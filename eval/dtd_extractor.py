@@ -50,16 +50,23 @@ def mask_entity_bodies(text: str) -> str:
 COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
 
 
-def _attlist_spans(text: str) -> List[str]:
-    """Yield each ATTLIST declaration body (quote-aware, so a '>' inside a
-    quoted default value never ends the declaration early)."""
+def _decl_spans(text: str, kind: str) -> List[str]:
+    """Yield each top-level declaration body of the given kind, quote-aware.
+
+    A declaration runs from '<!KIND' to its matching '>' with single/double
+    quotes respected, so a '>' inside a quoted entity value never splits a
+    declaration. This is what makes entity bodies data: a declaration
+    nested inside an entity value is consumed by the outer declaration and
+    never surfaces as its own declaration (LAW.AMP.13).
+    """
     spans: List[str] = []
+    marker = "<!" + kind
     start = 0
     while True:
-        i = text.find("<!ATTLIST", start)
+        i = text.find(marker, start)
         if i < 0:
             break
-        j = i + len("<!ATTLIST")
+        j = i + len(marker)
         quote: Optional[str] = None
         while j < len(text):
             ch = text[j]
@@ -74,6 +81,12 @@ def _attlist_spans(text: str) -> List[str]:
         spans.append(text[i : j + 1])
         start = j + 1
     return spans
+
+
+def _attlist_spans(text: str) -> List[str]:
+    """Yield each ATTLIST declaration body (quote-aware, so a '>' inside a
+    quoted default value never ends the declaration early)."""
+    return _decl_spans(text, "ATTLIST")
 
 
 def extract_attr_names(scanned: str) -> List[str]:
@@ -201,8 +214,17 @@ def extract_dtd_profile(path: Path) -> DTDProfile:
     elems = ELEM_RE.findall(scanned)
     attr_decls = ATTR_DECL_RE.findall(scanned)
     attrs = extract_attr_names(scanned)
-    ents = ENT_RE.findall(text)
-    params = PARAM_RE.findall(text)
+    ents: List[str] = []
+    params: List[str] = []
+    for decl in _decl_spans(text, "ENTITY"):
+        rest = decl[len("<!ENTITY") :].lstrip()
+        if not rest:
+            continue
+        if rest.startswith("%"):
+            rest = rest[1:].lstrip()
+            params.append(rest.split()[0])
+        else:
+            ents.append(rest.split()[0])
     nots = NOTATION_RE.findall(scanned)
     shapes = [content_model_shape(cm) for _, cm in elems]
     return DTDProfile(

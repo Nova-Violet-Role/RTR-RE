@@ -83,6 +83,37 @@ class TestDTDExtractorSafety(unittest.TestCase):
         self.assertEqual(prof.elements, 1)
         self.assertNotIn("injected", prof.element_names)
 
+    def test_parameter_entity_internal_subset_never_expanded(self):
+        hostile = (
+            "<!ENTITY % evil [ <!ELEMENT injected EMPTY> ]>\n"
+            "<!ENTITY % worse [ <!ATTLIST injected id ID #REQUIRED> ]>\n"
+            "<!ELEMENT safe EMPTY>\n"
+        )
+        p = write_tmp(hostile)
+        prof = ext.extract_dtd_profile(p)
+        self.assertEqual(prof.elements, 1)
+        self.assertNotIn("injected", prof.element_names)
+        self.assertEqual(prof.attributes, 0)
+        self.assertNotIn("injected", prof.attribute_names)
+        self.assertIn("evil", prof.param_entity_names)
+        self.assertIn("worse", prof.param_entity_names)
+
+    def test_parameter_entity_injecting_entity_declaration_never_expanded(self):
+        hostile = "<!ENTITY % evil \"<!ENTITY injected 'x'>\">\n<!ELEMENT safe EMPTY>\n"
+        p = write_tmp(hostile)
+        prof = ext.extract_dtd_profile(p)
+        self.assertNotIn("injected", prof.entity_names)
+        self.assertIn("evil", prof.param_entity_names)
+
+    def test_parameter_entity_injecting_notation_never_expanded(self):
+        hostile = (
+            "<!ENTITY % evil \"<!NOTATION injected SYSTEM 'image/x'>\">\n"
+            "<!ELEMENT safe EMPTY>\n"
+        )
+        p = write_tmp(hostile)
+        prof = ext.extract_dtd_profile(p)
+        self.assertNotIn("injected", prof.notation_names)
+
     def test_malformed_dtd_does_not_crash(self):
         broken = "<!ELEMENT unclosed (a, b>\n<!ATTLIST broken\n<!ENTITY\n"
         p = write_tmp(broken)

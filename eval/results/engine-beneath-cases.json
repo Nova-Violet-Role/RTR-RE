@@ -1,10 +1,10 @@
 {
   "schema": "rtr-re.engine-beneath.cases/v1",
   "scope": "RE edition: full architecture case registry",
-  "run_at": "2026-11-06T19:20:35",
+  "run_at": "2026-11-06T19:32:01",
   "summary": {
-    "cases": 15,
-    "passed": 15,
+    "cases": 16,
+    "passed": 16,
     "failed": 0,
     "pass": true
   },
@@ -325,12 +325,33 @@
       "failed_required": [],
       "evidence": {
         "sink": {
-          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-jtsy24lo\\rtrre-8714a4e373a2b6e0.md",
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-mzdsexla\\rtrre-8714a4e373a2b6e0.md",
           "exists": true,
           "bytes": 305,
           "sha256": "45ba312d9501e2438a91931e70fee15848f39dfdcb4774de2e4d37d546bda2e0",
           "span_markers": 2
         }
+      }
+    },
+    {
+      "case": "parameter-entity-injection-blocked",
+      "description": "Entity bodies are data, never expanded",
+      "checks": {
+        "root_is_safe": 1.0,
+        "no_injected_attributes": 1.0,
+        "no_injected_elements": 1.0,
+        "param_entities_reported_as_data": 1.0
+      },
+      "required": [
+        "root_is_safe",
+        "no_injected_attributes",
+        "no_injected_elements",
+        "param_entities_reported_as_data"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "header": "ROOT: safe\nENTITIES: evil, worse"
       }
     },
     {
@@ -1144,7 +1165,7 @@
         "evict": 161,
         "total_tokens": 200004,
         "keep_tokens": 39004,
-        "plan_ms": 0.931
+        "plan_ms": 0.885
       }
     },
     {
@@ -1168,7 +1189,7 @@
         "evict": 963,
         "total_tokens": 1004004,
         "keep_tokens": 39004,
-        "plan_ms": 5.184,
+        "plan_ms": 5.172,
         "cumulative_messages": 1001,
         "old_todo_index": 5,
         "old_todo_retained": false,

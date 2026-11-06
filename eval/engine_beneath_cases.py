@@ -857,6 +857,89 @@ def case_content_model_feature() -> Dict[str, Any]:
     )
 
 
+@register_case("parameter-entity-injection-blocked")
+def case_parameter_entity_injection() -> Dict[str, Any]:
+    """A hostile DTD cannot inject declarations into the indexed inventory:
+    entity bodies are data, never expanded (LAW.AMP.13)."""
+    import os
+
+    from memory_engine import MemoryEngine
+
+    checks: Dict[str, float] = {}
+    evidence: Dict[str, Any] = {}
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-pe-") as temporary:
+        root = Path(temporary)
+        proj = root / "projects"
+        (proj / "directives").mkdir(parents=True)
+        (proj / "directives" / "hostile.dtd").write_text(
+            '<!ENTITY % evil "<!ATTLIST injected id ID #REQUIRED>">\n'
+            "<!ENTITY % worse [ <!ELEMENT injected EMPTY> ]>\n"
+            "<!ELEMENT safe EMPTY>\n",
+            encoding="utf-8",
+        )
+        old_db = os.environ.get("OPENCODE_MEMORY_DB_DIR")
+        try:
+            os.environ["OPENCODE_MEMORY_DB_DIR"] = str(root / "db")
+            os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = "BAAI/bge-small-en-v1.5"
+            os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = (
+                ".md,.nt,.yaml,.yml,.dita,.xml,.dtd,.mod,.ent"
+            )
+            import memory_engine as mem
+
+            old_roots = mem.PROJECT_ROOTS
+            old_registry = mem.REGISTRY_FILE
+            old_extra = mem.EXTRA_ROOTS_FILE
+            old_lex = mem.LEXIKON_GLOBAL_FILE
+            mem.PROJECT_ROOTS = [root / "projects"]
+            mem.PROJECTS_DIR = root / "projects"
+            mem.REGISTRY_FILE = root / "registry.json"
+            mem.EXTRA_ROOTS_FILE = root / "extra_roots.json"
+            mem.LEXIKON_GLOBAL_FILE = root / "lexikon_global.json"
+            engine = MemoryEngine()
+            try:
+                engine.index_all(force=True)
+                col = engine.chroma_client.get_collection(
+                    "opencode_memory_baai_bge_small_en_v1_5"
+                )
+                docs = col.get(include=["documents"])["documents"]
+                header = docs[0].split("Section: Full Document\n\n")[1].split("\n\n")[0]
+                checks["root_is_safe"] = 1.0 if "ROOT: safe" in header else 0.0
+                checks["no_injected_attributes"] = (
+                    1.0 if "ATTRIBUTES:" not in header else 0.0
+                )
+                checks["no_injected_elements"] = (
+                    1.0 if "injected" not in header else 0.0
+                )
+                checks["param_entities_reported_as_data"] = (
+                    1.0 if "ENTITIES: evil, worse" in header else 0.0
+                )
+                evidence["header"] = header
+            finally:
+                engine.close()
+                mem.PROJECT_ROOTS = old_roots
+                mem.PROJECTS_DIR = old_roots
+                mem.REGISTRY_FILE = old_registry
+                mem.EXTRA_ROOTS_FILE = old_extra
+                mem.LEXIKON_GLOBAL_FILE = old_lex
+        finally:
+            if old_db is None:
+                os.environ.pop("OPENCODE_MEMORY_DB_DIR", None)
+            else:
+                os.environ["OPENCODE_MEMORY_DB_DIR"] = old_db
+    return _verdict(
+        checks,
+        [
+            "root_is_safe",
+            "no_injected_attributes",
+            "no_injected_elements",
+            "param_entities_reported_as_data",
+        ],
+        evidence,
+        "parameter-entity-injection-blocked",
+        "Entity bodies are data, never expanded",
+    )
+
+
 def run_all() -> Dict[str, Any]:
     """Run every registered case and aggregate into a scoreboard that can go red."""
     case_results: List[Dict[str, Any]] = []

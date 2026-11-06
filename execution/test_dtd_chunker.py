@@ -52,6 +52,19 @@ class ScanDtdDeclarationsTests(unittest.TestCase):
     def test_scan_empty_content(self):
         self.assertEqual(list(_scan_dtd_declarations("")), [])
 
+    def test_scan_entity_body_declarations_never_surface(self):
+        hostile = (
+            '<!ENTITY % evil "<!ATTLIST injected id ID #REQUIRED>">\n'
+            "<!ENTITY % worse [ <!ELEMENT injected EMPTY> ]>\n"
+            "<!ELEMENT safe EMPTY>\n"
+        )
+        decls = list(_scan_dtd_declarations(hostile))
+        kinds = [k for k, _n, _d in decls]
+        self.assertEqual(kinds, ["ENTITY", "ENTITY", "ELEMENT"])
+        names = [n for _k, n, _d in decls]
+        self.assertEqual(names, ["evil", "worse", "safe"])
+        self.assertNotIn("injected", names)
+
 
 class ChunkDtdTests(unittest.TestCase):
     def setUp(self):
@@ -200,6 +213,24 @@ class ChunkDtdWholeTests(unittest.TestCase):
         chunks = self.engine.chunk_dtd_whole(f, "sample.dtd")
         text = chunks[0]["text"]
         self.assertIn("CONTENT MODELS: (title, chapter+)", text)
+
+    def test_hostile_dtd_header_carries_no_injected_names(self):
+        hostile = (
+            '<!ENTITY % evil "<!ATTLIST injected id ID #REQUIRED>">\n'
+            "<!ENTITY % worse [ <!ELEMENT injected EMPTY> ]>\n"
+            "<!ENTITY % nastier \"<!ENTITY injected 'x'>\">\n"
+            "<!ELEMENT safe EMPTY>\n"
+        )
+        f = self._write(hostile)
+        chunks = self.engine.chunk_dtd_whole(f, "hostile.dtd")
+        self.assertEqual(len(chunks), 1)
+        text = chunks[0]["text"]
+        header = text.split("Section: Full Document\n\n")[1].split("\n\n")[0]
+        self.assertIn("ROOT: safe", header)
+        self.assertNotIn("ATTRIBUTES:", header)
+        self.assertNotIn("injected", header)
+        self.assertIn("ENTITIES: evil, nastier, worse", header)
+        self.assertIn("<!ELEMENT safe EMPTY>", text)
 
     def test_no_element_list_in_header(self):
         f = self._write(SAMPLE_DTD)
