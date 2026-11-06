@@ -1,0 +1,413 @@
+{
+  "schema": "rtr-re.baseline/0.5.0/v1",
+  "release_arc": "1.0.0",
+  "frozen_at": "2026-11-06T13:22:59",
+  "source_manifest": {
+    "versus": "1e6f90761fc3c253d3911ca61a88fe0112e8e631633b7816dd8550db96c4aebe",
+    "engine_beneath": "bb5aa806f20207d801b6ad83d9b6378cc0b19c21724ba6fe039e3617dd44de74",
+    "parity_matrix": "9757cb2154a029f2e8b49464805097c9d9ef36a9b89cf251326979d8336be330"
+  },
+  "retrieval": {
+    "seed": 20260928,
+    "tool": "RE:Symbiose versus v2 (isolated, same-size controls)",
+    "corpora": {
+      "dita-spec": {
+        "files": 30,
+        "queries": 77,
+        "systems": {
+          "rag-dense": {
+            "n": 77,
+            "recall@1": 0.7143,
+            "recall@3": 0.7792,
+            "mrr": 0.7403,
+            "p50_ms": 2.8
+          },
+          "rag-dense-base": {
+            "n": 77,
+            "recall@1": 0.7013,
+            "recall@3": 0.7922,
+            "mrr": 0.7424,
+            "p50_ms": 8.0
+          },
+          "rag-hybrid": {
+            "n": 77,
+            "recall@1": 0.9091,
+            "recall@3": 0.9351,
+            "mrr": 0.9199,
+            "p50_ms": 4.9
+          },
+          "rag-hybrid-base": {
+            "n": 77,
+            "recall@1": 0.8961,
+            "recall@3": 0.9221,
+            "mrr": 0.9048,
+            "p50_ms": 9.9
+          },
+          "rtr-arctic": {
+            "n": 77,
+            "recall@1": 0.8961,
+            "recall@3": 0.9351,
+            "mrr": 0.9156,
+            "p50_ms": 12.2
+          },
+          "rtr-bge": {
+            "n": 77,
+            "recall@1": 0.8961,
+            "recall@3": 0.9221,
+            "mrr": 0.9048,
+            "p50_ms": 12.2
+          },
+          "rtr-full": {
+            "n": 77,
+            "recall@1": 0.9221,
+            "recall@3": 0.974,
+            "mrr": 0.9459,
+            "p50_ms": 22.5
+          }
+        }
+      },
+      "dtd-commands": {
+        "files": 48,
+        "queries": 97,
+        "systems": {
+          "rag-dense": {
+            "n": 97,
+            "recall@1": 0.3196,
+            "recall@3": 0.4742,
+            "mrr": 0.3883,
+            "p50_ms": 2.6
+          },
+          "rag-dense-base": {
+            "n": 97,
+            "recall@1": 0.3711,
+            "recall@3": 0.4639,
+            "mrr": 0.4124,
+            "p50_ms": 7.7
+          },
+          "rag-hybrid": {
+            "n": 97,
+            "recall@1": 0.4124,
+            "recall@3": 0.5052,
+            "mrr": 0.4536,
+            "p50_ms": 2.9
+          },
+          "rag-hybrid-base": {
+            "n": 97,
+            "recall@1": 0.4639,
+            "recall@3": 0.5464,
+            "mrr": 0.4983,
+            "p50_ms": 8.8
+          },
+          "rtr-arctic": {
+            "n": 97,
+            "recall@1": 0.1649,
+            "recall@3": 0.1959,
+            "mrr": 0.177,
+            "p50_ms": 13.8
+          },
+          "rtr-bge": {
+            "n": 97,
+            "recall@1": 0.4536,
+            "recall@3": 0.5361,
+            "mrr": 0.488,
+            "p50_ms": 13.5
+          },
+          "rtr-full": {
+            "n": 97,
+            "recall@1": 0.3918,
+            "recall@3": 0.4948,
+            "mrr": 0.4364,
+            "p50_ms": 25.2
+          }
+        }
+      },
+      "dtd-family": {
+        "files": 60,
+        "queries": 92,
+        "systems": {
+          "rag-dense": {
+            "n": 92,
+            "recall@1": 0.2826,
+            "recall@3": 0.413,
+            "mrr": 0.3388,
+            "p50_ms": 3.6
+          },
+          "rag-dense-base": {
+            "n": 92,
+            "recall@1": 0.3913,
+            "recall@3": 0.4674,
+            "mrr": 0.4239,
+            "p50_ms": 8.1
+          },
+          "rag-hybrid": {
+            "n": 92,
+            "recall@1": 0.4891,
+            "recall@3": 0.587,
+            "mrr": 0.5308,
+            "p50_ms": 13.1
+          },
+          "rag-hybrid-base": {
+            "n": 92,
+            "recall@1": 0.5543,
+            "recall@3": 0.6196,
+            "mrr": 0.5851,
+            "p50_ms": 20.3
+          },
+          "rtr-arctic": {
+            "n": 92,
+            "recall@1": 0.413,
+            "recall@3": 0.5,
+            "mrr": 0.4529,
+            "p50_ms": 23.1
+          },
+          "rtr-bge": {
+            "n": 92,
+            "recall@1": 0.5543,
+            "recall@3": 0.6196,
+            "mrr": 0.5851,
+            "p50_ms": 26.1
+          },
+          "rtr-full": {
+            "n": 92,
+            "recall@1": 0.5652,
+            "recall@3": 0.6848,
+            "mrr": 0.6196,
+            "p50_ms": 41.6
+          }
+        }
+      },
+      "nt-studies": {
+        "files": 36,
+        "queries": 87,
+        "systems": {
+          "rag-dense": {
+            "n": 87,
+            "recall@1": 0.3333,
+            "recall@3": 0.5747,
+            "mrr": 0.4387,
+            "p50_ms": 4.0
+          },
+          "rag-dense-base": {
+            "n": 87,
+            "recall@1": 0.3448,
+            "recall@3": 0.5977,
+            "mrr": 0.4483,
+            "p50_ms": 9.7
+          },
+          "rag-hybrid": {
+            "n": 87,
+            "recall@1": 0.5747,
+            "recall@3": 0.8161,
+            "mrr": 0.6705,
+            "p50_ms": 5.9
+          },
+          "rag-hybrid-base": {
+            "n": 87,
+            "recall@1": 0.5287,
+            "recall@3": 0.6782,
+            "mrr": 0.5881,
+            "p50_ms": 11.6
+          },
+          "rtr-arctic": {
+            "n": 87,
+            "recall@1": 0.4483,
+            "recall@3": 0.6207,
+            "mrr": 0.5134,
+            "p50_ms": 15.0
+          },
+          "rtr-bge": {
+            "n": 87,
+            "recall@1": 0.5402,
+            "recall@3": 0.6897,
+            "mrr": 0.5996,
+            "p50_ms": 14.6
+          },
+          "rtr-full": {
+            "n": 87,
+            "recall@1": 0.5402,
+            "recall@3": 0.7586,
+            "mrr": 0.6284,
+            "p50_ms": 27.6
+          }
+        }
+      }
+    },
+    "dtd_family_rtr_full_taxons": {
+      "T1": {
+        "n": 32,
+        "recall@1": 0.5625,
+        "recall@3": 0.75,
+        "mrr": 0.6406
+      },
+      "T10": {
+        "n": 12,
+        "recall@1": 0.5,
+        "recall@3": 0.5,
+        "mrr": 0.5
+      },
+      "T2": {
+        "n": 12,
+        "recall@1": 0.5833,
+        "recall@3": 0.6667,
+        "mrr": 0.625
+      },
+      "T6": {
+        "n": 6,
+        "recall@1": 0.8333,
+        "recall@3": 1.0,
+        "mrr": 0.9167
+      },
+      "T7": {
+        "n": 12,
+        "recall@1": 0.5,
+        "recall@3": 0.5,
+        "mrr": 0.5
+      },
+      "T8": {
+        "n": 12,
+        "recall@1": 0.5,
+        "recall@3": 0.5833,
+        "mrr": 0.5417
+      },
+      "T9": {
+        "n": 6,
+        "recall@1": 0.6667,
+        "recall@3": 1.0,
+        "mrr": 0.8333
+      },
+      "OVERALL": {
+        "n": 92,
+        "recall@1": 0.5652,
+        "recall@3": 0.6848,
+        "mrr": 0.6196,
+        "p50_ms": 41.6
+      }
+    }
+  },
+  "engine_beneath": {
+    "summary": {
+      "cases": 14,
+      "passed": 14,
+      "failed": 0,
+      "pass": true
+    },
+    "cases": {
+      "compressor-fires-only-past-trigger": {
+        "verdict": "pass",
+        "checks": {
+          "no_compress_below_trigger": 1.0,
+          "compress_above_trigger": 1.0
+        }
+      },
+      "compressor-never-compresses-protected": {
+        "verdict": "pass",
+        "checks": {
+          "protected_never_compressed_below": 1.0,
+          "old_protected_evictable_above": 1.0,
+          "recent_protected_retained_above": 1.0
+        }
+      },
+      "compressor-reduces-live-window": {
+        "verdict": "pass",
+        "checks": {
+          "window_measurably_smaller": 1.0,
+          "evict_payload_carries_all_evicted": 1.0
+        }
+      },
+      "corrupted-sink-mid-batch": {
+        "verdict": "pass",
+        "checks": {
+          "worker_reports_failed": 1.0,
+          "error_recorded": 1.0,
+          "sink_attempted_write": 1.0
+        }
+      },
+      "corrupted-sink-reports-failed": {
+        "verdict": "pass",
+        "checks": {
+          "worker_reports_failed": 1.0,
+          "error_recorded": 1.0
+        }
+      },
+      "duplicate-submission-deterministic": {
+        "verdict": "pass",
+        "checks": {
+          "same_keep": 1.0,
+          "same_evict": 1.0,
+          "same_total_tokens": 1.0
+        }
+      },
+      "live-engine-sink-roundtrip": {
+        "verdict": "pass",
+        "checks": {
+          "verdict_pass": 1.0,
+          "sink_exists": 1.0,
+          "sink_has_marker": 1.0
+        }
+      },
+      "preset-axis-all-six": {
+        "verdict": "pass",
+        "checks": {
+          "standard_resolves": 1.0,
+          "calibrated_resolves": 1.0,
+          "wide_resolves": 1.0,
+          "fusion-ah_resolves": 1.0,
+          "symbiose-ah_resolves": 1.0,
+          "re-symbiose_resolves": 1.0
+        }
+      },
+      "preset-axis-full": {
+        "verdict": "pass",
+        "checks": {
+          "standard_bounds_exact": 1.0,
+          "calibrated_bounds_exact": 1.0,
+          "wide_bounds_exact": 1.0,
+          "fusion-ah_bounds_exact": 1.0,
+          "symbiose-ah_bounds_exact": 1.0,
+          "re-symbiose_bounds_exact": 1.0,
+          "parking_arithmetic_all_cells": 1.0,
+          "public_default_profile": 1.0,
+          "local_system_profile": 1.0
+        }
+      },
+      "production-scale-bounds": {
+        "verdict": "pass",
+        "checks": {
+          "all_accounted": 1.0,
+          "keep_within_max": 1.0,
+          "compress_triggered": 1.0
+        }
+      },
+      "production-scale-extreme-protection-warning": {
+        "verdict": "pass",
+        "checks": {
+          "old_todo_evicted_past_threshold": 1.0,
+          "recent_todo_retained": 1.0,
+          "all_accounted": 1.0
+        }
+      },
+      "protected-tool-todowrite-retained": {
+        "verdict": "pass",
+        "checks": {
+          "todowrite_retained": 1.0
+        }
+      },
+      "tool-pair-fixpoint": {
+        "verdict": "pass",
+        "checks": {
+          "call_retained": 1.0,
+          "result_retained": 1.0
+        }
+      },
+      "worker-cache-deduplicates": {
+        "verdict": "pass",
+        "checks": {
+          "second_is_cached": 1.0,
+          "same_digest": 1.0,
+          "first_ready": 1.0
+        }
+      }
+    }
+  },
+  "parity_matrix": "eval/results/parity-matrix-1.0.0.md"
+}
