@@ -4,10 +4,28 @@
 
 **Short name: RE:Symbiose. RRF-heuristic, DTD-semantic-capable retriever + symbiotized context engine. CPU-first. Local-first. Zero API cost.**
 
+### Two products, one family — the engine and the car
+
+**RTR** (the separate `rtr-role-type-retrieval` repo) is the **engine**: the
+retriever alone — dual-ONNX RRF ballot, DTD typing, Lexikon — built to
+annihilate RAG. It runs on its own for its own crowd.
+
+**RTR-RE** is the **car**: the RTR retriever **plus** the full context engine —
+the Keeper (window), the Compressor (drain), the Manager (memory MCP), the
+SymbioseWorker (background tickets), the engine-beneath (formal Lean battery),
+the installer, and the live-tuning palette. Every major incremental performance
+update to the Compressor and the Keeper lands here, not in RTR. The preset
+registry (`execution/rtr_presets.json`) is shared by both products; the keeper
+presets (trigger/target/max) are RTR-RE's section of it.
+
+The predecessors whose complete form was dragged into RTR-RE are
+`opencode-acp` and `rolling-context` — lab-only, gitignored, and never shipped
+here.
+
 Three offices, zero overlap: a **Keeper** (native OpenCode plugin,
 `opencode-plugin/rtr-re-keeper.js`) selects what stays in the window,
-a **Compressor** keeps everything verbatim until 320k tokens then cuts
-60% to a 128k preserved tail without pausing the live turn, and **RTR
+a **Compressor** keeps everything verbatim until the trigger preset then cuts
+to the target preset without pausing the live turn, and **RTR
 manages** what left the window as typed, retrievable substance. Classic
 RAG — generic soup in, hope out — is not extended here; it is replaced
 by role-routed, DTD-typed retrieval, and the claim ships with the
@@ -190,6 +208,22 @@ reports all three offices; absent evidence reads absent). Self-install:
 wheel ships the Keeper asset, `rtr-re-install-opencode` writes the plugin
 and prints the config snippet; clean-venv smoke proves 26 MCP tools.
 
+The engine-beneath is the formal Lean battery (`formal/Symbiose.lean`, built
+against full Mathlib pinned v4.33.0) and its eval probe
+(`eval/engine_beneath.py`): the typed lanes and the bounded loop are proven in
+Lean, not just asserted in Python.
+
+| Component | Path | What it is |
+|---|---|---|
+| Keeper (0.5.0) | `opencode-plugin/rtr-re-keeper.js` | window edge: selects, protects (`todowrite`), prunes, sinks first; fails open |
+| Compressor | `execution/context_budget.py` + `execution/symbiose_worker.py` | verbatim until trigger, drain to target, background tickets, never pauses the turn |
+| Manager | `execution/memory_engine.py` | memory MCP viewport: status/health/work-in-progress/retrieval, ≤512 tickets |
+| Engine-beneath | `formal/Symbiose.lean`, `eval/engine_beneath.py` | Lean-proven typed lanes and bounded loop |
+| Installer | `execution/install_opencode.py` | `rtr-re-install-opencode` writes the keeper plugin + config snippet |
+| Live tuning | `opencode-plugin/rtr-re-tui.tsx` | ctrl+p palette commands (status/enable/disable/preset/cpu/modality/threads/parking/trigger/target/max) |
+| Presets (shared) | `execution/rtr_presets.json` | keeper presets: fusion-ah 200k/100k/30 · symbiose-ah 250k/100k/40 (default) · re-symbiose 320k/128k/50 · legacy standard/calibrated/wide |
+| .mjs edition | `mjs/` | no-MCP memory plugin for OpenCode + Claude Code / Codex hooks |
+
 ---
 
 ## 🥚 The Easter Egg — why this retriever thinks in roles, and where it is going
@@ -264,7 +298,7 @@ code:
 |---|---|---|
 | 1 | *"Welcome back to **The World**"* (.hack) | the context window as a persistent world, not a buffer. You do not restart it — you **re-login**: restore-on-start (`SessionMemory`) puts goals, blockers and discoveries back on screen, bounded at 4000 chars so the login never floods the world |
 | 2 | *"**digitized, not deleted**"* (Re:Digitize) | the whole RE:Symbiose thesis. Evicted read + written spans are **re-digitized** into `directives/sessions/` and the dual-ONNX index — they change world, they do not die. Compression loses position, never substance |
-| 3 | *"**Data Drain** that takes only the bloat"* (.hack) | the Compressor: verbatim until 320k, then a 60% drain to a 128k preserved tail, sink-first so nothing evicts unwritten. Like the Bracelet's Drain, it extracts what weighs the target down and leaves the **core** — protected tools, last user message, tool pairs — untouchable |
+| 3 | *"**Data Drain** that takes only the bloat"* (.hack) | the Compressor: verbatim until the trigger preset, then a drain to the target preset, sink-first so nothing evicts unwritten. Like the Bracelet's Drain, it extracts what weighs the target down and leaves the **core** — protected tools, last user message, tool pairs — untouchable |
 | 4 | *"finding your partner **exactly where you raised them**"* (Re:Digitize raising) | the concept lifecycle: candidate → emerging → **validated** → deprecated, raised session by session in the concept registry, materialized only when grown. A partner is not summoned; it is raised |
 | 5 | *"the bracelet that was called a **cheat**"* (RE:Cheat) | the Keeper's bracelet: `permission: deny` looks like less power and is the strongest guard in the game — no second compressor can ever fire inside the window. The honest cheat: keeping substance after the cut, byte-exact, typed PCDATA/CDATA, NDATA masked like a virus core sealed, never executed |
 | 6 | *"**what if** … **?**"* (the RE prefix itself) | RE = again. Every RE here is a re-entry with proof: **RE:Symbiose** (symbiotized again, denser), re-login (restore), re-digitize (evict→index), re-trieve (RRF ballot). And the question stays open on purpose — the official Versus tool in `eval/` is how The World answers, per release, in numbers |
@@ -278,7 +312,7 @@ door — digitized, typed, and one search away.
 The RE saga citation is not decoration; it is the runtime diagram:
 
 ```
-Context (live window) → Compressor (evict ~60%, background, no pause)
+Context (live window) → Compressor (evict to the target preset, background, no pause)
   → Re:Digitize (verbatim typed spans) → Memory (dual-ONNX index)
   → Retrieval (RRF ballot) → Restore (bounded ≤4000 chars)
   → new Context → Session Commit → Memory …

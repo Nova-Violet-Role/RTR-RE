@@ -6,8 +6,14 @@ RTR-RE:Symbiose (Role-Type-Retrieval-RE:Symbiotized) 0.4.1: RRF-heuristic,
 DTD-semantic-capable persistent memory + symbiotized context engine for
 coding agents. Dual ONNX ensemble on CPU, zero API cost, local only.
 Three offices: native Keeper plugin (window), background Compressor
-(verbatim until 320k, 60% cut to a 128k preserved tail), RTR Manager
+(verbatim until trigger, drain to target), RTR Manager
 (retrieval of what left the window).
+
+**Engine vs car:** RTR (the `rtr-role-type-retrieval` repo) is the retriever
+alone. RTR-RE is the full system: RTR retrieval + Keeper + Compressor + Manager
++ engine-beneath + installer + live-tuning palette. The preset registry is
+shared; the keeper presets are RTR-RE's section. The predecessors
+`opencode-acp` and `rolling-context` are lab-only and never shipped here.
 
 The **.mjs edition** (`mjs/` in the repo) provides the same memory
 discipline with **no MCP server**: an OpenCode plugin + Claude Code /
@@ -110,8 +116,12 @@ partitioned per project. Reopen the same project name → memory restored.
 | `OPENCODE_MEMORY_RRF_K` | `60` | RRF dampening; fuses rankings, never raw scores |
 | `OPENCODE_MEMORY_RRF_VOTE_TOP` | `10` | per-run rank vote truncation (0 disables) |
 | `OPENCODE_MEMORY_STRUCT_LANE` | off | `rg`/`ccc`/`auto` = structural grep lane for code-shaped terms |
-| `OPENCODE_MEMORY_RTRRE_TRIGGER` | `320000` | Compressor trigger tokens (scale below your model input cap) |
-| `OPENCODE_MEMORY_RTRRE_TARGET` | `128000` | verbatim tail kept after the 60% cut |
+| `OPENCODE_MEMORY_RTRRE_TRIGGER` | `250000` | Compressor trigger tokens (scale below your model input cap) |
+| `OPENCODE_MEMORY_RTRRE_TARGET` | `100000` | verbatim tail kept after the drain (target) |
+| `OPENCODE_MEMORY_RTRRE_PRESET` | `symbiose-ah` | keeper preset: `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40 · `re-symbiose` 320k/128k/50 · legacy `standard`/`calibrated`/`wide` |
+| `OPENCODE_MEMORY_RTR_PRESET_PROFILE` | `public-default` | CPU profile: `public-default` (T4/P60) or `local-system` (T8/P80) |
+| `OPENCODE_MEMORY_RETRIEVAL_MODALITY` | `rtr-full` | retrieval modality: `rtr-full` (dual), `rtr-arctic`, `rtr-bge`, `rag-hybrid-base`, `rag-dense-base`, `rag-hybrid`, `rag-dense`, `custom` |
+| `OPENCODE_MEMORY_CPU_PARKING_PERCENT` | profile default | CPU parking percent (20–80) — cores kept awake for embedding |
 | `OPENCODE_MEMORY_RTRRE_MAX_KEEP` | `40` | max verbatim messages kept |
 | `RTR_RE_KEEPER_CONFIG` | `<project>/.opencode/rtr-re-keeper.json` | live Keeper bounds file (watched, no restart) |
 | `RTR_RE_KEEPER_STATUS` | `<project>/.opencode/rtr-re-keeper-status.json` | Keeper status file read by `memory_rtr_status` |
@@ -193,12 +203,21 @@ result; the window itself is untouched):
 
 ```
 /rtr status              bounds, last decision, sink, errors
-/rtr hold 64000          preserved tail (target)
-/rtr trigger 200000      eviction starts here
-/rtr max 40              message cap
-/rtr preset standard|calibrated|wide
+/rtr hold 100000         preserved tail (target)
+/rtr trigger 250000      eviction starts here
+/rtr max 200             message cap
+/rtr preset fusion-ah|symbiose-ah|re-symbiose|standard|calibrated|wide
 /rtr disable | /rtr enable
 ```
+
+The ctrl+p palette (TUI plugin `rtr-re-tui.tsx`) exposes the same knobs as
+commands under **RTR Keeper**: status, enable, disable, preset, cpu, modality,
+threads, parking, trigger, target, max — each writes the same watched file, so
+every change applies on the next exchange with no restart. Presets (shared
+registry, 0.5.0): `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40
+(default) · `re-symbiose` 320k/128k/50 · legacy `standard`/`calibrated`/`wide`.
+The Keeper protects `todowrite` messages and the last user message; eviction is
+oldest-first, sink-first, fail-open.
 
 Every transform also writes `.opencode/rtr-re-keeper-status.json`; the
 `memory_rtr_status` MCP tool reports it alongside Compressor bounds, worker
@@ -211,6 +230,7 @@ invented.
 uvx --from rtr-role-type-retrieval python -m execution.rtr_eval  # release gate
 python -m unittest execution.test_memory                          # unit suite
 node --test opencode-plugin/rtr-re-keeper.test.mjs                # Keeper suite (repo)
+bun test opencode-plugin/rtr-re-tui.test.ts                       # ctrl+p palette suite (repo)
 python eval/bench_versus.py --intense                             # RTR-vs-RAG bench, real docs
 python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
 ```
