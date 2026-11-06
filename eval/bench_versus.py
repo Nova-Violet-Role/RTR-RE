@@ -88,6 +88,156 @@ CORPORA = [
     },
 ]
 
+# Per-family DTD suites (TODO-36): one corpus per real family, staged from
+# that family's own directory only, capped at 40 files so every suite is
+# bounded. Queries are derived from each family's own vocabulary by
+# derive_dtd_queries (T10 naturally yields nothing within a single family).
+# Only run when explicitly named via --corpora; the default run is unchanged.
+PER_FAMILY_CORPORA = [
+    {
+        "name": "dtd-jats",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\JATS-DTDs"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-daisy",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\daisy"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-docbook",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\docbook"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-dtds",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\dtds"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-mathml",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\mathml"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-office",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\office"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-dita-spec11",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\org.dita.specialization.dita11"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-dita12",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\org.oasis-open.dita.v1_2"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-dita13",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\org.oasis-open.dita.v1_3"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-xdita",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\org.oasis-open.xdita.v0_2_2"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-svg",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\svg"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-tei",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\tei"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-xhtml",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\xhtml"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+    {
+        "name": "dtd-xhtml11",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples\xhtml11"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "step",
+        "step": 1,
+        "n": 40,
+        "title": "dtd",
+        "prefix_rel": True,
+    },
+]
+
+ALL_CORPORA = CORPORA + PER_FAMILY_CORPORA
+
 # Per-taxon query caps. Precedent defaults reproduce the historical 164;
 # --intense explodes the table (more queries per taxon, same derivation).
 CAPS = {"T2": 12, "T3": 12, "T4": 12, "T5": 12, "T6": 6}
@@ -648,6 +798,37 @@ def write_scoreboard(path, results):
     path.write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
 
 
+def write_per_family_board(path, results):
+    """Per-family DTD suite scoreboard (TODO-36): one row per family x
+    system, R@1/R@3/MRR from the OVERALL metrics of each suite corpus."""
+    families = [c for c in results["corpora"] if c.startswith("dtd-")]
+    if not families:
+        return
+    systems = sorted({s for c in families for s in results["corpora"][c]["systems"]})
+    lines = [
+        "<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->",
+        "<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->",
+        "# DTD per-family suites — scoreboard (generated, do not edit)",
+        "",
+        f"Tool: {results.get('tool')} | seed {results.get('seed')}",
+        "",
+        "| Family | Files | Queries | System | n | R@1 | R@3 | MRR |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for fam in sorted(families):
+        corp = results["corpora"][fam]
+        for system in systems:
+            if system not in corp["systems"]:
+                continue
+            o = corp["systems"][system]["metrics"]["OVERALL"]
+            lines.append(
+                f"| {fam} | {corp['files']} | {corp['queries']} | "
+                f"{system} | {o['n']} | {o['recall@1']:.4f} | "
+                f"{o['recall@3']:.4f} | {o['mrr']:.4f} |"
+            )
+    path.write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
+
+
 def cleanup_extra(base):
     try:
         if mem.EXTRA_ROOTS_FILE.exists():
@@ -717,7 +898,8 @@ def main():
     corpora = [c.strip() for c in args.corpora.split(",") if c.strip()]
     all_rows = {s: [] for s in systems}
     try:
-        for spec in [c for c in CORPORA if not corpora or c["name"] in corpora]:
+        available = ALL_CORPORA if corpora else CORPORA
+        for spec in [c for c in available if not corpora or c["name"] in corpora]:
             # One fresh DB + registry per corpus: delete/add churn on one
             # persistent HNSW segment desyncs ids under many short-lived
             # engines (measured: bge arms return empty after corpus 1 in
@@ -820,7 +1002,9 @@ def main():
     write_mermaid(Path(__file__).parent / "versus.mmd", combined, n_q, n_err)
     board = Path(__file__).parent / "results" / "versus.md"
     write_scoreboard(board, results)
-    print(f"wrote {out} + versus.mmd + {board}")
+    pfamily = Path(__file__).parent / "results" / "per-family-scoreboard.md"
+    write_per_family_board(pfamily, results)
+    print(f"wrote {out} + versus.mmd + {board} + {pfamily}")
 
 
 if __name__ == "__main__":
