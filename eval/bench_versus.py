@@ -92,6 +92,9 @@ CORPORA = [
 # --intense explodes the table (more queries per taxon, same derivation).
 CAPS = {"T2": 12, "T3": 12, "T4": 12, "T5": 12, "T6": 6}
 INTENSE_CAPS = {"T2": 40, "T3": 10**9, "T4": 36, "T5": 24, "T6": 20}
+# DTD taxon caps: raised so per-taxon verdicts are statistically meaningful
+# (T7-T10 at n=12 or below flip 0.08-0.17 on a single query).
+DTD_CAPS = {"T7": 40, "T8": 40, "T9": 40, "T10": 40}
 K = 3
 
 STOP = {
@@ -449,7 +452,7 @@ def derive_dtd_queries(proj, rng):
     for n, prof in docs.items():
         for t in set(prof.attribute_names):
             attr_owner.setdefault(t, n)
-    for t in attr_rares[: CAPS["T2"]]:
+    for t in attr_rares[: DTD_CAPS["T7"]]:
         queries.append(("T7", t, attr_owner[t]))
     # T8: entity-lane recall — rare entity/parameter-entity names.
     ent_rares = sorted(
@@ -460,10 +463,10 @@ def derive_dtd_queries(proj, rng):
     for n, prof in docs.items():
         for t in set(prof.entity_names + prof.param_entity_names):
             ent_owner.setdefault(t, n)
-    for t in ent_rares[: CAPS["T2"]]:
+    for t in ent_rares[: DTD_CAPS["T8"]]:
         queries.append(("T8", t, ent_owner[t]))
     # T9: content-model fragment recall — distinctive sequence/choice text.
-    for n in names[: CAPS["T3"]]:
+    for n in names[: DTD_CAPS["T9"]]:
         prof = docs[n]
         if prof.content_models["sequences"] or prof.content_models["choices"]:
             text = Path(proj / "directives" / n).read_text(
@@ -492,7 +495,7 @@ def derive_dtd_queries(proj, rng):
         and t not in STOP
     )
     rng.shuffle(cross_terms)
-    for t in cross_terms[: CAPS["T2"]]:
+    for t in cross_terms[: DTD_CAPS["T10"]]:
         queries.append(("T10", t, cross[t][0]))
     # T6: identifier/path lookup (filename stems).
     for n in names[: CAPS["T6"]]:

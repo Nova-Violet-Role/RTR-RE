@@ -173,10 +173,17 @@ class ChunkDtdWholeTests(unittest.TestCase):
         f = self._write(SAMPLE_DTD)
         chunks = self.engine.chunk_dtd_whole(f, "sample.dtd")
         text = chunks[0]["text"]
-        self.assertIn("ELEMENTS: book", text)
+        self.assertIn("ROOT: book", text)
         self.assertIn("ATTRIBUTES: book", text)
         self.assertIn("ENTITIES: copyright, xhtml.list", text)
         self.assertIn("NOTATIONS: gif", text)
+
+    def test_no_element_list_in_header(self):
+        f = self._write(SAMPLE_DTD)
+        chunks = self.engine.chunk_dtd_whole(f, "sample.dtd")
+        text = chunks[0]["text"]
+        self.assertNotIn("ELEMENTS:", text)
+        self.assertIn("<!ELEMENT book", text)
 
     def test_raw_content_follows_inventory(self):
         f = self._write(SAMPLE_DTD)

@@ -1,9 +1,9 @@
 {
   "schema": "rtr-re.baseline/1.0.0/v1",
   "release_arc": "1.0.0",
-  "frozen_at": "2026-11-06T13:25:48",
+  "frozen_at": "2026-11-06T14:48:27",
   "source_manifest": {
-    "versus": "1e6f90761fc3c253d3911ca61a88fe0112e8e631633b7816dd8550db96c4aebe",
+    "versus": "0a7511551b77e280c0ff11f87d3978b669aa589b83c6cd5cc1c3562d9c169933",
     "engine_beneath": "bb5aa806f20207d801b6ad83d9b6378cc0b19c21724ba6fe039e3617dd44de74",
     "parity_matrix": "9757cb2154a029f2e8b49464805097c9d9ef36a9b89cf251326979d8336be330"
   },
@@ -18,51 +18,51 @@
           "rag-dense": {
             "n": 77,
             "recall@1": 0.7143,
-            "recall@3": 0.7792,
-            "mrr": 0.7403,
-            "p50_ms": 2.8
+            "recall@3": 0.7662,
+            "mrr": 0.7359,
+            "p50_ms": 3.6
           },
           "rag-dense-base": {
             "n": 77,
-            "recall@1": 0.7013,
-            "recall@3": 0.7922,
-            "mrr": 0.7424,
-            "p50_ms": 8.0
+            "recall@1": 0.6883,
+            "recall@3": 0.7792,
+            "mrr": 0.7294,
+            "p50_ms": 8.9
           },
           "rag-hybrid": {
             "n": 77,
-            "recall@1": 0.9091,
-            "recall@3": 0.9351,
-            "mrr": 0.9199,
-            "p50_ms": 4.9
+            "recall@1": 0.9351,
+            "recall@3": 0.961,
+            "mrr": 0.9459,
+            "p50_ms": 6.1
           },
           "rag-hybrid-base": {
             "n": 77,
             "recall@1": 0.8961,
-            "recall@3": 0.9221,
-            "mrr": 0.9048,
-            "p50_ms": 9.9
+            "recall@3": 0.9091,
+            "mrr": 0.9004,
+            "p50_ms": 11.7
           },
           "rtr-arctic": {
             "n": 77,
             "recall@1": 0.8961,
-            "recall@3": 0.9351,
-            "mrr": 0.9156,
-            "p50_ms": 12.2
+            "recall@3": 0.9221,
+            "mrr": 0.9091,
+            "p50_ms": 14.0
           },
           "rtr-bge": {
             "n": 77,
             "recall@1": 0.8961,
-            "recall@3": 0.9221,
-            "mrr": 0.9048,
-            "p50_ms": 12.2
+            "recall@3": 0.9091,
+            "mrr": 0.9004,
+            "p50_ms": 14.0
           },
           "rtr-full": {
             "n": 77,
-            "recall@1": 0.9221,
+            "recall@1": 0.9351,
             "recall@3": 0.974,
-            "mrr": 0.9459,
-            "p50_ms": 22.5
+            "mrr": 0.9524,
+            "p50_ms": 23.9
           }
         }
       },
@@ -72,107 +72,107 @@
         "systems": {
           "rag-dense": {
             "n": 97,
-            "recall@1": 0.3196,
-            "recall@3": 0.4742,
-            "mrr": 0.3883,
-            "p50_ms": 2.6
+            "recall@1": 0.3093,
+            "recall@3": 0.4536,
+            "mrr": 0.3763,
+            "p50_ms": 3.2
           },
           "rag-dense-base": {
             "n": 97,
-            "recall@1": 0.3711,
-            "recall@3": 0.4639,
-            "mrr": 0.4124,
-            "p50_ms": 7.7
+            "recall@1": 0.3505,
+            "recall@3": 0.4742,
+            "mrr": 0.4055,
+            "p50_ms": 8.2
           },
           "rag-hybrid": {
             "n": 97,
-            "recall@1": 0.4124,
-            "recall@3": 0.5052,
-            "mrr": 0.4536,
-            "p50_ms": 2.9
+            "recall@1": 0.4021,
+            "recall@3": 0.5155,
+            "mrr": 0.4519,
+            "p50_ms": 3.7
           },
           "rag-hybrid-base": {
             "n": 97,
-            "recall@1": 0.4639,
-            "recall@3": 0.5464,
-            "mrr": 0.4983,
+            "recall@1": 0.4536,
+            "recall@3": 0.5155,
+            "mrr": 0.4811,
             "p50_ms": 8.8
           },
           "rtr-arctic": {
             "n": 97,
             "recall@1": 0.1649,
-            "recall@3": 0.1959,
-            "mrr": 0.177,
-            "p50_ms": 13.8
+            "recall@3": 0.2062,
+            "mrr": 0.1821,
+            "p50_ms": 15.1
           },
           "rtr-bge": {
             "n": 97,
             "recall@1": 0.4536,
-            "recall@3": 0.5361,
-            "mrr": 0.488,
-            "p50_ms": 13.5
+            "recall@3": 0.5258,
+            "mrr": 0.4845,
+            "p50_ms": 15.1
           },
           "rtr-full": {
             "n": 97,
-            "recall@1": 0.3918,
-            "recall@3": 0.4948,
-            "mrr": 0.4364,
-            "p50_ms": 25.2
+            "recall@1": 0.433,
+            "recall@3": 0.5155,
+            "mrr": 0.4691,
+            "p50_ms": 26.1
           }
         }
       },
       "dtd-family": {
         "files": 60,
-        "queries": 92,
+        "queries": 163,
         "systems": {
           "rag-dense": {
-            "n": 92,
-            "recall@1": 0.2826,
-            "recall@3": 0.413,
-            "mrr": 0.3388,
+            "n": 163,
+            "recall@1": 0.2515,
+            "recall@3": 0.3436,
+            "mrr": 0.2924,
             "p50_ms": 3.6
           },
           "rag-dense-base": {
-            "n": 92,
-            "recall@1": 0.3913,
-            "recall@3": 0.4674,
-            "mrr": 0.4239,
-            "p50_ms": 8.1
+            "n": 163,
+            "recall@1": 0.2822,
+            "recall@3": 0.3742,
+            "mrr": 0.3221,
+            "p50_ms": 8.6
           },
           "rag-hybrid": {
-            "n": 92,
-            "recall@1": 0.4891,
-            "recall@3": 0.587,
-            "mrr": 0.5308,
-            "p50_ms": 13.1
+            "n": 163,
+            "recall@1": 0.4908,
+            "recall@3": 0.5767,
+            "mrr": 0.5286,
+            "p50_ms": 17.7
           },
           "rag-hybrid-base": {
-            "n": 92,
-            "recall@1": 0.5543,
-            "recall@3": 0.6196,
-            "mrr": 0.5851,
-            "p50_ms": 20.3
+            "n": 163,
+            "recall@1": 0.4785,
+            "recall@3": 0.5215,
+            "mrr": 0.498,
+            "p50_ms": 23.6
           },
           "rtr-arctic": {
-            "n": 92,
-            "recall@1": 0.413,
-            "recall@3": 0.5,
-            "mrr": 0.4529,
-            "p50_ms": 23.1
+            "n": 163,
+            "recall@1": 0.4417,
+            "recall@3": 0.4969,
+            "mrr": 0.4673,
+            "p50_ms": 37.0
           },
           "rtr-bge": {
-            "n": 92,
-            "recall@1": 0.5543,
-            "recall@3": 0.6196,
-            "mrr": 0.5851,
-            "p50_ms": 26.1
+            "n": 163,
+            "recall@1": 0.4785,
+            "recall@3": 0.5215,
+            "mrr": 0.498,
+            "p50_ms": 29.9
           },
           "rtr-full": {
-            "n": 92,
-            "recall@1": 0.5652,
-            "recall@3": 0.6848,
-            "mrr": 0.6196,
-            "p50_ms": 41.6
+            "n": 163,
+            "recall@1": 0.5337,
+            "recall@3": 0.6319,
+            "mrr": 0.5757,
+            "p50_ms": 54.2
           }
         }
       },
@@ -182,52 +182,52 @@
         "systems": {
           "rag-dense": {
             "n": 87,
-            "recall@1": 0.3333,
-            "recall@3": 0.5747,
-            "mrr": 0.4387,
-            "p50_ms": 4.0
+            "recall@1": 0.3218,
+            "recall@3": 0.5632,
+            "mrr": 0.431,
+            "p50_ms": 5.3
           },
           "rag-dense-base": {
             "n": 87,
-            "recall@1": 0.3448,
-            "recall@3": 0.5977,
-            "mrr": 0.4483,
-            "p50_ms": 9.7
+            "recall@1": 0.3678,
+            "recall@3": 0.5747,
+            "mrr": 0.4502,
+            "p50_ms": 13.4
           },
           "rag-hybrid": {
             "n": 87,
-            "recall@1": 0.5747,
-            "recall@3": 0.8161,
-            "mrr": 0.6705,
-            "p50_ms": 5.9
+            "recall@1": 0.5632,
+            "recall@3": 0.8046,
+            "mrr": 0.659,
+            "p50_ms": 7.3
           },
           "rag-hybrid-base": {
             "n": 87,
             "recall@1": 0.5287,
-            "recall@3": 0.6782,
-            "mrr": 0.5881,
-            "p50_ms": 11.6
+            "recall@3": 0.6897,
+            "mrr": 0.59,
+            "p50_ms": 15.1
           },
           "rtr-arctic": {
             "n": 87,
-            "recall@1": 0.4483,
-            "recall@3": 0.6207,
-            "mrr": 0.5134,
-            "p50_ms": 15.0
+            "recall@1": 0.4368,
+            "recall@3": 0.6092,
+            "mrr": 0.5019,
+            "p50_ms": 19.2
           },
           "rtr-bge": {
             "n": 87,
-            "recall@1": 0.5402,
-            "recall@3": 0.6897,
-            "mrr": 0.5996,
-            "p50_ms": 14.6
+            "recall@1": 0.5287,
+            "recall@3": 0.7011,
+            "mrr": 0.5958,
+            "p50_ms": 19.7
           },
           "rtr-full": {
             "n": 87,
             "recall@1": 0.5402,
             "recall@3": 0.7586,
-            "mrr": 0.6284,
-            "p50_ms": 27.6
+            "mrr": 0.6264,
+            "p50_ms": 32.2
           }
         }
       }
@@ -236,14 +236,14 @@
       "T1": {
         "n": 32,
         "recall@1": 0.5625,
-        "recall@3": 0.75,
-        "mrr": 0.6406
+        "recall@3": 0.7188,
+        "mrr": 0.6198
       },
       "T10": {
-        "n": 12,
-        "recall@1": 0.5,
-        "recall@3": 0.5,
-        "mrr": 0.5
+        "n": 21,
+        "recall@1": 0.619,
+        "recall@3": 0.7143,
+        "mrr": 0.6587
       },
       "T2": {
         "n": 12,
@@ -258,29 +258,29 @@
         "mrr": 0.9167
       },
       "T7": {
-        "n": 12,
-        "recall@1": 0.5,
-        "recall@3": 0.5,
-        "mrr": 0.5
+        "n": 40,
+        "recall@1": 0.525,
+        "recall@3": 0.55,
+        "mrr": 0.5375
       },
       "T8": {
-        "n": 12,
-        "recall@1": 0.5,
-        "recall@3": 0.5833,
-        "mrr": 0.5417
+        "n": 40,
+        "recall@1": 0.4,
+        "recall@3": 0.5,
+        "mrr": 0.4417
       },
       "T9": {
-        "n": 6,
-        "recall@1": 0.6667,
-        "recall@3": 1.0,
-        "mrr": 0.8333
+        "n": 12,
+        "recall@1": 0.5833,
+        "recall@3": 0.75,
+        "mrr": 0.6667
       },
       "OVERALL": {
-        "n": 92,
-        "recall@1": 0.5652,
-        "recall@3": 0.6848,
-        "mrr": 0.6196,
-        "p50_ms": 41.6
+        "n": 163,
+        "recall@1": 0.5337,
+        "recall@3": 0.6319,
+        "mrr": 0.5757,
+        "p50_ms": 54.2
       }
     }
   },

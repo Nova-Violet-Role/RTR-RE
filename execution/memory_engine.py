@@ -1199,9 +1199,13 @@ class MemoryEngine:
         attrs = sorted({n for k, n, _d in decls if k == "ATTLIST" and n})
         entities = sorted({n for k, n, _d in decls if k == "ENTITY" and n})
         notations = sorted({n for k, n, _d in decls if k == "NOTATION" and n})
+        root = next((n for k, n, _d in decls if k == "ELEMENT" and n), "")
         header_lines = []
-        if elements:
-            header_lines.append("ELEMENTS: " + ", ".join(elements[:200]))
+        if root:
+            header_lines.append("ROOT: " + root)
+        # No ELEMENTS list: a full element-name bag homogenizes the corpus
+        # and hurt T1/T7/T9/T10 (measured, TODO-30). Element vocabulary stays
+        # available in the raw content that follows the header.
         if attrs:
             header_lines.append("ATTRIBUTES: " + ", ".join(attrs[:200]))
         if entities:
@@ -1412,7 +1416,17 @@ class MemoryEngine:
             jobs = []
             for info, filepath, old_hash, new_hash in to_index:
                 if filepath.suffix.lower() in (".dtd", ".mod", ".ent"):
-                    chunks = self.chunk_dtd_whole(filepath, info["rel_path"])
+                    mode = (
+                        os.environ.get("OPENCODE_MEMORY_DTD_CHUNK_MODE", "inventory")
+                        .strip()
+                        .lower()
+                    )
+                    if mode == "markdown":
+                        chunks = self.chunk_markdown(filepath, info["rel_path"])
+                    elif mode == "hybrid":
+                        chunks = self.chunk_dtd(filepath, info["rel_path"])
+                    else:
+                        chunks = self.chunk_dtd_whole(filepath, info["rel_path"])
                 else:
                     chunks = self.chunk_markdown(filepath, info["rel_path"])
                 if not chunks:
