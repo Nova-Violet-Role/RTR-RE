@@ -23,8 +23,8 @@ SOURCES = {
     "engine_beneath": RESULTS / "engine-beneath-cases.json",
     "parity_matrix": RESULTS / "parity-matrix-1.0.0.md",
 }
-OUT_JSON = RESULTS / "baseline-0.5.0.json"
-OUT_MD = RESULTS / "baseline-0.5.0.md"
+OUT_JSON = RESULTS / "baseline-1.0.0.json"
+OUT_MD = RESULTS / "baseline-1.0.0.md"
 
 
 def sha256(path: Path) -> str:
@@ -74,7 +74,7 @@ def main() -> int:
     eb = load_json(SOURCES["engine_beneath"])
 
     baseline: Dict[str, Any] = {
-        "schema": "rtr-re.baseline/0.5.0/v1",
+        "schema": "rtr-re.baseline/1.0.0/v1",
         "release_arc": "1.0.0",
         "frozen_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "source_manifest": manifest,

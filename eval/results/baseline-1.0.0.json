@@ -1,7 +1,7 @@
 {
-  "schema": "rtr-re.baseline/0.5.0/v1",
+  "schema": "rtr-re.baseline/1.0.0/v1",
   "release_arc": "1.0.0",
-  "frozen_at": "2026-11-06T13:22:59",
+  "frozen_at": "2026-11-06T13:25:48",
   "source_manifest": {
     "versus": "1e6f90761fc3c253d3911ca61a88fe0112e8e631633b7816dd8550db96c4aebe",
     "engine_beneath": "bb5aa806f20207d801b6ad83d9b6378cc0b19c21724ba6fe039e3617dd44de74",

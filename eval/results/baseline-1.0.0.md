@@ -1,6 +1,6 @@
 # RTR-RE baseline — 0.5.0 (frozen, TODO-29)
 
-- Frozen at: 2026-11-06T13:22:59
+- Frozen at: 2026-11-06T13:25:48
 - Release arc: 1.0.0
 - Source manifest (sha256):
   - `versus`: `1e6f90761fc3c253d3911ca61a88fe0112e8e631633b7816dd8550db96c4aebe`
