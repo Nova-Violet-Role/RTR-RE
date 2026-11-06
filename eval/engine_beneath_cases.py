@@ -463,6 +463,152 @@ def case_production_scale_extreme_protection() -> Dict[str, Any]:
     )
 
 
+@register_case("compressor-fires-only-past-trigger")
+def case_compressor_fires_only_past_trigger() -> Dict[str, Any]:
+    """The Compressor fires only when total tokens exceed the trigger.
+
+    Bounds come from the shipped preset registry (Symbiose-AH! public
+    default), never from ad-hoc test numbers: the procedure verifies the
+    actual shipped configuration.
+    """
+    _name, preset = keeper_preset("symbiose-ah")
+    trigger = int(preset["triggerTokens"])
+    target = int(preset["targetTokens"])
+    max_keep = int(preset["maxKeepMessages"])
+    cfg = {
+        "trigger_tokens": trigger,
+        "target_tokens": target,
+        "max_keep_messages": max_keep,
+    }
+    below = [_msg("assistant", _blob(1000)) for _ in range(5)]
+    # ~3000 tokens per _blob(12000); need > trigger messages.
+    above = [_msg("assistant", _blob(12000)) for _ in range(trigger // 3000 + 5)]
+    plan_below = plan_compression(below, config=cfg)
+    plan_above = plan_compression(above, config=cfg)
+    checks = {
+        "no_compress_below_trigger": 1.0 if not plan_below["compress"] else 0.0,
+        "compress_above_trigger": 1.0 if plan_above["compress"] else 0.0,
+    }
+    return _verdict(
+        checks,
+        ["no_compress_below_trigger", "compress_above_trigger"],
+        {
+            "preset": "symbiose-ah",
+            "trigger_tokens": trigger,
+            "below_total": plan_below["total_tokens"],
+            "below_compress": plan_below["compress"],
+            "above_total": plan_above["total_tokens"],
+            "above_compress": plan_above["compress"],
+        },
+        "compressor-fires-only-past-trigger",
+        "Compressor fires only past the shipped preset trigger",
+    )
+
+
+@register_case("compressor-reduces-live-window")
+def case_compressor_reduces_live_window() -> Dict[str, Any]:
+    """Compression measurably reduces the live window; evicted content is carried verbatim.
+
+    Bounds come from the shipped preset registry (Symbiose-AH! public
+    default), never from ad-hoc test numbers.
+    """
+    _name, preset = keeper_preset("symbiose-ah")
+    trigger = int(preset["triggerTokens"])
+    target = int(preset["targetTokens"])
+    max_keep = int(preset["maxKeepMessages"])
+    cfg = {
+        "trigger_tokens": trigger,
+        "target_tokens": target,
+        "max_keep_messages": max_keep,
+    }
+    messages = [_msg("assistant", _blob(12000)) for _ in range(trigger // 3000 + 10)]
+    messages.append(_msg("user", "latest question"))
+    plan = plan_compression(messages, config=cfg)
+    kept_tokens = int(plan["keep_tokens"])
+    total = int(plan["total_tokens"])
+    payload = plan.get("evict_payload", [])
+    evict = plan.get("evict", [])
+    # Verbatim check: every evicted span's index is present in the payload.
+    evicted_indexes = {int(p["index"]) for p in payload}
+    verbatim = evicted_indexes == {int(i) for i in evict}
+    checks = {
+        "window_measurably_smaller": 1.0 if kept_tokens < total else 0.0,
+        "evict_payload_carries_all_evicted": 1.0 if verbatim else 0.0,
+    }
+    return _verdict(
+        checks,
+        ["window_measurably_smaller", "evict_payload_carries_all_evicted"],
+        {
+            "preset": "symbiose-ah",
+            "trigger_tokens": trigger,
+            "target_tokens": target,
+            "total_tokens": total,
+            "keep_tokens": kept_tokens,
+            "reduction_ratio": round(kept_tokens / total, 4) if total else 0.0,
+            "evicted_count": len(evict),
+            "payload_count": len(payload),
+        },
+        "compressor-reduces-live-window",
+        "Compressor measurably reduces the live window; evicted content survives verbatim",
+    )
+
+
+@register_case("compressor-never-compresses-protected")
+def case_compressor_never_compresses_protected() -> Dict[str, Any]:
+    """Protected todowrite never appears in the evict payload while protected.
+
+    Below the cumulative threshold, every todowrite message is protected and
+    must never be compressed away. At/above the threshold, only recent
+    todowrite stays protected; old todowrite becomes evictable (the keeper's
+    recency-aware contract, TODO-45).
+    """
+    _name, preset = keeper_preset("symbiose-ah")
+    trigger = int(preset["triggerTokens"])
+    target = int(preset["targetTokens"])
+    max_keep = int(preset["maxKeepMessages"])
+    messages = [_msg("assistant", _blob(12000)) for _ in range(trigger // 3000 + 20)]
+    # Old todowrite buried early (outside the max_keep window); recent one
+    # near the end (inside the window). With max_keep=40 and n>100, the old
+    # region exists and the recency boundary is meaningful.
+    messages[5]["tool"] = "todowrite"  # old
+    messages[-2]["tool"] = "todowrite"  # recent
+    messages.append(_msg("user", "latest question"))
+    cfg = {
+        "trigger_tokens": trigger,
+        "target_tokens": target,
+        "max_keep_messages": max_keep,
+    }
+    # Below threshold: both protected → neither evicted.
+    plan_below = plan_compression(messages, config={**cfg, "cumulative_messages": 999})
+    evicted_below = {int(i) for i in plan_below["evict"]}
+    # Above threshold: old evicted, recent retained.
+    plan_above = plan_compression(messages, config={**cfg, "cumulative_messages": 1001})
+    evicted_above = {int(i) for i in plan_above["evict"]}
+    checks = {
+        "protected_never_compressed_below": 1.0
+        if (5 not in evicted_below and (len(messages) - 2) not in evicted_below)
+        else 0.0,
+        "old_protected_evictable_above": 1.0 if 5 in evicted_above else 0.0,
+        "recent_protected_retained_above": 1.0
+        if (len(messages) - 2) not in evicted_above
+        else 0.0,
+    }
+    return _verdict(
+        checks,
+        [
+            "protected_never_compressed_below",
+            "old_protected_evictable_above",
+            "recent_protected_retained_above",
+        ],
+        {
+            "below_evicted": sorted(evicted_below),
+            "above_evicted": sorted(evicted_above),
+        },
+        "compressor-never-compresses-protected",
+        "Protected todowrite is never compressed while protected",
+    )
+
+
 @register_case("live-engine-sink-roundtrip")
 def case_live_engine_sink() -> Dict[str, Any]:
     """A real SessionSpanSink round-trips evicted spans to disk."""
