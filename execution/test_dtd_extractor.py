@@ -35,7 +35,7 @@ class TestDTDExtractorKnownAnswers(unittest.TestCase):
         prof = ext.extract_dtd_profile(p)
         self.assertEqual(prof.elements, 82)
         self.assertEqual(prof.attr_decls, 82)
-        self.assertEqual(prof.attributes, 101)
+        self.assertEqual(prof.attributes, 36)
         self.assertGreaterEqual(prof.param_entities, 50)
 
     def test_datatypes_entity_count(self):

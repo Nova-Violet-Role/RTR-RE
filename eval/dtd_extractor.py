@@ -43,6 +43,51 @@ def mask_entity_bodies(text: str) -> str:
     return ENTITY_BLOCK_RE.sub("", text)
 
 
+COMMENT_RE = re.compile(r"<!--.*?-->", re.S)
+
+
+def _attlist_spans(text: str) -> List[str]:
+    """Yield each ATTLIST declaration body (quote-aware, so a '>' inside a
+    quoted default value never ends the declaration early)."""
+    spans: List[str] = []
+    start = 0
+    while True:
+        i = text.find("<!ATTLIST", start)
+        if i < 0:
+            break
+        j = i + len("<!ATTLIST")
+        quote: Optional[str] = None
+        while j < len(text):
+            ch = text[j]
+            if quote is not None:
+                if ch == quote:
+                    quote = None
+            elif ch in "\"'":
+                quote = ch
+            elif ch == ">":
+                break
+            j += 1
+        spans.append(text[i : j + 1])
+        start = j + 1
+    return spans
+
+
+def extract_attr_names(scanned: str) -> List[str]:
+    """Attribute names scoped to ATTLIST declarations.
+
+    The previous context-free ATTR_ITEM_RE.findall over the whole file
+    captured junk tokens from comments, XML declarations and entity
+    leftovers as "attribute names" (measured: 34/40 T7 queries were not
+    real attributes). Scoping to declaration bodies and stripping
+    comments fixes the instrument.
+    """
+    names: List[str] = []
+    for decl in _attlist_spans(scanned):
+        decl = COMMENT_RE.sub("", decl)
+        names.extend(ATTR_ITEM_RE.findall(decl))
+    return names
+
+
 @dataclass
 class ContentModel:
     has_sequence: bool = False
@@ -112,7 +157,7 @@ def extract_dtd_profile(path: Path) -> DTDProfile:
     scanned = mask_entity_bodies(text)
     elems = ELEM_RE.findall(scanned)
     attr_decls = ATTR_DECL_RE.findall(scanned)
-    attrs = ATTR_ITEM_RE.findall(scanned)
+    attrs = extract_attr_names(scanned)
     ents = ENT_RE.findall(text)
     params = PARAM_RE.findall(text)
     nots = NOTATION_RE.findall(scanned)
