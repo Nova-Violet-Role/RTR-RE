@@ -1,0 +1,4334 @@
+{
+  "matrix": {
+    "families": [
+      "(root)",
+      "JATS-DTDs",
+      "daisy",
+      "docbook",
+      "dtds",
+      "mathml",
+      "office",
+      "org.dita.specialization.dita11",
+      "org.oasis-open.dita.v1_2",
+      "org.oasis-open.dita.v1_3",
+      "org.oasis-open.xdita.v0_2_2",
+      "svg",
+      "tei",
+      "xhtml",
+      "xhtml11"
+    ],
+    "pairs": [
+      {
+        "family_a": "mathml",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.8607,
+        "combined_containment_a_in_b": 0.9056,
+        "combined_containment_b_in_a": 0.9455,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.7174,
+            "a_in_b": 0.9199,
+            "b_in_a": 0.7652,
+            "|a|": 287,
+            "|b|": 345,
+            "|a\u2229b|": 264
+          },
+          "attributes": {
+            "jaccard": 0.3587,
+            "a_in_b": 0.4938,
+            "b_in_a": 0.5674,
+            "|a|": 162,
+            "|b|": 141,
+            "|a\u2229b|": 80
+          },
+          "entities": {
+            "jaccard": 0.9315,
+            "a_in_b": 0.9319,
+            "b_in_a": 0.9995,
+            "|a|": 2261,
+            "|b|": 2108,
+            "|a\u2229b|": 2107
+          },
+          "notations": {
+            "jaccard": 1.0,
+            "a_in_b": 1.0,
+            "b_in_a": 1.0,
+            "|a|": 20,
+            "|b|": 20,
+            "|a\u2229b|": 20
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "mathml",
+        "combined_jaccard": 0.7427,
+        "combined_containment_a_in_b": 0.7921,
+        "combined_containment_b_in_a": 0.9225,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.3269,
+            "a_in_b": 0.378,
+            "b_in_a": 0.7073,
+            "|a|": 537,
+            "|b|": 287,
+            "|a\u2229b|": 203
+          },
+          "attributes": {
+            "jaccard": 0.2045,
+            "a_in_b": 0.2278,
+            "b_in_a": 0.6667,
+            "|a|": 474,
+            "|b|": 162,
+            "|a\u2229b|": 108
+          },
+          "entities": {
+            "jaccard": 0.9713,
+            "a_in_b": 0.9986,
+            "b_in_a": 0.9726,
+            "|a|": 2202,
+            "|b|": 2261,
+            "|a\u2229b|": 2199
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_3",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.7155,
+        "combined_containment_a_in_b": 0.7501,
+        "combined_containment_b_in_a": 0.9394,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.261,
+            "a_in_b": 0.2849,
+            "b_in_a": 0.7565,
+            "|a|": 916,
+            "|b|": 345,
+            "|a\u2229b|": 261
+          },
+          "attributes": {
+            "jaccard": 0.3071,
+            "a_in_b": 0.4084,
+            "b_in_a": 0.5532,
+            "|a|": 191,
+            "|b|": 141,
+            "|a\u2229b|": 78
+          },
+          "entities": {
+            "jaccard": 0.9687,
+            "a_in_b": 0.9692,
+            "b_in_a": 0.9995,
+            "|a|": 2174,
+            "|b|": 2108,
+            "|a\u2229b|": 2107
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.6766,
+        "combined_containment_a_in_b": 0.8876,
+        "combined_containment_b_in_a": 0.74,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.1923,
+            "a_in_b": 0.676,
+            "b_in_a": 0.2118,
+            "|a|": 287,
+            "|b|": 916,
+            "|a\u2229b|": 194
+          },
+          "attributes": {
+            "jaccard": 0.3577,
+            "a_in_b": 0.5741,
+            "b_in_a": 0.4869,
+            "|a|": 162,
+            "|b|": 191,
+            "|a\u2229b|": 93
+          },
+          "entities": {
+            "jaccard": 0.9207,
+            "a_in_b": 0.9403,
+            "b_in_a": 0.9779,
+            "|a|": 2261,
+            "|b|": 2174,
+            "|a\u2229b|": 2126
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.6653,
+        "combined_containment_a_in_b": 0.7281,
+        "combined_containment_b_in_a": 0.8853,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.2764,
+            "a_in_b": 0.3557,
+            "b_in_a": 0.5536,
+            "|a|": 537,
+            "|b|": 345,
+            "|a\u2229b|": 191
+          },
+          "attributes": {
+            "jaccard": 0.0659,
+            "a_in_b": 0.0802,
+            "b_in_a": 0.2695,
+            "|a|": 474,
+            "|b|": 141,
+            "|a\u2229b|": 38
+          },
+          "entities": {
+            "jaccard": 0.9301,
+            "a_in_b": 0.9432,
+            "b_in_a": 0.9853,
+            "|a|": 2202,
+            "|b|": 2108,
+            "|a\u2229b|": 2077
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.5952,
+        "combined_containment_a_in_b": 0.7574,
+        "combined_containment_b_in_a": 0.7354,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.1842,
+            "a_in_b": 0.4209,
+            "b_in_a": 0.2467,
+            "|a|": 537,
+            "|b|": 916,
+            "|a\u2229b|": 226
+          },
+          "attributes": {
+            "jaccard": 0.1426,
+            "a_in_b": 0.1751,
+            "b_in_a": 0.4346,
+            "|a|": 474,
+            "|b|": 191,
+            "|a\u2229b|": 83
+          },
+          "entities": {
+            "jaccard": 0.9118,
+            "a_in_b": 0.9478,
+            "b_in_a": 0.96,
+            "|a|": 2202,
+            "|b|": 2174,
+            "|a\u2229b|": 2087
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.5081,
+        "combined_containment_a_in_b": 0.5812,
+        "combined_containment_b_in_a": 0.8015,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.2312,
+            "a_in_b": 0.2987,
+            "b_in_a": 0.5055,
+            "|a|": 154,
+            "|b|": 91,
+            "|a\u2229b|": 46
+          },
+          "attributes": {
+            "jaccard": 0.0859,
+            "a_in_b": 0.1076,
+            "b_in_a": 0.2982,
+            "|a|": 158,
+            "|b|": 57,
+            "|a\u2229b|": 17
+          },
+          "entities": {
+            "jaccard": 1.0,
+            "a_in_b": 1.0,
+            "b_in_a": 1.0,
+            "|a|": 253,
+            "|b|": 253,
+            "|a\u2229b|": 253
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.dita.specialization.dita11",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.4818,
+        "combined_containment_a_in_b": 0.8094,
+        "combined_containment_b_in_a": 0.5434,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.5439,
+            "a_in_b": 1.0,
+            "b_in_a": 0.5439,
+            "|a|": 291,
+            "|b|": 535,
+            "|a\u2229b|": 291
+          },
+          "attributes": {
+            "jaccard": 0.259,
+            "a_in_b": 0.305,
+            "b_in_a": 0.6324,
+            "|a|": 141,
+            "|b|": 68,
+            "|a\u2229b|": 43
+          },
+          "entities": {
+            "jaccard": 0.2941,
+            "a_in_b": 1.0,
+            "b_in_a": 0.2941,
+            "|a|": 10,
+            "|b|": 34,
+            "|a\u2229b|": 10
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "mathml",
+        "combined_jaccard": 0.2949,
+        "combined_containment_a_in_b": 0.5963,
+        "combined_containment_b_in_a": 0.3685,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0014,
+            "a_in_b": 0.0023,
+            "b_in_a": 0.0035,
+            "|a|": 428,
+            "|b|": 287,
+            "|a\u2229b|": 1
+          },
+          "attributes": {
+            "jaccard": 0.0488,
+            "a_in_b": 0.0746,
+            "b_in_a": 0.1235,
+            "|a|": 268,
+            "|b|": 162,
+            "|a\u2229b|": 20
+          },
+          "entities": {
+            "jaccard": 0.4313,
+            "a_in_b": 0.9959,
+            "b_in_a": 0.4321,
+            "|a|": 981,
+            "|b|": 2261,
+            "|a\u2229b|": 977
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "docbook",
+        "combined_jaccard": 0.2799,
+        "combined_containment_a_in_b": 0.3347,
+        "combined_containment_b_in_a": 0.6308,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0478,
+            "a_in_b": 0.0819,
+            "b_in_a": 0.1028,
+            "|a|": 537,
+            "|b|": 428,
+            "|a\u2229b|": 44
+          },
+          "attributes": {
+            "jaccard": 0.0738,
+            "a_in_b": 0.1076,
+            "b_in_a": 0.1903,
+            "|a|": 474,
+            "|b|": 268,
+            "|a\u2229b|": 51
+          },
+          "entities": {
+            "jaccard": 0.4286,
+            "a_in_b": 0.4337,
+            "b_in_a": 0.9735,
+            "|a|": 2202,
+            "|b|": 981,
+            "|a\u2229b|": 955
+          },
+          "notations": {
+            "jaccard": 0.0256,
+            "a_in_b": 0.1,
+            "b_in_a": 0.0333,
+            "|a|": 10,
+            "|b|": 30,
+            "|a\u2229b|": 1
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.2526,
+        "combined_containment_a_in_b": 0.5143,
+        "combined_containment_b_in_a": 0.3318,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 428,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0514,
+            "a_in_b": 0.0746,
+            "b_in_a": 0.1418,
+            "|a|": 268,
+            "|b|": 141,
+            "|a\u2229b|": 20
+          },
+          "entities": {
+            "jaccard": 0.3735,
+            "a_in_b": 0.8563,
+            "b_in_a": 0.3985,
+            "|a|": 981,
+            "|b|": 2108,
+            "|a\u2229b|": 840
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.2321,
+        "combined_containment_a_in_b": 0.5541,
+        "combined_containment_b_in_a": 0.2855,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0435,
+            "a_in_b": 0.1308,
+            "b_in_a": 0.0611,
+            "|a|": 428,
+            "|b|": 916,
+            "|a\u2229b|": 56
+          },
+          "attributes": {
+            "jaccard": 0.0528,
+            "a_in_b": 0.0858,
+            "b_in_a": 0.1204,
+            "|a|": 268,
+            "|b|": 191,
+            "|a\u2229b|": 23
+          },
+          "entities": {
+            "jaccard": 0.3646,
+            "a_in_b": 0.8593,
+            "b_in_a": 0.3878,
+            "|a|": 981,
+            "|b|": 2174,
+            "|a\u2229b|": 843
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_2",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.183,
+        "combined_containment_a_in_b": 0.9526,
+        "combined_containment_b_in_a": 0.1847,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.5823,
+            "a_in_b": 0.9981,
+            "b_in_a": 0.583,
+            "|a|": 535,
+            "|b|": 916,
+            "|a\u2229b|": 534
+          },
+          "attributes": {
+            "jaccard": 0.1562,
+            "a_in_b": 0.5147,
+            "b_in_a": 0.1832,
+            "|a|": 68,
+            "|b|": 191,
+            "|a\u2229b|": 35
+          },
+          "entities": {
+            "jaccard": 0.0156,
+            "a_in_b": 1.0,
+            "b_in_a": 0.0156,
+            "|a|": 34,
+            "|b|": 2174,
+            "|a\u2229b|": 34
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.1433,
+        "combined_containment_a_in_b": 0.1546,
+        "combined_containment_b_in_a": 0.6616,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.038,
+            "a_in_b": 0.0444,
+            "b_in_a": 0.2088,
+            "|a|": 428,
+            "|b|": 91,
+            "|a\u2229b|": 19
+          },
+          "attributes": {
+            "jaccard": 0.0417,
+            "a_in_b": 0.0485,
+            "b_in_a": 0.2281,
+            "|a|": 268,
+            "|b|": 57,
+            "|a\u2229b|": 13
+          },
+          "entities": {
+            "jaccard": 0.2158,
+            "a_in_b": 0.2232,
+            "b_in_a": 0.8656,
+            "|a|": 981,
+            "|b|": 253,
+            "|a\u2229b|": 219
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "docbook",
+        "combined_jaccard": 0.1429,
+        "combined_containment_a_in_b": 0.5129,
+        "combined_containment_b_in_a": 0.1653,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0449,
+            "a_in_b": 0.1623,
+            "b_in_a": 0.0584,
+            "|a|": 154,
+            "|b|": 428,
+            "|a\u2229b|": 25
+          },
+          "attributes": {
+            "jaccard": 0.065,
+            "a_in_b": 0.1646,
+            "b_in_a": 0.097,
+            "|a|": 158,
+            "|b|": 268,
+            "|a\u2229b|": 26
+          },
+          "entities": {
+            "jaccard": 0.2158,
+            "a_in_b": 0.8656,
+            "b_in_a": 0.2232,
+            "|a|": 253,
+            "|b|": 981,
+            "|a\u2229b|": 219
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 30,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.dita.specialization.dita11",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.1149,
+        "combined_containment_a_in_b": 0.12,
+        "combined_containment_b_in_a": 0.7286,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.1262,
+            "a_in_b": 0.1306,
+            "b_in_a": 0.7917,
+            "|a|": 291,
+            "|b|": 48,
+            "|a\u2229b|": 38
+          },
+          "attributes": {
+            "jaccard": 0.0811,
+            "a_in_b": 0.0851,
+            "b_in_a": 0.6316,
+            "|a|": 141,
+            "|b|": 19,
+            "|a\u2229b|": 12
+          },
+          "entities": {
+            "jaccard": 0.0769,
+            "a_in_b": 0.1,
+            "b_in_a": 0.25,
+            "|a|": 10,
+            "|b|": 4,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "xhtml",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.105,
+        "combined_containment_a_in_b": 0.7252,
+        "combined_containment_b_in_a": 0.1093,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 91,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.1647,
+            "a_in_b": 0.4912,
+            "b_in_a": 0.1986,
+            "|a|": 57,
+            "|b|": 141,
+            "|a\u2229b|": 28
+          },
+          "entities": {
+            "jaccard": 0.12,
+            "a_in_b": 1.0,
+            "b_in_a": 0.12,
+            "|a|": 253,
+            "|b|": 2108,
+            "|a\u2229b|": 253
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.103,
+        "combined_containment_a_in_b": 0.1069,
+        "combined_containment_b_in_a": 0.7405,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 287,
+            "|b|": 91,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.1649,
+            "a_in_b": 0.1914,
+            "b_in_a": 0.5439,
+            "|a|": 162,
+            "|b|": 57,
+            "|a\u2229b|": 31
+          },
+          "entities": {
+            "jaccard": 0.1119,
+            "a_in_b": 0.1119,
+            "b_in_a": 1.0,
+            "|a|": 2261,
+            "|b|": 253,
+            "|a\u2229b|": 253
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.dita.specialization.dita11",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.1005,
+        "combined_containment_a_in_b": 0.7929,
+        "combined_containment_b_in_a": 0.1032,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.3162,
+            "a_in_b": 0.9966,
+            "b_in_a": 0.3166,
+            "|a|": 291,
+            "|b|": 916,
+            "|a\u2229b|": 290
+          },
+          "attributes": {
+            "jaccard": 0.1067,
+            "a_in_b": 0.227,
+            "b_in_a": 0.1675,
+            "|a|": 141,
+            "|b|": 191,
+            "|a\u2229b|": 32
+          },
+          "entities": {
+            "jaccard": 0.0046,
+            "a_in_b": 1.0,
+            "b_in_a": 0.0046,
+            "|a|": 10,
+            "|b|": 2174,
+            "|a\u2229b|": 10
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0976,
+        "combined_containment_a_in_b": 0.5166,
+        "combined_containment_b_in_a": 0.1074,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 154,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0641,
+            "a_in_b": 0.1139,
+            "b_in_a": 0.1277,
+            "|a|": 158,
+            "|b|": 141,
+            "|a\u2229b|": 18
+          },
+          "entities": {
+            "jaccard": 0.12,
+            "a_in_b": 1.0,
+            "b_in_a": 0.12,
+            "|a|": 253,
+            "|b|": 2108,
+            "|a\u2229b|": 253
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "mathml",
+        "combined_jaccard": 0.0957,
+        "combined_containment_a_in_b": 0.5258,
+        "combined_containment_b_in_a": 0.1047,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 154,
+            "|b|": 287,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0738,
+            "a_in_b": 0.1392,
+            "b_in_a": 0.1358,
+            "|a|": 158,
+            "|b|": 162,
+            "|a\u2229b|": 22
+          },
+          "entities": {
+            "jaccard": 0.1119,
+            "a_in_b": 1.0,
+            "b_in_a": 0.1119,
+            "|a|": 253,
+            "|b|": 2261,
+            "|a\u2229b|": 253
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_3",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0884,
+        "combined_containment_a_in_b": 0.091,
+        "combined_containment_b_in_a": 0.7557,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0297,
+            "a_in_b": 0.0317,
+            "b_in_a": 0.3187,
+            "|a|": 916,
+            "|b|": 91,
+            "|a\u2229b|": 29
+          },
+          "attributes": {
+            "jaccard": 0.0377,
+            "a_in_b": 0.0471,
+            "b_in_a": 0.1579,
+            "|a|": 191,
+            "|b|": 57,
+            "|a\u2229b|": 9
+          },
+          "entities": {
+            "jaccard": 0.1164,
+            "a_in_b": 0.1164,
+            "b_in_a": 1.0,
+            "|a|": 2174,
+            "|b|": 253,
+            "|a\u2229b|": 253
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.0821,
+        "combined_containment_a_in_b": 0.5332,
+        "combined_containment_b_in_a": 0.0885,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.022,
+            "a_in_b": 0.1494,
+            "b_in_a": 0.0251,
+            "|a|": 154,
+            "|b|": 916,
+            "|a\u2229b|": 23
+          },
+          "attributes": {
+            "jaccard": 0.0295,
+            "a_in_b": 0.0633,
+            "b_in_a": 0.0524,
+            "|a|": 158,
+            "|b|": 191,
+            "|a\u2229b|": 10
+          },
+          "entities": {
+            "jaccard": 0.1164,
+            "a_in_b": 1.0,
+            "b_in_a": 0.1164,
+            "|a|": 253,
+            "|b|": 2174,
+            "|a\u2229b|": 253
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "daisy",
+        "combined_jaccard": 0.0797,
+        "combined_containment_a_in_b": 0.0864,
+        "combined_containment_b_in_a": 0.5055,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0177,
+            "a_in_b": 0.0223,
+            "b_in_a": 0.0779,
+            "|a|": 537,
+            "|b|": 154,
+            "|a\u2229b|": 12
+          },
+          "attributes": {
+            "jaccard": 0.0481,
+            "a_in_b": 0.0612,
+            "b_in_a": 0.1835,
+            "|a|": 474,
+            "|b|": 158,
+            "|a\u2229b|": 29
+          },
+          "entities": {
+            "jaccard": 0.0999,
+            "a_in_b": 0.1013,
+            "b_in_a": 0.8814,
+            "|a|": 2202,
+            "|b|": 253,
+            "|a\u2229b|": 223
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0771,
+        "combined_containment_a_in_b": 0.0804,
+        "combined_containment_b_in_a": 0.6489,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0195,
+            "a_in_b": 0.0223,
+            "b_in_a": 0.1319,
+            "|a|": 537,
+            "|b|": 91,
+            "|a\u2229b|": 12
+          },
+          "attributes": {
+            "jaccard": 0.0251,
+            "a_in_b": 0.0274,
+            "b_in_a": 0.2281,
+            "|a|": 474,
+            "|b|": 57,
+            "|a\u2229b|": 13
+          },
+          "entities": {
+            "jaccard": 0.0999,
+            "a_in_b": 0.1013,
+            "b_in_a": 0.8814,
+            "|a|": 2202,
+            "|b|": 253,
+            "|a\u2229b|": 223
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_2",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0652,
+        "combined_containment_a_in_b": 0.0679,
+        "combined_containment_b_in_a": 0.6143,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0717,
+            "a_in_b": 0.0729,
+            "b_in_a": 0.8125,
+            "|a|": 535,
+            "|b|": 48,
+            "|a\u2229b|": 39
+          },
+          "attributes": {
+            "jaccard": 0.0357,
+            "a_in_b": 0.0441,
+            "b_in_a": 0.1579,
+            "|a|": 68,
+            "|b|": 19,
+            "|a\u2229b|": 3
+          },
+          "entities": {
+            "jaccard": 0.027,
+            "a_in_b": 0.0294,
+            "b_in_a": 0.25,
+            "|a|": 34,
+            "|b|": 4,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.dita.specialization.dita11",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.061,
+        "combined_containment_a_in_b": 0.1106,
+        "combined_containment_b_in_a": 0.1196,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0761,
+            "a_in_b": 0.0928,
+            "b_in_a": 0.2967,
+            "|a|": 291,
+            "|b|": 91,
+            "|a\u2229b|": 27
+          },
+          "attributes": {
+            "jaccard": 0.082,
+            "a_in_b": 0.1064,
+            "b_in_a": 0.2632,
+            "|a|": 141,
+            "|b|": 57,
+            "|a\u2229b|": 15
+          },
+          "entities": {
+            "jaccard": 0.0038,
+            "a_in_b": 0.1,
+            "b_in_a": 0.004,
+            "|a|": 10,
+            "|b|": 253,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "svg",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.058,
+        "combined_containment_a_in_b": 0.6527,
+        "combined_containment_b_in_a": 0.0598,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.1901,
+            "a_in_b": 0.5,
+            "b_in_a": 0.2348,
+            "|a|": 162,
+            "|b|": 345,
+            "|a\u2229b|": 81
+          },
+          "attributes": {
+            "jaccard": 0.4636,
+            "a_in_b": 0.875,
+            "b_in_a": 0.4965,
+            "|a|": 80,
+            "|b|": 141,
+            "|a\u2229b|": 70
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2108,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "dtds",
+        "combined_jaccard": 0.0552,
+        "combined_containment_a_in_b": 0.0775,
+        "combined_containment_b_in_a": 0.1609,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0669,
+            "a_in_b": 0.1234,
+            "b_in_a": 0.1275,
+            "|a|": 154,
+            "|b|": 149,
+            "|a\u2229b|": 19
+          },
+          "attributes": {
+            "jaccard": 0.0642,
+            "a_in_b": 0.1076,
+            "b_in_a": 0.1371,
+            "|a|": 158,
+            "|b|": 124,
+            "|a\u2229b|": 17
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 253,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "org.dita.specialization.dita11",
+        "combined_jaccard": 0.0551,
+        "combined_containment_a_in_b": 0.0654,
+        "combined_containment_b_in_a": 0.2588,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0812,
+            "a_in_b": 0.1262,
+            "b_in_a": 0.1856,
+            "|a|": 428,
+            "|b|": 291,
+            "|a\u2229b|": 54
+          },
+          "attributes": {
+            "jaccard": 0.1175,
+            "a_in_b": 0.1604,
+            "b_in_a": 0.305,
+            "|a|": 268,
+            "|b|": 141,
+            "|a\u2229b|": 43
+          },
+          "entities": {
+            "jaccard": 0.001,
+            "a_in_b": 0.001,
+            "b_in_a": 0.1,
+            "|a|": 981,
+            "|b|": 10,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.xdita.v0_2_2",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0547,
+        "combined_containment_a_in_b": 0.3429,
+        "combined_containment_b_in_a": 0.0611,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.1301,
+            "a_in_b": 0.3333,
+            "b_in_a": 0.1758,
+            "|a|": 48,
+            "|b|": 91,
+            "|a\u2229b|": 16
+          },
+          "attributes": {
+            "jaccard": 0.1014,
+            "a_in_b": 0.3684,
+            "b_in_a": 0.1228,
+            "|a|": 19,
+            "|b|": 57,
+            "|a\u2229b|": 7
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 4,
+            "|b|": 253,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "dtds",
+        "combined_jaccard": 0.0514,
+        "combined_containment_a_in_b": 0.1164,
+        "combined_containment_b_in_a": 0.0843,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0349,
+            "a_in_b": 0.0763,
+            "b_in_a": 0.0604,
+            "|a|": 118,
+            "|b|": 149,
+            "|a\u2229b|": 9
+          },
+          "attributes": {
+            "jaccard": 0.0423,
+            "a_in_b": 0.1096,
+            "b_in_a": 0.0645,
+            "|a|": 73,
+            "|b|": 124,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_3",
+        "family_b": "svg",
+        "combined_jaccard": 0.0475,
+        "combined_containment_a_in_b": 0.0487,
+        "combined_containment_b_in_a": 0.6653,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0856,
+            "a_in_b": 0.0928,
+            "b_in_a": 0.5247,
+            "|a|": 916,
+            "|b|": 162,
+            "|a\u2229b|": 85
+          },
+          "attributes": {
+            "jaccard": 0.355,
+            "a_in_b": 0.3717,
+            "b_in_a": 0.8875,
+            "|a|": 191,
+            "|b|": 80,
+            "|a\u2229b|": 71
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2174,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "org.dita.specialization.dita11",
+        "combined_jaccard": 0.0426,
+        "combined_containment_a_in_b": 0.1073,
+        "combined_containment_b_in_a": 0.0659,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0353,
+            "a_in_b": 0.1007,
+            "b_in_a": 0.0515,
+            "|a|": 149,
+            "|b|": 291,
+            "|a\u2229b|": 15
+          },
+          "attributes": {
+            "jaccard": 0.0271,
+            "a_in_b": 0.0565,
+            "b_in_a": 0.0496,
+            "|a|": 124,
+            "|b|": 141,
+            "|a\u2229b|": 7
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 10,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "org.dita.specialization.dita11",
+        "combined_jaccard": 0.0409,
+        "combined_containment_a_in_b": 0.0701,
+        "combined_containment_b_in_a": 0.0894,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0446,
+            "a_in_b": 0.1234,
+            "b_in_a": 0.0653,
+            "|a|": 154,
+            "|b|": 291,
+            "|a\u2229b|": 19
+          },
+          "attributes": {
+            "jaccard": 0.0565,
+            "a_in_b": 0.1013,
+            "b_in_a": 0.1135,
+            "|a|": 158,
+            "|b|": 141,
+            "|a\u2229b|": 16
+          },
+          "entities": {
+            "jaccard": 0.0038,
+            "a_in_b": 0.004,
+            "b_in_a": 0.1,
+            "|a|": 253,
+            "|b|": 10,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0402,
+        "combined_containment_a_in_b": 0.0529,
+        "combined_containment_b_in_a": 0.1429,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0122,
+            "a_in_b": 0.0169,
+            "b_in_a": 0.0417,
+            "|a|": 118,
+            "|b|": 48,
+            "|a\u2229b|": 2
+          },
+          "attributes": {
+            "jaccard": 0.0824,
+            "a_in_b": 0.0959,
+            "b_in_a": 0.3684,
+            "|a|": 73,
+            "|b|": 19,
+            "|a\u2229b|": 7
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 4,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.04,
+        "combined_containment_a_in_b": 0.0529,
+        "combined_containment_b_in_a": 0.1406,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0594,
+            "a_in_b": 0.1262,
+            "b_in_a": 0.1009,
+            "|a|": 428,
+            "|b|": 535,
+            "|a\u2229b|": 54
+          },
+          "attributes": {
+            "jaccard": 0.0633,
+            "a_in_b": 0.0746,
+            "b_in_a": 0.2941,
+            "|a|": 268,
+            "|b|": 68,
+            "|a\u2229b|": 20
+          },
+          "entities": {
+            "jaccard": 0.001,
+            "a_in_b": 0.001,
+            "b_in_a": 0.0294,
+            "|a|": 981,
+            "|b|": 34,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0376,
+        "combined_containment_a_in_b": 0.046,
+        "combined_containment_b_in_a": 0.1714,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0314,
+            "a_in_b": 0.0403,
+            "b_in_a": 0.125,
+            "|a|": 149,
+            "|b|": 48,
+            "|a\u2229b|": 6
+          },
+          "attributes": {
+            "jaccard": 0.0288,
+            "a_in_b": 0.0323,
+            "b_in_a": 0.2105,
+            "|a|": 124,
+            "|b|": 19,
+            "|a\u2229b|": 4
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 4,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_2",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0353,
+        "combined_containment_a_in_b": 0.0553,
+        "combined_containment_b_in_a": 0.0891,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0451,
+            "a_in_b": 0.0505,
+            "b_in_a": 0.2967,
+            "|a|": 535,
+            "|b|": 91,
+            "|a\u2229b|": 27
+          },
+          "attributes": {
+            "jaccard": 0.0163,
+            "a_in_b": 0.0294,
+            "b_in_a": 0.0351,
+            "|a|": 68,
+            "|b|": 57,
+            "|a\u2229b|": 2
+          },
+          "entities": {
+            "jaccard": 0.0035,
+            "a_in_b": 0.0294,
+            "b_in_a": 0.004,
+            "|a|": 34,
+            "|b|": 253,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0338,
+        "combined_containment_a_in_b": 0.0369,
+        "combined_containment_b_in_a": 0.2857,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0576,
+            "a_in_b": 0.0714,
+            "b_in_a": 0.2292,
+            "|a|": 154,
+            "|b|": 48,
+            "|a\u2229b|": 11
+          },
+          "attributes": {
+            "jaccard": 0.0473,
+            "a_in_b": 0.0506,
+            "b_in_a": 0.4211,
+            "|a|": 158,
+            "|b|": 19,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 253,
+            "|b|": 4,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "tei",
+        "combined_jaccard": 0.0332,
+        "combined_containment_a_in_b": 0.0559,
+        "combined_containment_b_in_a": 0.0756,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0266,
+            "a_in_b": 0.0958,
+            "b_in_a": 0.0355,
+            "|a|": 428,
+            "|b|": 1156,
+            "|a\u2229b|": 41
+          },
+          "attributes": {
+            "jaccard": 0.0508,
+            "a_in_b": 0.0672,
+            "b_in_a": 0.1731,
+            "|a|": 268,
+            "|b|": 104,
+            "|a\u2229b|": 18
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 981,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0332,
+        "combined_containment_a_in_b": 0.0805,
+        "combined_containment_b_in_a": 0.0534,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.03,
+            "a_in_b": 0.047,
+            "b_in_a": 0.0769,
+            "|a|": 149,
+            "|b|": 91,
+            "|a\u2229b|": 7
+          },
+          "attributes": {
+            "jaccard": 0.0462,
+            "a_in_b": 0.0645,
+            "b_in_a": 0.1404,
+            "|a|": 124,
+            "|b|": 57,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 253,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "svg",
+        "combined_jaccard": 0.0331,
+        "combined_containment_a_in_b": 0.0613,
+        "combined_containment_b_in_a": 0.0669,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.023,
+            "a_in_b": 0.047,
+            "b_in_a": 0.0432,
+            "|a|": 149,
+            "|b|": 162,
+            "|a\u2229b|": 7
+          },
+          "attributes": {
+            "jaccard": 0.0408,
+            "a_in_b": 0.0645,
+            "b_in_a": 0.1,
+            "|a|": 124,
+            "|b|": 80,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "tei",
+        "combined_jaccard": 0.033,
+        "combined_containment_a_in_b": 0.1839,
+        "combined_containment_b_in_a": 0.0386,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0211,
+            "a_in_b": 0.1812,
+            "b_in_a": 0.0234,
+            "|a|": 149,
+            "|b|": 1156,
+            "|a\u2229b|": 27
+          },
+          "attributes": {
+            "jaccard": 0.0507,
+            "a_in_b": 0.0887,
+            "b_in_a": 0.1058,
+            "|a|": 124,
+            "|b|": 104,
+            "|a\u2229b|": 11
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "tei",
+        "combined_jaccard": 0.0318,
+        "combined_containment_a_in_b": 0.1015,
+        "combined_containment_b_in_a": 0.0442,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0234,
+            "a_in_b": 0.1948,
+            "b_in_a": 0.026,
+            "|a|": 154,
+            "|b|": 1156,
+            "|a\u2229b|": 30
+          },
+          "attributes": {
+            "jaccard": 0.0356,
+            "a_in_b": 0.057,
+            "b_in_a": 0.0865,
+            "|a|": 158,
+            "|b|": 104,
+            "|a\u2229b|": 9
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 253,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.dita.specialization.dita11",
+        "family_b": "tei",
+        "combined_jaccard": 0.0303,
+        "combined_containment_a_in_b": 0.1153,
+        "combined_containment_b_in_a": 0.0394,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0248,
+            "a_in_b": 0.1203,
+            "b_in_a": 0.0303,
+            "|a|": 291,
+            "|b|": 1156,
+            "|a\u2229b|": 35
+          },
+          "attributes": {
+            "jaccard": 0.0338,
+            "a_in_b": 0.0567,
+            "b_in_a": 0.0769,
+            "|a|": 141,
+            "|b|": 104,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "tei",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0289,
+        "combined_containment_a_in_b": 0.037,
+        "combined_containment_b_in_a": 0.117,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0205,
+            "a_in_b": 0.0216,
+            "b_in_a": 0.2747,
+            "|a|": 1156,
+            "|b|": 91,
+            "|a\u2229b|": 25
+          },
+          "attributes": {
+            "jaccard": 0.0592,
+            "a_in_b": 0.0865,
+            "b_in_a": 0.1579,
+            "|a|": 104,
+            "|b|": 57,
+            "|a\u2229b|": 9
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 253,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "org.dita.specialization.dita11",
+        "combined_jaccard": 0.0285,
+        "combined_containment_a_in_b": 0.0899,
+        "combined_containment_b_in_a": 0.04,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0149,
+            "a_in_b": 0.0508,
+            "b_in_a": 0.0206,
+            "|a|": 118,
+            "|b|": 291,
+            "|a\u2229b|": 6
+          },
+          "attributes": {
+            "jaccard": 0.049,
+            "a_in_b": 0.137,
+            "b_in_a": 0.0709,
+            "|a|": 73,
+            "|b|": 141,
+            "|a\u2229b|": 10
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 10,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.0271,
+        "combined_containment_a_in_b": 0.0572,
+        "combined_containment_b_in_a": 0.049,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0299,
+            "a_in_b": 0.1299,
+            "b_in_a": 0.0374,
+            "|a|": 154,
+            "|b|": 535,
+            "|a\u2229b|": 20
+          },
+          "attributes": {
+            "jaccard": 0.032,
+            "a_in_b": 0.0443,
+            "b_in_a": 0.1029,
+            "|a|": 158,
+            "|b|": 68,
+            "|a\u2229b|": 7
+          },
+          "entities": {
+            "jaccard": 0.0035,
+            "a_in_b": 0.004,
+            "b_in_a": 0.0294,
+            "|a|": 253,
+            "|b|": 34,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "daisy",
+        "combined_jaccard": 0.0267,
+        "combined_containment_a_in_b": 0.1005,
+        "combined_containment_b_in_a": 0.0351,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0149,
+            "a_in_b": 0.0339,
+            "b_in_a": 0.026,
+            "|a|": 118,
+            "|b|": 154,
+            "|a\u2229b|": 4
+          },
+          "attributes": {
+            "jaccard": 0.0548,
+            "a_in_b": 0.1644,
+            "b_in_a": 0.0759,
+            "|a|": 73,
+            "|b|": 158,
+            "|a\u2229b|": 12
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 253,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.0241,
+        "combined_containment_a_in_b": 0.0805,
+        "combined_containment_b_in_a": 0.0332,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.024,
+            "a_in_b": 0.1074,
+            "b_in_a": 0.0299,
+            "|a|": 149,
+            "|b|": 535,
+            "|a\u2229b|": 16
+          },
+          "attributes": {
+            "jaccard": 0.0052,
+            "a_in_b": 0.0081,
+            "b_in_a": 0.0147,
+            "|a|": 124,
+            "|b|": 68,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 34,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "dtds",
+        "combined_jaccard": 0.0237,
+        "combined_containment_a_in_b": 0.0268,
+        "combined_containment_b_in_a": 0.1724,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.023,
+            "a_in_b": 0.0304,
+            "b_in_a": 0.0872,
+            "|a|": 428,
+            "|b|": 149,
+            "|a\u2229b|": 13
+          },
+          "attributes": {
+            "jaccard": 0.0453,
+            "a_in_b": 0.0634,
+            "b_in_a": 0.1371,
+            "|a|": 268,
+            "|b|": 124,
+            "|a\u2229b|": 17
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 981,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.xdita.v0_2_2",
+        "family_b": "svg",
+        "combined_jaccard": 0.0232,
+        "combined_containment_a_in_b": 0.1,
+        "combined_containment_b_in_a": 0.0293,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0145,
+            "a_in_b": 0.0625,
+            "b_in_a": 0.0185,
+            "|a|": 48,
+            "|b|": 162,
+            "|a\u2229b|": 3
+          },
+          "attributes": {
+            "jaccard": 0.0421,
+            "a_in_b": 0.2105,
+            "b_in_a": 0.05,
+            "|a|": 19,
+            "|b|": 80,
+            "|a\u2229b|": 4
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 4,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0228,
+        "combined_containment_a_in_b": 0.0688,
+        "combined_containment_b_in_a": 0.0331,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0097,
+            "a_in_b": 0.0169,
+            "b_in_a": 0.022,
+            "|a|": 118,
+            "|b|": 91,
+            "|a\u2229b|": 2
+          },
+          "attributes": {
+            "jaccard": 0.0484,
+            "a_in_b": 0.0822,
+            "b_in_a": 0.1053,
+            "|a|": 73,
+            "|b|": 57,
+            "|a\u2229b|": 6
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 253,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "org.dita.specialization.dita11",
+        "combined_jaccard": 0.0219,
+        "combined_containment_a_in_b": 0.0243,
+        "combined_containment_b_in_a": 0.1812,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0363,
+            "a_in_b": 0.054,
+            "b_in_a": 0.0997,
+            "|a|": 537,
+            "|b|": 291,
+            "|a\u2229b|": 29
+          },
+          "attributes": {
+            "jaccard": 0.064,
+            "a_in_b": 0.0781,
+            "b_in_a": 0.2624,
+            "|a|": 474,
+            "|b|": 141,
+            "|a\u2229b|": 37
+          },
+          "entities": {
+            "jaccard": 0.0005,
+            "a_in_b": 0.0005,
+            "b_in_a": 0.1,
+            "|a|": 2202,
+            "|b|": 10,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_2",
+        "family_b": "tei",
+        "combined_jaccard": 0.0212,
+        "combined_containment_a_in_b": 0.0616,
+        "combined_containment_b_in_a": 0.0314,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0224,
+            "a_in_b": 0.0692,
+            "b_in_a": 0.032,
+            "|a|": 535,
+            "|b|": 1156,
+            "|a\u2229b|": 37
+          },
+          "attributes": {
+            "jaccard": 0.0118,
+            "a_in_b": 0.0294,
+            "b_in_a": 0.0192,
+            "|a|": 68,
+            "|b|": 104,
+            "|a\u2229b|": 2
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 34,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "svg",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0194,
+        "combined_containment_a_in_b": 0.0502,
+        "combined_containment_b_in_a": 0.0305,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0202,
+            "a_in_b": 0.0309,
+            "b_in_a": 0.0549,
+            "|a|": 162,
+            "|b|": 91,
+            "|a\u2229b|": 5
+          },
+          "attributes": {
+            "jaccard": 0.0458,
+            "a_in_b": 0.075,
+            "b_in_a": 0.1053,
+            "|a|": 80,
+            "|b|": 57,
+            "|a\u2229b|": 6
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 253,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "svg",
+        "combined_jaccard": 0.019,
+        "combined_containment_a_in_b": 0.0423,
+        "combined_containment_b_in_a": 0.0335,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0036,
+            "a_in_b": 0.0085,
+            "b_in_a": 0.0062,
+            "|a|": 118,
+            "|b|": 162,
+            "|a\u2229b|": 1
+          },
+          "attributes": {
+            "jaccard": 0.0338,
+            "a_in_b": 0.0685,
+            "b_in_a": 0.0625,
+            "|a|": 73,
+            "|b|": 80,
+            "|a\u2229b|": 5
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "tei",
+        "combined_jaccard": 0.0178,
+        "combined_containment_a_in_b": 0.1323,
+        "combined_containment_b_in_a": 0.0201,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0055,
+            "a_in_b": 0.0593,
+            "b_in_a": 0.0061,
+            "|a|": 118,
+            "|b|": 1156,
+            "|a\u2229b|": 7
+          },
+          "attributes": {
+            "jaccard": 0.0412,
+            "a_in_b": 0.0959,
+            "b_in_a": 0.0673,
+            "|a|": 73,
+            "|b|": 104,
+            "|a\u2229b|": 7
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "tei",
+        "combined_jaccard": 0.0173,
+        "combined_containment_a_in_b": 0.0237,
+        "combined_containment_b_in_a": 0.0603,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0217,
+            "a_in_b": 0.067,
+            "b_in_a": 0.0311,
+            "|a|": 537,
+            "|b|": 1156,
+            "|a\u2229b|": 36
+          },
+          "attributes": {
+            "jaccard": 0.0212,
+            "a_in_b": 0.0253,
+            "b_in_a": 0.1154,
+            "|a|": 474,
+            "|b|": 104,
+            "|a\u2229b|": 12
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2202,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.0171,
+        "combined_containment_a_in_b": 0.0202,
+        "combined_containment_b_in_a": 0.1011,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0288,
+            "a_in_b": 0.0559,
+            "b_in_a": 0.0561,
+            "|a|": 537,
+            "|b|": 535,
+            "|a\u2229b|": 30
+          },
+          "attributes": {
+            "jaccard": 0.0403,
+            "a_in_b": 0.0443,
+            "b_in_a": 0.3088,
+            "|a|": 474,
+            "|b|": 68,
+            "|a\u2229b|": 21
+          },
+          "entities": {
+            "jaccard": 0.0004,
+            "a_in_b": 0.0005,
+            "b_in_a": 0.0294,
+            "|a|": 2202,
+            "|b|": 34,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "docbook",
+        "combined_jaccard": 0.0168,
+        "combined_containment_a_in_b": 0.164,
+        "combined_containment_b_in_a": 0.0184,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0168,
+            "a_in_b": 0.0763,
+            "b_in_a": 0.021,
+            "|a|": 118,
+            "|b|": 428,
+            "|a\u2229b|": 9
+          },
+          "attributes": {
+            "jaccard": 0.0396,
+            "a_in_b": 0.1781,
+            "b_in_a": 0.0485,
+            "|a|": 73,
+            "|b|": 268,
+            "|a\u2229b|": 13
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 981,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 30,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_3",
+        "family_b": "tei",
+        "combined_jaccard": 0.0165,
+        "combined_containment_a_in_b": 0.0224,
+        "combined_containment_b_in_a": 0.0587,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0232,
+            "a_in_b": 0.0513,
+            "b_in_a": 0.0407,
+            "|a|": 916,
+            "|b|": 1156,
+            "|a\u2229b|": 47
+          },
+          "attributes": {
+            "jaccard": 0.0243,
+            "a_in_b": 0.0366,
+            "b_in_a": 0.0673,
+            "|a|": 191,
+            "|b|": 104,
+            "|a\u2229b|": 7
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2174,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.dita.specialization.dita11",
+        "family_b": "svg",
+        "combined_jaccard": 0.0153,
+        "combined_containment_a_in_b": 0.0235,
+        "combined_containment_b_in_a": 0.0418,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0089,
+            "a_in_b": 0.0137,
+            "b_in_a": 0.0247,
+            "|a|": 291,
+            "|b|": 162,
+            "|a\u2229b|": 4
+          },
+          "attributes": {
+            "jaccard": 0.0231,
+            "a_in_b": 0.0355,
+            "b_in_a": 0.0625,
+            "|a|": 141,
+            "|b|": 80,
+            "|a\u2229b|": 5
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_3",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0146,
+        "combined_containment_a_in_b": 0.0147,
+        "combined_containment_b_in_a": 0.6857,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0422,
+            "a_in_b": 0.0426,
+            "b_in_a": 0.8125,
+            "|a|": 916,
+            "|b|": 48,
+            "|a\u2229b|": 39
+          },
+          "attributes": {
+            "jaccard": 0.0396,
+            "a_in_b": 0.0419,
+            "b_in_a": 0.4211,
+            "|a|": 191,
+            "|b|": 19,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0005,
+            "a_in_b": 0.0005,
+            "b_in_a": 0.25,
+            "|a|": 2174,
+            "|b|": 4,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "svg",
+        "combined_jaccard": 0.0143,
+        "combined_containment_a_in_b": 0.0203,
+        "combined_containment_b_in_a": 0.046,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0161,
+            "a_in_b": 0.0325,
+            "b_in_a": 0.0309,
+            "|a|": 154,
+            "|b|": 162,
+            "|a\u2229b|": 5
+          },
+          "attributes": {
+            "jaccard": 0.0215,
+            "a_in_b": 0.0316,
+            "b_in_a": 0.0625,
+            "|a|": 158,
+            "|b|": 80,
+            "|a\u2229b|": 5
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 253,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "svg",
+        "family_b": "tei",
+        "combined_jaccard": 0.0137,
+        "combined_containment_a_in_b": 0.0837,
+        "combined_containment_b_in_a": 0.0161,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0076,
+            "a_in_b": 0.0617,
+            "b_in_a": 0.0087,
+            "|a|": 162,
+            "|b|": 1156,
+            "|a\u2229b|": 10
+          },
+          "attributes": {
+            "jaccard": 0.0337,
+            "a_in_b": 0.075,
+            "b_in_a": 0.0577,
+            "|a|": 80,
+            "|b|": 104,
+            "|a\u2229b|": 6
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.xdita.v0_2_2",
+        "family_b": "tei",
+        "combined_jaccard": 0.0131,
+        "combined_containment_a_in_b": 0.2429,
+        "combined_containment_b_in_a": 0.0137,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0101,
+            "a_in_b": 0.25,
+            "b_in_a": 0.0104,
+            "|a|": 48,
+            "|b|": 1156,
+            "|a\u2229b|": 12
+          },
+          "attributes": {
+            "jaccard": 0.025,
+            "a_in_b": 0.1579,
+            "b_in_a": 0.0288,
+            "|a|": 19,
+            "|b|": 104,
+            "|a\u2229b|": 3
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 4,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.0123,
+        "combined_containment_a_in_b": 0.0529,
+        "combined_containment_b_in_a": 0.0158,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0093,
+            "a_in_b": 0.0508,
+            "b_in_a": 0.0112,
+            "|a|": 118,
+            "|b|": 535,
+            "|a\u2229b|": 6
+          },
+          "attributes": {
+            "jaccard": 0.0217,
+            "a_in_b": 0.0411,
+            "b_in_a": 0.0441,
+            "|a|": 73,
+            "|b|": 68,
+            "|a\u2229b|": 3
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 34,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "svg",
+        "combined_jaccard": 0.0111,
+        "combined_containment_a_in_b": 0.0125,
+        "combined_containment_b_in_a": 0.0879,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0051,
+            "a_in_b": 0.007,
+            "b_in_a": 0.0185,
+            "|a|": 428,
+            "|b|": 162,
+            "|a\u2229b|": 3
+          },
+          "attributes": {
+            "jaccard": 0.0388,
+            "a_in_b": 0.0485,
+            "b_in_a": 0.1625,
+            "|a|": 268,
+            "|b|": 80,
+            "|a\u2229b|": 13
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 981,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "dtds",
+        "combined_jaccard": 0.0106,
+        "combined_containment_a_in_b": 0.0114,
+        "combined_containment_b_in_a": 0.1379,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0224,
+            "a_in_b": 0.0279,
+            "b_in_a": 0.1007,
+            "|a|": 537,
+            "|b|": 149,
+            "|a\u2229b|": 15
+          },
+          "attributes": {
+            "jaccard": 0.0153,
+            "a_in_b": 0.019,
+            "b_in_a": 0.0726,
+            "|a|": 474,
+            "|b|": 124,
+            "|a\u2229b|": 9
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2202,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "org.dita.specialization.dita11",
+        "combined_jaccard": 0.0106,
+        "combined_containment_a_in_b": 0.0121,
+        "combined_containment_b_in_a": 0.0776,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0017,
+            "a_in_b": 0.0035,
+            "b_in_a": 0.0034,
+            "|a|": 287,
+            "|b|": 291,
+            "|a\u2229b|": 1
+          },
+          "attributes": {
+            "jaccard": 0.0745,
+            "a_in_b": 0.1296,
+            "b_in_a": 0.1489,
+            "|a|": 162,
+            "|b|": 141,
+            "|a\u2229b|": 21
+          },
+          "entities": {
+            "jaccard": 0.0009,
+            "a_in_b": 0.0009,
+            "b_in_a": 0.2,
+            "|a|": 2261,
+            "|b|": 10,
+            "|a\u2229b|": 2
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0104,
+        "combined_containment_a_in_b": 0.0107,
+        "combined_containment_b_in_a": 0.2571,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0106,
+            "a_in_b": 0.0117,
+            "b_in_a": 0.1042,
+            "|a|": 428,
+            "|b|": 48,
+            "|a\u2229b|": 5
+          },
+          "attributes": {
+            "jaccard": 0.0214,
+            "a_in_b": 0.0224,
+            "b_in_a": 0.3158,
+            "|a|": 268,
+            "|b|": 19,
+            "|a\u2229b|": 6
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 981,
+            "|b|": 4,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.0103,
+        "combined_containment_a_in_b": 0.1379,
+        "combined_containment_b_in_a": 0.011,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0182,
+            "a_in_b": 0.1275,
+            "b_in_a": 0.0207,
+            "|a|": 149,
+            "|b|": 916,
+            "|a\u2229b|": 19
+          },
+          "attributes": {
+            "jaccard": 0.0261,
+            "a_in_b": 0.0645,
+            "b_in_a": 0.0419,
+            "|a|": 124,
+            "|b|": 191,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2174,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "tei",
+        "combined_jaccard": 0.0086,
+        "combined_containment_a_in_b": 0.0125,
+        "combined_containment_b_in_a": 0.0274,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 287,
+            "|b|": 1156,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0391,
+            "a_in_b": 0.0617,
+            "b_in_a": 0.0962,
+            "|a|": 162,
+            "|b|": 104,
+            "|a\u2229b|": 10
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2261,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "tei",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0086,
+        "combined_containment_a_in_b": 0.0265,
+        "combined_containment_b_in_a": 0.0127,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 1156,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0338,
+            "a_in_b": 0.0769,
+            "b_in_a": 0.0567,
+            "|a|": 104,
+            "|b|": 141,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2108,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0084,
+        "combined_containment_a_in_b": 0.092,
+        "combined_containment_b_in_a": 0.0092,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 149,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0516,
+            "a_in_b": 0.1048,
+            "b_in_a": 0.0922,
+            "|a|": 124,
+            "|b|": 141,
+            "|a\u2229b|": 13
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2108,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "mathml",
+        "combined_jaccard": 0.0078,
+        "combined_containment_a_in_b": 0.0881,
+        "combined_containment_b_in_a": 0.0084,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 149,
+            "|b|": 287,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0438,
+            "a_in_b": 0.0968,
+            "b_in_a": 0.0741,
+            "|a|": 124,
+            "|b|": 162,
+            "|a\u2229b|": 12
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2261,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.dita.specialization.dita11",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0076,
+        "combined_containment_a_in_b": 0.0541,
+        "combined_containment_b_in_a": 0.0088,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 291,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0444,
+            "a_in_b": 0.0851,
+            "b_in_a": 0.0851,
+            "|a|": 141,
+            "|b|": 141,
+            "|a\u2229b|": 12
+          },
+          "entities": {
+            "jaccard": 0.0005,
+            "a_in_b": 0.1,
+            "b_in_a": 0.0005,
+            "|a|": 10,
+            "|b|": 2108,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "JATS-DTDs",
+        "combined_jaccard": 0.0072,
+        "combined_containment_a_in_b": 0.127,
+        "combined_containment_b_in_a": 0.0076,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0061,
+            "a_in_b": 0.0339,
+            "b_in_a": 0.0074,
+            "|a|": 118,
+            "|b|": 537,
+            "|a\u2229b|": 4
+          },
+          "attributes": {
+            "jaccard": 0.0186,
+            "a_in_b": 0.137,
+            "b_in_a": 0.0211,
+            "|a|": 73,
+            "|b|": 474,
+            "|a\u2229b|": 10
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2202,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 10,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_2",
+        "family_b": "svg",
+        "combined_jaccard": 0.0069,
+        "combined_containment_a_in_b": 0.0095,
+        "combined_containment_b_in_a": 0.0251,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0072,
+            "a_in_b": 0.0093,
+            "b_in_a": 0.0309,
+            "|a|": 535,
+            "|b|": 162,
+            "|a\u2229b|": 5
+          },
+          "attributes": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 68,
+            "|b|": 80,
+            "|a\u2229b|": 0
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 34,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.0066,
+        "combined_containment_a_in_b": 0.0081,
+        "combined_containment_b_in_a": 0.0348,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0012,
+            "a_in_b": 0.0035,
+            "b_in_a": 0.0019,
+            "|a|": 287,
+            "|b|": 535,
+            "|a\u2229b|": 1
+          },
+          "attributes": {
+            "jaccard": 0.036,
+            "a_in_b": 0.0494,
+            "b_in_a": 0.1176,
+            "|a|": 162,
+            "|b|": 68,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0009,
+            "a_in_b": 0.0009,
+            "b_in_a": 0.0588,
+            "|a|": 2261,
+            "|b|": 34,
+            "|a\u2229b|": 2
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0061,
+        "combined_containment_a_in_b": 0.0062,
+        "combined_containment_b_in_a": 0.2429,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 287,
+            "|b|": 48,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0523,
+            "a_in_b": 0.0556,
+            "b_in_a": 0.4737,
+            "|a|": 162,
+            "|b|": 19,
+            "|a\u2229b|": 9
+          },
+          "entities": {
+            "jaccard": 0.0004,
+            "a_in_b": 0.0004,
+            "b_in_a": 0.25,
+            "|a|": 2261,
+            "|b|": 4,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.0059,
+        "combined_containment_a_in_b": 0.006,
+        "combined_containment_b_in_a": 0.2714,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0156,
+            "a_in_b": 0.0168,
+            "b_in_a": 0.1875,
+            "|a|": 537,
+            "|b|": 48,
+            "|a\u2229b|": 9
+          },
+          "attributes": {
+            "jaccard": 0.0123,
+            "a_in_b": 0.0127,
+            "b_in_a": 0.3158,
+            "|a|": 474,
+            "|b|": 19,
+            "|a\u2229b|": 6
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2202,
+            "|b|": 4,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.0058,
+        "combined_containment_a_in_b": 0.1058,
+        "combined_containment_b_in_a": 0.0061,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0068,
+            "a_in_b": 0.0593,
+            "b_in_a": 0.0076,
+            "|a|": 118,
+            "|b|": 916,
+            "|a\u2229b|": 7
+          },
+          "attributes": {
+            "jaccard": 0.0312,
+            "a_in_b": 0.1096,
+            "b_in_a": 0.0419,
+            "|a|": 73,
+            "|b|": 191,
+            "|a\u2229b|": 8
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2174,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "svg",
+        "combined_jaccard": 0.0054,
+        "combined_containment_a_in_b": 0.0059,
+        "combined_containment_b_in_a": 0.0669,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 287,
+            "|b|": 162,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0431,
+            "a_in_b": 0.0617,
+            "b_in_a": 0.125,
+            "|a|": 162,
+            "|b|": 80,
+            "|a\u2229b|": 10
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2261,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "mathml",
+        "combined_jaccard": 0.0052,
+        "combined_containment_a_in_b": 0.0794,
+        "combined_containment_b_in_a": 0.0055,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 118,
+            "|b|": 287,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0444,
+            "a_in_b": 0.137,
+            "b_in_a": 0.0617,
+            "|a|": 73,
+            "|b|": 162,
+            "|a\u2229b|": 10
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2261,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.xdita.v0_2_2",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0049,
+        "combined_containment_a_in_b": 0.1857,
+        "combined_containment_b_in_a": 0.005,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 48,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.039,
+            "a_in_b": 0.3158,
+            "b_in_a": 0.0426,
+            "|a|": 19,
+            "|b|": 141,
+            "|a\u2229b|": 6
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 4,
+            "|b|": 2108,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0047,
+        "combined_containment_a_in_b": 0.0688,
+        "combined_containment_b_in_a": 0.005,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 118,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0338,
+            "a_in_b": 0.0959,
+            "b_in_a": 0.0496,
+            "|a|": 73,
+            "|b|": 141,
+            "|a\u2229b|": 7
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 2108,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "org.oasis-open.dita.v1_2",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0047,
+        "combined_containment_a_in_b": 0.0237,
+        "combined_containment_b_in_a": 0.0058,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 535,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0097,
+            "a_in_b": 0.0294,
+            "b_in_a": 0.0142,
+            "|a|": 68,
+            "|b|": 141,
+            "|a\u2229b|": 2
+          },
+          "entities": {
+            "jaccard": 0.0005,
+            "a_in_b": 0.0294,
+            "b_in_a": 0.0005,
+            "|a|": 34,
+            "|b|": 2108,
+            "|a\u2229b|": 1
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "svg",
+        "combined_jaccard": 0.0035,
+        "combined_containment_a_in_b": 0.0038,
+        "combined_containment_b_in_a": 0.0502,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0014,
+            "a_in_b": 0.0019,
+            "b_in_a": 0.0062,
+            "|a|": 537,
+            "|b|": 162,
+            "|a\u2229b|": 1
+          },
+          "attributes": {
+            "jaccard": 0.0073,
+            "a_in_b": 0.0084,
+            "b_in_a": 0.05,
+            "|a|": 474,
+            "|b|": 80,
+            "|a\u2229b|": 4
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2202,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "svg",
+        "combined_jaccard": 0.0034,
+        "combined_containment_a_in_b": 0.0043,
+        "combined_containment_b_in_a": 0.0167,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 162,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0086,
+            "a_in_b": 0.0103,
+            "b_in_a": 0.05,
+            "|a|": 389,
+            "|b|": 80,
+            "|a\u2229b|": 4
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "(root)",
+        "family_b": "office",
+        "combined_jaccard": 0.0018,
+        "combined_containment_a_in_b": 0.0106,
+        "combined_containment_b_in_a": 0.0022,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 118,
+            "|b|": 529,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0022,
+            "a_in_b": 0.0137,
+            "b_in_a": 0.0026,
+            "|a|": 73,
+            "|b|": 389,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "org.dita.specialization.dita11",
+        "combined_jaccard": 0.0015,
+        "combined_containment_a_in_b": 0.0022,
+        "combined_containment_b_in_a": 0.0047,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 291,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0019,
+            "a_in_b": 0.0026,
+            "b_in_a": 0.0071,
+            "|a|": 389,
+            "|b|": 141,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 10,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "org.oasis-open.dita.v1_2",
+        "combined_jaccard": 0.0013,
+        "combined_containment_a_in_b": 0.0022,
+        "combined_containment_b_in_a": 0.0032,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 535,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0022,
+            "a_in_b": 0.0026,
+            "b_in_a": 0.0147,
+            "|a|": 389,
+            "|b|": 68,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 34,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "org.oasis-open.xdita.v0_2_2",
+        "combined_jaccard": 0.001,
+        "combined_containment_a_in_b": 0.0011,
+        "combined_containment_b_in_a": 0.0143,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 48,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0025,
+            "a_in_b": 0.0026,
+            "b_in_a": 0.0526,
+            "|a|": 389,
+            "|b|": 19,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 4,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "dtds",
+        "family_b": "office",
+        "combined_jaccard": 0.0008,
+        "combined_containment_a_in_b": 0.0038,
+        "combined_containment_b_in_a": 0.0011,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 149,
+            "|b|": 529,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.002,
+            "a_in_b": 0.0081,
+            "b_in_a": 0.0026,
+            "|a|": 124,
+            "|b|": 389,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "xhtml11",
+        "combined_jaccard": 0.0006,
+        "combined_containment_a_in_b": 0.0022,
+        "combined_containment_b_in_a": 0.0008,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 345,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0019,
+            "a_in_b": 0.0026,
+            "b_in_a": 0.0071,
+            "|a|": 389,
+            "|b|": 141,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 2108,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "JATS-DTDs",
+        "family_b": "office",
+        "combined_jaccard": 0.0005,
+        "combined_containment_a_in_b": 0.0006,
+        "combined_containment_b_in_a": 0.0022,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 537,
+            "|b|": 529,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0023,
+            "a_in_b": 0.0042,
+            "b_in_a": 0.0051,
+            "|a|": 474,
+            "|b|": 389,
+            "|a\u2229b|": 2
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2202,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 10,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "mathml",
+        "family_b": "office",
+        "combined_jaccard": 0.0005,
+        "combined_containment_a_in_b": 0.0007,
+        "combined_containment_b_in_a": 0.0022,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 287,
+            "|b|": 529,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0018,
+            "a_in_b": 0.0062,
+            "b_in_a": 0.0026,
+            "|a|": 162,
+            "|b|": 389,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 2261,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "org.oasis-open.dita.v1_3",
+        "combined_jaccard": 0.0005,
+        "combined_containment_a_in_b": 0.0022,
+        "combined_containment_b_in_a": 0.0006,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 916,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0017,
+            "a_in_b": 0.0026,
+            "b_in_a": 0.0052,
+            "|a|": 389,
+            "|b|": 191,
+            "|a\u2229b|": 1
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 2174,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "daisy",
+        "family_b": "office",
+        "combined_jaccard": 0.0,
+        "combined_containment_a_in_b": 0.0,
+        "combined_containment_b_in_a": 0.0,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 154,
+            "|b|": 529,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 158,
+            "|b|": 389,
+            "|a\u2229b|": 0
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 253,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "docbook",
+        "family_b": "office",
+        "combined_jaccard": 0.0,
+        "combined_containment_a_in_b": 0.0,
+        "combined_containment_b_in_a": 0.0,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 428,
+            "|b|": 529,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 268,
+            "|b|": 389,
+            "|a\u2229b|": 0
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 981,
+            "|b|": 20,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 30,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "tei",
+        "combined_jaccard": 0.0,
+        "combined_containment_a_in_b": 0.0,
+        "combined_containment_b_in_a": 0.0,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 1156,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 389,
+            "|b|": 104,
+            "|a\u2229b|": 0
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      },
+      {
+        "family_a": "office",
+        "family_b": "xhtml",
+        "combined_jaccard": 0.0,
+        "combined_containment_a_in_b": 0.0,
+        "combined_containment_b_in_a": 0.0,
+        "per_kind": {
+          "elements": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 529,
+            "|b|": 91,
+            "|a\u2229b|": 0
+          },
+          "attributes": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 389,
+            "|b|": 57,
+            "|a\u2229b|": 0
+          },
+          "entities": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 20,
+            "|b|": 253,
+            "|a\u2229b|": 0
+          },
+          "notations": {
+            "jaccard": 0.0,
+            "a_in_b": 0.0,
+            "b_in_a": 0.0,
+            "|a|": 0,
+            "|b|": 0,
+            "|a\u2229b|": 0
+          }
+        }
+      }
+    ]
+  },
+  "decision": {
+    "near_duplicate_pairs": 7,
+    "moderate_overlap_pairs": 6,
+    "low_overlap_pairs": 92,
+    "decision": "unified lanes for near-duplicate pairs (Jaccard >= 0.5); per-family or family-tagged lanes for moderate-overlap pairs (0.15 <= Jaccard < 0.5), where cross-family discrimination (T10) is the binding constraint; independent lanes for low-overlap pairs (Jaccard < 0.15)."
+  }
+}
