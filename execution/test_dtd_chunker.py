@@ -136,6 +136,23 @@ class ChunkDtdTests(unittest.TestCase):
             else:
                 os.environ["OPENCODE_MEMORY_DTD_CHUNK_TOKENS"] = old
 
+    def test_hard_ceiling_falls_back_to_whole_file(self):
+        # A pathological per-declaration split must never recreate the
+        # 23 GB blow-up: force a tiny ceiling so chunk_dtd falls back to
+        # the whole-file inventory chunk.
+        f = self._write(BIG_FILE)
+        old = os.environ.get("OPENCODE_MEMORY_DTD_MAX_CHUNKS")
+        os.environ["OPENCODE_MEMORY_DTD_MAX_CHUNKS"] = "1"
+        try:
+            chunks = self.engine.chunk_dtd(f, "big.dtd")
+            self.assertEqual(len(chunks), 1)
+            self.assertIn("ROOT:", chunks[0]["text"])
+        finally:
+            if old is None:
+                os.environ.pop("OPENCODE_MEMORY_DTD_MAX_CHUNKS", None)
+            else:
+                os.environ["OPENCODE_MEMORY_DTD_MAX_CHUNKS"] = old
+
     def test_env_per_declaration_threshold_overrides_default(self):
         f = self._write(BIG_FILE)
         old = os.environ.get("OPENCODE_MEMORY_DTD_PER_DECLARATION_MAX")

@@ -279,6 +279,30 @@ def configured_rrf_k() -> float:
         return 60.0
 
 
+def _compute_run_consensus(run_ranks: List[Dict[str, int]]) -> List[float]:
+    """Per-run agreement weight for RRF fusion (TODO-31).
+
+    A run whose top pick appears nowhere in any peer's top-10 is likely a
+    confidently-wrong model (measured: arctic-m on dtd-commands votes
+    confidently wrong and drags the fusion below its best member). Such a
+    run halves its vote; a run whose top pick is corroborated somewhere in
+    the vote window keeps full weight. The top-10 window spares runs that
+    are differently right (correct doc ranked deeper by peers). Single-run
+    fusions keep weight 1.0.
+    """
+    n = len(run_ranks)
+    if n <= 1:
+        return [1.0] * n
+    top10s = [set(list(r.keys())[:10]) for r in run_ranks]
+    out: List[float] = []
+    for i, s in enumerate(top10s):
+        peers = [top10s[j] for j in range(n) if j != i]
+        top1 = next(iter(run_ranks[i]), None)
+        corroborated = any(top1 in p for p in peers) if top1 is not None else False
+        out.append(1.0 if corroborated else 0.5)
+    return out
+
+
 def hybrid_lane_weights(bm25_scores: List[float]) -> tuple[float, float]:
     """(w_dense, w_bm25) for the hybrid mix; the pair always sums to 0.75.
 
@@ -1303,6 +1327,17 @@ class MemoryEngine:
             buf.append((kind, name, decl))
             buf_tokens += decl_tokens
         flush()
+        # Hard ceiling (operator guard, TODO-31): a pathological env or file
+        # must never recreate the 23 GB blow-up. If a per-declaration split
+        # would exceed this many chunks, fall back to the whole-file inventory
+        # chunk instead.
+        try:
+            hard_ceiling = int(os.environ.get("OPENCODE_MEMORY_DTD_MAX_CHUNKS", "2000"))
+            hard_ceiling = hard_ceiling if hard_ceiling > 0 else 2000
+        except Exception:
+            hard_ceiling = 2000
+        if len(chunks) > hard_ceiling:
+            return self.chunk_dtd_whole(filepath, rel_path)
         return chunks
 
     def load_registry(self) -> Dict[str, str]:
@@ -1770,9 +1805,25 @@ class MemoryEngine:
         except Exception:
             vote_top = 10
         total_spread = sum(run_spreads) or 1.0
+        # Consensus weighting (TODO-31): a run whose top ranks disagree with
+        # the other runs is likely a confidently-wrong model (measured:
+        # arctic-m on dtd-commands votes confidently wrong and drags the
+        # fusion below its best member). Down-weight such runs. Single-run
+        # fusions (one model, one subquery) keep full weight.
+        try:
+            consensus_on = (
+                os.environ.get("OPENCODE_MEMORY_RRF_CONSENSUS", "0").strip() == "1"
+            )
+        except Exception:
+            consensus_on = False
+        run_consensus = (
+            _compute_run_consensus(run_ranks)
+            if consensus_on
+            else [1.0] * len(run_ranks)
+        )
         raw_rrf: Dict[str, float] = {doc_id: 0.0 for doc_id in per_doc}
-        for doc_ranks, spread in zip(run_ranks, run_spreads):
-            w = spread / total_spread
+        for doc_ranks, spread, cw in zip(run_ranks, run_spreads, run_consensus):
+            w = spread / total_spread * cw
             for doc_id, r in doc_ranks.items():
                 if vote_top > 0 and r > vote_top:
                     continue

@@ -662,5 +662,48 @@ class TestHybridLaneWeights(unittest.TestCase):
             self.assertAlmostEqual(w_bm25, 0.30)
 
 
+class TestRunConsensus(unittest.TestCase):
+    """RRF consensus weighting contract (TODO-31).
+
+    A run whose top-3 ranks disagree with the other runs is likely a
+    confidently-wrong model (measured: arctic-m on dtd-commands votes
+    confidently wrong and drags the fusion below its best member). Agreeing
+    runs keep full weight; disagreeing runs are down-weighted toward 0.5.
+    """
+
+    def test_single_run_keeps_full_weight(self):
+        self.assertEqual(memory_engine._compute_run_consensus([{"a": 1}]), [1.0])
+
+    def test_agreeing_runs_keep_full_weight(self):
+        ranks = [{"a": 1, "b": 2, "c": 3}, {"a": 1, "b": 2, "c": 3}]
+        out = memory_engine._compute_run_consensus(ranks)
+        self.assertEqual(len(out), 2)
+        self.assertAlmostEqual(out[0], 1.0)
+        self.assertAlmostEqual(out[1], 1.0)
+
+    def test_disagreeing_run_is_downweighted(self):
+        ranks = [
+            {"a": 1, "b": 2, "c": 3},
+            {"a": 1, "b": 2, "c": 3},
+            {"x": 1, "y": 2, "z": 3},
+        ]
+        out = memory_engine._compute_run_consensus(ranks)
+        # Run 0/1 top1 'a' is corroborated by peer 0/1 -> full weight.
+        # Run 2 top1 'x' appears in no peer's top-10 -> halved.
+        self.assertAlmostEqual(out[0], 1.0)
+        self.assertAlmostEqual(out[1], 1.0)
+        self.assertAlmostEqual(out[2], 0.5)
+
+    def test_differently_right_run_keeps_weight(self):
+        # Run 1's top1 'd' is not in run 0's top-3 but is in its top-10.
+        ranks = [
+            {"a": 1, "b": 2, "c": 3, "d": 7, "e": 8, "f": 9},
+            {"d": 1, "e": 2, "f": 3, "a": 7, "b": 8, "c": 9},
+        ]
+        out = memory_engine._compute_run_consensus(ranks)
+        self.assertAlmostEqual(out[0], 1.0)
+        self.assertAlmostEqual(out[1], 1.0)
+
+
 if __name__ == "__main__":
     unittest.main()
