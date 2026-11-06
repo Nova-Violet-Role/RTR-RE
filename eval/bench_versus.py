@@ -860,7 +860,8 @@ def write_scoreboard(path, results):
 def write_per_family_board(path, results):
     """Per-family DTD suite scoreboard (TODO-36): one row per family x
     system, R@1/R@3/MRR from the OVERALL metrics of each suite corpus."""
-    families = [c for c in results["corpora"] if c.startswith("dtd-")]
+    family_names = {c["name"] for c in PER_FAMILY_CORPORA}
+    families = [c for c in results["corpora"] if c in family_names]
     if not families:
         return
     systems = sorted({s for c in families for s in results["corpora"][c]["systems"]})
