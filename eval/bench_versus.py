@@ -45,6 +45,7 @@ import memory_engine as mem
 from memory_engine import MemoryEngine
 
 SEED = 20260928
+DTD_SUFFIXES = (".dtd", ".mod", ".ent")
 CORPORA = [
     {
         "name": "nt-studies",
@@ -74,6 +75,16 @@ CORPORA = [
         "mode": "stratified",
         "n": 48,
         "title": "md",
+    },
+    {
+        "name": "dtd-family",
+        "src": Path(r"C:\DTD_FAMILY\.dtd-file-examples"),
+        "suffixes": DTD_SUFFIXES,
+        "mode": "stratified",
+        "group_by": "dir",
+        "n": 60,
+        "title": "dtd",
+        "prefix_rel": True,
     },
 ]
 
@@ -211,11 +222,24 @@ BENCH_ROOT = None  # set by main(): the only discovery root (full isolation)
 
 def stage_corpus(spec, prefix):
     """Sample real docs -> temp bench project (original names, bytes intact)."""
-    files = sorted(spec["src"].glob(spec["glob"]))
+    if spec.get("suffixes"):
+        files = sorted(
+            f
+            for f in spec["src"].rglob("*")
+            if f.is_file() and f.suffix.lower() in spec["suffixes"]
+        )
+    else:
+        files = sorted(spec["src"].glob(spec["glob"]))
     if spec["mode"] == "stratified":
         groups = defaultdict(list)
-        for f in files:
-            groups[f.name.split("-")[0].split(".")[0]].append(f)
+        if spec.get("group_by") == "dir":
+            for f in files:
+                rel = f.relative_to(spec["src"])
+                key = rel.parts[0] if len(rel.parts) > 1 else "(root)"
+                groups[key].append(f)
+        else:
+            for f in files:
+                groups[f.name.split("-")[0].split(".")[0]].append(f)
         chosen = []
         while len(chosen) < spec["n"] and groups:
             for g in sorted(groups):
@@ -231,11 +255,18 @@ def stage_corpus(spec, prefix):
     proj = base
     d = proj / "directives"
     d.mkdir(parents=True)
+    staged = []
     for f in chosen:
         # Byte copy: staged corpora must be byte-identical to the real
         # sources hashed in the manifest, never newline-translated.
-        shutil.copyfile(f, d / f.name)
-    return base, proj, [f.name for f in chosen]
+        if spec.get("prefix_rel"):
+            rel = f.relative_to(spec["src"])
+            name = f"{rel.parts[0]}__{f.name}" if len(rel.parts) > 1 else f.name
+        else:
+            name = f.name
+        shutil.copyfile(f, d / name)
+        staged.append(name)
+    return base, proj, staged
 
 
 def extract_title(text, mode):
@@ -246,6 +277,10 @@ def extract_title(text, mode):
             t = re.sub(r"\s+", " ", t).strip()
             if t:
                 return t
+    if mode == "dtd":
+        m = re.search(r"<!ELEMENT\s+([^\s>]+)", text)
+        if m:
+            return m.group(1)
     headers = []
     for line in text.splitlines():
         s = line.strip()
@@ -354,6 +389,92 @@ def derive_queries(proj, rng, title_mode="md"):
     rng.shuffle(idtoks)
     for t in idtoks[: CAPS["T6"]]:
         queries.append(("T6", t, owner[t]))
+    return queries
+
+
+def derive_dtd_queries(proj, rng):
+    """Auto-derive DTD-structural taxon queries from staged DTD files.
+
+    Uses the shared extractor (eval/dtd_extractor.py) so queries target real
+    declared structure: element names (T1/T2), attribute semantics (T7),
+    entity/parameter-entity lanes (T8), content-model fragments (T9).
+    Deterministic: seeded per-corpus RNG, same staged set -> same queries.
+    """
+    sys.path.insert(0, str(Path(__file__).parent))
+    import dtd_extractor as dx
+
+    docs = {}
+    for f in sorted((proj / "directives").iterdir()):
+        if not f.is_file():
+            continue
+        docs[f.name] = dx.extract_dtd_profile(f)
+
+    # Element-name document frequency across the staged corpus.
+    df = defaultdict(int)
+    for name, prof in docs.items():
+        for el in set(prof.element_names):
+            df[el] += 1
+    attr_df = defaultdict(int)
+    for name, prof in docs.items():
+        for a in set(prof.attribute_names):
+            attr_df[a] += 1
+    ent_df = defaultdict(int)
+    for name, prof in docs.items():
+        for e in set(prof.entity_names + prof.param_entity_names):
+            ent_df[e] += 1
+
+    queries = []
+    names = sorted(docs)
+    # T1: root element self-retrieval (first declared element).
+    for n in names:
+        if docs[n].element_names:
+            queries.append(("T1", docs[n].element_names[0], n))
+    # T2: rare element names (df == 1, opaque length).
+    rares = sorted(
+        [t for t, c in df.items() if c == 1 and len(t) > 3 and t not in STOP]
+    )
+    rng.shuffle(rares)
+    owner = {}
+    for n, prof in docs.items():
+        for t in set(prof.element_names):
+            owner.setdefault(t, n)
+    for t in rares[: CAPS["T2"]]:
+        queries.append(("T2", t, owner[t]))
+    # T7: attribute-semantic recall — rare attribute names.
+    attr_rares = sorted(
+        [t for t, c in attr_df.items() if c == 1 and len(t) > 3 and t not in STOP]
+    )
+    rng.shuffle(attr_rares)
+    attr_owner = {}
+    for n, prof in docs.items():
+        for t in set(prof.attribute_names):
+            attr_owner.setdefault(t, n)
+    for t in attr_rares[: CAPS["T2"]]:
+        queries.append(("T7", t, attr_owner[t]))
+    # T8: entity-lane recall — rare entity/parameter-entity names.
+    ent_rares = sorted(
+        [t for t, c in ent_df.items() if c == 1 and len(t) > 3 and t not in STOP]
+    )
+    rng.shuffle(ent_rares)
+    ent_owner = {}
+    for n, prof in docs.items():
+        for t in set(prof.entity_names + prof.param_entity_names):
+            ent_owner.setdefault(t, n)
+    for t in ent_rares[: CAPS["T2"]]:
+        queries.append(("T8", t, ent_owner[t]))
+    # T9: content-model fragment recall — distinctive sequence/choice text.
+    for n in names[: CAPS["T3"]]:
+        prof = docs[n]
+        if prof.content_models["sequences"] or prof.content_models["choices"]:
+            text = Path(proj / "directives" / n).read_text(
+                encoding="utf-8", errors="replace"
+            )
+            m = re.search(r"<!ELEMENT\s+[^\s>]+\s+\(([^)]+)\)", text)
+            if m and len(m.group(1).strip()) > 6:
+                queries.append(("T9", m.group(1).strip(), n))
+    # T6: identifier/path lookup (filename stems).
+    for n in names[: CAPS["T6"]]:
+        queries.append(("T6", Path(n).stem, n))
     return queries
 
 
@@ -523,7 +644,9 @@ def main():
     if args.intense:
         CAPS.update(INTENSE_CAPS)
     global BENCH_ROOT
-    os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = ".md,.nt,.yaml,.yml,.dita,.xml"
+    os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = (
+        ".md,.nt,.yaml,.yml,.dita,.xml,.dtd,.mod,.ent"
+    )
     # FULL isolation: DB, registry, extra roots and discovery roots all temp.
     # Precedent runs leaked live roots (measured: 36 staged -> 66 indexed).
     iso = Path(tempfile.mkdtemp(prefix="rtr-versus-iso-"))
@@ -572,7 +695,10 @@ def main():
                 args.seed
                 + int(hashlib.sha256(spec["name"].encode()).hexdigest()[:8], 16)
             )
-            queries = derive_queries(proj, crng, spec["title"])
+            if spec["title"] == "dtd":
+                queries = derive_dtd_queries(proj, crng)
+            else:
+                queries = derive_queries(proj, crng, spec["title"])
             print(f"[{spec['name']}] derived {len(queries)} queries")
             results["manifest"][spec["name"]] = [
                 {
