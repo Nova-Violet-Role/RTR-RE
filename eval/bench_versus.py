@@ -254,7 +254,14 @@ def stage_corpus(spec, prefix):
     # Project dir directly under the isolated root so the engine's project
     # key (first relative part) equals Path(proj).name — scoped filters
     # resolve. One level deeper measured 0.0 on every scoped arm.
-    base = Path(tempfile.mkdtemp(prefix=f"bench-{prefix}-", dir=BENCH_ROOT))
+    # Deterministic name (no random suffix): the staged dir name becomes
+    # part of every indexed chunk text, so a random suffix made the
+    # embeddings — and therefore the whole scoreboard — nondeterministic
+    # across runs (measured: identical runs differed on 52-118/163 queries).
+    base = BENCH_ROOT / f"bench-{prefix}"
+    if base.exists():
+        shutil.rmtree(base, ignore_errors=True)
+    base.mkdir(parents=True)
     proj = base
     d = proj / "directives"
     d.mkdir(parents=True)
@@ -672,6 +679,12 @@ def main():
     os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = (
         ".md,.nt,.yaml,.yml,.dita,.xml,.dtd,.mod,.ent"
     )
+    # Determinism (measured, TODO-31): chroma HNSW build/search is
+    # nondeterministic by default — two identical runs differed on
+    # 52-118/163 queries. Pin single-threaded construction and a
+    # near-exact search so the scoreboard is reproducible.
+    os.environ["OPENCODE_MEMORY_HNSW_NUM_THREADS"] = "1"
+    os.environ["OPENCODE_MEMORY_HNSW_SEARCH_EF"] = "1000"
     # FULL isolation: DB, registry, extra roots and discovery roots all temp.
     # Precedent runs leaked live roots (measured: 36 staged -> 66 indexed).
     iso = Path(tempfile.mkdtemp(prefix="rtr-versus-iso-"))

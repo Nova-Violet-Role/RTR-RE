@@ -7,7 +7,9 @@ import json
 import re
 import shutil
 import subprocess
+import tempfile
 import time
+import urllib.request
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 
@@ -248,6 +250,83 @@ DEFAULT_EMBED_MODELS = [
     "Snowflake/snowflake-arctic-embed-m",
     "BAAI/bge-base-en-v1.5",
 ]
+
+
+QUERY_PROMPTS = {
+    # Offline fallback map of model-card query prompts. The source of truth
+    # is each model's own config_sentence_transformers.json (fetched and
+    # cached per model), so a model update that changes its prompt is
+    # followed automatically. This map only boots a first run without
+    # network. Without a prompt, instruction-trained models embed queries
+    # out-of-distribution (measured: arctic-m R@1 0.0309 -> 0.3299 on
+    # dtd-commands).
+    "snowflake_snowflake_arctic_embed_m": (
+        "Represent this sentence for searching relevant passages: "
+    ),
+}
+
+
+def _fastembed_cache_dir() -> Path:
+    raw = os.environ.get("FASTEMBED_CACHE_PATH", "").strip()
+    if raw:
+        return Path(raw)
+    return Path(tempfile.gettempdir()) / "fastembed_cache"
+
+
+def _fetch_query_prompt(model_name: str) -> str:
+    """Fetch the model card's query prompt from Hugging Face (short timeout)."""
+    url = f"https://huggingface.co/{model_name}/raw/main/config_sentence_transformers.json"
+    try:
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            cfg = json.loads(resp.read().decode("utf-8"))
+        prompts = cfg.get("prompts") or {}
+        return prompts.get("query", "")
+    except Exception:
+        return ""
+
+
+_QUERY_PROMPT_MEMO: Dict[str, str] = {}
+
+
+def query_prompt_for(model_name: str) -> str:
+    """Query prompt for a model, or "" when none is declared.
+
+    Resolution order: env override (experiments) -> in-process memo ->
+    per-model derived cache (fetched from the model's own config and stored
+    beside the fastembed cache) -> shipped offline fallback map.
+    """
+    override = os.environ.get("OPENCODE_MEMORY_QUERY_PROMPT_OVERRIDE", "")
+    for pair in override.split(";"):
+        if "=" in pair:
+            slug, _, prompt = pair.partition("=")
+            if model_slug(slug) == model_slug(model_name):
+                return prompt
+    slug = model_slug(model_name)
+    if slug in _QUERY_PROMPT_MEMO:
+        return _QUERY_PROMPT_MEMO[slug]
+    cache_file = _fastembed_cache_dir() / "query_prompts" / f"{slug}.json"
+    try:
+        if cache_file.exists():
+            data = json.loads(cache_file.read_text(encoding="utf-8"))
+            if data.get("model") == slug and isinstance(data.get("prompt"), str):
+                return data["prompt"]
+    except Exception:
+        pass
+    prompt = _fetch_query_prompt(model_name)
+    if prompt:
+        try:
+            cache_file.parent.mkdir(parents=True, exist_ok=True)
+            cache_file.write_text(
+                json.dumps({"model": slug, "prompt": prompt}, indent=2) + "\n",
+                encoding="utf-8",
+            )
+        except Exception:
+            pass
+        _QUERY_PROMPT_MEMO[slug] = prompt
+        return prompt
+    prompt = QUERY_PROMPTS.get(slug, "")
+    _QUERY_PROMPT_MEMO[slug] = prompt
+    return prompt
 
 
 def configured_embed_models() -> List[str]:
@@ -999,9 +1078,15 @@ class MemoryEngine:
         """Backward-compat: primary embedding model."""
         return self.models[model_slug(self.primary_model_name)]
 
-    def embed_all(self, texts: List[str]) -> Dict[str, List[List[float]]]:
+    def embed_all(
+        self, texts: List[str], for_query: bool = False
+    ) -> Dict[str, List[List[float]]]:
         out: Dict[str, List[List[float]]] = {}
         for slug, m in self.models.items():
+            if for_query:
+                prompt = query_prompt_for(slug)
+                if prompt:
+                    texts = [prompt + t for t in texts]
             out[slug] = [[float(v) for v in e] for e in m.embed(texts)]
         return out
 
@@ -1035,11 +1120,30 @@ class MemoryEngine:
     def collections(self) -> Dict[str, Any]:
         """One ChromaDB collection per embedding model (fixed vector spaces never mix)."""
         if not self._collections:
+            metadata: Dict[str, Any] = {"hnsw:space": "cosine"}
+            # Determinism knobs (measured, TODO-31): chroma's HNSW build is
+            # multithreaded by default and its search is approximate, so two
+            # identical bench runs differed on 52-118/163 queries. Pinning
+            # num_threads=1 (deterministic graph) and a high search_ef
+            # (near-exact search) makes results reproducible. Unset keeps
+            # chroma defaults; the bench pins both.
+            try:
+                nt = os.environ.get("OPENCODE_MEMORY_HNSW_NUM_THREADS", "").strip()
+                if nt:
+                    metadata["hnsw:num_threads"] = int(nt)
+            except Exception:
+                pass
+            try:
+                sef = os.environ.get("OPENCODE_MEMORY_HNSW_SEARCH_EF", "").strip()
+                if sef:
+                    metadata["hnsw:search_ef"] = int(sef)
+            except Exception:
+                pass
             for name in self.embed_model_names:
                 slug = model_slug(name)
                 self._collections[slug] = self.chroma_client.get_or_create_collection(
                     name=collection_name_for(name),
-                    metadata={"hnsw:space": "cosine"},
+                    metadata=metadata,
                 )
         return self._collections
 
@@ -1073,6 +1177,13 @@ class MemoryEngine:
             if not walk_root.exists():
                 continue
             for root, dirs, files in os.walk(walk_root):
+                # Deterministic discovery: os.walk yields entries in OS
+                # enumeration order, which varies across runs on Windows.
+                # Unstable insertion order makes the HNSW index
+                # nondeterministic (measured: two identical bench runs
+                # differed on 118/163 queries). Sorting fixes it.
+                dirs.sort()
+                files.sort()
                 root_path = Path(root)
 
                 # Skip common noise dirs to keep index fast
@@ -1749,7 +1860,7 @@ class MemoryEngine:
             if filter_key:
                 where_filter = {"project": filter_key}
 
-        query_vecs = {q: self.embed_all([q]) for q in subs}
+        query_vecs = {q: self.embed_all([q], for_query=True) for q in subs}
         per_doc: Dict[str, Dict[str, Any]] = {}
         run_ranks: List[Dict[str, int]] = []
         run_spreads: List[float] = []

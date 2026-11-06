@@ -694,6 +694,100 @@ class TestRunConsensus(unittest.TestCase):
         self.assertAlmostEqual(out[1], 1.0)
         self.assertAlmostEqual(out[2], 0.5)
 
+
+class TestQueryPrompts(unittest.TestCase):
+    """Query prompt wiring (TODO-31): instruction-trained models get their
+    model-card prompt on the query path only; documents stay plain."""
+
+    def setUp(self):
+        self.test_dir = Path(tempfile.mkdtemp())
+        memory_engine.DB_DIR = self.test_dir / "db"
+        self._old_fastembed_cache = os.environ.get("FASTEMBED_CACHE_PATH")
+        os.environ["FASTEMBED_CACHE_PATH"] = str(self.test_dir / "fastembed_cache")
+
+    def tearDown(self):
+        if self._old_fastembed_cache is None:
+            os.environ.pop("FASTEMBED_CACHE_PATH", None)
+        else:
+            os.environ["FASTEMBED_CACHE_PATH"] = self._old_fastembed_cache
+        shutil.rmtree(self.test_dir, ignore_errors=True)
+
+    def test_shipped_fallback_arctic_prompt(self):
+        # No cache, no network -> shipped map fallback keeps arctic working.
+        with patch.object(memory_engine, "_fetch_query_prompt", return_value=""):
+            self.assertEqual(
+                memory_engine.query_prompt_for("Snowflake/snowflake-arctic-embed-m"),
+                "Represent this sentence for searching relevant passages: ",
+            )
+
+    def test_unknown_model_no_prompt(self):
+        with patch.object(memory_engine, "_fetch_query_prompt", return_value=""):
+            self.assertEqual(memory_engine.query_prompt_for("no/such-model"), "")
+
+    def test_env_override_wins(self):
+        old = os.environ.get("OPENCODE_MEMORY_QUERY_PROMPT_OVERRIDE")
+        os.environ["OPENCODE_MEMORY_QUERY_PROMPT_OVERRIDE"] = "foo/bar=Fizz buzz;"
+        try:
+            self.assertEqual(memory_engine.query_prompt_for("foo/bar"), "Fizz buzz")
+        finally:
+            if old is None:
+                os.environ.pop("OPENCODE_MEMORY_QUERY_PROMPT_OVERRIDE", None)
+            else:
+                os.environ["OPENCODE_MEMORY_QUERY_PROMPT_OVERRIDE"] = old
+
+    def test_fetch_and_cache_per_model(self):
+        # First call fetches from the model config and caches; later calls
+        # serve from cache without fetching again (self-maintaining).
+        with patch.object(
+            memory_engine,
+            "_fetch_query_prompt",
+            return_value="Search: ",
+        ) as fetch:
+            self.assertEqual(memory_engine.query_prompt_for("Some/Model"), "Search: ")
+            self.assertEqual(fetch.call_count, 1)
+            fetch.return_value = ""
+            self.assertEqual(memory_engine.query_prompt_for("Some/Model"), "Search: ")
+            self.assertEqual(fetch.call_count, 1)
+
+    def test_embed_all_query_path_prepends_prompt(self):
+        captured = {}
+
+        class FakeModel:
+            def embed(self, texts):
+                captured["texts"] = list(texts)
+                return [[0.0] * 4 for _ in texts]
+
+        engine = MemoryEngine()
+        try:
+            engine._models = {
+                "snowflake_snowflake_arctic_embed_m": FakeModel(),
+                "baai_bge_base_en_v1_5": FakeModel(),
+            }
+            with patch.object(memory_engine, "_fetch_query_prompt", return_value=""):
+                engine.embed_all(["hello"], for_query=True)
+            self.assertEqual(
+                captured["texts"],
+                ["Represent this sentence for searching relevant passages: hello"],
+            )
+        finally:
+            engine.close()
+
+    def test_embed_all_doc_path_stays_plain(self):
+        captured = {}
+
+        class FakeModel:
+            def embed(self, texts):
+                captured["texts"] = list(texts)
+                return [[0.0] * 4 for _ in texts]
+
+        engine = MemoryEngine()
+        try:
+            engine._models = {"snowflake_snowflake_arctic_embed_m": FakeModel()}
+            engine.embed_all(["hello"])
+            self.assertEqual(captured["texts"], ["hello"])
+        finally:
+            engine.close()
+
     def test_differently_right_run_keeps_weight(self):
         # Run 1's top1 'd' is not in run 0's top-3 but is in its top-10.
         ranks = [
