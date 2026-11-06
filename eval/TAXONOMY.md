@@ -5,6 +5,15 @@
 How we measure, what each taxon means, and what the numbers honestly say.
 Methodology first, scoreboard second. Reality is the judge.
 
+## Probe placement
+
+Evaluation probes (`engine_beneath.py`, `calibrate_symbiose.py`, benches)
+live in `eval/` and are never shipped in the wheel; their tests live in
+`execution/test_*.py` and load the probe by path, so they run in the
+standard suite while the probe itself stays out of the package.
+`execution/test_engine_beneath.py` and `execution/test_calibrate_symbiose.py`
+follow this convention.
+
 ## Corpora (both real, both local)
 
 | Corpus | Files | Nature | Queries (intense) |
