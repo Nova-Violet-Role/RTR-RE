@@ -776,6 +776,87 @@ def case_live_engine_sink() -> Dict[str, Any]:
     )
 
 
+@register_case("content-model-feature-in-header")
+def case_content_model_feature() -> Dict[str, Any]:
+    """DTD chunks carry a CONTENT MODELS inventory line, and a distinctive
+    fragment query resolves to the declaring file (TODO-33)."""
+    import os
+
+    from memory_engine import MemoryEngine
+
+    checks: Dict[str, float] = {}
+    evidence: Dict[str, Any] = {}
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-cm-") as temporary:
+        root = Path(temporary)
+        proj = root / "projects"
+        (proj / "directives").mkdir(parents=True)
+        (proj / "directives" / "alpha.dtd").write_text(
+            "<!ELEMENT alpha (title, author*)>\n<!ELEMENT title (#PCDATA)>\n",
+            encoding="utf-8",
+        )
+        (proj / "directives" / "beta.dtd").write_text(
+            "<!ELEMENT beta (chapter, section?)>\n<!ELEMENT chapter (#PCDATA)>\n",
+            encoding="utf-8",
+        )
+        old_db = os.environ.get("OPENCODE_MEMORY_DB_DIR")
+        old_roots = None
+        try:
+            os.environ["OPENCODE_MEMORY_DB_DIR"] = str(root / "db")
+            os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = (
+                ".md,.nt,.yaml,.yml,.dita,.xml,.dtd,.mod,.ent"
+            )
+            os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = "BAAI/bge-small-en-v1.5"
+            import memory_engine as mem
+
+            old_roots = mem.PROJECT_ROOTS
+            old_registry = mem.REGISTRY_FILE
+            old_extra = mem.EXTRA_ROOTS_FILE
+            old_lex = mem.LEXIKON_GLOBAL_FILE
+            mem.PROJECT_ROOTS = [root / "projects"]
+            mem.PROJECTS_DIR = root / "projects"
+            mem.REGISTRY_FILE = root / "registry.json"
+            mem.EXTRA_ROOTS_FILE = root / "extra_roots.json"
+            mem.LEXIKON_GLOBAL_FILE = root / "lexikon_global.json"
+            engine = MemoryEngine()
+            try:
+                stats = engine.index_all(force=True)
+                col = engine.chroma_client.get_collection(
+                    "opencode_memory_baai_bge_small_en_v1_5"
+                )
+                docs = col.get(include=["documents"])["documents"]
+                cm_lines = [d for d in docs if "CONTENT MODELS:" in d]
+                checks["header_has_content_models"] = 1.0 if len(cm_lines) >= 2 else 0.0
+                alpha_cm = any("CONTENT MODELS: (title, author*)" in d for d in docs)
+                beta_cm = any("CONTENT MODELS: (chapter, section?)" in d for d in docs)
+                checks["fragments_listed"] = 1.0 if alpha_cm and beta_cm else 0.0
+                res = engine.search("(title, author*)", k=3, project=None, hybrid=False)
+                top = [Path(r["metadata"]["source"]).name for r in res]
+                checks["fragment_query_resolves"] = (
+                    1.0 if top and top[0] == "alpha.dtd" else 0.0
+                )
+                evidence["top"] = top
+                evidence["indexed"] = stats.get("new")
+            finally:
+                engine.close()
+                mem.PROJECT_ROOTS = old_roots
+                mem.PROJECTS_DIR = old_roots
+                mem.REGISTRY_FILE = old_registry
+                mem.EXTRA_ROOTS_FILE = old_extra
+                mem.LEXIKON_GLOBAL_FILE = old_lex
+        finally:
+            if old_db is None:
+                os.environ.pop("OPENCODE_MEMORY_DB_DIR", None)
+            else:
+                os.environ["OPENCODE_MEMORY_DB_DIR"] = old_db
+    return _verdict(
+        checks,
+        ["header_has_content_models", "fragments_listed", "fragment_query_resolves"],
+        evidence,
+        "content-model-feature-in-header",
+        "Content-model fragments are listed in the inventory and resolve",
+    )
+
+
 def run_all() -> Dict[str, Any]:
     """Run every registered case and aggregate into a scoreboard that can go red."""
     case_results: List[Dict[str, Any]] = []

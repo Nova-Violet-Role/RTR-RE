@@ -1,10 +1,10 @@
 {
   "schema": "rtr-re.engine-beneath.cases/v1",
   "scope": "RE edition: full architecture case registry",
-  "run_at": "2026-11-06T13:14:33",
+  "run_at": "2026-11-06T19:20:35",
   "summary": {
-    "cases": 14,
-    "passed": 14,
+    "cases": 15,
+    "passed": 15,
     "failed": 0,
     "pass": true
   },
@@ -217,6 +217,29 @@
       }
     },
     {
+      "case": "content-model-feature-in-header",
+      "description": "Content-model fragments are listed in the inventory and resolve",
+      "checks": {
+        "header_has_content_models": 1.0,
+        "fragments_listed": 1.0,
+        "fragment_query_resolves": 1.0
+      },
+      "required": [
+        "header_has_content_models",
+        "fragments_listed",
+        "fragment_query_resolves"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "top": [
+          "alpha.dtd",
+          "beta.dtd"
+        ],
+        "indexed": 2
+      }
+    },
+    {
       "case": "corrupted-sink-mid-batch",
       "description": "Mid-batch sink failure surfaces as failed, never silent pass",
       "checks": {
@@ -302,7 +325,7 @@
       "failed_required": [],
       "evidence": {
         "sink": {
-          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-im4fahae\\rtrre-8714a4e373a2b6e0.md",
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-jtsy24lo\\rtrre-8714a4e373a2b6e0.md",
           "exists": true,
           "bytes": 305,
           "sha256": "45ba312d9501e2438a91931e70fee15848f39dfdcb4774de2e4d37d546bda2e0",
@@ -1121,7 +1144,7 @@
         "evict": 161,
         "total_tokens": 200004,
         "keep_tokens": 39004,
-        "plan_ms": 1.014
+        "plan_ms": 0.931
       }
     },
     {
@@ -1145,7 +1168,7 @@
         "evict": 963,
         "total_tokens": 1004004,
         "keep_tokens": 39004,
-        "plan_ms": 5.931,
+        "plan_ms": 5.184,
         "cumulative_messages": 1001,
         "old_todo_index": 5,
         "old_todo_retained": false,

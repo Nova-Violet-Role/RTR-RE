@@ -117,6 +117,34 @@ class TestDTDExtractorStructural(unittest.TestCase):
         self.assertEqual(prof.attr_decls, 1)
         self.assertEqual(prof.attributes, 2)
 
+    def test_attribute_types_extracted(self):
+        text = '<!ATTLIST root a CDATA #IMPLIED b ID #REQUIRED c (one|two) "one">\n'
+        p = write_tmp(text)
+        prof = ext.extract_dtd_profile(p)
+        self.assertEqual(prof.attribute_types.get("a"), "CDATA")
+        self.assertEqual(prof.attribute_types.get("b"), "ID")
+        self.assertEqual(prof.attribute_types.get("c"), "(one|two)")
+
+    def test_content_model_fragments_extracted(self):
+        text = (
+            "<!ELEMENT book (title, author*)>\n"
+            "<!ELEMENT title (#PCDATA)>\n"
+            "<!ELEMENT author (first | last)>\n"
+        )
+        p = write_tmp(text)
+        prof = ext.extract_dtd_profile(p)
+        self.assertIn("(title, author*)", prof.content_model_fragments)
+        self.assertIn("(#PCDATA)", prof.content_model_fragments)
+        self.assertIn("(first | last)", prof.content_model_fragments)
+
+    def test_content_model_fragments_deduplicated_and_capped(self):
+        text = (
+            "<!ELEMENT a (x, y, z)>\n<!ELEMENT b (x, y, z)>\n<!ELEMENT c (x, y, z)>\n"
+        )
+        p = write_tmp(text)
+        prof = ext.extract_dtd_profile(p)
+        self.assertEqual(prof.content_model_fragments.count("(x, y, z)"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

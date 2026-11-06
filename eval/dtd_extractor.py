@@ -21,6 +21,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 ELEM_RE = re.compile(r"<!ELEMENT\s+([^\s>]+)\s+\(?([^>]*)\)?")
+ELEM_DECL_RE = re.compile(r"<!ELEMENT\s+([^\s>]+)\s+(.*?)>", re.S)
+ATTR_ITEM_TYPE_RE = re.compile(
+    r"\s+([^\s>]+)\s+(CDATA|ID|IDREF|IDREFS|NMTOKEN|NMTOKENS|ENTITY|ENTITIES|NOTATION|\([^)]*\))"
+)
 ATTR_DECL_RE = re.compile(r"<!ATTLIST\s+([^\s>]+)")
 ATTR_ITEM_RE = re.compile(
     r'\s+([^\s>]+)\s+(?:CDATA|ID|IDREF|IDREFS|NMTOKEN|NMTOKENS|ENTITY|ENTITIES|NOTATION|\([^)]*\))\s+(?:#REQUIRED|#IMPLIED|#FIXED|"[^"]*"|\'[^\']*\'|[^\s>]+)'
@@ -88,6 +92,41 @@ def extract_attr_names(scanned: str) -> List[str]:
     return names
 
 
+def extract_attr_types(scanned: str) -> Dict[str, str]:
+    """Attribute name -> declared type, scoped to ATTLIST declarations.
+
+    The type is the token after the attribute name (CDATA, ID, enumerated
+    list, ...). First declaration wins; later duplicates are ignored.
+    """
+    types: Dict[str, str] = {}
+    for decl in _attlist_spans(scanned):
+        decl = COMMENT_RE.sub("", decl)
+        for name, typ in ATTR_ITEM_TYPE_RE.findall(decl):
+            types.setdefault(name, typ)
+    return types
+
+
+def extract_content_model_fragments(scanned: str, limit: int = 100) -> List[str]:
+    """Distinctive content-model fragments from ELEMENT declarations.
+
+    Each fragment is the normalized content model text (whitespace
+    collapsed) of one element declaration, deduplicated and capped. These
+    are the strings T9 queries are drawn from, so listing them in the
+    inventory header gives the dense model a declaration context for the
+    fragment.
+    """
+    out: List[str] = []
+    seen = set()
+    for _name, cm in ELEM_DECL_RE.findall(scanned):
+        frag = " ".join(cm.split())
+        if len(frag) > 6 and frag not in seen:
+            seen.add(frag)
+            out.append(frag)
+            if len(out) >= limit:
+                break
+    return out
+
+
 @dataclass
 class ContentModel:
     has_sequence: bool = False
@@ -115,6 +154,8 @@ class DTDProfile:
     param_entity_names: List[str] = field(default_factory=list)
     notation_names: List[str] = field(default_factory=list)
     content_models: Dict[str, int] = field(default_factory=dict)
+    content_model_fragments: List[str] = field(default_factory=list)
+    attribute_types: Dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -134,6 +175,8 @@ class DTDProfile:
             "param_entity_names": self.param_entity_names,
             "notation_names": self.notation_names,
             "content_models": self.content_models,
+            "content_model_fragments": self.content_model_fragments,
+            "attribute_types": self.attribute_types,
         }
 
 
@@ -184,6 +227,8 @@ def extract_dtd_profile(path: Path) -> DTDProfile:
             "repetitions": sum(1 for s in shapes if s.has_repetition),
             "max_nesting": max((s.max_nesting for s in shapes), default=0),
         },
+        content_model_fragments=extract_content_model_fragments(scanned),
+        attribute_types=extract_attr_types(scanned),
     )
 
 

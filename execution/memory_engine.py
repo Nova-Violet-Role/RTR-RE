@@ -724,6 +724,31 @@ def dtype_histogram(text: str) -> str:
 
 
 _DTD_DECL_START = re.compile(r"<!([A-Za-z]+)\b")
+_ELEM_FRAG_RE = re.compile(r"<!ELEMENT\s+[^\s>]+\s+(.*?)>", re.S)
+
+
+def _content_model_fragments(decls) -> List[str]:
+    """Distinctive content-model fragments from ELEMENT declarations.
+
+    Matches the extractor's fragment extraction (eval/dtd_extractor.py) so
+    the inventory header and the T9 query derivation speak the same
+    vocabulary (TODO-33).
+    """
+    out: List[str] = []
+    seen = set()
+    for kind, _name, decl in decls:
+        if kind != "ELEMENT":
+            continue
+        m = _ELEM_FRAG_RE.search(decl)
+        if m is None:
+            continue
+        frag = " ".join(m.group(1).split())
+        if len(frag) > 6 and frag not in seen:
+            seen.add(frag)
+            out.append(frag)
+            if len(out) >= 50:
+                break
+    return out
 
 
 def _scan_dtd_declarations(content: str):
@@ -1347,6 +1372,9 @@ class MemoryEngine:
             header_lines.append("ENTITIES: " + ", ".join(entities[:200]))
         if notations:
             header_lines.append("NOTATIONS: " + ", ".join(notations[:200]))
+        frags = _content_model_fragments(decls)
+        if frags:
+            header_lines.append("CONTENT MODELS: " + ", ".join(frags))
         header = "\n".join(header_lines)
         body = f"{header}\n\n{content}" if header else content
         section_text = f"Document: {rel_path}\nSection: Full Document\n\n{body}"

@@ -195,6 +195,12 @@ class ChunkDtdWholeTests(unittest.TestCase):
         self.assertIn("ENTITIES: copyright, xhtml.list", text)
         self.assertIn("NOTATIONS: gif", text)
 
+    def test_content_models_line_in_header(self):
+        f = self._write(SAMPLE_DTD)
+        chunks = self.engine.chunk_dtd_whole(f, "sample.dtd")
+        text = chunks[0]["text"]
+        self.assertIn("CONTENT MODELS: (title, chapter+)", text)
+
     def test_no_element_list_in_header(self):
         f = self._write(SAMPLE_DTD)
         chunks = self.engine.chunk_dtd_whole(f, "sample.dtd")
