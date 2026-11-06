@@ -472,8 +472,12 @@ function planKeepIndices(messages, cfg) {
         }
     }
     let lastUser = -1
+    const cumulative = Number(cfg.cumulativeMessages) || 0
+    const protectAll = cumulative < 1000
+    const recencyStart = Math.max(0, messages.length - cfg.maxKeepMessages)
     messages.forEach((m, i) => {
-        if (isProtected(m, cfg.protectedTools) && !keep.has(i)) {
+        if (isProtected(m, cfg.protectedTools) && !keep.has(i) &&
+            (protectAll || i >= recencyStart)) {
             keep.add(i)
             keptTokens += tokens[i]
         }

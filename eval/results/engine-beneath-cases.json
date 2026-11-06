@@ -1,7 +1,7 @@
 {
   "schema": "rtr-re.engine-beneath.cases/v1",
   "scope": "RE edition: full architecture case registry",
-  "run_at": "2026-11-06T12:25:36",
+  "run_at": "2026-11-06T12:45:01",
   "summary": {
     "cases": 10,
     "passed": 10,
@@ -95,7 +95,7 @@
       "failed_required": [],
       "evidence": {
         "sink": {
-          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-yddzv8z8\\rtrre-8714a4e373a2b6e0.md",
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-98ab15xb\\rtrre-8714a4e373a2b6e0.md",
           "exists": true,
           "bytes": 305,
           "sha256": "45ba312d9501e2438a91931e70fee15848f39dfdcb4774de2e4d37d546bda2e0",
@@ -198,31 +198,36 @@
         "evict": 161,
         "total_tokens": 200004,
         "keep_tokens": 39004,
-        "plan_ms": 1.132
+        "plan_ms": 2.127
       }
     },
     {
       "case": "production-scale-extreme-protection-warning",
-      "description": "Extreme scale (>1000k) must not delete protected content",
+      "description": "Extreme scale (>1000k) removes protection from old todowrite, keeps recent",
       "checks": {
-        "todowrite_survives_extreme": 1.0,
+        "old_todo_evicted_past_threshold": 1.0,
+        "recent_todo_retained": 1.0,
         "all_accounted": 1.0
       },
       "required": [
-        "todowrite_survives_extreme",
+        "old_todo_evicted_past_threshold",
+        "recent_todo_retained",
         "all_accounted"
       ],
       "verdict": "pass",
       "failed_required": [],
       "evidence": {
         "messages": 1001,
-        "keep": 41,
-        "evict": 960,
-        "total_tokens": 1002004,
-        "keep_tokens": 42004,
-        "plan_ms": 5.858,
-        "todowrite_index": 5,
-        "todowrite_retained": true
+        "keep": 38,
+        "evict": 963,
+        "total_tokens": 1004004,
+        "keep_tokens": 39004,
+        "plan_ms": 10.96,
+        "cumulative_messages": 1001,
+        "old_todo_index": 5,
+        "old_todo_retained": false,
+        "recent_todo_index": 999,
+        "recent_todo_retained": true
       }
     },
     {

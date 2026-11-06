@@ -406,32 +406,45 @@ def case_production_scale() -> Dict[str, Any]:
 
 @register_case("production-scale-extreme-protection-warning")
 def case_production_scale_extreme_protection() -> Dict[str, Any]:
-    """WARNING case: at datacenter scale (>1000k context), protected content must survive.
+    """WARNING case: at datacenter scale (>1000k context), protection is recency-aware.
 
-    This is the edge case the operator called out: when the window is extreme,
-    does the keeper still protect todowrite, or does it delete preserved
-    content? If this case fails, the warning fires — protection broke at
-    extreme scale.
+    This is the operator's design (TODO-45): a cumulative counter of all
+    messages ever processed (including evicted) grows past 1000, and then
+    protection is removed from really old todowrite so it yields to newer
+    context. The intended contract:
+      - cumulative <= 1000: old todowrite IS protected (full protection)
+      - cumulative > 1000: OLD todowrite IS evicted (correct, makes space),
+        while RECENT todowrite stays protected.
+    If either side of this contract fails, the warning fires.
     """
     count = 1000
     messages = [_msg("assistant", _blob(4000)) for _ in range(count)]
-    # Bury a todowrite message early in the window — the hardest protection case.
+    # Old todowrite buried early (index 5) — must be evicted past the threshold.
     messages[5] = _msg("assistant", _blob(12000), tool="todowrite")
+    # Recent todowrite near the end (index count-1) — must stay protected.
+    messages[count - 1] = _msg("assistant", _blob(12000), tool="todowrite")
     messages.append(_msg("user", "latest question"))
-    cfg = {"trigger_tokens": 100000, "target_tokens": 40000, "max_keep_messages": 40}
+    cfg = {
+        "trigger_tokens": 100000,
+        "target_tokens": 40000,
+        "max_keep_messages": 40,
+        "cumulative_messages": 1001,
+    }
     started = time.monotonic()
     plan = plan_compression(messages, config=cfg)
     elapsed_ms = (time.monotonic() - started) * 1000.0
     kept = {int(i) for i in plan.get("keep", [])}
     evicted = {int(i) for i in plan.get("evict", [])}
-    todowrite_retained = 5 in kept and 5 not in evicted
+    old_todo_retained = 5 in kept and 5 not in evicted
+    recent_todo_retained = (count - 1) in kept and (count - 1) not in evicted
     checks = {
-        "todowrite_survives_extreme": 1.0 if todowrite_retained else 0.0,
+        "old_todo_evicted_past_threshold": 1.0 if not old_todo_retained else 0.0,
+        "recent_todo_retained": 1.0 if recent_todo_retained else 0.0,
         "all_accounted": 1.0 if len(kept) + len(evicted) == len(messages) else 0.0,
     }
     return _verdict(
         checks,
-        ["todowrite_survives_extreme", "all_accounted"],
+        ["old_todo_evicted_past_threshold", "recent_todo_retained", "all_accounted"],
         {
             "messages": len(messages),
             "keep": len(kept),
@@ -439,11 +452,14 @@ def case_production_scale_extreme_protection() -> Dict[str, Any]:
             "total_tokens": plan.get("total_tokens"),
             "keep_tokens": plan.get("keep_tokens"),
             "plan_ms": round(elapsed_ms, 3),
-            "todowrite_index": 5,
-            "todowrite_retained": todowrite_retained,
+            "cumulative_messages": 1001,
+            "old_todo_index": 5,
+            "old_todo_retained": old_todo_retained,
+            "recent_todo_index": count - 1,
+            "recent_todo_retained": recent_todo_retained,
         },
         "production-scale-extreme-protection-warning",
-        "Extreme scale (>1000k) must not delete protected content",
+        "Extreme scale (>1000k) removes protection from old todowrite, keeps recent",
     )
 
 

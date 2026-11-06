@@ -4,7 +4,7 @@
 <svg xmlns='http://www.w3.org/2000/svg' width='980' height='900' viewBox='0 0 980 900' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif'>
 <rect width='980' height='900' fill='#ffffff'/>
 <text x='24' y='44' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='21' fill='#1a1d24' text-anchor='start' font-weight='bold'>Engine Beneath — case scoreboard (RE edition)</text>
-<text x='24' y='68' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='13' fill='#5b6472' text-anchor='start'>10 cases · 10 passed · 0 failed · run 2026-11-06T12:25:36</text>
+<text x='24' y='68' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='13' fill='#5b6472' text-anchor='start'>10 cases · 10 passed · 0 failed · run 2026-11-06T12:45:01</text>
 <line x1='24' y1='82' x2='956' y2='82' stroke='#e2e5ec'/>
 <rect x='642' y='96' width='320' height='56' fill='#e2e5ec'/>
 <polygon points='956,96 962,102 962,158 956,146' fill='#e2e5ec'/>
@@ -96,12 +96,15 @@
 <text x='24' y='361' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>production-scale-extreme-protection-warning</text>
 <rect x='182' y='350' width='56' height='16' rx='3' fill='#1a7f37'/>
 <text x='210' y='362' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='10' fill='#ffffff' text-anchor='middle'>PASS</text>
-<rect x='260.0' y='352' width='304.0' height='12' fill='#e2e5ec'/>
-<rect x='260.0' y='352' width='304.0' height='12' fill='#1a7f37'/>
-<text x='262.0' y='372' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='9' fill='#5b6472' text-anchor='start'>todowrite_survives_extreme</text>
-<rect x='570.0' y='352' width='304.0' height='12' fill='#e2e5ec'/>
-<rect x='570.0' y='352' width='304.0' height='12' fill='#1a7f37'/>
-<text x='572.0' y='372' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='9' fill='#5b6472' text-anchor='start'>all_accounted</text>
+<rect x='260.0' y='352' width='200.66666666666666' height='12' fill='#e2e5ec'/>
+<rect x='260.0' y='352' width='200.66666666666666' height='12' fill='#1a7f37'/>
+<text x='262.0' y='372' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='9' fill='#5b6472' text-anchor='start'>old_todo_evicted_past_threshold</text>
+<rect x='466.66666666666663' y='352' width='200.66666666666666' height='12' fill='#e2e5ec'/>
+<rect x='466.66666666666663' y='352' width='200.66666666666666' height='12' fill='#1a7f37'/>
+<text x='468.66666666666663' y='372' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='9' fill='#5b6472' text-anchor='start'>recent_todo_retained</text>
+<rect x='673.3333333333333' y='352' width='200.66666666666666' height='12' fill='#e2e5ec'/>
+<rect x='673.3333333333333' y='352' width='200.66666666666666' height='12' fill='#1a7f37'/>
+<text x='675.3333333333333' y='372' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='9' fill='#5b6472' text-anchor='start'>all_accounted</text>
 <text x='24' y='383' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>protected-tool-todowrite-retained</text>
 <rect x='182' y='372' width='56' height='16' rx='3' fill='#1a7f37'/>
 <text x='210' y='384' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='10' fill='#ffffff' text-anchor='middle'>PASS</text>
@@ -136,19 +139,19 @@
 <text x='24' y='518' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>messages</text>
 <text x='260' y='518' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>1001</text>
 <text x='24' y='536' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>keep</text>
-<text x='260' y='536' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>41</text>
+<text x='260' y='536' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>38</text>
 <text x='24' y='554' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>evict</text>
-<text x='260' y='554' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>960</text>
+<text x='260' y='554' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>963</text>
 <text x='24' y='572' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>total_tokens</text>
-<text x='260' y='572' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>1002004</text>
+<text x='260' y='572' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>1004004</text>
 <text x='24' y='590' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>keep_tokens</text>
-<text x='260' y='590' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>42004</text>
+<text x='260' y='590' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>39004</text>
 <text x='24' y='608' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>plan_ms</text>
-<text x='260' y='608' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>5.858</text>
+<text x='260' y='608' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>10.96</text>
 <text x='24' y='626' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>todowrite_index</text>
-<text x='260' y='626' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>5</text>
+<text x='260' y='626' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>None</text>
 <text x='24' y='644' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#1a1d24' text-anchor='start'>todowrite_retained</text>
-<text x='260' y='644' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start'>True</text>
+<text x='260' y='644' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start'>None</text>
 <text x='24' y='668' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='15' fill='#1a1d24' text-anchor='start' font-weight='bold'>Preset axis (all six resolve)</text>
 <text x='24' y='690' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>preset</text>
 <text x='260' y='690' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>trigger</text>

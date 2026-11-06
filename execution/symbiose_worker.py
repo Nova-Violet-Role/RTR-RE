@@ -15,6 +15,7 @@ messages. Standard library only.
 
 import hashlib
 import json
+import os
 import queue
 import threading
 import time
@@ -102,6 +103,7 @@ class SymbioseWorker:
         max_retained_tickets: int = 512,
         config: Dict[str, Any] | None = None,
         clock: Callable[[], float] = time.monotonic,
+        cumulative_path: Path | None = None,
     ):
         if int(max_retained_tickets) < 1:
             raise ValueError(
@@ -122,6 +124,29 @@ class SymbioseWorker:
         self._closed = False
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
+        # Cumulative message counter: total messages ever processed, including
+        # evicted ones (operator design, TODO-45). Persisted at cumulative_path
+        # so it grows across sessions and can never stay pinned to the live
+        # window size. None disables persistence (pure in-memory counter).
+        self._cumulative_path = Path(cumulative_path) if cumulative_path else None
+        self._cumulative_messages = 0
+        if self._cumulative_path and self._cumulative_path.exists():
+            # Fail-closed on corrupt state: a corrupted counter must never
+            # silently reset to zero, because zero re-enables full protection
+            # and hides the corruption from every later audit (LAW.AMP.1:
+            # silence must not read as health). The worker refuses to start
+            # until the state is repaired or explicitly removed.
+            try:
+                state = json.loads(self._cumulative_path.read_text(encoding="utf-8"))
+                self._cumulative_messages = int(state.get("cumulative_messages", 0))
+                if self._cumulative_messages < 0:
+                    raise ValueError("cumulative_messages must be >= 0")
+            except Exception as exc:
+                raise ValueError(
+                    "REFUSED: cumulative counter state is corrupt at "
+                    f"{self._cumulative_path}: {exc}. Repair or remove the file "
+                    "to start with a fresh counter."
+                ) from exc
 
     def _evict_locked(self) -> None:
         """Bound the completed-ticket store (Lean retainBounded contract).
@@ -206,6 +231,27 @@ class SymbioseWorker:
                 }
             tid = self._next_id
             self._next_id += 1
+            self._cumulative_messages += len(messages)
+            if self._cumulative_path:
+                try:
+                    self._cumulative_path.parent.mkdir(parents=True, exist_ok=True)
+                    # Atomic write: write a temp sibling then rename, so a
+                    # crash mid-write never leaves a truncated state file that
+                    # the fail-closed loader would refuse.
+                    tmp = self._cumulative_path.with_suffix(
+                        self._cumulative_path.suffix + ".tmp"
+                    )
+                    tmp.write_text(
+                        json.dumps({"cumulative_messages": self._cumulative_messages})
+                        + "\n",
+                        encoding="utf-8",
+                        newline="\n",
+                    )
+                    os.replace(tmp, self._cumulative_path)
+                except OSError:
+                    # A persistence failure must never block the submission; the
+                    # in-memory counter still advances for this session.
+                    pass
             ticket: Dict[str, Any] = {
                 "id": tid,
                 "hash": digest,
@@ -283,7 +329,9 @@ class SymbioseWorker:
                 dequeued_at = self._clock()
                 queue_ms = max(0.0, (dequeued_at - submitted_at) * 1000.0)
                 plan_started = self._clock()
-                plan = context_budget.plan_compression(messages, config=self._config)
+                plan_config = dict(self._config or {})
+                plan_config["cumulative_messages"] = self._cumulative_messages
+                plan = context_budget.plan_compression(messages, config=plan_config)
                 plan_ended = self._clock()
                 plan_ms = max(0.0, (plan_ended - plan_started) * 1000.0)
                 result = None

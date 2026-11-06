@@ -43,6 +43,12 @@ MAX_KEEP_MESSAGES = 40
 MAX_SUMMARY_CHARS = 20000
 MAX_RESTORE_CHARS = 4000
 PROTECTED_TOOLS = frozenset({"todowrite"})
+# Cumulative-message protection threshold: below this many messages ever
+# processed (including evicted), protected tools are always retained. Past
+# it, protection becomes recency-aware — only protected messages inside the
+# keep window stay hard-protected, so really old protected content yields to
+# newer context (operator design, TODO-45).
+PROTECTION_CUMULATIVE_THRESHOLD = 1000
 NDATA_PLACEHOLDER = "[NDATA]"
 SHED_MARKER = "\n[shed: oldest summary lines moved to RTR index]\n"
 
@@ -485,11 +491,21 @@ def plan_compression(
     count outside the tail walk but inside keep_tokens reporting), so
     TARGET is a soft target: keep_tokens can exceed it by exactly the
     protected/tool-pair additions, reported in the returned plan.
+
+    Protection is recency-aware past PROTECTION_CUMULATIVE_THRESHOLD
+    cumulative messages: below the threshold every protected message is
+    retained; at or above it, only protected messages inside the keep
+    window (the newest max_keep_messages positions) stay hard-protected,
+    so really old protected content becomes evictable to make space for
+    newer context. The cumulative count is the number of messages ever
+    processed, including evicted ones — it grows across sessions and can
+    never stay pinned to the live window size.
     """
     if config:
         trigger_tokens = int(config.get("trigger_tokens", trigger_tokens))
         target_tokens = int(config.get("target_tokens", target_tokens))
         max_keep_messages = int(config.get("max_keep_messages", max_keep_messages))
+    cumulative_messages = int(config.get("cumulative_messages", 0)) if config else 0
     n = len(messages)
     total = sum(_tokens_of(m) for m in messages)
     if total <= trigger_tokens or n == 0:
@@ -531,9 +547,19 @@ def plan_compression(
                     kept_tokens += _tokens_of(messages[i - 1])
                     changed = True
     # Hard protections ride outside the budget walk by design (survey D3:
-    # todowrite plans are the sole record and must never evict).
+    # todowrite plans are the sole record and must never evict). Past
+    # PROTECTION_CUMULATIVE_THRESHOLD cumulative messages, protection is
+    # recency-aware: only protected messages inside the keep window (the
+    # newest max_keep_messages positions) are hard-protected, so really old
+    # protected content becomes evictable to make space for newer context.
+    protect_all = cumulative_messages < PROTECTION_CUMULATIVE_THRESHOLD
+    recency_start = max(0, n - max_keep_messages)
     for i, m in enumerate(messages):
-        if _is_protected(m) and i not in keep:
+        if not _is_protected(m):
+            continue
+        if i in keep:
+            continue
+        if protect_all or i >= recency_start:
             keep.add(i)
             kept_tokens += _tokens_of(m)
     if last_user is not None and last_user not in keep:
