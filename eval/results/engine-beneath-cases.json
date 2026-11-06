@@ -1,14 +1,35 @@
 {
   "schema": "rtr-re.engine-beneath.cases/v1",
   "scope": "RE edition: full architecture case registry",
-  "run_at": "2026-11-06T12:15:40",
+  "run_at": "2026-11-06T12:25:36",
   "summary": {
-    "cases": 7,
-    "passed": 7,
+    "cases": 10,
+    "passed": 10,
     "failed": 0,
     "pass": true
   },
   "cases": [
+    {
+      "case": "corrupted-sink-mid-batch",
+      "description": "Mid-batch sink failure surfaces as failed, never silent pass",
+      "checks": {
+        "worker_reports_failed": 1.0,
+        "error_recorded": 1.0,
+        "sink_attempted_write": 1.0
+      },
+      "required": [
+        "worker_reports_failed",
+        "error_recorded",
+        "sink_attempted_write"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "status": "failed",
+        "error": "simulated mid-batch sink failure",
+        "sink_writes": 1
+      }
+    },
     {
       "case": "corrupted-sink-reports-failed",
       "description": "Corrupted sink surfaces as failed, never silent pass",
@@ -74,7 +95,7 @@
       "failed_required": [],
       "evidence": {
         "sink": {
-          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-39kd393j\\rtrre-8714a4e373a2b6e0.md",
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-yddzv8z8\\rtrre-8714a4e373a2b6e0.md",
           "exists": true,
           "bytes": 305,
           "sha256": "45ba312d9501e2438a91931e70fee15848f39dfdcb4774de2e4d37d546bda2e0",
@@ -177,7 +198,31 @@
         "evict": 161,
         "total_tokens": 200004,
         "keep_tokens": 39004,
-        "plan_ms": 1.851
+        "plan_ms": 1.132
+      }
+    },
+    {
+      "case": "production-scale-extreme-protection-warning",
+      "description": "Extreme scale (>1000k) must not delete protected content",
+      "checks": {
+        "todowrite_survives_extreme": 1.0,
+        "all_accounted": 1.0
+      },
+      "required": [
+        "todowrite_survives_extreme",
+        "all_accounted"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "messages": 1001,
+        "keep": 41,
+        "evict": 960,
+        "total_tokens": 1002004,
+        "keep_tokens": 42004,
+        "plan_ms": 5.858,
+        "todowrite_index": 5,
+        "todowrite_retained": true
       }
     },
     {
@@ -220,6 +265,27 @@
           3,
           4
         ]
+      }
+    },
+    {
+      "case": "worker-cache-deduplicates",
+      "description": "Worker cache deduplicates identical submissions",
+      "checks": {
+        "second_is_cached": 1.0,
+        "same_digest": 1.0,
+        "first_ready": 1.0
+      },
+      "required": [
+        "second_is_cached",
+        "same_digest",
+        "first_ready"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "first_status": "ready",
+        "second_status": "cached",
+        "hash": "a56bd8cd2bb60096"
       }
     }
   ]

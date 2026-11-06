@@ -171,6 +171,104 @@ def case_duplicate() -> Dict[str, Any]:
     )
 
 
+@register_case("worker-cache-deduplicates")
+def case_worker_cache_deduplicates() -> Dict[str, Any]:
+    """The worker returns status 'cached' for a second identical submission."""
+    messages = [
+        _msg("assistant", _blob(12000)),
+        _msg("user", "question"),
+    ]
+    cfg = {"trigger_tokens": 100, "target_tokens": 30, "max_keep_messages": 2}
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-cache-") as temporary:
+        worker = SymbioseWorker(
+            SessionSpanSink(Path(temporary)),
+            cooldown_seconds=0,
+            config=cfg,
+        )
+        try:
+            first = worker.submit(messages)
+            first_completed = worker.wait(int(first["id"]), timeout=10.0)
+            second = worker.submit(messages)
+        finally:
+            worker.close()
+    checks = {
+        "second_is_cached": 1.0 if second.get("status") == "cached" else 0.0,
+        "same_digest": 1.0 if second.get("hash") == first.get("hash") else 0.0,
+        "first_ready": 1.0 if first_completed.get("status") == "ready" else 0.0,
+    }
+    return _verdict(
+        checks,
+        ["second_is_cached", "same_digest", "first_ready"],
+        {
+            "first_status": first_completed.get("status"),
+            "second_status": second.get("status"),
+            "hash": first.get("hash"),
+        },
+        "worker-cache-deduplicates",
+        "Worker cache deduplicates identical submissions",
+    )
+
+
+@register_case("corrupted-sink-mid-batch")
+def case_corrupted_sink_mid_batch() -> Dict[str, Any]:
+    """A sink that fails after writing the first span must surface as failed."""
+
+    class MidBatchExplodingSink:
+        def __init__(self, directory: Path):
+            self.directory = Path(directory)
+            self.writes = 0
+            self.partial_bytes = 0
+
+        def __call__(self, spans, digest=""):
+            path = self.directory / f"rtrre-midbatch-{digest or 'spans'}.md"
+            lines = [f"# RE:Symbiose evicted spans {digest}", ""]
+            for index, span in enumerate(spans):
+                if index >= 1:
+                    # Simulate a mid-batch failure: the first span is already
+                    # written, the second one fails.
+                    raise OSError("simulated mid-batch sink failure")
+                self.writes += 1
+                lines.append(f"## span {span.get('index', '?')}")
+                lines.append(str(span.get("text") or ""))
+                lines.append("")
+            path.write_bytes(("\n".join(lines)).encode("utf-8"))
+            self.partial_bytes = path.stat().st_size
+            return str(path)
+
+    messages = [
+        _msg("assistant", _blob(12000)),
+        _msg("assistant", _blob(12000)),
+        _msg("assistant", _blob(12000)),
+        _msg("user", "latest question"),
+    ]
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-midbatch-") as temporary:
+        sink = MidBatchExplodingSink(Path(temporary))
+        worker = SymbioseWorker(
+            sink,
+            cooldown_seconds=0,
+            config={"trigger_tokens": 100, "target_tokens": 30, "max_keep_messages": 2},
+        )
+        try:
+            ticket = worker.submit(messages)
+            completed = worker.wait(int(ticket["id"]), timeout=10.0)
+        finally:
+            worker.close()
+
+    status = completed.get("status")
+    checks = {
+        "worker_reports_failed": 1.0 if status == "failed" else 0.0,
+        "error_recorded": 1.0 if completed.get("error") else 0.0,
+        "sink_attempted_write": 1.0 if sink.writes >= 1 else 0.0,
+    }
+    return _verdict(
+        checks,
+        ["worker_reports_failed", "error_recorded", "sink_attempted_write"],
+        {"status": status, "error": completed.get("error"), "sink_writes": sink.writes},
+        "corrupted-sink-mid-batch",
+        "Mid-batch sink failure surfaces as failed, never silent pass",
+    )
+
+
 @register_case("protected-tool-todowrite-retained")
 def case_protected_tool() -> Dict[str, Any]:
     """todowrite messages are always retained, even when old and large."""
@@ -272,7 +370,10 @@ def case_preset_axis() -> Dict[str, Any]:
 
 @register_case("production-scale-bounds")
 def case_production_scale() -> Dict[str, Any]:
-    """A production-scale window (many spans, large total) plans within bounds."""
+    """A production-scale window (single-user bound, many spans) plans within bounds."""
+    # Single-user realistic windows sit around 40-200 messages (the keeper's
+    # max_keep_messages is 40-50). 1000-message windows are datacenter scale
+    # and only become relevant when models exceed ~1M context.
     count = 200
     messages = [_msg("assistant", _blob(4000)) for _ in range(count)]
     messages.append(_msg("user", "latest question"))
@@ -300,6 +401,49 @@ def case_production_scale() -> Dict[str, Any]:
         },
         "production-scale-bounds",
         "Production-scale window plans within bounds",
+    )
+
+
+@register_case("production-scale-extreme-protection-warning")
+def case_production_scale_extreme_protection() -> Dict[str, Any]:
+    """WARNING case: at datacenter scale (>1000k context), protected content must survive.
+
+    This is the edge case the operator called out: when the window is extreme,
+    does the keeper still protect todowrite, or does it delete preserved
+    content? If this case fails, the warning fires — protection broke at
+    extreme scale.
+    """
+    count = 1000
+    messages = [_msg("assistant", _blob(4000)) for _ in range(count)]
+    # Bury a todowrite message early in the window — the hardest protection case.
+    messages[5] = _msg("assistant", _blob(12000), tool="todowrite")
+    messages.append(_msg("user", "latest question"))
+    cfg = {"trigger_tokens": 100000, "target_tokens": 40000, "max_keep_messages": 40}
+    started = time.monotonic()
+    plan = plan_compression(messages, config=cfg)
+    elapsed_ms = (time.monotonic() - started) * 1000.0
+    kept = {int(i) for i in plan.get("keep", [])}
+    evicted = {int(i) for i in plan.get("evict", [])}
+    todowrite_retained = 5 in kept and 5 not in evicted
+    checks = {
+        "todowrite_survives_extreme": 1.0 if todowrite_retained else 0.0,
+        "all_accounted": 1.0 if len(kept) + len(evicted) == len(messages) else 0.0,
+    }
+    return _verdict(
+        checks,
+        ["todowrite_survives_extreme", "all_accounted"],
+        {
+            "messages": len(messages),
+            "keep": len(kept),
+            "evict": len(evicted),
+            "total_tokens": plan.get("total_tokens"),
+            "keep_tokens": plan.get("keep_tokens"),
+            "plan_ms": round(elapsed_ms, 3),
+            "todowrite_index": 5,
+            "todowrite_retained": todowrite_retained,
+        },
+        "production-scale-extreme-protection-warning",
+        "Extreme scale (>1000k) must not delete protected content",
     )
 
 
