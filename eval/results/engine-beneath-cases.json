@@ -1,10 +1,10 @@
 {
   "schema": "rtr-re.engine-beneath.cases/v1",
   "scope": "RE edition: full architecture case registry",
-  "run_at": "2026-11-06T13:02:26",
+  "run_at": "2026-11-06T13:14:33",
   "summary": {
-    "cases": 13,
-    "passed": 13,
+    "cases": 14,
+    "passed": 14,
     "failed": 0,
     "pass": true
   },
@@ -302,7 +302,7 @@
       "failed_required": [],
       "evidence": {
         "sink": {
-          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-9ivcgl0i\\rtrre-8714a4e373a2b6e0.md",
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-im4fahae\\rtrre-8714a4e373a2b6e0.md",
           "exists": true,
           "bytes": 305,
           "sha256": "45ba312d9501e2438a91931e70fee15848f39dfdcb4774de2e4d37d546bda2e0",
@@ -385,6 +385,722 @@
       }
     },
     {
+      "case": "preset-axis-full",
+      "description": "Full preset \u00d7 thread \u00d7 parking \u00d7 profile matrix verifies the parking arithmetic",
+      "checks": {
+        "standard_bounds_exact": 1.0,
+        "calibrated_bounds_exact": 1.0,
+        "wide_bounds_exact": 1.0,
+        "fusion-ah_bounds_exact": 1.0,
+        "symbiose-ah_bounds_exact": 1.0,
+        "re-symbiose_bounds_exact": 1.0,
+        "parking_arithmetic_all_cells": 1.0,
+        "public_default_profile": 1.0,
+        "local_system_profile": 1.0
+      },
+      "required": [
+        "standard_bounds_exact",
+        "calibrated_bounds_exact",
+        "wide_bounds_exact",
+        "fusion-ah_bounds_exact",
+        "symbiose-ah_bounds_exact",
+        "re-symbiose_bounds_exact",
+        "parking_arithmetic_all_cells",
+        "public_default_profile",
+        "local_system_profile"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "standard_bounds": {
+          "resolved": [
+            320000,
+            128000,
+            40
+          ],
+          "expected": [
+            320000,
+            128000,
+            40
+          ]
+        },
+        "calibrated_bounds": {
+          "resolved": [
+            40000,
+            20000,
+            40
+          ],
+          "expected": [
+            40000,
+            20000,
+            40
+          ]
+        },
+        "wide_bounds": {
+          "resolved": [
+            640000,
+            256000,
+            40
+          ],
+          "expected": [
+            640000,
+            256000,
+            40
+          ]
+        },
+        "fusion-ah_bounds": {
+          "resolved": [
+            200000,
+            100000,
+            30
+          ],
+          "expected": [
+            200000,
+            100000,
+            30
+          ]
+        },
+        "symbiose-ah_bounds": {
+          "resolved": [
+            250000,
+            100000,
+            40
+          ],
+          "expected": [
+            250000,
+            100000,
+            40
+          ]
+        },
+        "re-symbiose_bounds": {
+          "resolved": [
+            320000,
+            128000,
+            50
+          ],
+          "expected": [
+            320000,
+            128000,
+            50
+          ]
+        },
+        "parking_matrix": {
+          "cells": 84,
+          "mismatches": 0,
+          "rows": [
+            {
+              "models": 1,
+              "threads": 2,
+              "parking": 20,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 1,
+              "threads": 2,
+              "parking": 30,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 1,
+              "threads": 2,
+              "parking": 40,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 1,
+              "threads": 2,
+              "parking": 50,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 1,
+              "threads": 2,
+              "parking": 60,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 1,
+              "threads": 2,
+              "parking": 70,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 1,
+              "threads": 2,
+              "parking": 80,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 1,
+              "threads": 4,
+              "parking": 20,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 1,
+              "threads": 4,
+              "parking": 30,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 1,
+              "threads": 4,
+              "parking": 40,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 1,
+              "threads": 4,
+              "parking": 50,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 1,
+              "threads": 4,
+              "parking": 60,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 1,
+              "threads": 4,
+              "parking": 70,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 1,
+              "threads": 4,
+              "parking": 80,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 1,
+              "threads": 6,
+              "parking": 20,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 6,
+              "parking": 30,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 6,
+              "parking": 40,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 6,
+              "parking": 50,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 6,
+              "parking": 60,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 6,
+              "parking": 70,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 6,
+              "parking": 80,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 8,
+              "parking": 20,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 8,
+              "parking": 30,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 1,
+              "threads": 8,
+              "parking": 40,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 1,
+              "threads": 8,
+              "parking": 50,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 1,
+              "threads": 8,
+              "parking": 60,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 1,
+              "threads": 8,
+              "parking": 70,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 1,
+              "threads": 8,
+              "parking": 80,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 1,
+              "threads": 12,
+              "parking": 20,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 12,
+              "parking": 30,
+              "effective": 9,
+              "expected": 9
+            },
+            {
+              "models": 1,
+              "threads": 12,
+              "parking": 40,
+              "effective": 12,
+              "expected": 12
+            },
+            {
+              "models": 1,
+              "threads": 12,
+              "parking": 50,
+              "effective": 12,
+              "expected": 12
+            },
+            {
+              "models": 1,
+              "threads": 12,
+              "parking": 60,
+              "effective": 12,
+              "expected": 12
+            },
+            {
+              "models": 1,
+              "threads": 12,
+              "parking": 70,
+              "effective": 12,
+              "expected": 12
+            },
+            {
+              "models": 1,
+              "threads": 12,
+              "parking": 80,
+              "effective": 12,
+              "expected": 12
+            },
+            {
+              "models": 1,
+              "threads": 16,
+              "parking": 20,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 1,
+              "threads": 16,
+              "parking": 30,
+              "effective": 9,
+              "expected": 9
+            },
+            {
+              "models": 1,
+              "threads": 16,
+              "parking": 40,
+              "effective": 12,
+              "expected": 12
+            },
+            {
+              "models": 1,
+              "threads": 16,
+              "parking": 50,
+              "effective": 16,
+              "expected": 16
+            },
+            {
+              "models": 1,
+              "threads": 16,
+              "parking": 60,
+              "effective": 16,
+              "expected": 16
+            },
+            {
+              "models": 1,
+              "threads": 16,
+              "parking": 70,
+              "effective": 16,
+              "expected": 16
+            },
+            {
+              "models": 1,
+              "threads": 16,
+              "parking": 80,
+              "effective": 16,
+              "expected": 16
+            },
+            {
+              "models": 2,
+              "threads": 2,
+              "parking": 20,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 2,
+              "threads": 2,
+              "parking": 30,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 2,
+              "threads": 2,
+              "parking": 40,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 2,
+              "threads": 2,
+              "parking": 50,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 2,
+              "threads": 2,
+              "parking": 60,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 2,
+              "threads": 2,
+              "parking": 70,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 2,
+              "threads": 2,
+              "parking": 80,
+              "effective": 2,
+              "expected": 2
+            },
+            {
+              "models": 2,
+              "threads": 4,
+              "parking": 20,
+              "effective": 3,
+              "expected": 3
+            },
+            {
+              "models": 2,
+              "threads": 4,
+              "parking": 30,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 4,
+              "parking": 40,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 4,
+              "parking": 50,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 4,
+              "parking": 60,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 4,
+              "parking": 70,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 4,
+              "parking": 80,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 6,
+              "parking": 20,
+              "effective": 3,
+              "expected": 3
+            },
+            {
+              "models": 2,
+              "threads": 6,
+              "parking": 30,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 6,
+              "parking": 40,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 6,
+              "parking": 50,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 6,
+              "parking": 60,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 6,
+              "parking": 70,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 6,
+              "parking": 80,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 8,
+              "parking": 20,
+              "effective": 3,
+              "expected": 3
+            },
+            {
+              "models": 2,
+              "threads": 8,
+              "parking": 30,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 8,
+              "parking": 40,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 8,
+              "parking": 50,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 2,
+              "threads": 8,
+              "parking": 60,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 2,
+              "threads": 8,
+              "parking": 70,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 2,
+              "threads": 8,
+              "parking": 80,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 2,
+              "threads": 12,
+              "parking": 20,
+              "effective": 3,
+              "expected": 3
+            },
+            {
+              "models": 2,
+              "threads": 12,
+              "parking": 30,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 12,
+              "parking": 40,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 12,
+              "parking": 50,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 2,
+              "threads": 12,
+              "parking": 60,
+              "effective": 9,
+              "expected": 9
+            },
+            {
+              "models": 2,
+              "threads": 12,
+              "parking": 70,
+              "effective": 11,
+              "expected": 11
+            },
+            {
+              "models": 2,
+              "threads": 12,
+              "parking": 80,
+              "effective": 12,
+              "expected": 12
+            },
+            {
+              "models": 2,
+              "threads": 16,
+              "parking": 20,
+              "effective": 3,
+              "expected": 3
+            },
+            {
+              "models": 2,
+              "threads": 16,
+              "parking": 30,
+              "effective": 4,
+              "expected": 4
+            },
+            {
+              "models": 2,
+              "threads": 16,
+              "parking": 40,
+              "effective": 6,
+              "expected": 6
+            },
+            {
+              "models": 2,
+              "threads": 16,
+              "parking": 50,
+              "effective": 8,
+              "expected": 8
+            },
+            {
+              "models": 2,
+              "threads": 16,
+              "parking": 60,
+              "effective": 9,
+              "expected": 9
+            },
+            {
+              "models": 2,
+              "threads": 16,
+              "parking": 70,
+              "effective": 11,
+              "expected": 11
+            },
+            {
+              "models": 2,
+              "threads": 16,
+              "parking": 80,
+              "effective": 12,
+              "expected": 12
+            }
+          ]
+        },
+        "public_default": {
+          "cpu_profile": "public-default",
+          "threads_per_model": 4,
+          "effective_threads_per_model": 4,
+          "parking_percent": 60,
+          "modality": "rtr-full",
+          "logical_processors": 32,
+          "parking_budget_threads": 19,
+          "planned_threads_per_engine": 8
+        },
+        "local_system": {
+          "cpu_profile": "local-system",
+          "threads_per_model": 8,
+          "effective_threads_per_model": 8,
+          "parking_percent": 80,
+          "modality": "rtr-full",
+          "logical_processors": 32,
+          "parking_budget_threads": 25,
+          "planned_threads_per_engine": 16
+        }
+      }
+    },
+    {
       "case": "production-scale-bounds",
       "description": "Production-scale window plans within bounds",
       "checks": {
@@ -405,7 +1121,7 @@
         "evict": 161,
         "total_tokens": 200004,
         "keep_tokens": 39004,
-        "plan_ms": 1.01
+        "plan_ms": 1.014
       }
     },
     {
@@ -429,7 +1145,7 @@
         "evict": 963,
         "total_tokens": 1004004,
         "keep_tokens": 39004,
-        "plan_ms": 5.673,
+        "plan_ms": 5.931,
         "cumulative_messages": 1001,
         "old_todo_index": 5,
         "old_todo_retained": false,

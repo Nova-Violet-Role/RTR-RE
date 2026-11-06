@@ -368,6 +368,142 @@ def case_preset_axis() -> Dict[str, Any]:
     )
 
 
+@register_case("preset-axis-full")
+def case_preset_axis_full() -> Dict[str, Any]:
+    """Full preset × thread-mode × parking × profile axis matrix verifies the parking arithmetic."""
+    from context_budget import effective_threads_for_model, resolve_retrieval_profile
+
+    checks: Dict[str, float] = {}
+    evidence: Dict[str, Any] = {}
+
+    # 1. Every keeper preset resolves its declared bounds exactly.
+    presets = [
+        "standard",
+        "calibrated",
+        "wide",
+        "fusion-ah",
+        "symbiose-ah",
+        "re-symbiose",
+    ]
+    expected_bounds = {
+        "standard": (320000, 128000, 40),
+        "calibrated": (40000, 20000, 40),
+        "wide": (640000, 256000, 40),
+        "fusion-ah": (200000, 100000, 30),
+        "symbiose-ah": (250000, 100000, 40),
+        "re-symbiose": (320000, 128000, 50),
+    }
+    for name in presets:
+        _, bounds = keeper_preset(name)
+        trig = int(bounds.get("triggerTokens", 0))
+        tgt = int(bounds.get("targetTokens", 0))
+        mk = int(bounds.get("maxKeepMessages", 0))
+        exp_trig, exp_tgt, exp_mk = expected_bounds[name]
+        ok = trig == exp_trig and tgt == exp_tgt and mk == exp_mk
+        checks[f"{name}_bounds_exact"] = 1.0 if ok else 0.0
+        evidence[f"{name}_bounds"] = {
+            "resolved": [trig, tgt, mk],
+            "expected": [exp_trig, exp_tgt, exp_mk],
+        }
+
+    # 2. Parking arithmetic verified across the full axis matrix (deterministic, 32 logical processors).
+    thread_modes = [2, 4, 6, 8, 12, 16]
+    parking_percents = [20, 30, 40, 50, 60, 70, 80]
+    processors = 32
+    rows: List[Dict[str, Any]] = []
+    mismatches = 0
+    cells = 0
+    for model_count in (1, 2):
+        for t in thread_modes:
+            for p in parking_percents:
+                got = effective_threads_for_model(
+                    t, p, model_count=model_count, logical_processors=processors
+                )
+                parked_budget = int(processors * p / 100)
+                per_model = max(1, parked_budget // model_count)
+                expected_val = max(1, min(t, per_model))
+                cells += 1
+                if got != expected_val:
+                    mismatches += 1
+                rows.append(
+                    {
+                        "models": model_count,
+                        "threads": t,
+                        "parking": p,
+                        "effective": got,
+                        "expected": expected_val,
+                    }
+                )
+    checks["parking_arithmetic_all_cells"] = 1.0 if mismatches == 0 else 0.0
+    evidence["parking_matrix"] = {
+        "cells": cells,
+        "mismatches": mismatches,
+        "rows": rows,
+    }
+
+    # 3. Profile defaults resolve on this machine (32 logical processors, rtr-full = 2 models).
+    pub = resolve_retrieval_profile({})
+    pub_ok = (
+        pub["cpu_profile"] == "public-default"
+        and pub["threads_per_model"] == 4
+        and pub["parking_percent"] == 60
+        and pub["modality"] == "rtr-full"
+        and len(pub["models"]) == 2
+    )
+    checks["public_default_profile"] = 1.0 if pub_ok else 0.0
+    evidence["public_default"] = {
+        k: pub[k]
+        for k in (
+            "cpu_profile",
+            "threads_per_model",
+            "effective_threads_per_model",
+            "parking_percent",
+            "modality",
+            "logical_processors",
+            "parking_budget_threads",
+            "planned_threads_per_engine",
+        )
+    }
+
+    loc = resolve_retrieval_profile(
+        {"OPENCODE_MEMORY_RTR_PRESET_PROFILE": "local-system"}
+    )
+    loc_ok = (
+        loc["cpu_profile"] == "local-system"
+        and loc["threads_per_model"] == 8
+        and loc["parking_percent"] == 80
+        and loc["modality"] == "rtr-full"
+        and len(loc["models"]) == 2
+    )
+    checks["local_system_profile"] = 1.0 if loc_ok else 0.0
+    evidence["local_system"] = {
+        k: loc[k]
+        for k in (
+            "cpu_profile",
+            "threads_per_model",
+            "effective_threads_per_model",
+            "parking_percent",
+            "modality",
+            "logical_processors",
+            "parking_budget_threads",
+            "planned_threads_per_engine",
+        )
+    }
+
+    required = [f"{name}_bounds_exact" for name in presets] + [
+        "parking_arithmetic_all_cells",
+        "public_default_profile",
+        "local_system_profile",
+    ]
+    return _verdict(
+        checks,
+        required,
+        evidence,
+        "preset-axis-full",
+        "Full preset × thread × parking × profile matrix verifies the parking arithmetic",
+    )
+
+
 @register_case("production-scale-bounds")
 def case_production_scale() -> Dict[str, Any]:
     """A production-scale window (single-user bound, many spans) plans within bounds."""

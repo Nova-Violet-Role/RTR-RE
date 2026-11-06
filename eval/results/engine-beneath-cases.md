@@ -1,7 +1,7 @@
 # Engine Beneath — case scoreboard (RE edition)
 
-- Run: 2026-11-06T13:02:26
-- Cases: 13 — passed 13, failed 0
+- Run: 2026-11-06T13:14:33
+- Cases: 14 — passed 14, failed 0
 - Verdict: **PASS**
 
 | Case | Verdict | Required checks |
@@ -14,6 +14,7 @@
 | duplicate-submission-deterministic | pass | same_keep, same_evict, same_total_tokens |
 | live-engine-sink-roundtrip | pass | verdict_pass, sink_exists, sink_has_marker |
 | preset-axis-all-six | pass | standard_resolves, calibrated_resolves, wide_resolves, fusion-ah_resolves, symbiose-ah_resolves, re-symbiose_resolves |
+| preset-axis-full | pass | standard_bounds_exact, calibrated_bounds_exact, wide_bounds_exact, fusion-ah_bounds_exact, symbiose-ah_bounds_exact, re-symbiose_bounds_exact, parking_arithmetic_all_cells, public_default_profile, local_system_profile |
 | production-scale-bounds | pass | all_accounted, keep_within_max, compress_triggered |
 | production-scale-extreme-protection-warning | pass | old_todo_evicted_past_threshold, recent_todo_retained, all_accounted |
 | protected-tool-todowrite-retained | pass | todowrite_retained |
