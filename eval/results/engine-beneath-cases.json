@@ -1,0 +1,226 @@
+{
+  "schema": "rtr-re.engine-beneath.cases/v1",
+  "scope": "RE edition: full architecture case registry",
+  "run_at": "2026-11-06T12:15:40",
+  "summary": {
+    "cases": 7,
+    "passed": 7,
+    "failed": 0,
+    "pass": true
+  },
+  "cases": [
+    {
+      "case": "corrupted-sink-reports-failed",
+      "description": "Corrupted sink surfaces as failed, never silent pass",
+      "checks": {
+        "worker_reports_failed": 1.0,
+        "error_recorded": 1.0
+      },
+      "required": [
+        "worker_reports_failed",
+        "error_recorded"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "status": "failed",
+        "error": "simulated sink failure"
+      }
+    },
+    {
+      "case": "duplicate-submission-deterministic",
+      "description": "Identical submissions produce identical plans",
+      "checks": {
+        "same_keep": 1.0,
+        "same_evict": 1.0,
+        "same_total_tokens": 1.0
+      },
+      "required": [
+        "same_keep",
+        "same_evict",
+        "same_total_tokens"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "keep_first": [
+          1
+        ],
+        "keep_second": [
+          1
+        ],
+        "evict_first": [
+          0
+        ],
+        "evict_second": [
+          0
+        ]
+      }
+    },
+    {
+      "case": "live-engine-sink-roundtrip",
+      "description": "Real sink round-trips evicted spans",
+      "checks": {
+        "verdict_pass": 1.0,
+        "sink_exists": 1.0,
+        "sink_has_marker": 1.0
+      },
+      "required": [
+        "verdict_pass",
+        "sink_exists",
+        "sink_has_marker"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "sink": {
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-39kd393j\\rtrre-8714a4e373a2b6e0.md",
+          "exists": true,
+          "bytes": 305,
+          "sha256": "45ba312d9501e2438a91931e70fee15848f39dfdcb4774de2e4d37d546bda2e0",
+          "span_markers": 2
+        }
+      }
+    },
+    {
+      "case": "preset-axis-all-six",
+      "description": "All six keeper presets resolve and plan",
+      "checks": {
+        "standard_resolves": 1.0,
+        "calibrated_resolves": 1.0,
+        "wide_resolves": 1.0,
+        "fusion-ah_resolves": 1.0,
+        "symbiose-ah_resolves": 1.0,
+        "re-symbiose_resolves": 1.0
+      },
+      "required": [
+        "standard_resolves",
+        "calibrated_resolves",
+        "wide_resolves",
+        "fusion-ah_resolves",
+        "symbiose-ah_resolves",
+        "re-symbiose_resolves"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "presets": {
+          "standard": {
+            "resolved": "standard",
+            "trigger": 320000,
+            "target": 128000,
+            "maxKeep": 40,
+            "plan_compress": false,
+            "plan_keep_count": 43
+          },
+          "calibrated": {
+            "resolved": "calibrated",
+            "trigger": 40000,
+            "target": 20000,
+            "maxKeep": 40,
+            "plan_compress": true,
+            "plan_keep_count": 7
+          },
+          "wide": {
+            "resolved": "wide",
+            "trigger": 640000,
+            "target": 256000,
+            "maxKeep": 40,
+            "plan_compress": false,
+            "plan_keep_count": 43
+          },
+          "fusion-ah": {
+            "resolved": "fusion-ah",
+            "trigger": 200000,
+            "target": 100000,
+            "maxKeep": 30,
+            "plan_compress": false,
+            "plan_keep_count": 33
+          },
+          "symbiose-ah": {
+            "resolved": "symbiose-ah",
+            "trigger": 250000,
+            "target": 100000,
+            "maxKeep": 40,
+            "plan_compress": false,
+            "plan_keep_count": 43
+          },
+          "re-symbiose": {
+            "resolved": "re-symbiose",
+            "trigger": 320000,
+            "target": 128000,
+            "maxKeep": 50,
+            "plan_compress": false,
+            "plan_keep_count": 53
+          }
+        }
+      }
+    },
+    {
+      "case": "production-scale-bounds",
+      "description": "Production-scale window plans within bounds",
+      "checks": {
+        "all_accounted": 1.0,
+        "keep_within_max": 1.0,
+        "compress_triggered": 1.0
+      },
+      "required": [
+        "all_accounted",
+        "keep_within_max",
+        "compress_triggered"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "messages": 201,
+        "keep": 40,
+        "evict": 161,
+        "total_tokens": 200004,
+        "keep_tokens": 39004,
+        "plan_ms": 1.851
+      }
+    },
+    {
+      "case": "protected-tool-todowrite-retained",
+      "description": "Protected tool survives eviction",
+      "checks": {
+        "todowrite_retained": 1.0
+      },
+      "required": [
+        "todowrite_retained"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "keep": [
+          0,
+          2
+        ],
+        "protected_tools": [
+          "todowrite"
+        ]
+      }
+    },
+    {
+      "case": "tool-pair-fixpoint",
+      "description": "Tool call + result stay together",
+      "checks": {
+        "call_retained": 1.0,
+        "result_retained": 1.0
+      },
+      "required": [
+        "call_retained",
+        "result_retained"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "keep": [
+          2,
+          3,
+          4
+        ]
+      }
+    }
+  ]
+}
