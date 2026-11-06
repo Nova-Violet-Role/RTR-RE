@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}/hooks/rtr-activate.js\"",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { $pluginRoot = if ($env:CLAUDE_PLUGIN_ROOT) { $env:CLAUDE_PLUGIN_ROOT } else { $env:PLUGIN_ROOT }; node \"$pluginRoot\\hooks\\rtr-activate.js\" }",
+            "timeout": 5,
+            "statusMessage": "Loading rtr-re..."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}/hooks/rtr-prompt.js\"",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { $pluginRoot = if ($env:CLAUDE_PLUGIN_ROOT) { $env:CLAUDE_PLUGIN_ROOT } else { $env:PLUGIN_ROOT }; node \"$pluginRoot\\hooks\\rtr-prompt.js\" }",
+            "timeout": 5,
+            "statusMessage": "Keeping rtr-re active..."
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}/hooks/rtr-subagent.js\"",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { $pluginRoot = if ($env:CLAUDE_PLUGIN_ROOT) { $env:CLAUDE_PLUGIN_ROOT } else { $env:PLUGIN_ROOT }; node \"$pluginRoot\\hooks\\rtr-subagent.js\" }",
+            "timeout": 5,
+            "statusMessage": "Loading rtr-re..."
+          }
+        ]
+      }
+    ]
+  }
+}

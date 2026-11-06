@@ -1,0 +1,268 @@
+{
+  "date": "2026-10-27",
+  "target": "C:\\RTR-RE",
+  "substrate": "windows-latest",
+  "read": 140911,
+  "of": 140911,
+  "seconds": "2.712",
+  "measures": [
+    {
+      "verb": 1,
+      "name": "planimetry",
+      "value": 140911,
+      "unit": "files",
+      "instrument": "lib/geometry.mjs instrument 1",
+      "seconds": "0.065",
+      "confidence": "measured",
+      "detail": {
+        "bytes": 7058414547,
+        "byTop": [
+          {
+            "dir": "formal",
+            "files": 140614,
+            "bytes": 7038819679
+          },
+          {
+            "dir": "media",
+            "files": 114,
+            "bytes": 1869492
+          },
+          {
+            "dir": "eval",
+            "files": 45,
+            "bytes": 13984964
+          },
+          {
+            "dir": "execution",
+            "files": 35,
+            "bytes": 685061
+          },
+          {
+            "dir": "artifacts",
+            "files": 34,
+            "bytes": 100069
+          },
+          {
+            "dir": "directives",
+            "files": 33,
+            "bytes": 76911
+          },
+          {
+            "dir": "(root)",
+            "files": 16,
+            "bytes": 153420
+          },
+          {
+            "dir": ".github",
+            "files": 12,
+            "bytes": 20412
+          },
+          {
+            "dir": "dist",
+            "files": 3,
+            "bytes": 2619933
+          },
+          {
+            "dir": "LICENSES",
+            "files": 2,
+            "bytes": 48315
+          },
+          {
+            "dir": "opencode-plugin",
+            "files": 2,
+            "bytes": 35933
+          },
+          {
+            "dir": ".opencode",
+            "files": 1,
+            "bytes": 358
+          }
+        ]
+      }
+    },
+    {
+      "verb": 5,
+      "name": "bathymetry",
+      "value": 14,
+      "unit": "levels",
+      "instrument": "lib/geometry.mjs instrument 5",
+      "seconds": "0.001",
+      "confidence": "measured",
+      "detail": {
+        "deepest": "formal/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Algebra/Group/Action/Pointwise/Set/Basic.ilean"
+      }
+    },
+    {
+      "verb": 6,
+      "name": "altimetry",
+      "value": 1,
+      "unit": "edges of the longest import chain",
+      "instrument": "lib/geometry.mjs instrument 6",
+      "seconds": "0.016",
+      "confidence": "measured",
+      "detail": {
+        "from": "opencode-plugin/rtr-re-keeper.test.mjs"
+      }
+    },
+    {
+      "verb": 9,
+      "name": "ergonometry",
+      "value": 98,
+      "unit": "lines before the first invocation or example",
+      "instrument": "lib/geometry.mjs instrument 9",
+      "seconds": "0.000",
+      "confidence": "measured",
+      "detail": {
+        "found": true
+      }
+    },
+    {
+      "verb": 15,
+      "name": "codicology",
+      "value": 45,
+      "unit": "kinds of file",
+      "instrument": "lib/geometry.mjs instrument 15",
+      "seconds": "0.018",
+      "confidence": "measured",
+      "detail": {
+        "byExt": [
+          [
+            ".hash",
+            60894
+          ],
+          [
+            ".lean",
+            9522
+          ],
+          [
+            ".trace",
+            8724
+          ],
+          [
+            ".olean",
+            8710
+          ],
+          [
+            ".c",
+            8707
+          ],
+          [
+            ".ilean",
+            8707
+          ],
+          [
+            ".ir",
+            8690
+          ],
+          [
+            ".sig",
+            8690
+          ],
+          [
+            ".private",
+            8690
+          ],
+          [
+            ".server",
+            8690
+          ],
+          [
+            ".json",
+            286
+          ],
+          [
+            ".md",
+            129
+          ]
+        ],
+        "tracked": null
+      }
+    },
+    {
+      "verb": 10,
+      "name": "chronometry",
+      "value": "0.100",
+      "unit": "s over every instrument",
+      "instrument": "lib/geometry.mjs instrument 10",
+      "seconds": "0.000",
+      "confidence": "measured",
+      "detail": {
+        "per": {
+          "planimetry": "0.065",
+          "bathymetry": "0.001",
+          "altimetry": "0.016",
+          "ergonometry": "0.000",
+          "codicology": "0.018"
+        }
+      }
+    },
+    {
+      "verb": 17,
+      "name": "conspectus",
+      "value": 10,
+      "unit": "shapes drawn from the measures",
+      "instrument": "lib/figure.mjs renderCells",
+      "seconds": "0.000",
+      "confidence": "measured",
+      "detail": {
+        "grid": "80x12"
+      }
+    }
+  ],
+  "unmeasured": [
+    {
+      "verb": 2,
+      "name": "ichnography",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 3,
+      "name": "goniometry",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 4,
+      "name": "hypsometry",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 7,
+      "name": "odometry",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 8,
+      "name": "tachymetry",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 11,
+      "name": "photogrammetry",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 12,
+      "name": "triangulation",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 14,
+      "name": "intraspection",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 16,
+      "name": "foliation",
+      "why": "the tree gives this instrument nothing to read"
+    },
+    {
+      "verb": 13,
+      "name": "trilateration",
+      "why": "needs measures 4, 5 and 7 in scope"
+    }
+  ],
+  "figure": {
+    "xml": "<figure grid=\"80x12\" mark=\"measured\" title=\"survey of RTR-RE\"><rect x=\"0\" y=\"0\" w=\"80\" h=\"3\" name=\"formal\"/><label x=\"0\" y=\"4\">140614 files  formal</label><label x=\"0\" y=\"5\">  114 files  media</label><label x=\"0\" y=\"6\">   45 files  eval</label><label x=\"0\" y=\"7\">   35 files  execution</label><label x=\"0\" y=\"8\">   34 files  artifacts</label><label x=\"0\" y=\"9\">   33 files  directives</label><label x=\"0\" y=\"10\">   16 files  (root)</label><label x=\"0\" y=\"11\">   12 files  .github</label><label x=\"40\" y=\"5\">bathymetry 14 levels</label></figure>",
+    "cut": "<figure grid=\"60x3\" mark=\"guessed\"><rect x=\"0\" y=\"0\" w=\"60\" h=\"3\" name=\"formal\"/></figure>"
+  }
+}

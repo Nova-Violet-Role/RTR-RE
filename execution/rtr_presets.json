@@ -1,0 +1,180 @@
+{
+  "schema": "rtr.preset-registry/v2",
+  "sections": {
+    "retrieval": {
+      "owner": "RTR: Role Type Retrieval",
+      "fields": [
+        "modalities",
+        "threadModes",
+        "parkingPercents",
+        "cpuProfiles",
+        "cpuProfileAliases",
+        "defaultCpuProfile"
+      ]
+    },
+    "rtrReContext": {
+      "owner": "RTR-RE: expanded live-context product",
+      "fields": [
+        "defaultKeeperPreset",
+        "keeperAliases",
+        "keeperPresets"
+      ],
+      "values": [
+        "triggerTokens",
+        "targetTokens",
+        "maxKeepMessages"
+      ]
+    }
+  },
+  "defaultKeeperPreset": "symbiose-ah",
+  "keeperAliases": {
+    "re-symbiose-ah": "re-symbiose"
+  },
+  "keeperPresets": {
+    "standard": {
+      "displayName": "Standard",
+      "triggerTokens": 320000,
+      "targetTokens": 128000,
+      "maxKeepMessages": 40
+    },
+    "calibrated": {
+      "displayName": "Calibrated",
+      "triggerTokens": 40000,
+      "targetTokens": 20000,
+      "maxKeepMessages": 40
+    },
+    "wide": {
+      "displayName": "Wide",
+      "triggerTokens": 640000,
+      "targetTokens": 256000,
+      "maxKeepMessages": 40
+    },
+    "fusion-ah": {
+      "displayName": "Fusion-AH!",
+      "triggerTokens": 200000,
+      "targetTokens": 100000,
+      "maxKeepMessages": 30
+    },
+    "symbiose-ah": {
+      "displayName": "Symbiose-AH!",
+      "triggerTokens": 250000,
+      "targetTokens": 100000,
+      "maxKeepMessages": 40
+    },
+    "re-symbiose": {
+      "displayName": "Re-Symbiose",
+      "triggerTokens": 320000,
+      "targetTokens": 128000,
+      "maxKeepMessages": 50
+    }
+  },
+  "modalities": {
+    "rtr-full": {
+      "displayName": "RTR-FULL",
+      "models": [
+        "Snowflake/snowflake-arctic-embed-m",
+        "BAAI/bge-base-en-v1.5"
+      ],
+      "hybrid": true,
+      "expansion": true,
+      "evidence": "eval/TAXONOMY.md:rtr-full"
+    },
+    "rtr-arctic": {
+      "displayName": "RTR-ARCTIC",
+      "models": [
+        "Snowflake/snowflake-arctic-embed-m"
+      ],
+      "hybrid": true,
+      "expansion": true,
+      "evidence": "eval/TAXONOMY.md:rtr-arctic"
+    },
+    "rtr-bge": {
+      "displayName": "RTR-BGE",
+      "models": [
+        "BAAI/bge-base-en-v1.5"
+      ],
+      "hybrid": true,
+      "expansion": true,
+      "evidence": "eval/TAXONOMY.md:rtr-bge"
+    },
+    "rag-hybrid-base": {
+      "displayName": "RAG-HYBRID-BASE",
+      "models": [
+        "BAAI/bge-base-en-v1.5"
+      ],
+      "hybrid": true,
+      "expansion": false,
+      "evidence": "eval/TAXONOMY.md:rag-hybrid-base"
+    },
+    "rag-dense-base": {
+      "displayName": "RAG-DENSE-BASE",
+      "models": [
+        "BAAI/bge-base-en-v1.5"
+      ],
+      "hybrid": false,
+      "expansion": false,
+      "evidence": "eval/TAXONOMY.md:rag-dense-base"
+    },
+    "rag-hybrid": {
+      "displayName": "RAG-HYBRID",
+      "models": [
+        "BAAI/bge-small-en-v1.5"
+      ],
+      "hybrid": true,
+      "expansion": false,
+      "evidence": "eval/TAXONOMY.md:rag-hybrid"
+    },
+    "rag-dense": {
+      "displayName": "RAG-DENSE",
+      "models": [
+        "BAAI/bge-small-en-v1.5"
+      ],
+      "hybrid": false,
+      "expansion": false,
+      "evidence": "eval/TAXONOMY.md:rag-dense"
+    },
+    "custom": {
+      "displayName": "CUSTOM",
+      "models": [],
+      "hybrid": true,
+      "expansion": true,
+      "evidence": "operator-selected OPENCODE_MEMORY_EMBED_MODELS"
+    }
+  },
+  "threadModes": [
+    2,
+    4,
+    6,
+    8,
+    12,
+    16
+  ],
+  "parkingPercents": [
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80
+  ],
+  "cpuProfiles": {
+    "public-default": {
+      "displayName": "Public Default",
+      "modality": "rtr-full",
+      "threadsPerModel": 4,
+      "parkingPercent": 60
+    },
+    "local-system": {
+      "displayName": "Local System",
+      "modality": "rtr-full",
+      "threadsPerModel": 8,
+      "parkingPercent": 80
+    }
+  },
+  "cpuProfileAliases": {
+    "balanced": "public-default",
+    "performance": "local-system"
+  },
+  "defaultCpuProfile": "public-default"
+}

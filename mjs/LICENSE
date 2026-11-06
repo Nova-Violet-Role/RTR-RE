@@ -1,0 +1,13 @@
+RTR-RE .mjs edition — dual-licensed under EUPL-1.2 and AGPL-3.0-or-later.
+Copyright: Nova-Violet Role ORG
+SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
+
+Full license texts ship in the repository root as LICENSE-EUPL-1.2.txt
+and LICENSE-AGPL-3.0.txt (also under LICENSES/).
+
+Attribution: the plugin/hook FORMS in this directory mirror the agile
+plugin by Hubert Lepicki (MIT, https://github.com/hubertlepicki/agile),
+whose host-detection and hook-output shapes derive from ponytail by
+DietrichGebert (MIT, https://github.com/DietrichGebert/ponytail).
+The rules, memory loop, AUTO-OPTIMIZE pass, and all RTR logic are
+Nova-Violet Role ORG work under the dual license above.

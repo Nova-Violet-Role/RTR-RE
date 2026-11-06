@@ -1,0 +1,40 @@
+{
+  "name": "@nova-violet-role/rtr-re-mjs",
+  "version": "0.4.1",
+  "description": "RTR-RE persistent memory mode without an MCP server: rtr-cli bridge, context budget discipline, and AUTO-OPTIMIZE between file reads and code writes. OpenCode plugin + Claude Code / Codex hooks, one shared core.",
+  "keywords": ["opencode-plugin", "opencode", "memory", "rag", "retrieval", "context", "optimize"],
+  "license": "AGPL-3.0-or-later OR EUPL-1.2",
+  "author": {
+    "name": "Nova-Violet Role ORG",
+    "url": "https://github.com/Nova-Violet-Role"
+  },
+  "homepage": "https://github.com/Nova-Violet-Role/rtr-role-type-retrieval",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nova-Violet-Role/rtr-role-type-retrieval.git",
+    "directory": "mjs"
+  },
+  "bugs": {
+    "url": "https://github.com/Nova-Violet-Role/rtr-role-type-retrieval/issues"
+  },
+  "main": "./.opencode/plugins/rtr.mjs",
+  "exports": {
+    ".": "./.opencode/plugins/rtr.mjs",
+    "./plugin": "./.opencode/plugins/rtr.mjs"
+  },
+  "files": [
+    "AGENTS.md",
+    "hooks/",
+    "skills/",
+    ".opencode/",
+    "plugin.json",
+    "LICENSE"
+  ],
+  "scripts": {
+    "generate:agents": "node scripts/generate-agents.js",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

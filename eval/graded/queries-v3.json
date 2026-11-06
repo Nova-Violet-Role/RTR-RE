@@ -1,0 +1,198 @@
+{
+  "version": "gold-v3-2026-10-27",
+  "seed": 20260928,
+  "queries": [
+    {
+      "id": "NT-G1",
+      "corpus": "nt-studies",
+      "taxon": "G1",
+      "text": "How is the SVG DTD family modularized across its module files?",
+      "intent": "SVG module architecture census",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "NT-G2",
+      "corpus": "nt-studies",
+      "taxon": "G2",
+      "text": "What distinguishes DAISY and DTBook accessible book formats in the corpus?",
+      "intent": "DAISY DTBook accessible formats",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "NT-G1B",
+      "corpus": "nt-studies",
+      "taxon": "G3",
+      "text": "How do XHTML strict and transitional variants differ in element counts and modularization?",
+      "intent": "XHTML variants comparison",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "NT-G3",
+      "corpus": "nt-studies",
+      "taxon": "G1",
+      "text": "Which studies census DITA plugin and shell distributions?",
+      "intent": "DITA plugins shells census",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "NT-G4",
+      "corpus": "nt-studies",
+      "taxon": "G1",
+      "text": "How are argument variants and sigil variables catalogued?",
+      "intent": "arguments and sigils catalog",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "NT-G5",
+      "corpus": "nt-studies",
+      "taxon": "G5",
+      "text": "Where is the complete numbering system with polyglot examples collected?",
+      "intent": "Greek numbering collection paraphrase",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "NT-G1C",
+      "corpus": "nt-studies",
+      "taxon": "G1",
+      "text": "What does the journal article tag suite distribution contain?",
+      "intent": "JATS distribution census",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "NT-G2B",
+      "corpus": "nt-studies",
+      "taxon": "G2",
+      "text": "How was the whole DTD tree rewritten and audited batch by batch?",
+      "intent": "rewrite audit programme",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G1",
+      "corpus": "dita-spec",
+      "taxon": "G2",
+      "text": "How does conditional processing filter and flag content with DITAVAL conditions?",
+      "intent": "conditional processing DITAVAL procedure",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G3",
+      "corpus": "dita-spec",
+      "taxon": "G3",
+      "text": "How do key scopes change which key definition wins?",
+      "intent": "key scopes precedence",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G4",
+      "corpus": "dita-spec",
+      "taxon": "G4",
+      "text": "Show an example of pushing reused content before another element.",
+      "intent": "conaction pushbefore example",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G4B",
+      "corpus": "dita-spec",
+      "taxon": "G4",
+      "text": "How can chunking combine topics or split a nested hierarchy apart?",
+      "intent": "chunk combine split examples",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G3B",
+      "corpus": "dita-spec",
+      "taxon": "G3",
+      "text": "Restrict a content model with constraints in DTD versus RNG: what differs?",
+      "intent": "constraints DTD RNG comparison",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G2",
+      "corpus": "dita-spec",
+      "taxon": "G2",
+      "text": "How does metadata cascade from one map to another?",
+      "intent": "metadata cascading maps",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G1B",
+      "corpus": "dita-spec",
+      "taxon": "G1",
+      "text": "What makes a document-type shell conformant and configurable?",
+      "intent": "shells conformance configuration",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "DT-G6",
+      "corpus": "dita-spec",
+      "taxon": "G6",
+      "text": "ditaaddressing and fileext: addressing and filename extension rules",
+      "intent": "identifier intent addressing extensions",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G3",
+      "corpus": "dtd-commands",
+      "taxon": "G3",
+      "text": "Which command should grow a sound codebase by replacement rather than beside-the-old additions?",
+      "intent": "overhaul versus amplify enhance comparison",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G2",
+      "corpus": "dtd-commands",
+      "taxon": "G2",
+      "text": "How do I bound a search space before enumerating it?",
+      "intent": "count bounds before search procedure",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G1",
+      "corpus": "dtd-commands",
+      "taxon": "G1",
+      "text": "Which channels are unclean by default and what rite makes each safe?",
+      "intent": "clean unclean channels rites",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G1B",
+      "corpus": "dtd-commands",
+      "taxon": "G1",
+      "text": "How does the memory palace fixed walk store and recall facts?",
+      "intent": "loci fixed walk recall",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G3B",
+      "corpus": "dtd-commands",
+      "taxon": "G3",
+      "text": "Compare decision frameworks for choosing among options under time pressure.",
+      "intent": "decision frameworks comparison",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G2B",
+      "corpus": "dtd-commands",
+      "taxon": "G2",
+      "text": "How do I audit a skill, heal it, or create a new agent skill?",
+      "intent": "skill audit heal create procedure",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G1C",
+      "corpus": "dtd-commands",
+      "taxon": "G1",
+      "text": "Which command declares codebase shape without rewriting code?",
+      "intent": "architect declare shape no rewrite",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    },
+    {
+      "id": "CMD-G6",
+      "corpus": "dtd-commands",
+      "taxon": "G6",
+      "text": "ccc and corpus routing: which search instrument by what is known",
+      "intent": "identifier intent search routing ccc corpus",
+      "authoring": "curated from staged title/family inventory before graded scoring"
+    }
+  ]
+}

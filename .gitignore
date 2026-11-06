@@ -1,0 +1,22 @@
+# RTR-RE:Symbiose standalone tree — owns its own git history
+# Runtime index + live config stay out of the repo
+.cocoindex_code/
+.opencode/
+__pycache__/
+*.pyc
+.lake/
+formal/.lake/
+dist/
+*.egg-info/
+.venv/
+state/
+# Via negativa 2026-10-27: generated intermediates stay on disk, out of the repo
+.ruff_cache/
+*.log
+media/frames-*/
+eval/results/*-todo6.json
+eval/results/*-prefix.json
+eval/results/*-prefix.md
+eval/results/graded-pool.json
+eval/results/calibration.json
+eval/results/calibration.md

@@ -1,0 +1,8 @@
++--------------+ +--------------+ +--------------+
+| L1 ROLLING   | | L2 ACP LSM   | | L3 RTR ONNX  |
+| plan first   |-| T1/T2/T3     |-| typed chunks |
+| TRIG 200k    | | summ<=20k    | | RRF dual     |
+| TGT 100k/40m | | decompress   | | verb. index  |
++--------------+ +--------------+ +--------------+
+   evict typed ---> index      restore <=4000 chars
+host prune 40k below | host compact auto OFF (emergency)

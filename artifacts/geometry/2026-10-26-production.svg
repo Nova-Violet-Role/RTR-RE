@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="160" viewBox="0 0 640 160">
+<title>RTR-RE:Rolling: verbatim to 200k, cut 50% to 100k, substance in RTR index</title>
+<rect x="8" y="16" width="192" height="96" fill="none" stroke="black"/>
+<rect x="224" y="16" width="192" height="96" fill="none" stroke="black"/>
+<rect x="440" y="16" width="192" height="96" fill="none" stroke="black"/>
+<text x="20" y="40" font-family="monospace" font-size="14">L1 ROLLING plan</text>
+<text x="20" y="60" font-family="monospace" font-size="12">TRIG 200k TGT 100k/40</text>
+<text x="236" y="40" font-family="monospace" font-size="14">L2 ACP LSM</text>
+<text x="236" y="60" font-family="monospace" font-size="12">T1/T2/T3 summ&lt;=20k</text>
+<text x="452" y="40" font-family="monospace" font-size="14">L3 RTR ONNX</text>
+<text x="452" y="60" font-family="monospace" font-size="12">typed RRF retrieve</text>
+<text x="8" y="140" font-family="monospace" font-size="12">host prune 40k below; host compact auto OFF; restore &lt;=4000 chars</text>
+</svg>

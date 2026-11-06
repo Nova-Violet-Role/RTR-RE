@@ -1,0 +1,104 @@
+1
+00:00:00,000 --> 00:00:05,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Gold-v2 frozen supervision / 24 queries · 773 judgments / histogram 0:633 1:51 2:48 3:41 / SUB: v1 was 155, too sparse
+
+2
+00:00:05,000 --> 00:00:10,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Combined nDCG@10 / dense-base 0.8167 BEST / rtr-full 0.7798 / SUB: dense leads, published
+
+3
+00:00:10,000 --> 00:00:15,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): ERR@10 + MAP / dense ERR 0.8369 MAP 0.724 / full ERR 0.7899 MAP 0.658 / SUB: same story, two metrics
+
+4
+00:00:15,000 --> 00:00:20,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Worst loss NT-G1C / dense 0.7346 vs full 0.4192 / delta -0.3154 / SUB: collapse hidden in mean
+
+5
+00:00:20,000 --> 00:00:25,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): NT-G1C mechanism / jats buried rank 12 before / generic terms matched 8 losers / SUB: burial, not relevance
+
+6
+00:00:25,000 --> 00:00:30,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): BM25 decisiveness bug / gap saturated at ~0.90 / flat-field branch dead code / SUB: max-norm + zeros
+
+7
+00:00:30,000 --> 00:00:35,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Fix: standout statistic / top vs runner-up positives / hybrid_lane_weights landed / SUB: 4 red-first tests
+
+8
+00:00:35,000 --> 00:00:40,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): After fix rank 12 to 4 / dense-unvoted leaders fell / head now dense-voted / SUB: mechanism removed
+
+9
+00:00:40,000 --> 00:00:45,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): NT-G1 loss -0.2446 / tei-modules family / semantic intent, weak lexicon / SUB: dense wins prose
+
+10
+00:00:45,000 --> 00:00:50,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): CMD-G1B loss -0.1977 / command shape intents / lexical helps here / SUB: corpus-shaped edge
+
+11
+00:00:50,000 --> 00:00:55,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Dita DT-G1 -0.1419 / spec title match / hybrid close behind / SUB: within noise band
+
+12
+00:00:55,000 --> 00:01:00,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): CMD wins for full / CMD-G3B +0.3422 measured / fusion helps term-dense / SUB: not one-sided
+
+13
+00:01:00,000 --> 00:01:05,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Lane-on graded neutral / full 0.7798 to 0.7809 / few code-shaped terms / SUB: no-harm, default-off
+
+14
+00:01:05,000 --> 00:01:10,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Unjudged accounting / dense-base 6 · full 2 / pool depth 20 blind / SUB: counted, not hidden
+
+15
+00:01:10,000 --> 00:01:15,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Doctor refuses forgery / forged 0.9999 refused / dataset label checked / SUB: generator with teeth
+
+16
+00:01:15,000 --> 00:01:20,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Plates regenerate / plates_graded.py one command / SVG + Lightpaper tables / SUB: decoration refused
+
+17
+00:01:20,000 --> 00:01:25,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Spread rejected / dense spread 0.06-0.27 / does not separate cases / SUB: measured, not tuned
+
+18
+00:01:25,000 --> 00:01:30,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): No overfit promise / labels frozen after v2 / engine moves, gold stays / SUB: benches rerun
+
+19
+00:01:30,000 --> 00:01:35,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Scoped verdict / graded: dense leads / binary: full R@3 leads / SUB: both tables printed
+
+20
+00:01:35,000 --> 00:01:40,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): What full wins / depth R@3 + MRR parity / dita-spec outright / SUB: where fusion earns
+
+21
+00:01:40,000 --> 00:01:45,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): What dense wins / generic-vocabulary prose / census/family corpora / SUB: semantic match
+
+22
+00:01:45,000 --> 00:01:50,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Calibration honesty / synthetic pipeline only / ONNX excluded, labeled / SUB: upper bound only
+
+23
+00:01:50,000 --> 00:01:55,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Lean battery 8 jobs / core-only, no Mathlib / 13 axiom records, 0 sorry / SUB: model, not engine
+
+24
+00:01:55,000 --> 00:02:00,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Lane.lean contract / total + disjoint routing / bounded cap + fallback / SUB: spec before code
+
+25
+00:02:00,000 --> 00:02:05,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): STRUCT lane verdict / prose-blind, scoreless alone / rg substrate, ccc precision / SUB: absorbed as lane
+
+26
+00:02:05,000 --> 00:02:10,000
+POV-B · GRADED GOLD-v2 (24 queries, 773 judgments): Publish rule / no decimal without artifact / no claim beyond noise / SUB: pitch perfect
+

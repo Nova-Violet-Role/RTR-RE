@@ -1,0 +1,79 @@
+name: Adaptation request — RE:Symbiose for your CLI or agent
+description: Ask for RE:Symbiose wiring on a CLI/agent harness we do not ship yet. The README promise applies - adaptations requested here will be delivered.
+title: "adaptation: "
+labels: ["adaptation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Any CLI. Any agent. Ask here and the wiring will be delivered:
+        Keeper plugin (or its hook equivalent), memory MCP config, and the
+        measured bounds for your model's window. To deliver fast, we need
+        the harness facts below — guesses cost both of us a round-trip.
+
+  - type: input
+    id: harness
+    attributes:
+      label: CLI / agent harness and version
+      description: e.g. "aider 0.86", "Claude Code 2.x", "our in-house runner (link if public)".
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mcp
+    attributes:
+      label: Does it speak MCP over stdio?
+      options:
+        - "Yes"
+        - "No"
+        - "I do not know"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: hooks
+    attributes:
+      label: Does it expose a message-transform or plugin hook (the Keeper surface)?
+      description: Anything that can rewrite the outgoing message list before a model call. Name it below if you know it.
+      options:
+        - "Yes"
+        - "No"
+        - "I do not know"
+    validations:
+      required: true
+
+  - type: textarea
+    id: hook-detail
+    attributes:
+      label: Hook / plugin details (optional)
+      description: Docs link, hook name, or the closest extension point you found.
+    validations:
+      required: false
+
+  - type: input
+    id: model
+    attributes:
+      label: Model + context window + input cap (if known)
+      description: The Keeper trigger must sit below the model's input cap; 320k/128k defaults assume a big window.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - "Windows"
+        - "Linux"
+        - "macOS"
+        - "Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: corpus
+    attributes:
+      label: What will it remember?
+      description: Rough corpus shape (docs/code/chat logs), size, and where the files live. This decides defaults, not eligibility.
+    validations:
+      required: false
