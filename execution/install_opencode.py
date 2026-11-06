@@ -3,7 +3,7 @@
 """Install the native RTR-RE Keeper plugin into an OpenCode config dir.
 
 The published architecture is self-contained: memory MCP (this package)
-plus the first-party Keeper plugin. No ACP plugin, no acp.jsonc. This
+plus the first-party Keeper plugin. This
 installer copies the keeper plus its preset registry and prints the config
 snippet to merge; it never rewrites an existing opencode config.
 """

@@ -18,10 +18,6 @@ update to the Compressor and the Keeper lands here, not in RTR. The preset
 registry (`execution/rtr_presets.json`) is shared by both products; the keeper
 presets (trigger/target/max) are RTR-RE's section of it.
 
-The predecessors whose complete form was dragged into RTR-RE are
-`opencode-acp` and `rolling-context` — lab-only, gitignored, and never shipped
-here.
-
 Three offices, zero overlap: a **Keeper** (native OpenCode plugin,
 `opencode-plugin/rtr-re-keeper.js`) selects what stays in the window,
 a **Compressor** keeps everything verbatim until the trigger preset then cuts
@@ -195,7 +191,7 @@ probe with `moviola_probe_media`. Spec: `media/TECHSPEC.md`.
 
 ### 🧬 Architecture expansion — Keeper × Compressor × Manager
 
-The Keeper (native plugin, no ACP) selects/protects/prunes the host window
+The Keeper (native plugin) selects/protects/prunes the host window
 between exchanges and sinks evicted spans before pruning — fail-open, async
 where it matters, never a `/compact` pause. Live-tunable with no restart:
 `/rtr status|hold|trigger|target|max|preset|enable|disable` writes the

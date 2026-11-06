@@ -3,8 +3,7 @@
 
 Full name: Role-Type-Retrieval-RE:Symbiotized. Licence:
 AGPL-3.0-or-later OR EUPL-1.2, as always. Three offices, zero overlap.
-The Keeper (native plugin `opencode-plugin/rtr-re-keeper.js`; the lab's
-legacy ACP wiring ran keeper-only under `permission: deny`) only
+The Keeper (native plugin `opencode-plugin/rtr-re-keeper.js`) only
 selects, protects and prunes the window — it never summarises and never
 nudges. The Compressor
 keeps everything verbatim until TRIGGER=320000 tokens, then cuts 60%

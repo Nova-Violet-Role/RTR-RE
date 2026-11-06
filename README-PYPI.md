@@ -12,8 +12,7 @@ Three offices: native Keeper plugin (window), background Compressor
 **Engine vs car:** RTR (the `rtr-role-type-retrieval` repo) is the retriever
 alone. RTR-RE is the full system: RTR retrieval + Keeper + Compressor + Manager
 + engine-beneath + installer + live-tuning palette. The preset registry is
-shared; the keeper presets are RTR-RE's section. The predecessors
-`opencode-acp` and `rolling-context` are lab-only and never shipped here.
+shared; the keeper presets are RTR-RE's section.
 
 The **.mjs edition** (`mjs/` in the repo) provides the same memory
 discipline with **no MCP server**: an OpenCode plugin + Claude Code /

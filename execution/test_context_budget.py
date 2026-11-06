@@ -86,8 +86,8 @@ class TestContextBudget(unittest.TestCase):
             self.assertIn(len(msgs) - 3, keep)
 
     def test_planner_never_mutates_input(self):
-        # Collision rule: one mutator per transport (vendored proxy or ACP
-        # compress). The RE:Symbiose planner is advisory only.
+        # Collision rule: one mutator per transport. The RE:Symbiose
+        # planner is advisory only.
         import copy
 
         msgs = [msg("assistant", "q" * 12000) for _ in range(120)]

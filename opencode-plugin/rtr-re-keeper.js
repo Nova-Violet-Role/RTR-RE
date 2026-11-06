@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Nova-Violet Role ORG
 // SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
-// RTR-RE:Symbiose native Keeper for OpenCode — first-party replacement for
-// the external ACP plugin in the keeper-only posture. No dependencies.
+// RTR-RE:Symbiose native Keeper for OpenCode — first-party, self-contained.
+// No dependencies.
 //
 // Office: Keeper only. On every request it estimates the visible window;
 // above TRIGGER it keeps a bounded verbatim tail (TARGET), sinks the

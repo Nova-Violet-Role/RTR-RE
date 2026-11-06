@@ -5,7 +5,7 @@ Full name: Role-Type-Retrieval-RE:Symbiotized. Short name: RE:Symbiose.
 The compression layer lifted into its own declarations with its own laws.
 Licence: AGPL-3.0-or-later OR EUPL-1.2, as always.
 Code: execution/context_budget.py (bounds), execution/symbiose_worker.py
-(background compressor), vendor proxy caps recorded in VENDORED.md.
+(background compressor).
 
 - RTRRE.trigger = 320000 tokens (env OPENCODE_MEMORY_RTRRE_TRIGGER)
 - RTRRE.target = 128000 tokens (env OPENCODE_MEMORY_RTRRE_TARGET)
@@ -19,7 +19,7 @@ Code: execution/context_budget.py (bounds), execution/symbiose_worker.py
   320k to 128k preserved; deployments under a smaller model input cap
   scale both numbers down through the env knobs).
 - LAW.RTRRE.2 Three offices, zero overlap: Keeper (native plugin
-  rtr-re-keeper.js; legacy lab wiring used ACP under permission deny)
+  rtr-re-keeper.js)
   selects/protects/prunes the host window and sinks evicted spans
   before any eviction; Compressor (symbiose planner + worker) plans
   and records evictions; RTR Manager retrieves. Planner and worker

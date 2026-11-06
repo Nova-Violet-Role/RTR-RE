@@ -42,5 +42,5 @@ Gitignored missing by top directory: [('eval', 8), ('state', 1)]
 | orphan (indexed minus eligible) | 0 |
 | drift (true missing + orphan) | 0 |
 
-Gitignored missing by top directory: [('opencode-acp', 792), ('rolling-context', 8), ('state', 2)]
+Gitignored missing by top directory: vendored lab predecessors 800, state 2
 
