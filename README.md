@@ -155,8 +155,8 @@ conceptual recall, scoped vs global), rendered as Mermaid and SVG.
 
 ```
 uvx --from <wheel> python -m execution.rtr_eval   # release gate (no regressal)
-python eval/bench_versus.py                        # full versus bench -> eval/results/
-python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
+uv run python eval/bench_versus.py                 # full versus bench -> eval/results/
+uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
 ```
 
 Final freeze (2026-10-27, within-run reading): binary intense —

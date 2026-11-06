@@ -43,7 +43,7 @@ rtr-cli index
 
 # C. Classic pip (you manage the venv)
 pip install rtr-role-type-retrieval
-python -m execution.memory_mcp_server
+rtr-mcp
 ```
 
 First run downloads embedding models once (~650 MB: Arctic-m 768 + bge-base 768)
@@ -186,7 +186,7 @@ collections janitor away. Measured guidance from our own bench:
 ```bash
 OPENCODE_MEMORY_EMBED_MODELS="BAAI/bge-large-en-v1.5,Snowflake/snowflake-arctic-embed-l"
 rtr-cli index          # new collections fill; old ones: rtr-cli janitor
-python eval/bench_versus.py   # prove it on your own corpus before you believe us
+uv run python eval/bench_versus.py   # prove it on your own corpus before you believe us
 ```
 
 Honest note: bigger is not always better — on keyword-dense corpora our bench
@@ -227,11 +227,11 @@ invented.
 
 ```bash
 uvx --from rtr-role-type-retrieval python -m execution.rtr_eval  # release gate
-python -m unittest execution.test_memory                          # unit suite
+uv run python -m unittest execution.test_memory                  # unit suite
 node --test opencode-plugin/rtr-re-keeper.test.mjs                # Keeper suite (repo)
 bun test opencode-plugin/rtr-re-tui.test.ts                       # ctrl+p palette suite (repo)
-python eval/bench_versus.py --intense                             # RTR-vs-RAG bench, real docs
-python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
+uv run python eval/bench_versus.py --intense                     # RTR-vs-RAG bench, real docs
+uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
 ```
 
 `eval/results/` ships the scoreboard JSON, the Mermaid source, and the SVG.

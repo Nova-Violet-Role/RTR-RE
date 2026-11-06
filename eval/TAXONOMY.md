@@ -108,10 +108,10 @@ Root causes found and fixed in-product:
 ## Reproduce
 
 ```
-python eval/bench_versus.py   # needs installed rtr wheel for deps
+uv run python eval/bench_versus.py   # needs installed rtr wheel for deps
 ```
 
 Outputs `results/versus.json` + `versus.mmd`; render with
 `npx -y @mermaid-js/mermaid-cli -i eval/versus.mmd -o eval/versus.svg`.
-The release gate (`python -m execution.rtr_eval`) is separate and must stay
+The release gate (`uv run python -m execution.rtr_eval`) is separate and must stay
 green: no ship on regression.
