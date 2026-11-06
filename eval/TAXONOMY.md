@@ -12,7 +12,9 @@ live in `eval/` and are never shipped in the wheel; their tests live in
 `execution/test_*.py` and load the probe by path, so they run in the
 standard suite while the probe itself stays out of the package.
 `execution/test_engine_beneath.py` and `execution/test_calibrate_symbiose.py`
-follow this convention.
+follow this convention. `eval/dtd_extractor.py` (the DTD structural feature
+extractor) is the instrument behind the DTD corpus queries and is covered by
+`execution/test_dtd_extractor.py`.
 
 ## Corpora (both real, both local)
 
@@ -21,6 +23,7 @@ follow this convention.
 | `nt-studies` | 36 NestedText research notes | keyword-dense, overlapping vocab | 191 |
 | `dita-spec` | 30 DITA 2.0 spec topics (XML) | long structured prose, element names | 169 |
 | `dtd-commands` | 48 real *-dtd command files | huge generated DTD prose, identifiers | 213 |
+| `dtd-family` | 60 DTD/module/entity files across 15 families | real DTD grammars (JATS, DocBook, DITA, TEI, MathML, XHTML, SVG, Office, daisy, …) | 92 |
 
 Same index per run for every system — the ablation is purely on the retrieval
 path. Each bench run uses an **isolated temp vector DB**
@@ -48,6 +51,10 @@ path. Each bench run uses an **isolated temp vector DB**
 | T4 scoped | T1 subset under project filter | isolation (no cross-project bleed) |
 | T5 paraphrase | true synonym phrase, absent corpus-wide (BM25 blind) + seeded lexikon | lexikon lane / semantic reach |
 | T6 ident | filename stems + opaque digit/underscore ids | exact-match lane |
+| T7 attribute-semantic | rare attribute name (df==1) → its file | attribute-semantic recall (DTD) |
+| T8 entity-lane | rare entity/parameter-entity name (df==1) → its file | entity-lane recall (DTD) |
+| T9 content-model | distinctive sequence/choice content-model fragment → its file | content-model recall (DTD) |
+| T10 cross-family | term occurring in exactly two files from different families → one of them | cross-family vocabulary discrimination (DTD) |
 
 Metrics per taxon: recall@1, recall@3, MRR. Queries auto-derived (seed 20260928),
 T5 pairs runtime-validated (source present, synonym absent, single owner).
@@ -62,7 +69,7 @@ claim basis in `results/versus.json`; STRUCT-lane-on run archived in
 ±~0.02 (register R-15) — read within-run comparisons only.
 
 | System | R@1 | R@3 | MRR |
-|---|---|---|---|
+|---|---|---|
 | rag-hybrid | 0.656 | 0.752 | 0.696 |
 | **rtr-full** | 0.642 | **0.756** | 0.689 |
 | rtr-bge | 0.647 | 0.730 | 0.682 |
@@ -70,6 +77,19 @@ claim basis in `results/versus.json`; STRUCT-lane-on run archived in
 | rag-dense-base | 0.469 | 0.614 | 0.534 |
 | rtr-arctic | 0.497 | 0.564 | 0.524 |
 | rag-dense | 0.452 | 0.607 | 0.522 |
+
+### DTD-corpus run (2026-11-06, 4 corpora, 353 queries, T7–T10 taxons)
+
+Full 4×7 run with the DTD family corpus and the new structural taxons.
+rtr-full leads the DTD corpus (R@1=0.565, R@3=0.685, MRR=0.620) and
+holds overall MRR leadership (0.643 vs rag-hybrid-base 0.632). On the
+DTD corpus, rtr-full beats every classic RAG arm on the same model size
+(rag-hybrid-base: R@1=0.554, MRR=0.585). DTD taxon detail (rtr-full):
+T7 attribute-semantic R@1=0.500, T8 entity-lane R@1=0.500, T9
+content-model R@1=0.667/R@3=1.000, T10 cross-family R@1=0.500. The
+cross-family taxon is the hardest lane — shared vocabulary across
+families (e.g. `appendix` in DocBook and DITA) collapses on the
+strongest family match; this is the measured target for amplification.
 
 rtr-full leads R@3 and sits at R@1/MRR parity (−0.014/−0.007 vs the best
 RAG arm); dense-only RAG is not close anywhere. The graded companion
@@ -107,9 +127,12 @@ Root causes found and fixed in-product:
 
 ## Limits (read before quoting us)
 
-- Three corpora, 573 queries (intense), file-level self-supervision, no
+- Four corpora, 353 queries (standard caps), file-level self-supervision, no
   human labels. Measures retrieval mechanics, not graded relevance depth.
 - Margins on nt-studies/dtd-commands are narrow queries-wide; dita-spec is decisive.
+- The DTD-family corpus is the hardest: 60 real grammar files across 15 families,
+  with T7–T10 structural taxons. Cross-family discrimination (T10) is the
+  weakest lane and the amplification target.
 - Latency: RTR-full ~42–47ms p50 vs 5–20ms classic arms (in-process; MCP adds transport).
 - Dual-ensemble value concentrates in identifiers and cross-corpus robustness;
   per-model ablations ship in the same table so anyone can check our work.

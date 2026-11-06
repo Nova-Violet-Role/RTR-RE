@@ -472,6 +472,28 @@ def derive_dtd_queries(proj, rng):
             m = re.search(r"<!ELEMENT\s+[^\s>]+\s+\(([^)]+)\)", text)
             if m and len(m.group(1).strip()) > 6:
                 queries.append(("T9", m.group(1).strip(), n))
+    # T10: cross-family generalization — a term occurring in exactly two files
+    # from DIFFERENT families (df==2, cross-family), querying one of them.
+    # Isolates whether retrieval can discriminate shared vocabulary across
+    # families instead of collapsing on the strongest family match.
+    fam_of = {}
+    for n in names:
+        fam_of[n] = n.split("__")[0] if "__" in n else "(root)"
+    cross = defaultdict(list)
+    for n, prof in docs.items():
+        for el in set(prof.element_names):
+            cross[el].append(n)
+    cross_terms = sorted(
+        t
+        for t, owners in cross.items()
+        if len(owners) == 2
+        and fam_of[owners[0]] != fam_of[owners[1]]
+        and len(t) > 3
+        and t not in STOP
+    )
+    rng.shuffle(cross_terms)
+    for t in cross_terms[: CAPS["T2"]]:
+        queries.append(("T10", t, cross[t][0]))
     # T6: identifier/path lookup (filename stems).
     for n in names[: CAPS["T6"]]:
         queries.append(("T6", Path(n).stem, n))
