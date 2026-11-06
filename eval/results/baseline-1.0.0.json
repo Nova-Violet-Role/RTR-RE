@@ -1,9 +1,9 @@
 {
   "schema": "rtr-re.baseline/1.0.0/v1",
   "release_arc": "1.0.0",
-  "frozen_at": "2026-11-06T14:48:27",
+  "frozen_at": "2026-11-06T18:55:03",
   "source_manifest": {
-    "versus": "0a7511551b77e280c0ff11f87d3978b669aa589b83c6cd5cc1c3562d9c169933",
+    "versus": "b2b334339d0e43ec3f44379efa116aadb76883c71dc29146feab193106a7744a",
     "engine_beneath": "bb5aa806f20207d801b6ad83d9b6378cc0b19c21724ba6fe039e3617dd44de74",
     "parity_matrix": "9757cb2154a029f2e8b49464805097c9d9ef36a9b89cf251326979d8336be330"
   },
@@ -17,51 +17,51 @@
         "systems": {
           "rag-dense": {
             "n": 77,
-            "recall@1": 0.7143,
-            "recall@3": 0.7662,
-            "mrr": 0.7359,
-            "p50_ms": 3.6
+            "recall@1": 0.7273,
+            "recall@3": 0.7922,
+            "mrr": 0.7576,
+            "p50_ms": 2.9
           },
           "rag-dense-base": {
             "n": 77,
-            "recall@1": 0.6883,
-            "recall@3": 0.7792,
-            "mrr": 0.7294,
-            "p50_ms": 8.9
+            "recall@1": 0.7013,
+            "recall@3": 0.7532,
+            "mrr": 0.7273,
+            "p50_ms": 7.8
           },
           "rag-hybrid": {
             "n": 77,
             "recall@1": 0.9351,
-            "recall@3": 0.961,
-            "mrr": 0.9459,
-            "p50_ms": 6.1
+            "recall@3": 0.9481,
+            "mrr": 0.9394,
+            "p50_ms": 5.0
           },
           "rag-hybrid-base": {
             "n": 77,
-            "recall@1": 0.8961,
-            "recall@3": 0.9091,
-            "mrr": 0.9004,
-            "p50_ms": 11.7
+            "recall@1": 0.8701,
+            "recall@3": 0.8961,
+            "mrr": 0.8788,
+            "p50_ms": 10.0
           },
           "rtr-arctic": {
             "n": 77,
-            "recall@1": 0.8961,
-            "recall@3": 0.9221,
-            "mrr": 0.9091,
-            "p50_ms": 14.0
+            "recall@1": 0.9091,
+            "recall@3": 0.9351,
+            "mrr": 0.9177,
+            "p50_ms": 12.8
           },
           "rtr-bge": {
             "n": 77,
-            "recall@1": 0.8961,
-            "recall@3": 0.9091,
-            "mrr": 0.9004,
-            "p50_ms": 14.0
+            "recall@1": 0.8701,
+            "recall@3": 0.8961,
+            "mrr": 0.8788,
+            "p50_ms": 12.2
           },
           "rtr-full": {
             "n": 77,
             "recall@1": 0.9351,
-            "recall@3": 0.974,
-            "mrr": 0.9524,
+            "recall@3": 0.9481,
+            "mrr": 0.9394,
             "p50_ms": 23.9
           }
         }
@@ -72,52 +72,52 @@
         "systems": {
           "rag-dense": {
             "n": 97,
-            "recall@1": 0.3093,
-            "recall@3": 0.4536,
-            "mrr": 0.3763,
-            "p50_ms": 3.2
+            "recall@1": 0.2887,
+            "recall@3": 0.4639,
+            "mrr": 0.3677,
+            "p50_ms": 3.4
           },
           "rag-dense-base": {
             "n": 97,
             "recall@1": 0.3505,
             "recall@3": 0.4742,
             "mrr": 0.4055,
-            "p50_ms": 8.2
+            "p50_ms": 8.4
           },
           "rag-hybrid": {
             "n": 97,
-            "recall@1": 0.4021,
-            "recall@3": 0.5155,
-            "mrr": 0.4519,
-            "p50_ms": 3.7
+            "recall@1": 0.4124,
+            "recall@3": 0.5258,
+            "mrr": 0.4622,
+            "p50_ms": 3.8
           },
           "rag-hybrid-base": {
             "n": 97,
             "recall@1": 0.4536,
-            "recall@3": 0.5155,
-            "mrr": 0.4811,
-            "p50_ms": 8.8
+            "recall@3": 0.5361,
+            "mrr": 0.4897,
+            "p50_ms": 9.3
           },
           "rtr-arctic": {
             "n": 97,
-            "recall@1": 0.1649,
-            "recall@3": 0.2062,
-            "mrr": 0.1821,
-            "p50_ms": 15.1
+            "recall@1": 0.4742,
+            "recall@3": 0.5773,
+            "mrr": 0.5189,
+            "p50_ms": 21.8
           },
           "rtr-bge": {
             "n": 97,
             "recall@1": 0.4536,
-            "recall@3": 0.5258,
-            "mrr": 0.4845,
-            "p50_ms": 15.1
+            "recall@3": 0.5361,
+            "mrr": 0.4897,
+            "p50_ms": 15.3
           },
           "rtr-full": {
             "n": 97,
-            "recall@1": 0.433,
-            "recall@3": 0.5155,
-            "mrr": 0.4691,
-            "p50_ms": 26.1
+            "recall@1": 0.4845,
+            "recall@3": 0.6082,
+            "mrr": 0.5378,
+            "p50_ms": 35.7
           }
         }
       },
@@ -127,52 +127,52 @@
         "systems": {
           "rag-dense": {
             "n": 163,
-            "recall@1": 0.2515,
-            "recall@3": 0.3436,
-            "mrr": 0.2924,
-            "p50_ms": 3.6
+            "recall@1": 0.3252,
+            "recall@3": 0.4172,
+            "mrr": 0.362,
+            "p50_ms": 3.7
           },
           "rag-dense-base": {
             "n": 163,
-            "recall@1": 0.2822,
-            "recall@3": 0.3742,
-            "mrr": 0.3221,
+            "recall@1": 0.2945,
+            "recall@3": 0.3926,
+            "mrr": 0.3354,
             "p50_ms": 8.6
           },
           "rag-hybrid": {
             "n": 163,
-            "recall@1": 0.4908,
-            "recall@3": 0.5767,
-            "mrr": 0.5286,
-            "p50_ms": 17.7
+            "recall@1": 0.5215,
+            "recall@3": 0.6074,
+            "mrr": 0.5593,
+            "p50_ms": 18.4
           },
           "rag-hybrid-base": {
             "n": 163,
-            "recall@1": 0.4785,
-            "recall@3": 0.5215,
-            "mrr": 0.498,
-            "p50_ms": 23.6
+            "recall@1": 0.4908,
+            "recall@3": 0.6196,
+            "mrr": 0.5501,
+            "p50_ms": 20.7
           },
           "rtr-arctic": {
             "n": 163,
-            "recall@1": 0.4417,
-            "recall@3": 0.4969,
-            "mrr": 0.4673,
-            "p50_ms": 37.0
+            "recall@1": 0.5092,
+            "recall@3": 0.6135,
+            "mrr": 0.5573,
+            "p50_ms": 33.6
           },
           "rtr-bge": {
             "n": 163,
-            "recall@1": 0.4785,
-            "recall@3": 0.5215,
-            "mrr": 0.498,
-            "p50_ms": 29.9
+            "recall@1": 0.4908,
+            "recall@3": 0.6196,
+            "mrr": 0.5501,
+            "p50_ms": 27.4
           },
           "rtr-full": {
             "n": 163,
-            "recall@1": 0.5337,
-            "recall@3": 0.6319,
-            "mrr": 0.5757,
-            "p50_ms": 54.2
+            "recall@1": 0.5399,
+            "recall@3": 0.6626,
+            "mrr": 0.593,
+            "p50_ms": 52.9
           }
         }
       },
@@ -182,52 +182,52 @@
         "systems": {
           "rag-dense": {
             "n": 87,
-            "recall@1": 0.3218,
-            "recall@3": 0.5632,
-            "mrr": 0.431,
-            "p50_ms": 5.3
+            "recall@1": 0.3333,
+            "recall@3": 0.6207,
+            "mrr": 0.4579,
+            "p50_ms": 4.2
           },
           "rag-dense-base": {
             "n": 87,
             "recall@1": 0.3678,
-            "recall@3": 0.5747,
-            "mrr": 0.4502,
-            "p50_ms": 13.4
+            "recall@3": 0.5862,
+            "mrr": 0.4579,
+            "p50_ms": 9.9
           },
           "rag-hybrid": {
             "n": 87,
             "recall@1": 0.5632,
-            "recall@3": 0.8046,
-            "mrr": 0.659,
-            "p50_ms": 7.3
+            "recall@3": 0.7241,
+            "mrr": 0.6284,
+            "p50_ms": 5.8
           },
           "rag-hybrid-base": {
             "n": 87,
-            "recall@1": 0.5287,
-            "recall@3": 0.6897,
-            "mrr": 0.59,
-            "p50_ms": 15.1
+            "recall@1": 0.5172,
+            "recall@3": 0.6667,
+            "mrr": 0.5805,
+            "p50_ms": 11.6
           },
           "rtr-arctic": {
             "n": 87,
-            "recall@1": 0.4368,
-            "recall@3": 0.6092,
-            "mrr": 0.5019,
-            "p50_ms": 19.2
+            "recall@1": 0.5747,
+            "recall@3": 0.8046,
+            "mrr": 0.6648,
+            "p50_ms": 15.6
           },
           "rtr-bge": {
             "n": 87,
             "recall@1": 0.5287,
-            "recall@3": 0.7011,
-            "mrr": 0.5958,
-            "p50_ms": 19.7
+            "recall@3": 0.6667,
+            "mrr": 0.5862,
+            "p50_ms": 14.8
           },
           "rtr-full": {
             "n": 87,
-            "recall@1": 0.5402,
-            "recall@3": 0.7586,
-            "mrr": 0.6264,
-            "p50_ms": 32.2
+            "recall@1": 0.5747,
+            "recall@3": 0.8506,
+            "mrr": 0.6916,
+            "p50_ms": 29.7
           }
         }
       }
@@ -235,21 +235,21 @@
     "dtd_family_rtr_full_taxons": {
       "T1": {
         "n": 32,
-        "recall@1": 0.5625,
-        "recall@3": 0.7188,
-        "mrr": 0.6198
+        "recall@1": 0.75,
+        "recall@3": 0.9062,
+        "mrr": 0.8229
       },
       "T10": {
         "n": 21,
         "recall@1": 0.619,
-        "recall@3": 0.7143,
-        "mrr": 0.6587
+        "recall@3": 0.8571,
+        "mrr": 0.7143
       },
       "T2": {
         "n": 12,
-        "recall@1": 0.5833,
-        "recall@3": 0.6667,
-        "mrr": 0.625
+        "recall@1": 0.8333,
+        "recall@3": 0.9167,
+        "mrr": 0.875
       },
       "T6": {
         "n": 6,
@@ -259,28 +259,28 @@
       },
       "T7": {
         "n": 40,
-        "recall@1": 0.525,
-        "recall@3": 0.55,
-        "mrr": 0.5375
+        "recall@1": 0.275,
+        "recall@3": 0.3,
+        "mrr": 0.2833
       },
       "T8": {
         "n": 40,
-        "recall@1": 0.4,
-        "recall@3": 0.5,
-        "mrr": 0.4417
+        "recall@1": 0.425,
+        "recall@3": 0.525,
+        "mrr": 0.4667
       },
       "T9": {
         "n": 12,
-        "recall@1": 0.5833,
-        "recall@3": 0.75,
-        "mrr": 0.6667
+        "recall@1": 0.6667,
+        "recall@3": 0.9167,
+        "mrr": 0.7778
       },
       "OVERALL": {
         "n": 163,
-        "recall@1": 0.5337,
-        "recall@3": 0.6319,
-        "mrr": 0.5757,
-        "p50_ms": 54.2
+        "recall@1": 0.5399,
+        "recall@3": 0.6626,
+        "mrr": 0.593,
+        "p50_ms": 52.9
       }
     }
   },

@@ -20,11 +20,13 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import bench_versus as bv
+
 from bench_versus import CORPORA, SEED, derive_dtd_queries, derive_queries, stage_corpus
 
 PROMPT = "Represent this sentence for searching relevant passages: "
 CORPUS_NAME = "dtd-family"
-MODEL_NAME = "BAAI/bge-base-en-v1.5"
+MODEL_NAME = "Snowflake/snowflake-arctic-embed-m"
 K = 10
 
 
@@ -55,6 +57,24 @@ def metrics(rows):
 
 
 def main():
+    import os
+    import tempfile
+
+    import memory_engine as mem
+
+    iso = Path(tempfile.mkdtemp(prefix="rtr-probe-iso-"))
+    bv.BENCH_ROOT = iso / "roots"
+    bv.BENCH_ROOT.mkdir(parents=True)
+    os.environ["OPENCODE_MEMORY_DB_DIR"] = str(iso / "db")
+    os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = (
+        ".md,.nt,.yaml,.yml,.dita,.xml,.dtd,.mod,.ent"
+    )
+    mem.REGISTRY_FILE = iso / "registry.json"
+    mem.PROJECT_ROOTS = [bv.BENCH_ROOT]
+    mem.PROJECTS_DIR = bv.BENCH_ROOT
+    mem.EXTRA_ROOTS_FILE = iso / "extra_roots.json"
+    mem.LEXIKON_GLOBAL_FILE = iso / "lexikon_global.json"
+
     spec = next(s for s in CORPORA if s["name"] == CORPUS_NAME)
     base, proj, staged = stage_corpus(spec, CORPUS_NAME)
     crng = random.Random(
@@ -77,27 +97,27 @@ def main():
 
     rows_plain = []
     rows_prompt = []
-    rows_selective = []
+    rows_attr = []
     for taxon, q, expected in queries:
         qv_plain = np.asarray(next(model.embed([q])), dtype=np.float32)
         qv_prompt = np.asarray(next(model.embed([PROMPT + q])), dtype=np.float32)
-        if len(q.split()) > 1:
-            qv_selective = qv_prompt
+        if taxon == "T7":
+            qv_attr = np.asarray(
+                next(model.embed([PROMPT + "attribute " + q])), dtype=np.float32
+            )
         else:
-            qv_selective = qv_plain
+            qv_attr = qv_prompt
         got_plain = [doc_names[i] for i in cosine_rank(qv_plain, docvecs)]
         got_prompt = [doc_names[i] for i in cosine_rank(qv_prompt, docvecs)]
-        got_selective = [doc_names[i] for i in cosine_rank(qv_selective, docvecs)]
+        got_attr = [doc_names[i] for i in cosine_rank(qv_attr, docvecs)]
         rows_plain.append({"taxon": taxon, "expected": expected, "got": got_plain})
         rows_prompt.append({"taxon": taxon, "expected": expected, "got": got_prompt})
-        rows_selective.append(
-            {"taxon": taxon, "expected": expected, "got": got_selective}
-        )
+        rows_attr.append({"taxon": taxon, "expected": expected, "got": got_attr})
 
     for label, rows in (
         ("plain queries", rows_plain),
         ("with prompt", rows_prompt),
-        ("selective (prompt only multiword)", rows_selective),
+        ("prompt + 'attribute ' prefix on T7", rows_attr),
     ):
         print(f"\n{label}:")
         for k, v in metrics(rows).items():

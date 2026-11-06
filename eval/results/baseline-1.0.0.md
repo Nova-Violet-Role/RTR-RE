@@ -1,9 +1,9 @@
 # RTR-RE baseline — 0.5.0 (frozen, TODO-29)
 
-- Frozen at: 2026-11-06T14:48:27
+- Frozen at: 2026-11-06T18:55:03
 - Release arc: 1.0.0
 - Source manifest (sha256):
-  - `versus`: `0a7511551b77e280c0ff11f87d3978b669aa589b83c6cd5cc1c3562d9c169933`
+  - `versus`: `b2b334339d0e43ec3f44379efa116aadb76883c71dc29146feab193106a7744a`
   - `engine_beneath`: `bb5aa806f20207d801b6ad83d9b6378cc0b19c21724ba6fe039e3617dd44de74`
   - `parity_matrix`: `9757cb2154a029f2e8b49464805097c9d9ef36a9b89cf251326979d8336be330`
 
@@ -11,47 +11,47 @@
 
 | Corpus | System | n | R@1 | R@3 | MRR | p50 ms |
 |---|---|---|---|---|---|---|
-| dita-spec | rag-dense | 77 | 0.7143 | 0.7662 | 0.7359 | 3.6 |
-| dita-spec | rag-dense-base | 77 | 0.6883 | 0.7792 | 0.7294 | 8.9 |
-| dita-spec | rag-hybrid | 77 | 0.9351 | 0.961 | 0.9459 | 6.1 |
-| dita-spec | rag-hybrid-base | 77 | 0.8961 | 0.9091 | 0.9004 | 11.7 |
-| dita-spec | rtr-arctic | 77 | 0.8961 | 0.9221 | 0.9091 | 14.0 |
-| dita-spec | rtr-bge | 77 | 0.8961 | 0.9091 | 0.9004 | 14.0 |
-| dita-spec | rtr-full | 77 | 0.9351 | 0.974 | 0.9524 | 23.9 |
-| dtd-commands | rag-dense | 97 | 0.3093 | 0.4536 | 0.3763 | 3.2 |
-| dtd-commands | rag-dense-base | 97 | 0.3505 | 0.4742 | 0.4055 | 8.2 |
-| dtd-commands | rag-hybrid | 97 | 0.4021 | 0.5155 | 0.4519 | 3.7 |
-| dtd-commands | rag-hybrid-base | 97 | 0.4536 | 0.5155 | 0.4811 | 8.8 |
-| dtd-commands | rtr-arctic | 97 | 0.1649 | 0.2062 | 0.1821 | 15.1 |
-| dtd-commands | rtr-bge | 97 | 0.4536 | 0.5258 | 0.4845 | 15.1 |
-| dtd-commands | rtr-full | 97 | 0.433 | 0.5155 | 0.4691 | 26.1 |
-| dtd-family | rag-dense | 163 | 0.2515 | 0.3436 | 0.2924 | 3.6 |
-| dtd-family | rag-dense-base | 163 | 0.2822 | 0.3742 | 0.3221 | 8.6 |
-| dtd-family | rag-hybrid | 163 | 0.4908 | 0.5767 | 0.5286 | 17.7 |
-| dtd-family | rag-hybrid-base | 163 | 0.4785 | 0.5215 | 0.498 | 23.6 |
-| dtd-family | rtr-arctic | 163 | 0.4417 | 0.4969 | 0.4673 | 37.0 |
-| dtd-family | rtr-bge | 163 | 0.4785 | 0.5215 | 0.498 | 29.9 |
-| dtd-family | rtr-full | 163 | 0.5337 | 0.6319 | 0.5757 | 54.2 |
-| nt-studies | rag-dense | 87 | 0.3218 | 0.5632 | 0.431 | 5.3 |
-| nt-studies | rag-dense-base | 87 | 0.3678 | 0.5747 | 0.4502 | 13.4 |
-| nt-studies | rag-hybrid | 87 | 0.5632 | 0.8046 | 0.659 | 7.3 |
-| nt-studies | rag-hybrid-base | 87 | 0.5287 | 0.6897 | 0.59 | 15.1 |
-| nt-studies | rtr-arctic | 87 | 0.4368 | 0.6092 | 0.5019 | 19.2 |
-| nt-studies | rtr-bge | 87 | 0.5287 | 0.7011 | 0.5958 | 19.7 |
-| nt-studies | rtr-full | 87 | 0.5402 | 0.7586 | 0.6264 | 32.2 |
+| dita-spec | rag-dense | 77 | 0.7273 | 0.7922 | 0.7576 | 2.9 |
+| dita-spec | rag-dense-base | 77 | 0.7013 | 0.7532 | 0.7273 | 7.8 |
+| dita-spec | rag-hybrid | 77 | 0.9351 | 0.9481 | 0.9394 | 5.0 |
+| dita-spec | rag-hybrid-base | 77 | 0.8701 | 0.8961 | 0.8788 | 10.0 |
+| dita-spec | rtr-arctic | 77 | 0.9091 | 0.9351 | 0.9177 | 12.8 |
+| dita-spec | rtr-bge | 77 | 0.8701 | 0.8961 | 0.8788 | 12.2 |
+| dita-spec | rtr-full | 77 | 0.9351 | 0.9481 | 0.9394 | 23.9 |
+| dtd-commands | rag-dense | 97 | 0.2887 | 0.4639 | 0.3677 | 3.4 |
+| dtd-commands | rag-dense-base | 97 | 0.3505 | 0.4742 | 0.4055 | 8.4 |
+| dtd-commands | rag-hybrid | 97 | 0.4124 | 0.5258 | 0.4622 | 3.8 |
+| dtd-commands | rag-hybrid-base | 97 | 0.4536 | 0.5361 | 0.4897 | 9.3 |
+| dtd-commands | rtr-arctic | 97 | 0.4742 | 0.5773 | 0.5189 | 21.8 |
+| dtd-commands | rtr-bge | 97 | 0.4536 | 0.5361 | 0.4897 | 15.3 |
+| dtd-commands | rtr-full | 97 | 0.4845 | 0.6082 | 0.5378 | 35.7 |
+| dtd-family | rag-dense | 163 | 0.3252 | 0.4172 | 0.362 | 3.7 |
+| dtd-family | rag-dense-base | 163 | 0.2945 | 0.3926 | 0.3354 | 8.6 |
+| dtd-family | rag-hybrid | 163 | 0.5215 | 0.6074 | 0.5593 | 18.4 |
+| dtd-family | rag-hybrid-base | 163 | 0.4908 | 0.6196 | 0.5501 | 20.7 |
+| dtd-family | rtr-arctic | 163 | 0.5092 | 0.6135 | 0.5573 | 33.6 |
+| dtd-family | rtr-bge | 163 | 0.4908 | 0.6196 | 0.5501 | 27.4 |
+| dtd-family | rtr-full | 163 | 0.5399 | 0.6626 | 0.593 | 52.9 |
+| nt-studies | rag-dense | 87 | 0.3333 | 0.6207 | 0.4579 | 4.2 |
+| nt-studies | rag-dense-base | 87 | 0.3678 | 0.5862 | 0.4579 | 9.9 |
+| nt-studies | rag-hybrid | 87 | 0.5632 | 0.7241 | 0.6284 | 5.8 |
+| nt-studies | rag-hybrid-base | 87 | 0.5172 | 0.6667 | 0.5805 | 11.6 |
+| nt-studies | rtr-arctic | 87 | 0.5747 | 0.8046 | 0.6648 | 15.6 |
+| nt-studies | rtr-bge | 87 | 0.5287 | 0.6667 | 0.5862 | 14.8 |
+| nt-studies | rtr-full | 87 | 0.5747 | 0.8506 | 0.6916 | 29.7 |
 
 ## DTD family — rtr-full taxon detail
 
 | Taxon | n | R@1 | R@3 | MRR |
 |---|---|---|---|---|
-| T1 | 32 | 0.5625 | 0.7188 | 0.6198 |
-| T10 | 21 | 0.619 | 0.7143 | 0.6587 |
-| T2 | 12 | 0.5833 | 0.6667 | 0.625 |
+| T1 | 32 | 0.75 | 0.9062 | 0.8229 |
+| T10 | 21 | 0.619 | 0.8571 | 0.7143 |
+| T2 | 12 | 0.8333 | 0.9167 | 0.875 |
 | T6 | 6 | 0.8333 | 1.0 | 0.9167 |
-| T7 | 40 | 0.525 | 0.55 | 0.5375 |
-| T8 | 40 | 0.4 | 0.5 | 0.4417 |
-| T9 | 12 | 0.5833 | 0.75 | 0.6667 |
-| OVERALL | 163 | 0.5337 | 0.6319 | 0.5757 |
+| T7 | 40 | 0.275 | 0.3 | 0.2833 |
+| T8 | 40 | 0.425 | 0.525 | 0.4667 |
+| T9 | 12 | 0.6667 | 0.9167 | 0.7778 |
+| OVERALL | 163 | 0.5399 | 0.6626 | 0.593 |
 
 ## Engine Beneath
 
