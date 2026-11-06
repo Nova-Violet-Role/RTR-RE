@@ -105,6 +105,27 @@ def extract_attr_names(scanned: str) -> List[str]:
     return names
 
 
+def extract_attr_owners(scanned: str) -> Dict[str, str]:
+    """Attribute name -> first owning element, scoped to ATTLIST declarations.
+
+    Each ATTLIST declaration names the element it decorates; the attribute
+    names inside it belong to that element. First declaration wins; later
+    duplicates are ignored. This is the attribute->element bridge the
+    lexikon seeding (TODO-37) uses to give a bare attribute name its
+    declaring context.
+    """
+    owners: Dict[str, str] = {}
+    for decl in _attlist_spans(scanned):
+        decl = COMMENT_RE.sub("", decl)
+        m = ATTR_DECL_RE.search(decl)
+        if not m:
+            continue
+        elem = m.group(1)
+        for name in ATTR_ITEM_RE.findall(decl):
+            owners.setdefault(name, elem)
+    return owners
+
+
 def extract_attr_types(scanned: str) -> Dict[str, str]:
     """Attribute name -> declared type, scoped to ATTLIST declarations.
 
@@ -169,6 +190,7 @@ class DTDProfile:
     content_models: Dict[str, int] = field(default_factory=dict)
     content_model_fragments: List[str] = field(default_factory=list)
     attribute_types: Dict[str, str] = field(default_factory=dict)
+    attribute_owners: Dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -190,6 +212,7 @@ class DTDProfile:
             "content_models": self.content_models,
             "content_model_fragments": self.content_model_fragments,
             "attribute_types": self.attribute_types,
+            "attribute_owners": self.attribute_owners,
         }
 
 
@@ -251,6 +274,7 @@ def extract_dtd_profile(path: Path) -> DTDProfile:
         },
         content_model_fragments=extract_content_model_fragments(scanned),
         attribute_types=extract_attr_types(scanned),
+        attribute_owners=extract_attr_owners(scanned),
     )
 
 
