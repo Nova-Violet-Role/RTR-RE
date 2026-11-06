@@ -620,6 +620,47 @@ def dtype_histogram(text: str) -> str:
     )
 
 
+_DTD_DECL_START = re.compile(r"<!([A-Za-z]+)\b")
+
+
+def _scan_dtd_declarations(content: str):
+    """Yield (kind, name, declaration_text) for each top-level DTD declaration.
+
+    A declaration runs from '<!' to its matching '>' with single/double
+    quotes respected, so a '>' inside a quoted entity value never splits a
+    declaration (LAW.AMP.13: entity bodies are data, never expanded).
+    """
+    i = 0
+    n = len(content)
+    while i < n:
+        m = _DTD_DECL_START.search(content, i)
+        if m is None:
+            return
+        kind = m.group(1).upper()
+        start = m.start()
+        j = m.end()
+        quote = None
+        while j < n:
+            ch = content[j]
+            if quote is not None:
+                if ch == quote:
+                    quote = None
+            elif ch in ('"', "'"):
+                quote = ch
+            elif ch == ">":
+                break
+            j += 1
+        if j >= n:
+            return
+        decl = content[start : j + 1]
+        rest = content[m.end() : j].strip()
+        if kind == "ENTITY" and rest.startswith("%"):
+            rest = rest[1:].lstrip()
+        name = rest.split()[0] if rest else ""
+        yield kind, name, decl
+        i = j + 1
+
+
 def cdata_terms_of(text: str) -> List[str]:
     """Opaque terms that deserve the exact-match lane."""
     terms = []
@@ -1132,6 +1173,134 @@ class MemoryEngine:
 
         return formatted_chunks
 
+    def chunk_dtd_whole(self, filepath: Path, rel_path: str) -> List[Dict[str, Any]]:
+        """One chunk per DTD-like file, prefixed with a structural inventory.
+
+        Measured (TODO-30): fragmenting DTDs into declaration chunks degraded
+        retrieval below the whole-file baseline (0.5652 → 0.5435 overall;
+        T9 0.667 → 0.5, T10 0.5 → 0.25) because DTD files are compact and
+        the queries are file-level. This variant keeps the winning whole-file
+        granularity and adds the vocabulary signal the dense model lacks: an
+        inventory header naming the file's elements, attributes, entities and
+        notations, so attribute/entity/cross-family queries can match the
+        names without fragmentation noise. Raw content follows verbatim —
+        entity bodies are data, never expanded (LAW.AMP.13).
+        """
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
+        except Exception as e:
+            print(f"Error reading {filepath}: {e}", file=sys.stderr)
+            return []
+        if not content.strip():
+            return []
+        decls = list(_scan_dtd_declarations(content))
+        elements = sorted({n for k, n, _d in decls if k == "ELEMENT" and n})
+        attrs = sorted({n for k, n, _d in decls if k == "ATTLIST" and n})
+        entities = sorted({n for k, n, _d in decls if k == "ENTITY" and n})
+        notations = sorted({n for k, n, _d in decls if k == "NOTATION" and n})
+        header_lines = []
+        if elements:
+            header_lines.append("ELEMENTS: " + ", ".join(elements[:200]))
+        if attrs:
+            header_lines.append("ATTRIBUTES: " + ", ".join(attrs[:200]))
+        if entities:
+            header_lines.append("ENTITIES: " + ", ".join(entities[:200]))
+        if notations:
+            header_lines.append("NOTATIONS: " + ", ".join(notations[:200]))
+        header = "\n".join(header_lines)
+        body = f"{header}\n\n{content}" if header else content
+        section_text = f"Document: {rel_path}\nSection: Full Document\n\n{body}"
+        return [
+            {
+                "chunk_id": f"{rel_path}#chunk_0",
+                "text": section_text,
+                "title": "Full Document",
+                "raw_body": body,
+                "linked_concepts": [],
+            }
+        ]
+
+    def chunk_dtd(self, filepath: Path, rel_path: str) -> List[Dict[str, Any]]:
+        """Split a DTD-like file (.dtd/.mod/.ent) on structural boundaries.
+
+        Hybrid design (measured, TODO-30): files with up to
+        OPENCODE_MEMORY_DTD_PER_DECLARATION_MAX declarations (default 300)
+        get one atomic chunk per declaration — element/attribute/entity/
+        content-model queries then match exactly the declaration they target
+        (the grouped design diluted these lanes: T9 fell 0.667 → 0.167).
+        Files above the threshold get consecutive declarations grouped into
+        chunks bounded by OPENCODE_MEMORY_DTD_CHUNK_TOKENS (default 512) so
+        the giants (TEI: 2702 declarations) stay bounded — the 23 GB memory
+        blow-up measured on the unbounded per-declaration design came from
+        the count, not the text. Declaration boundaries are always respected
+        as split points. Titles carry the first declaration's kind and name.
+        Raw declaration text is kept verbatim — entity bodies are data, never
+        expanded (LAW.AMP.13).
+        """
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
+        except Exception as e:
+            print(f"Error reading {filepath}: {e}", file=sys.stderr)
+            return []
+        if not content.strip():
+            return []
+        try:
+            per_decl_max = int(
+                os.environ.get("OPENCODE_MEMORY_DTD_PER_DECLARATION_MAX", "300")
+            )
+            per_decl_max = per_decl_max if per_decl_max > 0 else 300
+        except Exception:
+            per_decl_max = 300
+        decls = list(_scan_dtd_declarations(content))
+        chunks: List[Dict[str, Any]] = []
+
+        def emit(idx: int, kind: str, name: str, body: str) -> None:
+            title = f"{kind}: {name}" if name else kind
+            section_text = f"Document: {rel_path}\nSection: {title}\n\n{body}"
+            chunks.append(
+                {
+                    "chunk_id": f"{rel_path}#chunk_{idx}",
+                    "text": section_text,
+                    "title": title,
+                    "raw_body": body,
+                    "linked_concepts": [],
+                }
+            )
+
+        if len(decls) <= per_decl_max:
+            for idx, (kind, name, decl) in enumerate(decls):
+                emit(idx, kind, name, decl)
+            return chunks
+
+        try:
+            max_tokens = int(os.environ.get("OPENCODE_MEMORY_DTD_CHUNK_TOKENS", "512"))
+            max_tokens = max_tokens if max_tokens > 0 else 512
+        except Exception:
+            max_tokens = 512
+        buf: List[Tuple[str, str, str]] = []
+        buf_tokens = 0
+
+        def flush() -> None:
+            nonlocal buf, buf_tokens
+            if not buf:
+                return
+            first_kind, first_name, _ = buf[0]
+            body = "\n".join(d for _, _, d in buf)
+            emit(len(chunks), first_kind, first_name, body)
+            buf = []
+            buf_tokens = 0
+
+        for kind, name, decl in decls:
+            decl_tokens = max(1, len(decl) // 4)
+            if buf and buf_tokens + decl_tokens > max_tokens:
+                flush()
+            buf.append((kind, name, decl))
+            buf_tokens += decl_tokens
+        flush()
+        return chunks
+
     def load_registry(self) -> Dict[str, str]:
         if REGISTRY_FILE.exists():
             try:
@@ -1242,7 +1411,10 @@ class MemoryEngine:
             # boundaries and ids stay stable.
             jobs = []
             for info, filepath, old_hash, new_hash in to_index:
-                chunks = self.chunk_markdown(filepath, info["rel_path"])
+                if filepath.suffix.lower() in (".dtd", ".mod", ".ent"):
+                    chunks = self.chunk_dtd_whole(filepath, info["rel_path"])
+                else:
+                    chunks = self.chunk_markdown(filepath, info["rel_path"])
                 if not chunks:
                     continue
                 mtime_val = (
