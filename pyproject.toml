@@ -41,6 +41,7 @@ xpajonx-memory-cli = "execution.memory_cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["execution"]
+exclude = ["execution/test_*.py"]
 
 [tool.hatch.build.targets.sdist.force-include]
 "mjs/.opencode/plugins/rtr.mjs" = "mjs/.opencode/plugins/rtr.mjs"
