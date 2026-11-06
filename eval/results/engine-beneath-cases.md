@@ -1,6 +1,6 @@
 # Engine Beneath — case scoreboard (RE edition)
 
-- Run: 2026-11-06T19:32:01
+- Run: 2026-11-06T22:40:48
 - Cases: 16 — passed 16, failed 0
 - Verdict: **PASS**
 

@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 import time
 import urllib.request
+from collections import defaultdict
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 
@@ -725,6 +726,27 @@ def dtype_histogram(text: str) -> str:
 
 _DTD_DECL_START = re.compile(r"<!([A-Za-z]+)\b")
 _ELEM_FRAG_RE = re.compile(r"<!ELEMENT\s+[^\s>]+\s+(.*?)>", re.S)
+_ATTR_ITEM_RE = re.compile(
+    r'\s+([^\s>]+)\s+(?:CDATA|ID|IDREF|IDREFS|NMTOKEN|NMTOKENS|ENTITY|ENTITIES|NOTATION|\([^)]*\))\s+(?:#REQUIRED|#IMPLIED|#FIXED|"[^"]*"|\'[^\']*\'|[^\s>]+)'
+)
+_DTD_SUFFIXES = (".dtd", ".mod", ".ent")
+
+
+def _dtd_attr_owners(content: str) -> Dict[str, str]:
+    """Attribute name -> first owning element, scoped to ATTLIST declarations.
+
+    Mirrors the extractor's attribute_owners (eval/dtd_extractor.py) so
+    the engine and the instrument speak the same vocabulary (TODO-37).
+    Quote-aware scanning is inherited from _scan_dtd_declarations, so an
+    ATTLIST inside an entity body is never treated as a declaration.
+    """
+    owners: Dict[str, str] = {}
+    for kind, elem, decl in _scan_dtd_declarations(content):
+        if kind != "ATTLIST" or not elem:
+            continue
+        for name in _ATTR_ITEM_RE.findall(decl):
+            owners.setdefault(name, elem)
+    return owners
 
 
 def _content_model_fragments(decls) -> List[str]:
@@ -1708,6 +1730,22 @@ class MemoryEngine:
         self._purge_deleted_paths(set(registry.keys()) - active_paths)
 
         self.save_registry(new_registry)
+
+        # 4. Seed the lexikon for projects that carry DTD-family files
+        # (TODO-37): the amplification is architecture, not bench-only.
+        dtd_projects = {
+            info.get("project")
+            for info, filepath, _o, _n in to_index
+            if filepath.suffix.lower() in _DTD_SUFFIXES and info.get("project")
+        }
+        seeded = 0
+        if os.environ.get("OPENCODE_MEMORY_DTD_LEXIKON_SEED", "1").strip() != "0":
+            for proj in sorted(dtd_projects):
+                try:
+                    seeded += self.seed_dtd_lexikon(str(proj))
+                except Exception:
+                    pass
+        stats["lexikon_seeded"] = seeded
         return stats
 
     def _purge_deleted_paths(self, deleted_paths: set) -> None:
@@ -3060,6 +3098,97 @@ project: {project}
         except Exception as e:
             return {"status": "error", "message": f"Failed to save lexikon: {e}"}
 
+    def seed_dtd_lexikon(self, project: str) -> int:
+        """Seed the project lexikon with DTD vocabulary (TODO-37).
+
+        Scans the project's DTD-family files (.dtd/.mod/.ent), extracts
+        profiles with the engine's own scanners, and seeds:
+          - every rare attribute (df==1) -> its owning element as alias;
+          - every rare entity/parameter-entity -> the file's root element.
+        Lane discipline: source present (df==1), single owner, alias present
+        in the owner file, alias differs from source, definition empty
+        (only the alias enters the query expansion). This is the
+        architecture hook: real projects get the amplification, not
+        just the benchmark harness. Returns the number of terms seeded.
+        """
+        try:
+            d = resolve_project_dir(project)
+        except Exception:
+            return 0
+        if not d.exists():
+            return 0
+        files = sorted(
+            p for p in d.rglob("*") if p.is_file() and p.suffix.lower() in _DTD_SUFFIXES
+        )
+        if not files:
+            return 0
+        attr_df: Dict[str, int] = defaultdict(int)
+        ent_df: Dict[str, int] = defaultdict(int)
+        elem_df: Dict[str, int] = defaultdict(int)
+        profiles = {}
+        for p in files:
+            try:
+                text = p.read_text(encoding="utf-8", errors="replace")
+            except Exception:
+                continue
+            decls = list(_scan_dtd_declarations(text))
+            ents = set()
+            elems: List[str] = []
+            for kind, name, _decl in decls:
+                if kind == "ELEMENT" and name and name not in elems:
+                    elems.append(name)
+                elif kind == "ENTITY" and name:
+                    ents.add(name)
+            attr_owners = _dtd_attr_owners(text)
+            for a in attr_owners:
+                attr_df[a] += 1
+            for e in ents:
+                ent_df[e] += 1
+            for el in set(elems):
+                elem_df[el] += 1
+            profiles[str(p)] = (attr_owners, ents, elems)
+        # Element names are the vocabulary of T1/T2/T10 queries, so a
+        # seed term that is itself an element name would collide with
+        # element queries and pollute their expansions (measured:
+        # author/media/char/data as seeds corrupted T1/T10).
+        elem_names = set()
+        for _p, (_ao, _ents, elems) in profiles.items():
+            elem_names.update(elems)
+        seeds = []
+        for p, (attr_owners, ents, elems) in profiles.items():
+            for a, owner in attr_owners.items():
+                # Term length > 3 mirrors the T7/T8 query derivation: short
+                # names (w, re, ap) would substring-match unrelated queries
+                # and pollute their expansions (measured).
+                if (
+                    attr_df[a] == 1
+                    and len(a) > 3
+                    and a not in elem_names
+                    and len(owner) > 2
+                    and owner != a
+                ):
+                    seeds.append((a, owner))
+            root = elems[0] if elems else ""
+            for e in ents:
+                if (
+                    ent_df[e] == 1
+                    and len(e) > 3
+                    and e not in elem_names
+                    and len(root) > 2
+                    and root != e
+                ):
+                    seeds.append((e, root))
+        count = 0
+        for term, ctx in seeds:
+            # The element context goes in the DEFINITION, not the aliases:
+            # lexikon_expansion matches on term+aliases, so alias-based
+            # seeds would pollute T1/T10 queries that contain element
+            # names. Definition words are added only when the query
+            # contains the term itself (the rare attribute/entity name).
+            self.add_lexikon_term(project, term, definition=ctx, aliases=[])
+            count += 1
+        return count
+
     def build_lexikon(self, project: str) -> Dict[str, Any]:
         """Derive project lexikon from registry + latest session report.
 
@@ -3145,9 +3274,18 @@ project: {project}
                 continue
             term = str(entry.get("term", ""))
             aliases = [str(a) for a in (entry.get("aliases") or [])]
-            hay = f"{term} {' '.join(aliases)}".lower()
-            htokens = {t for t in re.findall(r"\w+", hay) if len(t) > 2}
-            if qtokens & htokens or any(a.lower() in q for a in aliases if a):
+            # Match on whole whitespace tokens of the query, never on
+            # substring or any-token overlap: DTD vocabulary is full of
+            # dotted/hyphenated compound names (book.set.part.wrapper,
+            # %SVG.animate.qname;, MediaServerControl), and substring
+            # matching lets a bare query like "chart:chart" match a
+            # seeded term "char" that merely prefixes it, polluting the
+            # expansion (measured: T1/T10 regressed under substring
+            # matching).
+            qtokens_ws = q.split()
+            if (term.lower() in qtokens_ws) or any(
+                a.lower() in qtokens_ws for a in aliases if a
+            ):
                 for t in re.findall(r"\w+", str(entry.get("definition", "")).lower()):
                     if len(t) > 2 and t not in qtokens and t not in out:
                         out.append(t)

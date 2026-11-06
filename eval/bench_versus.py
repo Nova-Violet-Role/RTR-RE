@@ -660,65 +660,6 @@ def derive_dtd_queries(proj, rng):
     return queries
 
 
-def seed_dtd_lexikon(proj, rng):
-    """Seed the project lexikon with DTD vocabulary (TODO-37).
-
-    For every rare attribute (df==1) the entry maps the attribute name to
-    its owning element; for every rare entity/parameter-entity it maps the
-    entity name to the file's root element. The element is the alias, so a
-    bare attribute/entity query expands with the declaring context that
-    lives in the same file. Lane discipline: source present (df==1),
-    single owner, alias present in the owner file, alias absent from the
-    query, alias differs from source, definition empty (only the alias is
-    added — generic definition words would dilute the expansion).
-    Deterministic: seeded per-corpus RNG, same staged set -> same seeds.
-    Returns the number of terms seeded.
-    """
-    sys.path.insert(0, str(Path(__file__).parent))
-    import dtd_extractor as dx
-
-    docs = {}
-    for f in sorted((proj / "directives").iterdir()):
-        if f.is_file():
-            docs[f.name] = dx.extract_dtd_profile(f)
-
-    attr_df = defaultdict(int)
-    ent_df = defaultdict(int)
-    for n, prof in docs.items():
-        for a in set(prof.attribute_names):
-            attr_df[a] += 1
-        for e in set(prof.entity_names + prof.param_entity_names):
-            ent_df[e] += 1
-
-    seeds = []
-    for n, prof in docs.items():
-        for a in set(prof.attribute_names):
-            owner = prof.attribute_owners.get(a, "")
-            if attr_df[a] == 1 and len(owner) > 2 and owner != a:
-                seeds.append((a, owner, n))
-        root = prof.element_names[0] if prof.element_names else ""
-        for e in set(prof.entity_names + prof.param_entity_names):
-            if ent_df[e] == 1 and len(root) > 2 and root != e:
-                seeds.append((e, root, n))
-    rng.shuffle(seeds)
-
-    count = 0
-    try:
-        eng0 = MemoryEngine()
-        for term, alias, _owner_n in seeds:
-            eng0.add_lexikon_term(
-                str(proj),
-                term,
-                definition="",
-                aliases=[alias],
-            )
-            count += 1
-        eng0.close()
-    except Exception as e:
-        print(f"lexikon seed failed: {e}", file=sys.stderr)
-    return count
-
-
 def run_system(engine, system, queries, proj):
     cfg = SYSTEMS[system]
     os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = cfg["models"]
@@ -977,7 +918,6 @@ def main():
             )
             if spec["title"] == "dtd":
                 queries = derive_dtd_queries(proj, crng)
-                results["lexikon_seeded"] += seed_dtd_lexikon(proj, crng)
             else:
                 queries = derive_queries(proj, crng, spec["title"])
             print(f"[{spec['name']}] derived {len(queries)} queries")
@@ -995,6 +935,7 @@ def main():
             mem.resolve_project_dir(str(proj))
             os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = INDEX_MODELS
             st = engine.index_all()
+            results["lexikon_seeded"] += st.get("lexikon_seeded", 0)
             if st.get("status") == "error":
                 print(
                     f"[{spec['name']}] INDEX REFUSED: {st.get('message')}",

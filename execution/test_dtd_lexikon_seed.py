@@ -72,14 +72,16 @@ class TestSeedDtdLexikon(unittest.TestCase):
         proj = Path(tmp.name) / "bench-tiny"
         d = proj / "directives"
         d.mkdir(parents=True)
+        # The owner element 'doc' appears in both files (df=2): a common
+        # element is never a T1 query target, so it is a safe alias.
         (d / "alpha.dtd").write_text(
-            "<!ELEMENT alpha (beta*)>\n"
-            "<!ATTLIST alpha rareattr CDATA #IMPLIED>\n"
+            "<!ELEMENT doc (beta*)>\n"
+            "<!ATTLIST doc rareattr CDATA #IMPLIED>\n"
             '<!ENTITY uniquebody "x">\n',
             encoding="utf-8",
         )
         (d / "beta.dtd").write_text(
-            "<!ELEMENT beta EMPTY>\n<!ATTLIST beta commonattr CDATA #IMPLIED>\n",
+            "<!ELEMENT doc EMPTY>\n<!ATTLIST doc commonattr CDATA #IMPLIED>\n",
             encoding="utf-8",
         )
         mem.PROJECT_ROOTS = [proj.parent]
@@ -90,19 +92,23 @@ class TestSeedDtdLexikon(unittest.TestCase):
         tmp, proj = self._stage_tiny()
         try:
             crng = random.Random(42)
-            count = b.seed_dtd_lexikon(proj, crng)
+            count = mem.MemoryEngine().seed_dtd_lexikon(str(proj))
             lex = mem.MemoryEngine().get_lexikon(str(proj))
             terms = lex
-            # rareattr: df==1, owner alpha -> seeded
+            # rareattr: df==1, owner doc -> seeded; element context lives
+            # in the definition, not the aliases, so T1/T10 queries that
+            # contain element names can never trigger the expansion.
             self.assertIn("rareattr", terms)
-            self.assertEqual(terms["rareattr"]["aliases"], ["alpha"])
-            self.assertEqual(terms["rareattr"]["definition"], "")
-            # uniquebody: df==1, root alpha -> seeded
+            self.assertEqual(terms["rareattr"]["aliases"], [])
+            self.assertEqual(terms["rareattr"]["definition"], "doc")
+            # uniquebody: df==1, root doc -> seeded
             self.assertIn("uniquebody", terms)
-            self.assertEqual(terms["uniquebody"]["aliases"], ["alpha"])
-            # commonattr: df==1 too (only in beta) -> seeded with owner beta
+            self.assertEqual(terms["uniquebody"]["aliases"], [])
+            self.assertEqual(terms["uniquebody"]["definition"], "doc")
+            # commonattr: df==1, owner doc -> seeded
             self.assertIn("commonattr", terms)
-            self.assertEqual(terms["commonattr"]["aliases"], ["beta"])
+            self.assertEqual(terms["commonattr"]["aliases"], [])
+            self.assertEqual(terms["commonattr"]["definition"], "doc")
             self.assertGreaterEqual(count, 3)
         finally:
             tmp.cleanup()
@@ -111,10 +117,13 @@ class TestSeedDtdLexikon(unittest.TestCase):
         tmp, proj = self._stage_tiny()
         try:
             crng = random.Random(42)
-            b.seed_dtd_lexikon(proj, crng)
+            mem.MemoryEngine().seed_dtd_lexikon(str(proj))
             eng = mem.MemoryEngine()
             expanded = eng.lexikon_expansion(str(proj), "rareattr")
-            self.assertIn("alpha", expanded)
+            self.assertIn("doc", expanded)
+            # A T1-style query (element name) must NOT expand: it never
+            # matches a seeded term, so it cannot be polluted.
+            self.assertEqual(eng.lexikon_expansion(str(proj), "doc"), [])
             eng.close()
         finally:
             tmp.cleanup()
@@ -133,7 +142,7 @@ class TestSeedDtdLexikon(unittest.TestCase):
             mem.PROJECT_ROOTS = [proj.parent]
             mem.PROJECTS_DIR = proj.parent
             crng = random.Random(42)
-            b.seed_dtd_lexikon(proj, crng)
+            mem.MemoryEngine().seed_dtd_lexikon(str(proj))
             lex = mem.MemoryEngine().get_lexikon(str(proj))
             terms = lex
             # dupattr appears in two files -> df==2 -> not seeded
