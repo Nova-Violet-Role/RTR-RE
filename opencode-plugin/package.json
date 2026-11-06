@@ -1,0 +1,9 @@
+{
+  "name": "rtr-re-opencode-plugin",
+  "private": true,
+  "version": "0.5.0",
+  "description": "RTR-RE:Symbiose OpenCode plugins — keeper (server) and ctrl+p palette (tui)",
+  "dependencies": {
+    "solid-js": "^1.9.18"
+  }
+}

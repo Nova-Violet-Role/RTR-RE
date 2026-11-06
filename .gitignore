@@ -2,6 +2,7 @@
 # Runtime index + live config stay out of the repo
 .cocoindex_code/
 .opencode/
+node_modules/
 __pycache__/
 *.pyc
 .lake/
