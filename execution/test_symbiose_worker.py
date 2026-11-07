@@ -277,6 +277,58 @@ class TestSessionSpanSink(unittest.TestCase):
             # schema block precedes content
             self.assertLess(body.index("<!ELEMENT span"), body.index("<span id="))
 
+    def test_sink_writes_paraphrase_companion_with_anchors(self):
+        with tempfile.TemporaryDirectory() as td:
+            sink = SessionSpanSink(Path(td))
+            path = sink(
+                [
+                    {
+                        "index": 0,
+                        "role": "assistant",
+                        "lane": "written",
+                        "dtype": "CDATA",
+                        "text": "First line anchor.\nSecond line.",
+                    },
+                    {
+                        "index": 1,
+                        "role": "user",
+                        "lane": "read",
+                        "dtype": "CDATA",
+                        "text": "x" * 300,
+                    },
+                ],
+                digest="abcd",
+            )
+            summary = Path(td) / "rtrre-summary-abcd.dtd"
+            self.assertTrue(summary.exists())
+            body = summary.read_text(encoding="utf-8")
+            self.assertIn("<!ELEMENT paraphrase EMPTY>", body)
+            self.assertIn("spanref IDREF #REQUIRED", body)
+            self.assertIn(
+                '<paraphrase spanref="span-0" text="First line anchor."', body
+            )
+            self.assertIn("…", body)  # truncated long anchor
+
+    def test_glossary_dtd_written_by_lexikon_build(self):
+        import sys
+
+        sys.path.insert(0, str(Path(__file__).parent))
+        from memory_engine import MemoryEngine
+
+        engine = MemoryEngine()
+        with tempfile.TemporaryDirectory() as td:
+            project = Path(td) / "proj"
+            project.mkdir()
+            (project / "state").mkdir()
+            (project / "state" / "lexikon.json").write_text(
+                '{"terms": {}}', encoding="utf-8"
+            )
+            res = engine.build_lexikon(str(project))
+            glossary = project / ".opencode" / "memory" / "rtrre-glossary.dtd"
+            self.assertTrue(glossary.exists(), res)
+            body = glossary.read_text(encoding="utf-8")
+            self.assertIn("<!ELEMENT glossaryentry EMPTY>", body)
+
     def test_engine_chunks_dtd_span_with_inventory_header(self):
         import sys
 

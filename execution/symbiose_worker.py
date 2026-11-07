@@ -94,11 +94,44 @@ class SessionSpanSink:
     def __init__(self, directory: Path):
         self.directory = Path(directory)
 
+    _SUMMARY_SCHEMA = (
+        "<!-- RTR-RE:Symbiose keeper paraphrase v2 (DTD-shaped) -->\n"
+        '<!ENTITY % rtrre.summary.module "INCLUDE">\n'
+        "<![%rtrre.summary.module;[\n"
+        "<!ELEMENT paraphrase EMPTY>\n"
+        "<!ATTLIST paraphrase\n"
+        "    spanref IDREF #REQUIRED\n"
+        "    text CDATA #REQUIRED\n"
+        "    ts CDATA #IMPLIED>\n"
+        "]]>\n"
+        "<!-- common-line anchors follow -->\n"
+    )
+
+    _ANCHOR_MAX = 160
+
+    @staticmethod
+    def _anchor_line(text: str) -> str:
+        """The common line: first meaningful line, truncated (TODO-70).
+
+        This is the honest, deterministic anchor for a bounded span —
+        the one-line paraphrase that stays visible/retrievable while the
+        verbatim span lives in memory. Real paraphrase generation is a
+        future summarizer hook; the anchor is the guaranteed fallback.
+        """
+        for line in str(text or "").splitlines():
+            stripped = line.strip()
+            if stripped:
+                if len(stripped) > SessionSpanSink._ANCHOR_MAX:
+                    return stripped[: SessionSpanSink._ANCHOR_MAX] + "…"
+                return stripped
+        return ""
+
     def __call__(self, spans: List[Dict[str, Any]], digest: str = "") -> str:
         self.directory.mkdir(parents=True, exist_ok=True)
         name = f"rtrre-{digest or 'spans'}.dtd"
         path = self.directory / name
         lines = [self._SCHEMA]
+        summaries = [self._SUMMARY_SCHEMA]
         for s in spans:
             role = s.get("role", "unknown")
             lane = s.get("lane", "read")
@@ -118,9 +151,17 @@ class SessionSpanSink:
             lines.append(text)
             lines.append("</span>")
             lines.append("")
+            anchor = self._anchor_line(text)
+            if anchor:
+                summaries.append(
+                    f'<paraphrase spanref="span-{idx}" text="{anchor}" ts="{ts}"/>'
+                )
         # Bytes, not text mode: Windows text translation would rewrite LF
         # as CRLF. Session spans are UTF-8 with LF endings, byte-exact.
         path.write_bytes(("\n".join(lines)).encode("utf-8"))
+        if len(summaries) > 1:
+            summary_path = self.directory / f"rtrre-summary-{digest or 'spans'}.dtd"
+            summary_path.write_bytes(("\n".join(summaries)).encode("utf-8"))
         return str(path)
 
 

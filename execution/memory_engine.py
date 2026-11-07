@@ -3401,11 +3401,60 @@ project: {project}
             fp.write_text(json.dumps({"terms": existing}, indent=2), encoding="utf-8")
         except Exception as e:
             return {"status": "error", "message": f"Failed to write lexikon: {e}"}
+        glossary_path = self._write_glossary_dtd(d, existing)
         return {
             "status": "success",
             "message": f"Lexikon built: {len(existing)} terms.",
             "terms": len(existing),
+            "glossary_dtd": str(glossary_path) if glossary_path else None,
         }
+
+    def _write_glossary_dtd(
+        self, project_dir: Path, terms: Dict[str, Any]
+    ) -> Path | None:
+        """Write the keeper glossary as a DTD corpus member (TODO-70).
+
+        The glossary lives beside the keeper memory root
+        (<project>/.opencode/memory/rtrre-glossary.dtd) and follows the
+        rtrre-glossary.mod architectural form: every term is a declaration
+        carrying term/alias/definition/source/ts attributes, so the DTD
+        chunker's inventory header makes glossary terms retrievable
+        structure-first — the operator's glossary-sync-in-DTD vision.
+        """
+        try:
+            memory_root = project_dir / ".opencode" / "memory"
+            memory_root.mkdir(parents=True, exist_ok=True)
+            path = memory_root / "rtrre-glossary.dtd"
+            lines = [
+                "<!-- RTR-RE:Symbiose keeper glossary v2 (DTD-shaped) -->",
+                '<!ENTITY % rtrre.glossary.module "INCLUDE">',
+                "<![%rtrre.glossary.module;[",
+                "<!ELEMENT glossaryentry EMPTY>",
+                "<!ATTLIST glossaryentry",
+                "    term CDATA #REQUIRED",
+                "    alias CDATA #IMPLIED",
+                "    definition CDATA #IMPLIED",
+                "    source CDATA #IMPLIED",
+                "    ts CDATA #IMPLIED>",
+                "]]>",
+                "<!-- glossary entries follow -->",
+                "",
+            ]
+            for key, entry in terms.items():
+                term = str(entry.get("term") or key)
+                aliases = entry.get("aliases") or []
+                alias = ", ".join(str(a) for a in aliases)
+                definition = str(entry.get("definition") or "")
+                source = str(entry.get("source") or "hand")
+                ts = str(entry.get("updated") or "")
+                lines.append(
+                    f'<glossaryentry term="{term}" alias="{alias}" '
+                    f'definition="{definition}" source="{source}" ts="{ts}"/>'
+                )
+            path.write_bytes(("\n".join(lines)).encode("utf-8"))
+            return path
+        except Exception:
+            return None
 
     def lexikon_expansion(self, project: str, query: str, limit: int = 8) -> List[str]:
         """Lookup-only expansion terms: lexikon hits overlapping the query."""
