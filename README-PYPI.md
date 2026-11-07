@@ -115,13 +115,13 @@ partitioned per project. Reopen the same project name → memory restored.
 | `OPENCODE_MEMORY_RRF_K` | `60` | RRF dampening; fuses rankings, never raw scores |
 | `OPENCODE_MEMORY_RRF_VOTE_TOP` | `10` | per-run rank vote truncation (0 disables) |
 | `OPENCODE_MEMORY_STRUCT_LANE` | off | `rg`/`ccc`/`auto` = structural grep lane for code-shaped terms |
-| `OPENCODE_MEMORY_RTRRE_TRIGGER` | `250000` | Compressor trigger tokens (scale below your model input cap) |
-| `OPENCODE_MEMORY_RTRRE_TARGET` | `100000` | verbatim tail kept after the drain (target) |
-| `OPENCODE_MEMORY_RTRRE_PRESET` | `symbiose-ah` | keeper preset: `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40 · `re-symbiose` 320k/128k/50 · `re-symbiose-mugen` 400k/200k/200 (future default) · legacy `standard`/`calibrated`/`wide` |
+| `OPENCODE_MEMORY_RTRRE_TRIGGER` | `400000` | Compressor trigger tokens (scale below your model input cap) |
+| `OPENCODE_MEMORY_RTRRE_TARGET` | `200000` | verbatim tail kept after the drain (target) |
+| `OPENCODE_MEMORY_RTRRE_PRESET` | `re-symbiose-mugen` | keeper preset: `re-symbiose-mugen` 400k/200k/200 (default) · `symbiose-ah` 250k/100k/40 · `fusion-ah` 200k/100k/30 · `re-symbiose` 320k/128k/50 · legacy `standard`/`calibrated`/`wide` |
 | `OPENCODE_MEMORY_RTR_PRESET_PROFILE` | `public-default` | CPU profile: `public-default` (T4/P60) or `local-system` (T8/P80) |
 | `OPENCODE_MEMORY_RETRIEVAL_MODALITY` | `rtr-full` | retrieval modality: `rtr-full` (dual), `rtr-arctic`, `rtr-bge`, `rag-hybrid-base`, `rag-dense-base`, `rag-hybrid`, `rag-dense`, `custom` |
 | `OPENCODE_MEMORY_CPU_PARKING_PERCENT` | profile default | CPU parking percent (20–80) — cores kept awake for embedding |
-| `OPENCODE_MEMORY_RTRRE_MAX_KEEP` | `40` | max verbatim messages kept |
+| `OPENCODE_MEMORY_RTRRE_MAX_KEEP` | `200` | max verbatim messages kept |
 | `RTR_RE_KEEPER_CONFIG` | `<project>/.opencode/rtr-re-keeper.json` | live Keeper bounds file (watched, no restart) |
 | `RTR_RE_KEEPER_STATUS` | `<project>/.opencode/rtr-re-keeper-status.json` | Keeper status file read by `memory_rtr_status` |
 | `RTR_RE_KEEPER_ENABLED` | `1` | `0` disables pruning (identity transform) |

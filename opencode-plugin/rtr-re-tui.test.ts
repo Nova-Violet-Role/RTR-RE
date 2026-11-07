@@ -22,7 +22,7 @@ describe("rtr-re-tui", () => {
     const found = candidates.find((p) => fs.existsSync(p))
     expect(found).toBeDefined()
     const data = JSON.parse(fs.readFileSync(found, "utf8"))
-    expect(data.defaultKeeperPreset).toBe("symbiose-ah")
+    expect(data.defaultKeeperPreset).toBe("re-symbiose-mugen")
     expect(data.futureDefaultKeeperPreset).toBe("re-symbiose-mugen")
     expect(data.keeperPresets["fusion-ah"].maxKeepMessages).toBe(30)
     expect(data.keeperPresets["symbiose-ah"].maxKeepMessages).toBe(40)

@@ -26,7 +26,7 @@
       ]
     }
   },
-  "defaultKeeperPreset": "symbiose-ah",
+  "defaultKeeperPreset": "re-symbiose-mugen",
   "futureDefaultKeeperPreset": "re-symbiose-mugen",
   "keeperAliases": {
     "re-symbiose-ah": "re-symbiose",

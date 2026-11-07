@@ -36,10 +36,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Tuple
 
 # Backward-compatible constants now describe the RTR-RE public default
-# context preset, Symbiose-AH!, so existing imports describe RTR-RE.
-TARGET_TOKENS = 100000
-TRIGGER_TOKENS = 250000
-MAX_KEEP_MESSAGES = 40
+# context preset, Re-Symbiose-Mugen, so existing imports describe RTR-RE.
+TARGET_TOKENS = 200000
+TRIGGER_TOKENS = 400000
+MAX_KEEP_MESSAGES = 200
 MAX_SUMMARY_CHARS = 20000
 MAX_RESTORE_CHARS = 4000
 PROTECTED_TOOLS = frozenset({"todowrite"})

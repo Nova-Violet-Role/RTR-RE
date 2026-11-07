@@ -200,10 +200,10 @@ span retrievability via memory_search, the lexikon lane reaching evicted
 content, the optimizer consuming its own resolved profile, preset-axis parking
 arithmetic across 84 cells, and parameter-entity injection safety.
 
-**Presets are measured, not typed:** a fresh install defaults to Symbiose-AH!
-(250k/100k/40) with RTR-FULL at T4/P60; the future-default Re-Symbiose-Mugen
-(400k/200k/200) is recorded in the shared registry for when the architecture
-completes.
+**Presets are measured, not typed:** a fresh install defaults to
+Re-Symbiose-Mugen (400k/200k/200) with RTR-FULL at T4/P60 — the
+infinite-memory preset, now the shipped default; Symbiose-AH!
+(250k/100k/40) remains available as the balanced preset.
 
 Final freeze (2026-10-27, within-run reading): binary intense —
 rtr-full R@3 **0.756** (best), R@1 0.642 / MRR 0.689 at parity with the

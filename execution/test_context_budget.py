@@ -27,10 +27,10 @@ def msg(role, text, tool=None):
 
 class TestContextBudget(unittest.TestCase):
     def test_constants_match_plan(self):
-        # Public default is Symbiose-AH!: verbatim to 250k, 100k tail.
-        self.assertEqual(TARGET_TOKENS, 100000)
-        self.assertEqual(TRIGGER_TOKENS, 250000)
-        self.assertEqual(MAX_KEEP_MESSAGES, 40)
+        # Public default is Re-Symbiose-Mugen: verbatim to 400k, 200k tail.
+        self.assertEqual(TARGET_TOKENS, 200000)
+        self.assertEqual(TRIGGER_TOKENS, 400000)
+        self.assertEqual(MAX_KEEP_MESSAGES, 200)
         self.assertEqual(MAX_SUMMARY_CHARS, 20000)
 
     def test_below_trigger_is_noop(self):
@@ -41,11 +41,11 @@ class TestContextBudget(unittest.TestCase):
         self.assertEqual(plan["evict"], [])
 
     def test_acceptance_keeps_bounded_tail(self):
-        # 120 messages, each ~3000 tokens (12000 chars) = ~360k total > 320k.
+        # 120 messages, each ~4500 tokens (18000 chars) = ~540k total > 400k.
         msgs = []
         for i in range(120):
             role = "user" if i % 2 == 0 else "assistant"
-            msgs.append(msg(role, f"message {i} " + "x" * 12000))
+            msgs.append(msg(role, f"message {i} " + "x" * 18000))
         plan = plan_compression(msgs)
         self.assertTrue(plan["compress"])
         self.assertLessEqual(len(plan["keep"]), MAX_KEEP_MESSAGES)
@@ -57,7 +57,7 @@ class TestContextBudget(unittest.TestCase):
 
     def test_protected_tool_never_evicted(self):
         msgs = [msg("assistant", "s" * 4000, tool="todowrite")]
-        msgs += [msg("assistant", "y" * 12000) for _ in range(120)]
+        msgs += [msg("assistant", "y" * 18000) for _ in range(120)]
         msgs.append(msg("user", "latest question"))
         plan = plan_compression(msgs)
         self.assertTrue(plan["compress"])
@@ -66,8 +66,8 @@ class TestContextBudget(unittest.TestCase):
 
     def test_ndata_masked_in_evict_payload(self):
         blob = "QUJD" * 40  # 160-char base64-like span
-        msgs = [msg("assistant", f"data {blob} end " + "z" * 12000)]
-        msgs += [msg("assistant", "w" * 12000) for _ in range(120)]
+        msgs = [msg("assistant", f"data {blob} end " + "z" * 18000)]
+        msgs += [msg("assistant", "w" * 18000) for _ in range(120)]
         msgs.append(msg("user", "go"))
         plan = plan_compression(msgs)
         evicted_text = " ".join(e["text"] for e in plan["evict_payload"])
@@ -76,7 +76,7 @@ class TestContextBudget(unittest.TestCase):
 
     def test_tool_pairs_are_not_split_backwards(self):
         # tool result kept implies its call kept when adjacent pair straddles cut.
-        msgs: list = [msg("assistant", "a" * 12000) for _ in range(120)]
+        msgs: list = [msg("assistant", "a" * 18000) for _ in range(120)]
         msgs.append(msg("assistant", "call", tool="read"))
         msgs.append({"role": "tool", "text": "result", "tool_call": True})
         msgs.append(msg("user", "next"))
@@ -90,7 +90,7 @@ class TestContextBudget(unittest.TestCase):
         # planner is advisory only.
         import copy
 
-        msgs = [msg("assistant", "q" * 12000) for _ in range(120)]
+        msgs = [msg("assistant", "q" * 18000) for _ in range(120)]
         msgs.append(msg("user", "go"))
         before = copy.deepcopy(msgs)
         plan = plan_compression(msgs)
@@ -99,8 +99,8 @@ class TestContextBudget(unittest.TestCase):
 
     def test_evicted_substance_kept_verbatim_for_index(self):
         marker = "UNIQUE-DECISION-keep-me-exactly"
-        msgs = [msg("assistant", marker + " " + "v" * 12000)]
-        msgs += [msg("assistant", "u" * 12000) for _ in range(120)]
+        msgs = [msg("assistant", marker + " " + "v" * 18000)]
+        msgs += [msg("assistant", "u" * 18000) for _ in range(120)]
         msgs.append(msg("user", "go"))
         plan = plan_compression(msgs)
         payload = " ".join(e["text"] for e in plan["evict_payload"])

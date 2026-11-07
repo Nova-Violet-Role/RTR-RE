@@ -95,7 +95,7 @@ class TestArtifactsAndSurface(unittest.TestCase):
         import context_budget as cb
 
         profile = cb.resolve_preset_profile({})
-        self.assertEqual((cb.TRIGGER_TOKENS, cb.TARGET_TOKENS), (250000, 100000))
+        self.assertEqual((cb.TRIGGER_TOKENS, cb.TARGET_TOKENS), (400000, 200000))
         self.assertEqual(
             (
                 profile["preset"],
@@ -110,16 +110,16 @@ class TestArtifactsAndSurface(unittest.TestCase):
                 profile["profile_label"],
             ),
             (
-                "symbiose-ah",
-                "Symbiose-AH!",
-                250000,
-                100000,
-                40,
+                "re-symbiose-mugen",
+                "Re-Symbiose-Mugen",
+                400000,
+                200000,
+                200,
                 "rtr-full",
                 4,
                 60,
-                "symbiose-ah/rtr-full/t4/p60",
-                "Symbiose-AH! · RTR-FULL · T4 · P60",
+                "re-symbiose-mugen/rtr-full/t4/p60",
+                "Re-Symbiose-Mugen · RTR-FULL · T4 · P60",
             ),
         )
         keeper = read(ROOT / "opencode-plugin" / "rtr-re-keeper.js")

@@ -94,6 +94,35 @@ const AUTO_OPTIMIZE_NOTE =
   'fewer elements, and name one concrete way it beats the obvious first ' +
   'version. Optimize this change only; name adjacent chances in one line.';
 
+// Measured axis guidance (thread-scaling-1.1.0.md, TODO-69): scores are
+// flat T4-T16, T8 is the speed sweet spot, T32 hurts, parking is
+// quality-neutral and caps threads, P20/P40 are the low-end mitigation.
+const DID_YOU_KNOW = [
+  'Did you know: retrieval scores are flat from T4 to T16 — threads buy speed, not quality.',
+  'Did you know: on small-RAM machines, P20 lets the SSD act as the memory mitigation.',
+  'Did you know: MUGEN (400k/200k/200) is the infinite-memory preset.',
+];
+
+function recommendProfile(profile, processors) {
+  const cores = Number(processors) || 0;
+  if (cores >= 24) {
+    return {
+      line: 'Recommended from Saimonokuma: T8 + P40 (measured speed sweet spot, balanced headroom).',
+      tip: DID_YOU_KNOW[0],
+    };
+  }
+  if (cores >= 8) {
+    return {
+      line: 'Recommended for this machine: T4 + P40 (quality is flat; threads buy speed only).',
+      tip: DID_YOU_KNOW[0],
+    };
+  }
+  return {
+    line: 'Recommended for this machine: T2 + P20 (low-end mode — the SSD mitigates RAM; same retrieval quality).',
+    tip: DID_YOU_KNOW[1],
+  };
+}
+
 // Data-rich note: when the optimizer has a context provider (the resolved
 // registry profile), the note carries the real numbers so the pass is
 // grounded in the actual configuration and retrieval learnings.
@@ -115,6 +144,8 @@ function buildOptimizeNote(ctx) {
   } else {
     parts.push('This modality has no lexikon expansion: match terms verbatim.');
   }
+  const rec = recommendProfile(ctx, ctx.logicalProcessors);
+  parts.push(rec.line, rec.tip);
   return parts.join(' ');
 }
 
@@ -205,6 +236,13 @@ function registryContextProfile() {
     hybrid: Boolean(modality.hybrid),
     expansion: Boolean(modality.expansion),
     models: Array.isArray(modality.models) ? modality.models : [],
+    logicalProcessors: (() => {
+      try {
+        return require('os').cpus().length;
+      } catch {
+        return 0;
+      }
+    })(),
   };
 }
 
@@ -303,6 +341,7 @@ function writeHookOutput(event, context) {
 module.exports = {
   AUTO_OPTIMIZE_NOTE,
   DEACTIVATE,
+  DID_YOU_KNOW,
   PLAN_DEFAULTS,
   READ_TOOLS,
   REACTIVATE,
@@ -317,6 +356,7 @@ module.exports = {
   isActive,
   loadRegistry,
   planContext,
+  recommendProfile,
   registryContextProfile,
   writeHookOutput,
 };

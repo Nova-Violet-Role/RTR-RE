@@ -36,26 +36,28 @@ class TestRetrievalProfile(unittest.TestCase):
 
     def test_context_profile_is_the_rtrre_composition(self):
         profile = resolve_context_profile({})
-        self.assertEqual(profile["preset"], "symbiose-ah")
-        self.assertEqual(profile["preset_display"], "Symbiose-AH!")
-        self.assertEqual(profile["keeper"]["trigger_tokens"], 250000)
-        self.assertEqual(profile["keeper"]["target_tokens"], 100000)
-        self.assertEqual(profile["keeper"]["max_keep_messages"], 40)
+        self.assertEqual(profile["preset"], "re-symbiose-mugen")
+        self.assertEqual(profile["preset_display"], "Re-Symbiose-Mugen")
+        self.assertEqual(profile["keeper"]["trigger_tokens"], 400000)
+        self.assertEqual(profile["keeper"]["target_tokens"], 200000)
+        self.assertEqual(profile["keeper"]["max_keep_messages"], 200)
         self.assertEqual(profile["modality"], "rtr-full")
         self.assertEqual(profile["threads_per_model"], 4)
         self.assertEqual(profile["parking_percent"], 60)
         self.assertEqual(profile["compute_preset"], "rtr-full/t4/p60")
-        self.assertEqual(profile["profile_code"], "symbiose-ah/rtr-full/t4/p60")
-        self.assertEqual(profile["profile_label"], "Symbiose-AH! · RTR-FULL · T4 · P60")
+        self.assertEqual(profile["profile_code"], "re-symbiose-mugen/rtr-full/t4/p60")
+        self.assertEqual(
+            profile["profile_label"], "Re-Symbiose-Mugen · RTR-FULL · T4 · P60"
+        )
 
-    def test_local_system_is_symbiose_ah_rtr_full_t8_p80(self):
+    def test_local_system_is_mugen_rtr_full_t8_p80(self):
         profile = resolve_context_profile(
             {"OPENCODE_MEMORY_RTR_PRESET_PROFILE": "local-system"}
         )
-        self.assertEqual(profile["preset"], "symbiose-ah")
+        self.assertEqual(profile["preset"], "re-symbiose-mugen")
         self.assertEqual(profile["threads_per_model"], 8)
         self.assertEqual(profile["parking_percent"], 80)
-        self.assertEqual(profile["profile_code"], "symbiose-ah/rtr-full/t8/p80")
+        self.assertEqual(profile["profile_code"], "re-symbiose-mugen/rtr-full/t8/p80")
 
     def test_legacy_profiles_are_aliases_not_parallel_defaults(self):
         balanced = resolve_retrieval_profile(
@@ -101,7 +103,9 @@ class TestRetrievalProfile(unittest.TestCase):
         self.assertEqual(alias_cfg["preset"], "re-symbiose-mugen")
         self.assertEqual(alias_cfg["trigger_tokens"], 400000)
         default_cfg = symbiose_config({})
-        self.assertEqual(default_cfg["preset"], "symbiose-ah")
+        self.assertEqual(default_cfg["preset"], "re-symbiose-mugen")
+        self.assertEqual(default_cfg["trigger_tokens"], 400000)
+        self.assertEqual(default_cfg["max_keep_messages"], 200)
 
     def test_modality_threads_and_parking_stay_independent(self):
         profile = resolve_retrieval_profile(

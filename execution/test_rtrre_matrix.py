@@ -32,8 +32,8 @@ def sized(tokens, role="assistant", tool=None):
 class TestConfigMatrix(unittest.TestCase):
     def test_each_knob_env(self):
         cases = [
-            ("OPENCODE_MEMORY_RTRRE_TRIGGER", "trigger_tokens", 150001),
-            ("OPENCODE_MEMORY_RTRRE_TARGET", "target_tokens", 50001),
+            ("OPENCODE_MEMORY_RTRRE_TRIGGER", "trigger_tokens", 450001),
+            ("OPENCODE_MEMORY_RTRRE_TARGET", "target_tokens", 150001),
             ("OPENCODE_MEMORY_RTRRE_MAX_KEEP", "max_keep_messages", 7),
             ("OPENCODE_MEMORY_RTRRE_MAX_SUMMARY", "max_summary_chars", 9001),
             ("OPENCODE_MEMORY_RTRRE_MAX_RESTORE", "max_restore_chars", 1234),
@@ -68,8 +68,8 @@ class TestConfigMatrix(unittest.TestCase):
 
     def test_whitespace_env_is_preset_default(self):
         cfg = symbiose_config({"OPENCODE_MEMORY_RTRRE_TARGET": "  "})
-        self.assertEqual(cfg["target_tokens"], 100000)
-        self.assertEqual(cfg["sources"]["target_tokens"], "preset:symbiose-ah")
+        self.assertEqual(cfg["target_tokens"], 200000)
+        self.assertEqual(cfg["sources"]["target_tokens"], "preset:re-symbiose-mugen")
 
 
 class TestPlanBoundaries(unittest.TestCase):

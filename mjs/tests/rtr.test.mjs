@@ -68,21 +68,21 @@ test("auto-optimize: a write with no read before it earns no note", () => {
 
 test("context plan keeps verbatim below the trigger and evicts above it", () => {
     const under = core.planContext(100000, 50)
-    assert.equal(under.triggerTokens, 250000)
-    assert.equal(under.targetTokens, 100000)
-    assert.equal(under.maxKeepMessages, 40)
+    assert.equal(under.triggerTokens, 400000)
+    assert.equal(under.targetTokens, 200000)
+    assert.equal(under.maxKeepMessages, 200)
     assert.match(under.decision, /keep verbatim/)
-    const over = core.planContext(400000, 90)
+    const over = core.planContext(500000, 90)
     assert.match(over.decision, /evict/)
 })
 
 test("context plan defaults come from the shared preset registry, not hardcoded values", () => {
     const reg = core.registryContextProfile()
     assert.ok(reg)
-    assert.equal(reg.preset, "symbiose-ah")
-    assert.equal(reg.triggerTokens, 250000)
-    assert.equal(reg.targetTokens, 100000)
-    assert.equal(reg.maxKeepMessages, 40)
+    assert.equal(reg.preset, "re-symbiose-mugen")
+    assert.equal(reg.triggerTokens, 400000)
+    assert.equal(reg.targetTokens, 200000)
+    assert.equal(reg.maxKeepMessages, 200)
     assert.equal(reg.cpuProfile, "public-default")
     assert.equal(reg.modality, "rtr-full")
     assert.equal(reg.threadsPerModel, 4)
@@ -94,8 +94,8 @@ test("context plan defaults come from the shared preset registry, not hardcoded 
 test("optimizer note carries the resolved profile numbers when a provider is present", () => {
     const note = core.buildOptimizeNote(core.registryContextProfile())
     assert.match(note, /AUTO-OPTIMIZE/)
-    assert.match(note, /Symbiose-AH!/)
-    assert.match(note, /250000\/100000\/40/)
+    assert.match(note, /Re-Symbiose-Mugen/)
+    assert.match(note, /400000\/200000\/200/)
     assert.match(note, /RTR-FULL/)
     assert.match(note, /T4\/P60/)
     assert.match(note, /hybrid=true expansion=true/)
@@ -107,12 +107,12 @@ test("optimizer with provider emits the data-rich note; without it, the static f
     })
     const rich = withProvider.noteForToolAfter("read")
     assert.match(rich ?? "", /AUTO-OPTIMIZE/)
-    assert.match(rich ?? "", /Symbiose-AH!/)
+    assert.match(rich ?? "", /Re-Symbiose-Mugen/)
 
     const plain = core.createAutoOptimizer()
     const fallback = plain.noteForToolAfter("read")
     assert.match(fallback ?? "", /AUTO-OPTIMIZE/)
-    assert.ok(!(fallback ?? "").includes("Symbiose-AH!"))
+    assert.ok(!(fallback ?? "").includes("Re-Symbiose-Mugen"))
 })
 
 test("cli bridge builds measured rtr-cli arguments and refuses unknown commands by name", () => {
@@ -188,6 +188,32 @@ test("plugin registers the rtr command from the command directory", async () => 
     await hooks.config(config)
     assert.ok(config.command?.rtr?.template)
     assert.ok(config.command?.rtr?.description)
+})
+
+test("optimizer recommendation is machine-aware and grounded in the measured axis", () => {
+    const high = core.recommendProfile({}, 32)
+    const mid = core.recommendProfile({}, 8)
+    const low = core.recommendProfile({}, 4)
+    assert.match(high.line, /Saimonokuma: T8 \+ P40/)
+    assert.match(mid.line, /T4 \+ P40/)
+    assert.match(low.line, /T2 \+ P20/)
+    assert.match(low.line, /SSD mitigates RAM/)
+    const note = core.buildOptimizeNote({
+        preset: "re-symbiose-mugen",
+        presetDisplay: "Re-Symbiose-Mugen",
+        triggerTokens: 400000,
+        targetTokens: 200000,
+        maxKeepMessages: 200,
+        modality: "rtr-full",
+        threadsPerModel: 8,
+        parkingPercent: 40,
+        hybrid: true,
+        expansion: true,
+        logicalProcessors: 32,
+    })
+    assert.ok(note.includes("Re-Symbiose-Mugen (400000/200000/200)"))
+    assert.ok(note.includes("Recommended from Saimonokuma"))
+    assert.ok(note.includes("Did you know"))
 })
 
 before(() => {})

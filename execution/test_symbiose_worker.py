@@ -12,7 +12,7 @@ from context_budget import symbiose_config
 from symbiose_worker import SessionSpanSink, SymbioseWorker, format_duration_ms
 
 
-def big_messages(n=90):
+def big_messages(n=110):
     msgs = []
     for i in range(n):
         role = "assistant" if i % 3 else "user"
@@ -22,31 +22,35 @@ def big_messages(n=90):
 
 
 class TestSymbioseConfig(unittest.TestCase):
-    def test_defaults_are_symbiose_ah_public_profile(self):
+    def test_defaults_are_mugen_public_profile(self):
         cfg = symbiose_config({})
-        self.assertEqual(cfg["preset"], "symbiose-ah")
-        self.assertEqual(cfg["preset_display"], "Symbiose-AH!")
+        self.assertEqual(cfg["preset"], "re-symbiose-mugen")
+        self.assertEqual(cfg["preset_display"], "Re-Symbiose-Mugen")
         self.assertEqual(cfg["compute_preset"], "rtr-full/t4/p60")
         self.assertEqual(cfg["modality"], "rtr-full")
         self.assertEqual(cfg["threads_per_model"], 4)
         self.assertEqual(cfg["parking_percent"], 60)
-        self.assertEqual(cfg["profile_label"], "Symbiose-AH! · RTR-FULL · T4 · P60")
-        self.assertEqual(cfg["profile_code"], "symbiose-ah/rtr-full/t4/p60")
-        self.assertEqual(cfg["trigger_tokens"], 250000)
-        self.assertEqual(cfg["target_tokens"], 100000)
-        self.assertEqual(cfg["max_keep_messages"], 40)
+        self.assertEqual(
+            cfg["profile_label"], "Re-Symbiose-Mugen · RTR-FULL · T4 · P60"
+        )
+        self.assertEqual(cfg["profile_code"], "re-symbiose-mugen/rtr-full/t4/p60")
+        self.assertEqual(cfg["trigger_tokens"], 400000)
+        self.assertEqual(cfg["target_tokens"], 200000)
+        self.assertEqual(cfg["max_keep_messages"], 200)
         self.assertEqual(cfg["max_summary_chars"], 20000)
         self.assertEqual(cfg["max_restore_chars"], 4000)
-        self.assertEqual(cfg["sources"]["trigger_tokens"], "preset:symbiose-ah")
+        self.assertEqual(cfg["sources"]["trigger_tokens"], "preset:re-symbiose-mugen")
 
-    def test_local_system_profile_uses_symbiose_ah_at_t8_p80(self):
+    def test_local_system_profile_uses_mugen_at_t8_p80(self):
         cfg = symbiose_config({"OPENCODE_MEMORY_RTR_PRESET_PROFILE": "local-system"})
-        self.assertEqual(cfg["preset"], "symbiose-ah")
+        self.assertEqual(cfg["preset"], "re-symbiose-mugen")
         self.assertEqual(cfg["compute_preset"], "rtr-full/t8/p80")
         self.assertEqual(cfg["threads_per_model"], 8)
         self.assertEqual(cfg["parking_percent"], 80)
-        self.assertEqual(cfg["profile_label"], "Symbiose-AH! · RTR-FULL · T8 · P80")
-        self.assertEqual(cfg["profile_code"], "symbiose-ah/rtr-full/t8/p80")
+        self.assertEqual(
+            cfg["profile_label"], "Re-Symbiose-Mugen · RTR-FULL · T8 · P80"
+        )
+        self.assertEqual(cfg["profile_code"], "re-symbiose-mugen/rtr-full/t8/p80")
 
     def test_env_overrides(self):
         cfg = symbiose_config(
@@ -61,7 +65,7 @@ class TestSymbioseConfig(unittest.TestCase):
 
     def test_invalid_refused_by_name(self):
         with self.assertRaises(ValueError) as cm:
-            symbiose_config({"OPENCODE_MEMORY_RTRRE_TARGET": "350000"})
+            symbiose_config({"OPENCODE_MEMORY_RTRRE_TARGET": "450000"})
         self.assertIn("TARGET", str(cm.exception))
         with self.assertRaises(ValueError):
             symbiose_config({"OPENCODE_MEMORY_RTRRE_TRIGGER": "abc"})

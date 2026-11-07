@@ -44,18 +44,18 @@ function msg(role, text, extra = {}) {
     }
 }
 
-test("config defaults are Symbiose-AH! public profile", () => {
+test("config defaults are Re-Symbiose-Mugen public profile", () => {
     const c = resolveKeeperConfig({}, {})
-    assert.equal(c.preset, "symbiose-ah")
-    assert.equal(c.presetDisplay, "Symbiose-AH!")
-    assert.equal(c.triggerTokens, 250000)
-    assert.equal(c.targetTokens, 100000)
-    assert.equal(c.maxKeepMessages, 40)
+    assert.equal(c.preset, "re-symbiose-mugen")
+    assert.equal(c.presetDisplay, "Re-Symbiose-Mugen")
+    assert.equal(c.triggerTokens, 400000)
+    assert.equal(c.targetTokens, 200000)
+    assert.equal(c.maxKeepMessages, 200)
     assert.equal(c.modality, "rtr-full")
     assert.equal(c.threadsPerModel, 4)
     assert.equal(c.parkingPercent, 60)
-    assert.equal(c.profileCode, "symbiose-ah/rtr-full/t4/p60")
-    assert.equal(c.profileLabel, "Symbiose-AH! · RTR-FULL · T4 · P60")
+    assert.equal(c.profileCode, "re-symbiose-mugen/rtr-full/t4/p60")
+    assert.equal(c.profileLabel, "Re-Symbiose-Mugen · RTR-FULL · T4 · P60")
 })
 
 test("config refuses invalid bounds by name", () => {
@@ -270,7 +270,7 @@ test("status file is written at the exchange boundary", async () => {
         const raw = await readFile(join(dir, ".opencode", "rtr-re-keeper-status.json"), "utf8")
         const st = JSON.parse(raw)
         assert.equal(st.keeper, "rtr-re-keeper")
-        assert.equal(st.triggerTokens, 250000)
+        assert.equal(st.triggerTokens, 400000)
         assert.ok(st.time)
         assert.equal(st.decision, "kept-verbatim")
     } finally {
@@ -454,7 +454,7 @@ test("server reads the cumulative file and applies recency through the hook", as
         await writeFile(cumulativeFile, JSON.stringify({ cumulative_messages: 1001 }), "utf8")
         const hooks = await server(
             { directory: dir },
-            { triggerTokens: 2000, targetTokens: 1500, cumulativeFile },
+            { triggerTokens: 2000, targetTokens: 1500, maxKeepMessages: 40, cumulativeFile },
         )
         const messages = recencyWindow()
         await hooks["experimental.chat.messages.transform"]({}, { messages })
