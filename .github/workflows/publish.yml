@@ -37,6 +37,29 @@ jobs:
           VERSION="${{ env.version }}"
           unzip -p "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl" \
             '*/METADATA' | grep -E "^Version: $VERSION$"
+      - name: Wheel must carry the Python installer (launcher + shell + audio)
+        run: |
+          WHEEL="dist/rtr_role_type_retrieval-${{ env.version }}-py3-none-any.whl"
+          unzip -l "$WHEEL" | grep -q "installer/launchers/python_launcher.py"
+          unzip -l "$WHEEL" | grep -q "installer/shell/dtd/rtrre-scene.mod"
+          unzip -l "$WHEEL" | grep -q "installer/shell/dtd/scenes/instrument.xml"
+          unzip -l "$WHEEL" | grep -q "installer/shell/assets/audio/obsession-quick.mp3"
+          unzip -l "$WHEEL" | grep -q "installer/shell/assets/audio/obsession-custom.mp3"
+          unzip -l "$WHEEL" | grep -q "installer/shell/assets/audio/obsession-hardcore.mp3"
+          unzip -p "$WHEEL" '*/entry_points.txt' | grep -q "rtr-re-install"
+      - name: npm tarball must carry the Node installer (launcher + bin + shell + audio)
+        run: |
+          TGZ="dist/rtr-re-opencode-plugin-${{ env.version }}.tgz"
+          tar -tzf "$TGZ" | grep -q "package/installer/launchers/node_launcher.mjs"
+          tar -tzf "$TGZ" | grep -q "package/installer-bin.mjs"
+          tar -tzf "$TGZ" | grep -q "package/installer/shell/dtd/rtrre-scene.mod"
+          tar -tzf "$TGZ" | grep -q "package/installer/shell/assets/audio/obsession-quick.mp3"
+          tar -tzf "$TGZ" | grep -q "package/installer/shell/assets/audio/obsession-hardcore.mp3"
+          tar -xOf "$TGZ" package/package.json | grep -q '"rtr-re-installer"'
+      - name: mjs tarball must exist and carry the plugin
+        run: |
+          TGZ="dist/nova-violet-role-rtr-re-mjs-${{ env.version }}.tgz"
+          tar -tzf "$TGZ" | grep -qE "package/(index\.mjs|plugin\.json|package\.json)"
 
   publish-pypi:
     needs: verify
