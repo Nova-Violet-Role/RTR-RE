@@ -254,9 +254,9 @@ nothing staged for the camera.
 
 | File | POV | Duration | Bytes | What it proves |
 |---|---|---:|---:|---|
-| `media/tessersect-a-480p.mp4` | A · binary Versus | 135 s | 121582 | 573 queries, R@3 full leads, R@1 parity, vote truncation |
+| `media/tessersect-a-480p.mp4` | A · binary Versus | 135 s | 120717 | 544 queries/5 corpora, R@3 full leads, R@1 full leads, vote truncation |
 | `media/tessersect-b-480p.mp4` | B · graded gold-v2 | 135 s | 118339 | dense-base leads, NT-G1C mechanism, standout fix |
-| `media/tessersect-c-480p.mp4` | C · live loop | 135 s | 117546 | Keeper/Compressor/Manager, dummy3+dummy4 sink proof |
+| `media/tessersect-c-480p.mp4` | C · live loop | 135 s | 118112 | Keeper/Compressor/Manager, dummy3+dummy4 sink proof |
 | `media/tessersect-d-480p.mp4` | D · dummy5 live instances | 135 s | 123855 | fresh native-Keeper loop, QUARTZ-999 sink hit 0.9650 |
 
 Spec: preset torch, height 480, fps 5, 26 captioned frames at 5 s each.

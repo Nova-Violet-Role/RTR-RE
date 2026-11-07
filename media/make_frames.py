@@ -8,38 +8,38 @@ W, H = 854, 480
 
 COLLAGES = {
     "frames-a": (
-        "POV-A · BINARY VERSUS (573 queries, 3 corpora)",
+        "POV-A · BINARY VERSUS (544 queries, 5 corpora)",
         [
             (
                 "RTR vs RAG — binary Versus",
                 [
-                    "573 queries · 114 real files",
-                    "frozen versus-final-off.json",
+                    "544 queries · 214 real files",
+                    "frozen versus.json (1.1.0)",
                     "SUB: every number re-runnable",
                 ],
             ),
             (
                 "Scoreboard R@1",
                 [
-                    "rag-hybrid 0.656 · rtr-full 0.642",
-                    "rtr-bge 0.647 · hybrid-base 0.646",
-                    "SUB: R@1 at parity, honest",
+                    "rtr-full 0.686 · rag-hybrid 0.590",
+                    "rtr-arctic 0.671 · bge 0.636",
+                    "SUB: full leads, published",
                 ],
             ),
             (
                 "Scoreboard R@3",
                 [
-                    "rtr-full 0.756 BEST",
-                    "rag-hybrid 0.752 · bge 0.730",
+                    "rtr-full 0.846 BEST",
+                    "rtr-arctic 0.802 · hybrid 0.713",
                     "SUB: full leads depth",
                 ],
             ),
             (
                 "Scoreboard MRR",
                 [
-                    "rag-hybrid 0.696 · full 0.689",
-                    "gap inside run noise R-15",
-                    "SUB: parity, not triumph",
+                    "rtr-full 0.754 · arctic 0.726",
+                    "rag-hybrid 0.645",
+                    "SUB: full leads, honest",
                 ],
             ),
             (
@@ -131,15 +131,15 @@ COLLAGES = {
                 ],
             ),
             (
-                "Golden gate 25/25",
+                "Golden gate 27/27",
                 [
                     "isolated rtr_eval PASS",
-                    "live DB crashes 0xC0000374",
+                    "Engine Beneath 27/27",
                     "SUB: isolation, not convenience",
                 ],
             ),
             (
-                "Calibration 320k-128k",
+                "Calibration 400k-200k",
                 [
                     "submit ~3-6ms complete <=41ms",
                     "synthetic upper bound",
@@ -147,17 +147,17 @@ COLLAGES = {
                 ],
             ),
             (
-                "Keeper 320k trigger",
+                "Keeper 400k trigger",
                 [
-                    "verbatim until 320k",
-                    "60% cut to 128k tail",
+                    "verbatim until 400k (MUGEN)",
+                    "50% cut to 200k tail",
                     "SUB: fewer, deeper cycles",
                 ],
             ),
             (
                 "Protected always kept",
                 [
-                    "skill + last user message",
+                    "todowrite + last user message",
                     "tool pairs fixpoint",
                     "SUB: core untouchable",
                 ],
@@ -165,7 +165,7 @@ COLLAGES = {
             (
                 "Sink-first eviction",
                 [
-                    "spans to sessions/*.md",
+                    "DTD-shaped spans to .opencode/memory/",
                     "fail-open on sink error",
                     "SUB: never lose substance",
                 ],
@@ -465,11 +465,15 @@ COLLAGES = {
                 ],
             ),
             (
-                "Trigger 320k hold 128k",
-                ["verbatim until 320k", "cut 60%, keep 128k", "SUB: big reads survive"],
+                "Trigger 400k hold 200k",
+                [
+                    "verbatim until 400k (MUGEN)",
+                    "cut 50%, keep 200k",
+                    "SUB: big reads survive",
+                ],
             ),
             (
-                "Max 40 messages cap",
+                "Max 200 messages cap",
                 [
                     "newest-first tail walk",
                     "tokens or count binds",
@@ -477,7 +481,7 @@ COLLAGES = {
                 ],
             ),
             (
-                "Protected tools: skill",
+                "Protected tools: todowrite",
                 [
                     "never evicted by tail",
                     "last user always kept",

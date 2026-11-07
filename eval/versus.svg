@@ -4,7 +4,7 @@
 <svg xmlns='http://www.w3.org/2000/svg' width='860' height='1720' viewBox='0 0 860 1720' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif'>
 <rect width='860' height='1720' fill='#ffffff'/>
 <text x='24' y='44' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='21' fill='#1a1d24' text-anchor='start' font-weight='bold'>RTR vs RAG — recall@3 by taxon</text>
-<text x='24' y='68' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='13' fill='#5b6472' text-anchor='start'>573 queries · 3 real corpora (114 docs) · 0 query errors · seed 20260928</text>
+<text x='24' y='68' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='13' fill='#5b6472' text-anchor='start'>544 queries · 5 real corpora (214 docs) · 0 query errors · seed 20260928</text>
 <line x1='24' y1='82' x2='836' y2='82' stroke='#e2e5ec'/>
 <rect x='24' y='90' width='12' height='12' fill='#b0b7c3'/>
 <text x='41' y='101' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#5b6472' text-anchor='start'>rag-dense</text>
@@ -21,177 +21,177 @@
 <rect x='713' y='90' width='12' height='12' fill='#7d3c98'/>
 <text x='730' y='101' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#5b6472' text-anchor='start'>rtr-full</text>
 <text x='24' y='132' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='13' fill='#1a1d24' text-anchor='start' font-weight='bold'>T1 title-self</text>
-<rect x='200' y='138' width='375.6' height='17' fill='#b0b7c3'/>
+<rect x='200' y='138' width='391.1' height='17' fill='#b0b7c3'/>
 <text x='24' y='151' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense</text>
-<text x='583.5797539826578' y='151' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.658</text>
-<rect x='200' y='160' width='385.6' height='17' fill='#5b6472'/>
+<text x='599.0717600326689' y='151' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.692</text>
+<rect x='200' y='160' width='387.2' height='17' fill='#5b6472'/>
 <text x='24' y='173' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid</text>
-<text x='593.5952140888619' y='173' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.675</text>
-<rect x='200' y='182' width='370.6' height='17' fill='#8a93a3'/>
+<text x='595.199762408583' y='173' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.685</text>
+<rect x='200' y='182' width='383.3' height='17' fill='#8a93a3'/>
 <text x='24' y='195' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense-base</text>
-<text x='578.5720239295556' y='195' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.649</text>
-<rect x='200' y='204' width='350.5' height='17' fill='#3f4653'/>
+<text x='591.3277647844972' y='195' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.678</text>
+<rect x='200' y='204' width='375.6' height='17' fill='#3f4653'/>
 <text x='24' y='217' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid-base</text>
-<text x='558.5411037171473' y='217' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.614</text>
-<rect x='200' y='226' width='315.5' height='17' fill='#2874a6'/>
+<text x='583.5837695363255' y='217' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.664</text>
+<rect x='200' y='226' width='410.4' height='17' fill='#2874a6'/>
 <text x='24' y='239' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-arctic</text>
-<text x='523.4869933454326' y='239' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.553</text>
-<rect x='200' y='248' width='350.5' height='17' fill='#1a7f37'/>
+<text x='618.4317481530979' y='239' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.726</text>
+<rect x='200' y='248' width='375.6' height='17' fill='#1a7f37'/>
 <text x='24' y='261' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-bge</text>
-<text x='558.5411037171473' y='261' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.614</text>
-<rect x='200' y='270' width='350.5' height='17' fill='#7d3c98'/>
+<text x='583.5837695363255' y='261' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.664</text>
+<rect x='200' y='270' width='418.2' height='17' fill='#7d3c98'/>
 <text x='24' y='283' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-full</text>
-<text x='558.5411037171473' y='283' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.614</text>
+<text x='626.1757434012695' y='283' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.740</text>
 <line x1='24' y1='312' x2='836' y2='312' stroke='#e2e5ec'/>
 <text x='24' y='354' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='13' fill='#1a1d24' text-anchor='start' font-weight='bold'>T2 rare-term</text>
-<rect x='200' y='360' width='180.8' height='17' fill='#b0b7c3'/>
+<rect x='200' y='360' width='235.5' height='17' fill='#b0b7c3'/>
 <text x='24' y='373' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense</text>
-<text x='388.77905491698596' y='373' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.317</text>
-<rect x='200' y='382' width='356.8' height='17' fill='#5b6472'/>
+<text x='443.54652213188797' y='373' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.417</text>
+<rect x='200' y='382' width='412.2' height='17' fill='#5b6472'/>
 <text x='24' y='395' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid</text>
-<text x='564.8007662835248' y='395' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.625</text>
-<rect x='200' y='404' width='171.3' height='17' fill='#8a93a3'/>
+<text x='620.2064137308039' y='395' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.729</text>
+<rect x='200' y='404' width='176.7' height='17' fill='#8a93a3'/>
 <text x='24' y='417' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense-base</text>
-<text x='379.264367816092' y='417' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.300</text>
-<rect x='200' y='426' width='356.8' height='17' fill='#3f4653'/>
+<text x='384.659891598916' y='417' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.312</text>
+<rect x='200' y='426' width='388.7' height='17' fill='#3f4653'/>
 <text x='24' y='439' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid-base</text>
-<text x='564.8007662835248' y='439' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.625</text>
-<rect x='200' y='448' width='290.2' height='17' fill='#2874a6'/>
+<text x='596.6517615176151' y='439' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.688</text>
+<rect x='200' y='448' width='459.3' height='17' fill='#2874a6'/>
 <text x='24' y='461' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-arctic</text>
-<text x='498.1979565772669' y='461' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.508</text>
-<rect x='200' y='470' width='356.8' height='17' fill='#1a7f37'/>
+<text x='667.3157181571815' y='461' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.812</text>
+<rect x='200' y='470' width='388.7' height='17' fill='#1a7f37'/>
 <text x='24' y='483' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-bge</text>
-<text x='564.8007662835248' y='483' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.625</text>
-<rect x='200' y='492' width='399.6' height='17' fill='#7d3c98'/>
+<text x='596.6517615176151' y='483' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.688</text>
+<rect x='200' y='492' width='459.3' height='17' fill='#7d3c98'/>
 <text x='24' y='505' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-full</text>
-<text x='607.6168582375478' y='505' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.700</text>
+<text x='667.3157181571815' y='505' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.812</text>
 <line x1='24' y1='534' x2='836' y2='534' stroke='#e2e5ec'/>
 <text x='24' y='576' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='13' fill='#1a1d24' text-anchor='start' font-weight='bold'>T3 concept</text>
-<rect x='200' y='582' width='414.3' height='17' fill='#b0b7c3'/>
+<rect x='200' y='582' width='306.9' height='17' fill='#b0b7c3'/>
 <text x='24' y='595' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense</text>
-<text x='622.2677923575086' y='595' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.726</text>
-<rect x='200' y='604' width='490.0' height='17' fill='#5b6472'/>
+<text x='514.8834688346883' y='595' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.543</text>
+<rect x='200' y='604' width='452.2' height='17' fill='#5b6472'/>
 <text x='24' y='617' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid</text>
-<text x='698.048486081443' y='617' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.858</text>
-<rect x='200' y='626' width='414.3' height='17' fill='#8a93a3'/>
+<text x='660.249322493225' y='617' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.800</text>
+<rect x='200' y='626' width='323.0' height='17' fill='#8a93a3'/>
 <text x='24' y='639' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense-base</text>
-<text x='622.2677923575086' y='639' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.726</text>
-<rect x='200' y='648' width='474.9' height='17' fill='#3f4653'/>
+<text x='531.0352303523034' y='639' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.571</text>
+<rect x='200' y='648' width='452.2' height='17' fill='#3f4653'/>
 <text x='24' y='661' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid-base</text>
-<text x='682.892347336656' y='661' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.832</text>
-<rect x='200' y='670' width='282.9' height='17' fill='#2874a6'/>
+<text x='660.249322493225' y='661' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.800</text>
+<rect x='200' y='670' width='533.0' height='17' fill='#2874a6'/>
 <text x='24' y='683' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-arctic</text>
-<text x='490.91458990268876' y='683' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.496</text>
-<rect x='200' y='692' width='474.9' height='17' fill='#1a7f37'/>
+<text x='741.0081300813008' y='683' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.943</text>
+<rect x='200' y='692' width='452.2' height='17' fill='#1a7f37'/>
 <text x='24' y='705' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-bge</text>
-<text x='682.892347336656' y='705' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.832</text>
-<rect x='200' y='714' width='485.0' height='17' fill='#7d3c98'/>
+<text x='660.249322493225' y='705' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.800</text>
+<rect x='200' y='714' width='549.2' height='17' fill='#7d3c98'/>
 <text x='24' y='727' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-full</text>
-<text x='692.9964398331807' y='727' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.850</text>
+<text x='757.1598915989159' y='727' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.971</text>
 <line x1='24' y1='756' x2='836' y2='756' stroke='#e2e5ec'/>
 <text x='24' y='798' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='13' fill='#1a1d24' text-anchor='start' font-weight='bold'>T4 scoped</text>
-<rect x='200' y='804' width='391.8' height='17' fill='#b0b7c3'/>
+<rect x='200' y='804' width='424.0' height='17' fill='#b0b7c3'/>
 <text x='24' y='817' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense</text>
-<text x='599.7812335662234' y='817' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.686</text>
-<rect x='200' y='826' width='391.8' height='17' fill='#5b6472'/>
+<text x='631.9837398373984' y='817' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.750</text>
+<rect x='200' y='826' width='408.3' height='17' fill='#5b6472'/>
 <text x='24' y='839' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid</text>
-<text x='599.7812335662234' y='839' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.686</text>
-<rect x='200' y='848' width='380.6' height='17' fill='#8a93a3'/>
+<text x='616.2806383619392' y='839' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.722</text>
+<rect x='200' y='848' width='392.6' height='17' fill='#8a93a3'/>
 <text x='24' y='861' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense-base</text>
-<text x='588.5874840357599' y='861' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.667</text>
-<rect x='200' y='870' width='358.2' height='17' fill='#3f4653'/>
+<text x='600.57753688648' y='861' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.694</text>
+<rect x='200' y='870' width='392.6' height='17' fill='#3f4653'/>
 <text x='24' y='883' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid-base</text>
-<text x='566.1999849748329' y='883' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.627</text>
-<rect x='200' y='892' width='330.2' height='17' fill='#2874a6'/>
+<text x='600.57753688648' y='883' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.694</text>
+<rect x='200' y='892' width='392.6' height='17' fill='#2874a6'/>
 <text x='24' y='905' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-arctic</text>
-<text x='538.215611148674' y='905' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.578</text>
-<rect x='200' y='914' width='358.2' height='17' fill='#1a7f37'/>
+<text x='600.57753688648' y='905' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.694</text>
+<rect x='200' y='914' width='392.6' height='17' fill='#1a7f37'/>
 <text x='24' y='927' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-bge</text>
-<text x='566.1999849748329' y='927' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.627</text>
-<rect x='200' y='936' width='363.8' height='17' fill='#7d3c98'/>
+<text x='600.57753688648' y='927' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.694</text>
+<rect x='200' y='936' width='424.0' height='17' fill='#7d3c98'/>
 <text x='24' y='949' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-full</text>
-<text x='571.7968597400645' y='949' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.637</text>
+<text x='631.9837398373984' y='949' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.750</text>
 <line x1='24' y1='978' x2='836' y2='978' stroke='#e2e5ec'/>
 <text x='24' y='1020' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='13' fill='#1a1d24' text-anchor='start' font-weight='bold'>T5 paraphrase</text>
-<rect x='200' y='1026' width='142.7' height='17' fill='#b0b7c3'/>
+<rect x='200' y='1026' width='141.3' height='17' fill='#b0b7c3'/>
 <text x='24' y='1039' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense</text>
-<text x='350.7203065134099' y='1039' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
-<rect x='200' y='1048' width='142.7' height='17' fill='#5b6472'/>
+<text x='349.32791327913276' y='1039' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
+<rect x='200' y='1048' width='141.3' height='17' fill='#5b6472'/>
 <text x='24' y='1061' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid</text>
-<text x='350.7203065134099' y='1061' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
-<rect x='200' y='1070' width='142.7' height='17' fill='#8a93a3'/>
+<text x='349.32791327913276' y='1061' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
+<rect x='200' y='1070' width='141.3' height='17' fill='#8a93a3'/>
 <text x='24' y='1083' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense-base</text>
-<text x='350.7203065134099' y='1083' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
-<rect x='200' y='1092' width='142.7' height='17' fill='#3f4653'/>
+<text x='349.32791327913276' y='1083' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
+<rect x='200' y='1092' width='141.3' height='17' fill='#3f4653'/>
 <text x='24' y='1105' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid-base</text>
-<text x='350.7203065134099' y='1105' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
-<rect x='200' y='1114' width='2.0' height='17' fill='#2874a6'/>
+<text x='349.32791327913276' y='1105' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
+<rect x='200' y='1114' width='282.7' height='17' fill='#2874a6'/>
 <text x='24' y='1127' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-arctic</text>
-<text x='210' y='1127' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.000</text>
-<rect x='200' y='1136' width='285.4' height='17' fill='#1a7f37'/>
+<text x='490.6558265582656' y='1127' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.500</text>
+<rect x='200' y='1136' width='141.3' height='17' fill='#1a7f37'/>
 <text x='24' y='1149' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-bge</text>
-<text x='493.4406130268199' y='1149' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.500</text>
-<rect x='200' y='1158' width='285.4' height='17' fill='#7d3c98'/>
+<text x='349.32791327913276' y='1149' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.250</text>
+<rect x='200' y='1158' width='282.7' height='17' fill='#7d3c98'/>
 <text x='24' y='1171' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-full</text>
-<text x='493.4406130268199' y='1171' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.500</text>
+<text x='490.6558265582656' y='1171' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.500</text>
 <line x1='24' y1='1200' x2='836' y2='1200' stroke='#e2e5ec'/>
 <text x='24' y='1242' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='13' fill='#1a1d24' text-anchor='start' font-weight='bold'>T6 ident</text>
-<rect x='200' y='1248' width='390.1' height='17' fill='#b0b7c3'/>
+<rect x='200' y='1248' width='457.6' height='17' fill='#b0b7c3'/>
 <text x='24' y='1261' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense</text>
-<text x='598.1021711366539' y='1261' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.683</text>
-<rect x='200' y='1270' width='528.1' height='17' fill='#5b6472'/>
+<text x='665.6332429990966' y='1261' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.810</text>
+<rect x='200' y='1270' width='551.9' height='17' fill='#5b6472'/>
 <text x='24' y='1283' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid</text>
-<text x='736.0651340996169' y='1283' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.925</text>
-<rect x='200' y='1292' width='432.9' height='17' fill='#8a93a3'/>
+<text x='759.8518518518518' y='1283' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start' font-weight='bold'>0.976</text>
+<rect x='200' y='1292' width='430.7' height='17' fill='#8a93a3'/>
 <text x='24' y='1305' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-dense-base</text>
-<text x='640.9182630906769' y='1305' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.758</text>
-<rect x='200' y='1314' width='537.6' height='17' fill='#3f4653'/>
+<text x='638.713640469738' y='1305' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.762</text>
+<rect x='200' y='1314' width='524.9' height='17' fill='#3f4653'/>
 <text x='24' y='1327' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rag-hybrid-base</text>
-<text x='745.5798212005108' y='1327' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.942</text>
-<rect x='200' y='1336' width='399.6' height='17' fill='#2874a6'/>
+<text x='732.9322493224932' y='1327' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.929</text>
+<rect x='200' y='1336' width='524.9' height='17' fill='#2874a6'/>
 <text x='24' y='1349' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-arctic</text>
-<text x='607.6168582375478' y='1349' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.700</text>
-<rect x='200' y='1358' width='537.6' height='17' fill='#1a7f37'/>
+<text x='732.9322493224932' y='1349' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.929</text>
+<rect x='200' y='1358' width='524.9' height='17' fill='#1a7f37'/>
 <text x='24' y='1371' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-bge</text>
-<text x='745.5798212005108' y='1371' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.942</text>
+<text x='732.9322493224932' y='1371' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>0.929</text>
 <rect x='200' y='1380' width='551.9' height='17' fill='#7d3c98'/>
 <text x='24' y='1393' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>rtr-full</text>
-<text x='759.8518518518518' y='1393' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.967</text>
+<text x='759.8518518518518' y='1393' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.976</text>
 <line x1='24' y1='1422' x2='836' y2='1422' stroke='#e2e5ec'/>
-<text x='24' y='1454' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='15' fill='#1a1d24' text-anchor='start' font-weight='bold'>Combined overall (573 queries)</text>
+<text x='24' y='1454' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='15' fill='#1a1d24' text-anchor='start' font-weight='bold'>Combined overall (544 queries)</text>
 <text x='24' y='1476' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>system</text>
 <text x='240' y='1476' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>R@1</text>
 <text x='390' y='1476' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>R@3</text>
 <text x='540' y='1476' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='11' fill='#5b6472' text-anchor='start'>MRR</text>
 <text x='24' y='1502' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>rag-dense</text>
-<text x='240' y='1502' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.452</text>
-<text x='390' y='1502' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.607</text>
-<text x='540' y='1502' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.522</text>
+<text x='240' y='1502' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.335</text>
+<text x='390' y='1502' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.516</text>
+<text x='540' y='1502' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.414</text>
 <text x='24' y='1522' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>rag-hybrid</text>
-<text x='240' y='1522' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start' font-weight='bold'>0.656</text>
-<text x='390' y='1522' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.752</text>
-<text x='540' y='1522' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start' font-weight='bold'>0.696</text>
+<text x='240' y='1522' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.590</text>
+<text x='390' y='1522' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.713</text>
+<text x='540' y='1522' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.645</text>
 <text x='24' y='1542' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>rag-dense-base</text>
-<text x='240' y='1542' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.469</text>
-<text x='390' y='1542' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.614</text>
-<text x='540' y='1542' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.534</text>
+<text x='240' y='1542' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.364</text>
+<text x='390' y='1542' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.533</text>
+<text x='540' y='1542' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.440</text>
 <text x='24' y='1562' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>rag-hybrid-base</text>
-<text x='240' y='1562' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.646</text>
-<text x='390' y='1562' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.728</text>
-<text x='540' y='1562' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.681</text>
+<text x='240' y='1562' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.583</text>
+<text x='390' y='1562' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.691</text>
+<text x='540' y='1562' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.631</text>
 <text x='24' y='1582' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>rtr-arctic</text>
-<text x='240' y='1582' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.497</text>
-<text x='390' y='1582' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.564</text>
-<text x='540' y='1582' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.524</text>
+<text x='240' y='1582' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.671</text>
+<text x='390' y='1582' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.801</text>
+<text x='540' y='1582' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.726</text>
 <text x='24' y='1602' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>rtr-bge</text>
-<text x='240' y='1602' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.647</text>
-<text x='390' y='1602' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.730</text>
-<text x='540' y='1602' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.682</text>
+<text x='240' y='1602' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.636</text>
+<text x='390' y='1602' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.763</text>
+<text x='540' y='1602' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.692</text>
 <text x='24' y='1622' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#7d3c98' text-anchor='start' font-weight='bold'>rtr-full</text>
-<text x='240' y='1622' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.642</text>
-<text x='390' y='1622' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.756</text>
-<text x='540' y='1622' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#1a1d24' text-anchor='start'>0.689</text>
+<text x='240' y='1622' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.686</text>
+<text x='390' y='1622' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.846</text>
+<text x='540' y='1622' font-family='ui-monospace,SFMono-Regular,Menlo,Consolas,monospace' font-size='12' fill='#7d3c98' text-anchor='start' font-weight='bold'>0.754</text>
 <line x1='24' y1='1656' x2='836' y2='1656' stroke='#e2e5ec'/>
-<text x='24' y='1678' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='11' fill='#5b6472' text-anchor='start'>leaders: R@1 rag-hybrid · R@3 rtr-full · MRR rag-hybrid · method: eval/bench_versus.py · taxonomy: eval/TAXONOMY.md</text>
+<text x='24' y='1678' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='11' fill='#5b6472' text-anchor='start'>leaders: R@1 rtr-full · R@3 rtr-full · MRR rtr-full · method: eval/bench_versus.py · taxonomy: eval/TAXONOMY.md</text>
 <text x='24' y='1696' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif' font-size='11' fill='#5b6472' text-anchor='start'>Nova-Violet Role · Reality is the judge.</text>
 </svg>

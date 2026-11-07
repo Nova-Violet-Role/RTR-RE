@@ -257,9 +257,9 @@ survey — nothing staged for the camera.
 
 | File | POV | Duration | Bytes | Frames |
 |---|---|---:|---:|---:|
-| `media/tessersect-a-480p.mp4` | A · binary Versus (573 queries) | 135 s | 121582 | 26 × 5 s |
+| `media/tessersect-a-480p.mp4` | A · binary Versus (544 queries, 5 corpora) | 135 s | 120717 | 26 × 5 s |
 | `media/tessersect-b-480p.mp4` | B · graded gold-v2 (773 judgments) | 135 s | 118339 | 26 × 5 s |
-| `media/tessersect-c-480p.mp4` | C · live loop (sink proof) | 135 s | 117546 | 26 × 5 s |
+| `media/tessersect-c-480p.mp4` | C · live loop (sink proof) | 135 s | 118112 | 26 × 5 s |
 | `media/tessersect-d-480p.mp4` | D · dummy5 live instances (QUARTZ-999 0.9650) | 135 s | 123855 | 26 × 5 s |
 
 Reproduce: `uv run --with pillow --no-project python media/make_frames.py`,
