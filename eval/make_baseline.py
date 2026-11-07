@@ -1,16 +1,19 @@
-"""Freeze the 1.0.0 architecture baseline (TODO-29).
+"""Freeze an architecture baseline (TODO-29, divided per TODO-68).
 
 Reads the three immutable source artifacts and writes:
-  - eval/results/baseline-1.0.0.json  (machine-readable, frozen)
-  - eval/results/baseline-1.0.0.md    (human-readable)
+  - eval/results/baseline-<arc>.json  (machine-readable, frozen)
+  - eval/results/baseline-<arc>.md    (human-readable)
 
-Every score below is a copy of a measured run, never a claim. The sha256
-manifest pins the exact source artifacts so a later re-run can prove the
-baseline is reproducible or detect drift.
+The release arc is a CLI argument (default 1.0.0), so the 1.0.0
+baseline stays as an always-available reference while newer arcs (e.g.
+1.1.0) freeze their own floor. Every score below is a copy of a measured
+run, never a claim. The sha256 manifest pins the exact source artifacts
+so a later re-run can prove the baseline is reproducible or detect drift.
 """
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import time
@@ -23,8 +26,10 @@ SOURCES = {
     "engine_beneath": RESULTS / "engine-beneath-cases.json",
     "parity_matrix": RESULTS / "parity-matrix-1.0.0.md",
 }
-OUT_JSON = RESULTS / "baseline-1.0.0.json"
-OUT_MD = RESULTS / "baseline-1.0.0.md"
+
+
+def out_paths(arc: str) -> tuple[Path, Path]:
+    return RESULTS / f"baseline-{arc}.json", RESULTS / f"baseline-{arc}.md"
 
 
 def sha256(path: Path) -> str:
@@ -63,6 +68,18 @@ def dtd_taxons(versus: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Freeze a RTR-RE architecture baseline."
+    )
+    parser.add_argument(
+        "--arc",
+        default="1.0.0",
+        help="release arc label for the baseline (default 1.0.0)",
+    )
+    args = parser.parse_args()
+    arc = args.arc
+    out_json, out_md = out_paths(arc)
+
     manifest: Dict[str, str] = {}
     for name, path in SOURCES.items():
         if not path.exists():
@@ -74,8 +91,8 @@ def main() -> int:
     eb = load_json(SOURCES["engine_beneath"])
 
     baseline: Dict[str, Any] = {
-        "schema": "rtr-re.baseline/1.0.0/v1",
-        "release_arc": "1.0.0",
+        "schema": f"rtr-re.baseline/{arc}/v1",
+        "release_arc": arc,
         "frozen_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "source_manifest": manifest,
         "retrieval": {
@@ -97,14 +114,14 @@ def main() -> int:
         "parity_matrix": "eval/results/parity-matrix-1.0.0.md",
     }
 
-    OUT_JSON.write_text(
+    out_json.write_text(
         json.dumps(baseline, indent=2) + "\n",
         encoding="utf-8",
         newline="\n",
     )
 
     lines = [
-        "# RTR-RE baseline — 1.0.0 (frozen, TODO-29)",
+        f"# RTR-RE baseline — {arc} (frozen, TODO-29/68)",
         "",
         f"- Frozen at: {baseline['frozen_at']}",
         f"- Release arc: {baseline['release_arc']}",
@@ -134,16 +151,16 @@ def main() -> int:
         f"- Cases: {s['cases']} — passed {s['passed']}, failed {s['failed']} "
         f"({('PASS' if s['pass'] else 'FAIL')})"
     )
-    lines.append("- Per-case verdicts and checks: `eval/results/baseline-1.0.0.json`")
+    lines.append(f"- Per-case verdicts and checks: `eval/results/baseline-{arc}.json`")
     lines += ["", "## Parity", ""]
     lines.append(
         "- `eval/results/parity-matrix-1.0.0.md` (four-column matrix, parity on shared retrieval core)"
     )
     lines.append("")
 
-    OUT_MD.write_text("\n".join(lines), encoding="utf-8", newline="\n")
-    print(f"WROTE {OUT_JSON}")
-    print(f"WROTE {OUT_MD}")
+    out_md.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    print(f"WROTE {out_json}")
+    print(f"WROTE {out_md}")
     print("BASELINE-FROZEN")
     return 0
 

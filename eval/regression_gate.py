@@ -31,7 +31,17 @@ import sys
 from pathlib import Path
 
 RESULTS = Path(__file__).parent / "results"
-BASELINE = RESULTS / "baseline-1.0.0.json"
+
+
+def _newest_baseline() -> Path:
+    """Default = the newest frozen baseline (release arcs sort lexicographically:
+    1.0.0 < 1.1.0 < ...). The 1.0.0 baseline stays available as an explicit
+    reference argument for cross-arc comparison (TODO-68 division)."""
+    candidates = sorted(RESULTS.glob("baseline-*.json"))
+    return candidates[-1] if candidates else RESULTS / "baseline-1.0.0.json"
+
+
+BASELINE = _newest_baseline()
 VERSUS = RESULTS / "versus.json"
 ENGINE_BENEATH = RESULTS / "engine-beneath-cases.json"
 
