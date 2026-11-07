@@ -1,0 +1,133 @@
+{
+  "RTR": {
+    "scripts": {
+      "rtr-mcp": "execution.memory_mcp_server:main",
+      "rtr-cli": "execution.memory_cli:main",
+      "rtr-re-mcp": "execution.memory_mcp_server:main",
+      "rtr-re-install-opencode": "execution.install_opencode:main",
+      "xpajonx-memory-mcp": "execution.memory_mcp_server:main",
+      "xpajonx-memory-cli": "execution.memory_cli:main"
+    },
+    "mcp_tools": [
+      "memory_discover",
+      "memory_search",
+      "memory_list",
+      "memory_delete",
+      "memory_inbox_write",
+      "memory_inbox_read",
+      "memory_write",
+      "memory_organize",
+      "memory_stats",
+      "memory_index",
+      "memory_init_project",
+      "memory_consolidate",
+      "memory_session_start",
+      "memory_explain_search",
+      "memory_reflect_session",
+      "memory_materialize_concepts",
+      "memory_update_graph",
+      "memory_session_commit",
+      "memory_lexikon_add",
+      "memory_lexikon_show",
+      "memory_lexikon_build",
+      "memory_janitor",
+      "memory_symbiose_submit",
+      "memory_symbiose_poll",
+      "memory_context_plan",
+      "memory_rtr_status"
+    ],
+    "cli_commands": [
+      "alias",
+      "definition"
+    ],
+    "installer_entry": true,
+    "plugin_hooks": [],
+    "keeper_config_keys": [],
+    "preset_names": [],
+    "env_knobs": [
+      "OPENCODE_MEMORY_DB_DIR",
+      "OPENCODE_MEMORY_DIR",
+      "OPENCODE_MEMORY_EMBED_MODELS",
+      "OPENCODE_MEMORY_EMBED_THREADS",
+      "OPENCODE_MEMORY_EXTRA_ROOTS_FILE",
+      "OPENCODE_MEMORY_FILE_SUFFIXES",
+      "OPENCODE_MEMORY_LEXIKON_GLOBAL_FILE",
+      "OPENCODE_MEMORY_PRF",
+      "OPENCODE_MEMORY_PROJECTS_DIR",
+      "OPENCODE_MEMORY_REGISTRY_FILE",
+      "OPENCODE_MEMORY_RRF_K",
+      "OPENCODE_MEMORY_RRF_VOTE_TOP",
+      "OPENCODE_MEMORY_RTR_PROFILE",
+      "OPENCODE_MEMORY_STRUCT_LANE"
+    ],
+    "persistence_paths": {}
+  },
+  "RTR-RE": {
+    "scripts": {
+      "rtr-mcp": "execution.memory_mcp_server:main",
+      "rtr-cli": "execution.memory_cli:main",
+      "rtr-re-mcp": "execution.memory_mcp_server:main",
+      "rtr-re-install-opencode": "execution.install_opencode:main",
+      "xpajonx-memory-mcp": "execution.memory_mcp_server:main",
+      "xpajonx-memory-cli": "execution.memory_cli:main"
+    },
+    "mcp_tools": [
+      "memory_discover",
+      "memory_search",
+      "memory_list",
+      "memory_delete",
+      "memory_inbox_write",
+      "memory_inbox_read",
+      "memory_write",
+      "memory_organize",
+      "memory_stats",
+      "memory_index",
+      "memory_init_project",
+      "memory_consolidate",
+      "memory_session_start",
+      "memory_explain_search",
+      "memory_reflect_session",
+      "memory_materialize_concepts",
+      "memory_update_graph",
+      "memory_session_commit",
+      "memory_lexikon_add",
+      "memory_lexikon_show",
+      "memory_lexikon_build",
+      "memory_janitor",
+      "memory_symbiose_submit",
+      "memory_symbiose_poll",
+      "memory_context_plan",
+      "memory_rtr_status"
+    ],
+    "cli_commands": [
+      "alias",
+      "definition"
+    ],
+    "installer_entry": true,
+    "plugin_hooks": [],
+    "keeper_config_keys": [
+      "enabled",
+      "maxKeepMessages",
+      "targetTokens",
+      "triggerTokens"
+    ],
+    "preset_names": [],
+    "env_knobs": [
+      "OPENCODE_MEMORY_DB_DIR",
+      "OPENCODE_MEMORY_DIR",
+      "OPENCODE_MEMORY_EMBED_MODELS",
+      "OPENCODE_MEMORY_EMBED_THREADS",
+      "OPENCODE_MEMORY_EXTRA_ROOTS_FILE",
+      "OPENCODE_MEMORY_FILE_SUFFIXES",
+      "OPENCODE_MEMORY_LEXIKON_GLOBAL_FILE",
+      "OPENCODE_MEMORY_PRF",
+      "OPENCODE_MEMORY_PROJECTS_DIR",
+      "OPENCODE_MEMORY_REGISTRY_FILE",
+      "OPENCODE_MEMORY_RRF_K",
+      "OPENCODE_MEMORY_RRF_VOTE_TOP",
+      "OPENCODE_MEMORY_RTR_PROFILE",
+      "OPENCODE_MEMORY_STRUCT_LANE"
+    ],
+    "persistence_paths": {}
+  }
+}

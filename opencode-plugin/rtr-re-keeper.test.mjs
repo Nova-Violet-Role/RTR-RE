@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 import assert from "node:assert/strict"
 import test from "node:test"
-import { mkdtempSync, readFileSync, rmSync } from "node:fs"
-import { writeFile, readFile } from "node:fs/promises"
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { mkdir, writeFile, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { tmpdir } from "node:os"
 import server from "./rtr-re-keeper.js"
@@ -14,6 +14,8 @@ const {
     handleRtrCommand,
     loadKeeperFileConfig,
     planKeepIndices,
+    readCumulativeFile,
+    reloadRegistry,
     resolveKeeperConfig,
     serializeSpans,
 } = server._test
@@ -382,6 +384,222 @@ test("config hook registers the rtr command once", async () => {
         const before = oc.command["rtr"]
         await hooks.config(oc)
         assert.equal(oc.command["rtr"], before)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("readCumulativeFile reads the worker file, absent means 0, corrupt refuses", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const path = join(dir, "rtr-re-cumulative.json")
+        assert.equal(await readCumulativeFile(path), 0)
+        await writeFile(path, JSON.stringify({ cumulative_messages: 1001 }), "utf8")
+        assert.equal(await readCumulativeFile(path), 1001)
+        await writeFile(path, "{ not json", "utf8")
+        await assert.rejects(() => readCumulativeFile(path), /JSON/)
+        await writeFile(path, JSON.stringify({ cumulative_messages: -3 }), "utf8")
+        await assert.rejects(() => readCumulativeFile(path), />= 0/)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+function recencyWindow() {
+    const messages = []
+    for (let i = 0; i < 60; i++) {
+        messages.push(msg("assistant", "x".repeat(400)))
+    }
+    messages[5] = msg("assistant", "x".repeat(400), { tool: "todowrite" })
+    messages[55] = msg("assistant", "x".repeat(400), { tool: "todowrite" })
+    messages.push(msg("user", "go"))
+    return messages
+}
+
+test("recency parity: past 1000 cumulative old protected todowrite is evicted", () => {
+    const messages = recencyWindow()
+    const plan = planKeepIndices(
+        messages,
+        cfg({ triggerTokens: 2000, targetTokens: 1500, cumulativeMessages: 1001 }),
+    )
+    assert.ok(plan.keep.has(55), "recent protected todowrite stays")
+    assert.ok(!plan.keep.has(5), "old protected todowrite yields to newer context")
+    assert.ok(plan.keep.has(60), "last user stays")
+})
+
+test("below 1000 cumulative every protected todowrite is kept (all-protect)", () => {
+    const messages = recencyWindow()
+    const plan = planKeepIndices(
+        messages,
+        cfg({ triggerTokens: 2000, targetTokens: 1500, cumulativeMessages: 999 }),
+    )
+    assert.ok(plan.keep.has(5), "old protected todowrite stays below threshold")
+    assert.ok(plan.keep.has(55))
+})
+
+test("server reads the cumulative file and applies recency through the hook", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const cumulativeFile = join(dir, ".opencode", "rtr-re-cumulative.json")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(cumulativeFile, JSON.stringify({ cumulative_messages: 1001 }), "utf8")
+        const hooks = await server(
+            { directory: dir },
+            { triggerTokens: 2000, targetTokens: 1500, cumulativeFile },
+        )
+        const messages = recencyWindow()
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const keptTools = messages.map((m) => m.parts[0]?.tool).filter(Boolean)
+        assert.ok(keptTools.includes("todowrite"), "recent protected survives")
+        assert.equal(
+            keptTools.filter((t) => t === "todowrite").length,
+            1,
+            "old protected evicted",
+        )
+        assert.ok(messages.some((m) => m.info.role === "user"))
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("status file is written atomically with no .tmp leftover", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server(
+            { directory: dir },
+            { triggerTokens: 100, targetTokens: 40 },
+        )
+        const messages = []
+        for (let i = 0; i < 10; i++) messages.push(msg("assistant", "z".repeat(400)))
+        messages.push(msg("user", "go"))
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const statusPath = join(dir, ".opencode", "rtr-re-keeper-status.json")
+        const status = JSON.parse(readFileSync(statusPath, "utf8"))
+        assert.equal(status.keeper, "rtr-re-keeper")
+        assert.equal(status.decision, "evicted")
+        assert.ok(!existsSync(`${statusPath}.tmp`), "no temp status file remains")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+// --- TODO-65 implementations: P1 prompt parser, P2 injection, P4 dedup,
+// --- registry reload (finding d) ---
+
+test("P1: prompt-level /rtr status appends a synthetic reply part", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server({ directory: dir }, {})
+        const user = msg("user", "/rtr status")
+        const messages = [user, msg("assistant", "hi")]
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const reply = user.parts.find((p) => p.synthetic === true)
+        assert.ok(reply, "synthetic reply part appended")
+        assert.match(reply.text, /profile:/)
+        assert.match(reply.text, /trigger:/)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("P1: prompt-level /rtr preset mugen writes the config file", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server({ directory: dir }, {})
+        const user = msg("user", "/rtr preset mugen")
+        const messages = [user]
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const cfgPath = join(dir, ".opencode", "rtr-re-keeper.json")
+        const written = JSON.parse(readFileSync(cfgPath, "utf8"))
+        assert.equal(written.preset, "re-symbiose-mugen")
+        assert.equal(written.triggerTokens, 400000)
+        assert.equal(written.targetTokens, 200000)
+        assert.equal(written.maxKeepMessages, 200)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("P1: prompt-level /rtr enable works while disabled", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const { mkdir } = await import("node:fs/promises")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({ enabled: false }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, {})
+        const user = msg("user", "/rtr enable")
+        const messages = [user]
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const cfgPath = join(dir, ".opencode", "rtr-re-keeper.json")
+        const written = JSON.parse(readFileSync(cfgPath, "utf8"))
+        assert.equal(written.enabled, true)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("P2: first exchange injects full status, later exchanges stay lean", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server({ directory: dir }, {})
+        const first = [msg("user", "hello")]
+        await hooks["experimental.chat.messages.transform"]({}, { messages: first })
+        const firstNote = first[0].parts.find((p) => p.synthetic === true)
+        assert.ok(firstNote, "full status injected on first exchange")
+        assert.match(firstNote.text, /RTR-RE Keeper status/)
+        const second = [msg("user", "again")]
+        await hooks["experimental.chat.messages.transform"]({}, { messages: second })
+        const secondNote = second[0].parts.find((p) => p.synthetic === true)
+        assert.equal(secondNote, undefined, "no reminder before the cadence")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("P4: the same messages array is processed exactly once", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server(
+            { directory: dir },
+            { triggerTokens: 100, targetTokens: 40 },
+        )
+        const messages = []
+        for (let i = 0; i < 10; i++) messages.push(msg("assistant", "z".repeat(400)))
+        messages.push(msg("user", "go"))
+        const before = messages.length
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const afterFirst = messages.length
+        assert.ok(afterFirst < before, "first pass evicted")
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        assert.equal(messages.length, afterFirst, "second pass is a no-op")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("registry reload picks up a newly added preset without restart", () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const base = JSON.parse(
+            readFileSync(join(import.meta.dirname, "assets", "rtr_presets.json"), "utf8"),
+        )
+        base.keeperPresets["test-fresh"] = {
+            displayName: "Test Fresh",
+            triggerTokens: 2000,
+            targetTokens: 1000,
+            maxKeepMessages: 10,
+        }
+        const p = join(dir, "registry.json")
+        writeFileSync(p, JSON.stringify(base), "utf8")
+        reloadRegistry(p)
+        const c = resolveKeeperConfig({ preset: "test-fresh" }, {})
+        assert.equal(c.triggerTokens, 2000)
+        assert.equal(c.targetTokens, 1000)
+        assert.equal(c.maxKeepMessages, 10)
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }

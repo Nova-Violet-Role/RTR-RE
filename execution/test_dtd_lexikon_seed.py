@@ -97,7 +97,9 @@ class TestSeedDtdLexikon(unittest.TestCase):
             terms = lex
             # rareattr: df==1, owner doc -> seeded; element context lives
             # in the definition, not the aliases, so T1/T10 queries that
-            # contain element names can never trigger the expansion.
+            # contain element names can never trigger the expansion. CDATA
+            # (the majority type) is deliberately not added to the
+            # definition (measured: it pollutes the expansion, TODO-33).
             self.assertIn("rareattr", terms)
             self.assertEqual(terms["rareattr"]["aliases"], [])
             self.assertEqual(terms["rareattr"]["definition"], "doc")

@@ -21,47 +21,61 @@
 // transform writes a status file the MCP viewport reads.
 
 import { createHash } from "node:crypto"
-import { mkdir, writeFile, stat, readFile } from "node:fs/promises"
+import { mkdir, writeFile, stat, readFile, rename } from "node:fs/promises"
 import { availableParallelism } from "node:os"
 import { join, dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 import { readFileSync, statSync } from "node:fs"
 
-const KEEPER_VERSION = "0.5.0"
+const KEEPER_VERSION = "1.1.0"
+
+function loadPresetRegistryFrom(path) {
+    try {
+        statSync(path)
+    } catch {
+        throw new Error(`rtr-re-keeper: preset registry ${path} not found`)
+    }
+    const data = JSON.parse(readFileSync(path, "utf8"))
+    if (
+        data?.schema !== "rtr.preset-registry/v1" &&
+        data?.schema !== "rtr.preset-registry/v2"
+    ) {
+        throw new Error(`rtr-re-keeper: preset registry ${path} has an unsupported schema`)
+    }
+    REGISTRY_PATH = path
+    REGISTRY_MTIME = statSync(path).mtimeMs
+    return data
+}
 
 function loadPresetRegistry() {
     const here = dirname(fileURLToPath(import.meta.url))
     const candidates = [
+        process.env.OPENCODE_MEMORY_RTRRE_REGISTRY_FILE,
         join(here, "..", "execution", "rtr_presets.json"),
         join(here, "assets", "rtr_presets.json"),
         join(here, "..", "execution", "assets", "rtr_presets.json"),
-    ]
+    ].filter(Boolean)
     for (const path of candidates) {
         try {
-            statSync(path)
+            return loadPresetRegistryFrom(path)
         } catch {
             continue
         }
-        const data = JSON.parse(readFileSync(path, "utf8"))
-        if (
-            data?.schema !== "rtr.preset-registry/v1" &&
-            data?.schema !== "rtr.preset-registry/v2"
-        ) {
-            throw new Error(`rtr-re-keeper: preset registry ${path} has an unsupported schema`)
-        }
-        return data
     }
     throw new Error(`rtr-re-keeper: preset registry not found; looked in ${candidates.join(", ")}`)
 }
 
-const PRESET_REGISTRY = loadPresetRegistry()
-const DEFAULT_PRESET = PRESET_REGISTRY.defaultKeeperPreset
-const DEFAULT_PRESET_VALUES = PRESET_REGISTRY.keeperPresets[DEFAULT_PRESET]
-const DEFAULT_CPU_PROFILE_NAME = PRESET_REGISTRY.defaultCpuProfile
-const DEFAULT_CPU_PROFILE = PRESET_REGISTRY.cpuProfiles[DEFAULT_CPU_PROFILE_NAME]
-const DEFAULT_TRIGGER_TOKENS = DEFAULT_PRESET_VALUES.triggerTokens
-const DEFAULT_TARGET_TOKENS = DEFAULT_PRESET_VALUES.targetTokens
-const DEFAULT_MAX_KEEP_MESSAGES = DEFAULT_PRESET_VALUES.maxKeepMessages
+let REGISTRY_PATH = null
+let REGISTRY_MTIME = 0
+
+let PRESET_REGISTRY = loadPresetRegistry()
+let DEFAULT_PRESET = PRESET_REGISTRY.defaultKeeperPreset
+let DEFAULT_PRESET_VALUES = PRESET_REGISTRY.keeperPresets[DEFAULT_PRESET]
+let DEFAULT_CPU_PROFILE_NAME = PRESET_REGISTRY.defaultCpuProfile
+let DEFAULT_CPU_PROFILE = PRESET_REGISTRY.cpuProfiles[DEFAULT_CPU_PROFILE_NAME]
+let DEFAULT_TRIGGER_TOKENS = DEFAULT_PRESET_VALUES.triggerTokens
+let DEFAULT_TARGET_TOKENS = DEFAULT_PRESET_VALUES.targetTokens
+let DEFAULT_MAX_KEEP_MESSAGES = DEFAULT_PRESET_VALUES.maxKeepMessages
 const PROTECTED_TOOLS = new Set(["todowrite"])
 const NDATA_RE = /[A-Za-z0-9+/]{64,}={0,2}/
 const NDATA_RE_G = /[A-Za-z0-9+/]{64,}={0,2}/g
@@ -71,13 +85,33 @@ const CDATA_RE =
 const KEEPER_CONFIG_NAME = "rtr-re-keeper.json"
 const KEEPER_STATUS_NAME = "rtr-re-keeper-status.json"
 
-const KEEPER_PRESETS = PRESET_REGISTRY.keeperPresets
-const KEEPER_PRESET_ALIASES = PRESET_REGISTRY.keeperAliases ?? {}
-const RETRIEVAL_MODALITIES = PRESET_REGISTRY.modalities
-const CPU_PROFILES = PRESET_REGISTRY.cpuProfiles
-const CPU_PROFILE_ALIASES = PRESET_REGISTRY.cpuProfileAliases ?? {}
-const THREAD_MODES = PRESET_REGISTRY.threadModes.map(Number)
-const PARKING_PERCENTS = PRESET_REGISTRY.parkingPercents.map(Number)
+let KEEPER_PRESETS = PRESET_REGISTRY.keeperPresets
+let KEEPER_PRESET_ALIASES = PRESET_REGISTRY.keeperAliases ?? {}
+let RETRIEVAL_MODALITIES = PRESET_REGISTRY.modalities
+let CPU_PROFILES = PRESET_REGISTRY.cpuProfiles
+let CPU_PROFILE_ALIASES = PRESET_REGISTRY.cpuProfileAliases ?? {}
+let THREAD_MODES = PRESET_REGISTRY.threadModes.map(Number)
+let PARKING_PERCENTS = PRESET_REGISTRY.parkingPercents.map(Number)
+
+function reloadRegistry(path) {
+    const next = path ? loadPresetRegistryFrom(path) : loadPresetRegistry()
+    PRESET_REGISTRY = next
+    DEFAULT_PRESET = next.defaultKeeperPreset
+    DEFAULT_PRESET_VALUES = next.keeperPresets[DEFAULT_PRESET]
+    DEFAULT_CPU_PROFILE_NAME = next.defaultCpuProfile
+    DEFAULT_CPU_PROFILE = next.cpuProfiles[DEFAULT_CPU_PROFILE_NAME]
+    DEFAULT_TRIGGER_TOKENS = DEFAULT_PRESET_VALUES.triggerTokens
+    DEFAULT_TARGET_TOKENS = DEFAULT_PRESET_VALUES.targetTokens
+    DEFAULT_MAX_KEEP_MESSAGES = DEFAULT_PRESET_VALUES.maxKeepMessages
+    KEEPER_PRESETS = next.keeperPresets
+    KEEPER_PRESET_ALIASES = next.keeperAliases ?? {}
+    RETRIEVAL_MODALITIES = next.modalities
+    CPU_PROFILES = next.cpuProfiles
+    CPU_PROFILE_ALIASES = next.cpuProfileAliases ?? {}
+    THREAD_MODES = next.threadModes.map(Number)
+    PARKING_PERCENTS = next.parkingPercents.map(Number)
+    return next
+}
 
 function normalizePresetName(raw) {
     const value = String(raw ?? "")
@@ -268,6 +302,9 @@ function resolveKeeperConfig(options = {}, env = process.env) {
             presetValues.maxKeepMessages,
         ),
         enabled: options.enabled ?? enabledFlag(env.RTR_RE_KEEPER_ENABLED),
+        cumulativeMessages: Number(
+            options.cumulativeMessages ?? env.OPENCODE_MEMORY_RTRRE_CUMULATIVE ?? 0,
+        ),
         protectedTools: new Set([
             ...PROTECTED_TOOLS,
             ...(Array.isArray(options.protectedTools) ? options.protectedTools : []),
@@ -512,6 +549,14 @@ function serializeSpans(spans, digest) {
             "PCDATA/CDATA byte-exact; NDATA masked, never embedded.",
         "",
     ]
+    const census = laneCensus(spans)
+    if (census.length) {
+        lines.push("## lane census")
+        for (const row of census) {
+            lines.push(`- ${row.lane}: ${row.count} spans, ~${row.tokens} tokens`)
+        }
+        lines.push("")
+    }
     for (const s of spans) {
         lines.push(
             `## span ${s.index}`,
@@ -533,6 +578,51 @@ function spansDigest(spans) {
         .slice(0, 16)
 }
 
+// P5 (TODO-65): Object.groupBy — group evicted spans by lane for the sink
+// payload summary, so the sink file carries a lane census without a second
+// pass. (ES2024; verified present in the supported Node runtime.)
+function laneCensus(spans) {
+    const byLane = Object.groupBy(spans, (s) => s.lane ?? "unknown")
+    return Object.entries(byLane).map(([lane, group]) => ({
+        lane,
+        count: group.length,
+        tokens: group.reduce((acc, s) => acc + (s.tokens ?? 0), 0),
+    }))
+}
+
+// P5 (TODO-65): Promise.withResolvers — a bounded sink wait. A hung sink
+// must fail open (window untouched) instead of blocking the exchange
+// forever; the timer is cleared on settle. (ES2024; verified present.)
+const SINK_TIMEOUT_MS = 30000
+
+function withTimeout(promise, ms, label) {
+    const { promise: out, resolve, reject } = Promise.withResolvers()
+    const timer = setTimeout(
+        () => reject(new Error(`${label} timed out after ${ms}ms`)),
+        ms,
+    )
+    promise.then(
+        (value) => {
+            clearTimeout(timer)
+            resolve(value)
+        },
+        (error) => {
+            clearTimeout(timer)
+            reject(error)
+        },
+    )
+    return out
+}
+
+// P5 (TODO-65): Temporal for status timestamps (ES2025; falls back to
+// Date when the runtime lacks Temporal).
+function nowIso() {
+    if (typeof Temporal !== "undefined" && Temporal.Now?.instant) {
+        return Temporal.Now.instant().toString()
+    }
+    return new Date().toISOString()
+}
+
 /**
  * Apply the keeper plan. `sink(spans, digest)` must persist the evicted
  * spans and return a path (or a Promise of one); if it throws/rejects,
@@ -546,7 +636,7 @@ async function applyKeeper(messages, cfg, sink) {
     }
     const spans = evictedSpans(messages, plan.evict)
     const digest = spansDigest(spans)
-    const sinkPath = await sink(spans, digest)
+    const sinkPath = await withTimeout(sink(spans, digest), SINK_TIMEOUT_MS, "sink")
     const kept = messages.filter((_, i) => plan.keep.has(i))
     const evictedTokens = plan.total - plan.keepTokens
     const note =
@@ -584,10 +674,30 @@ function writeSink(directory) {
     }
 }
 
+/** Read the Python worker's cumulative counter file; 0 when absent. */
+async function readCumulativeFile(path) {
+    let raw
+    try {
+        raw = await readFile(path, "utf8")
+    } catch {
+        return 0
+    }
+    const state = JSON.parse(raw)
+    const value = Number(state?.cumulative_messages ?? 0)
+    if (!Number.isFinite(value) || value < 0) {
+        throw new Error("cumulative_messages must be >= 0")
+    }
+    return value
+}
+
 async function writeStatusFile(path, status) {
     const payload = { keeper: "rtr-re-keeper", version: KEEPER_VERSION, ...status }
     await mkdir(dirname(path), { recursive: true })
-    await writeFile(path, JSON.stringify(payload, null, 2) + "\n", "utf8")
+    // Atomic write: temp + rename, mirroring the Python worker's
+    // cumulative-counter persistence. A reader never sees a torn status.
+    const tmp = `${path}.tmp`
+    await writeFile(tmp, JSON.stringify(payload, null, 2) + "\n", "utf8")
+    await rename(tmp, path)
     return path
 }
 
@@ -629,28 +739,22 @@ function formatStatus(cfg, last) {
     return lines.join("\n")
 }
 
+const RTR_USAGE =
+    "rtr usage: /rtr status | hold <tokens> | trigger <tokens> | target <tokens> | max <n> | preset <standard|calibrated|wide|fusion-ah|symbiose-ah|re-symbiose|re-symbiose-mugen> | cpu <public-default|local-system> | modality <rtr-full|rtr-arctic|rtr-bge|rag-hybrid-base|rag-dense-base|rag-hybrid|rag-dense|custom> | threads <2|4|6|8|12|16> | parking <20|30|40|50|60|70|80> | enable | disable"
+
 /**
- * `/rtr` command handler. Mutates output.parts in place with the result
- * text and returns normally (the command result rides to the model as
- * the user message; no abort-error hack, no ERROR log line).
+ * Shared `/rtr` verb executor (P1, TODO-65): used by both the command
+ * hook (`command.execute.before`) and the prompt-level parser
+ * (PROMPT_RTR_RE in the transform). `say` receives the reply text.
  */
-async function handleRtrCommand(input, output, ctx) {
-    const args = (input.arguments ?? "").trim().split(/\s+/).filter(Boolean)
-    const [verb, ...rest] = args.map((a) => String(a))
-    const parts = Array.isArray(output.parts) ? output.parts : (output.parts = [])
-    const say = (text) => {
-        parts.length = 0
-        parts.push({ type: "text", text })
-    }
-    const usage = () =>
-        "rtr usage: /rtr status | hold <tokens> | trigger <tokens> | target <tokens> | max <n> | preset <standard|calibrated|wide|fusion-ah|symbiose-ah|re-symbiose> | cpu <public-default|local-system> | modality <rtr-full|rtr-arctic|rtr-bge|rag-hybrid-base|rag-dense-base|rag-hybrid|rag-dense|custom> | threads <2|4|6|8|12|16> | parking <20|30|40|50|60|70|80> | enable | disable"
+async function runRtrVerb(verb, rest, ctx, say) {
     try {
         if (!verb || verb === "status") {
             say(formatStatus(ctx.getConfig(), ctx.last))
             return
         }
         if (verb === "help") {
-            say(usage())
+            say(RTR_USAGE)
             return
         }
         if (verb === "enable" || verb === "disable") {
@@ -704,7 +808,7 @@ async function handleRtrCommand(input, output, ctx) {
             verb
         ]
         if (!numeric) {
-            say(usage())
+            say(RTR_USAGE)
             return
         }
         const value = positiveInt(rest[0], verb)
@@ -715,16 +819,93 @@ async function handleRtrCommand(input, output, ctx) {
     }
 }
 
+/**
+ * `/rtr` command handler. Mutates output.parts in place with the result
+ * text and returns normally (the command result rides to the model as
+ * the user message; no abort-error hack, no ERROR log line).
+ */
+async function handleRtrCommand(input, output, ctx) {
+    const args = (input.arguments ?? "").trim().split(/\s+/).filter(Boolean)
+    const [verb, ...rest] = args.map((a) => String(a))
+    const parts = Array.isArray(output.parts) ? output.parts : (output.parts = [])
+    const say = (text) => {
+        parts.length = 0
+        parts.push({ type: "text", text })
+    }
+    await runRtrVerb(verb, rest, ctx, say)
+}
+
+// P1 (TODO-65): prompt-level `/rtr` parser (Agile pattern — regex on the
+// prompt). Matches "/rtr status", "/rtr preset mugen", "/rtr max 200",
+// etc. inside the last user message, so the command family works in plain
+// chat without the command palette.
+const PROMPT_RTR_RE = /^\s*\/(?:rtr|rtr-re)(?:\s+([a-z][a-z0-9_-]*))?(?:\s+([\s\S]*?))?\s*$/i
+
+// P4 (TODO-65): processed-array dedup so V1 and V2 surfaces never
+// double-process the same exchange.
+const processedMessageArrays = new WeakSet()
+
+// P2 (TODO-65): reminder cadence for the one-line status note.
+const REMINDER_EVERY = 10
+
 const server = async (ctx, options = {}) => {
     let cfg = resolveKeeperConfig(options)
     const configPath = options.configFile ?? keeperConfigPath(ctx.directory, process.env)
     const statusPath = options.statusFile ?? keeperStatusPath(ctx.directory, process.env)
+    const cumulativePath =
+        options.cumulativeFile ??
+        join(ctx.directory, ".opencode", "rtr-re-cumulative.json")
     let fileMtime = 0
+    let cumulativeMtime = 0
     let last = null
+    let exchangeCount = 0
 
     const sink = writeSink(ctx.directory)
 
+    // The cumulative counter is owned by the Python worker (atomic
+    // temp+rename). This host-side mirror reads it so the recency-aware
+    // protection (TODO-45) behaves identically in both engines: past
+    // PROTECTION_CUMULATIVE_THRESHOLD only recent protected messages stay
+    // hard-protected. A missing/corrupt file reads as 0 (all-protect),
+    // never as a refusal — the worker is the authority.
+    async function refreshCumulative() {
+        let st = null
+        try {
+            st = await stat(cumulativePath)
+        } catch {
+            if (cumulativeMtime !== 0) {
+                cumulativeMtime = 0
+                cfg = { ...cfg, cumulativeMessages: 0 }
+            }
+            return
+        }
+        if (st.mtimeMs === cumulativeMtime) return
+        try {
+            const value = await readCumulativeFile(cumulativePath)
+            cfg = { ...cfg, cumulativeMessages: value }
+            cumulativeMtime = st.mtimeMs
+        } catch (error) {
+            console.error(
+                `[rtr-re-keeper] cumulative counter read refused: ${error?.message ?? error}`,
+            )
+        }
+    }
+
     async function refreshConfig() {
+        // Registry reload (finding d, TODO-65): the registry is loaded once
+        // at module load; if it changed on disk (e.g. a new preset shipped
+        // mid-session), reload it so newly-added preset names resolve without
+        // a restart. This fixes the measured stale-registry refusal.
+        if (REGISTRY_PATH) {
+            try {
+                const st = await stat(REGISTRY_PATH)
+                if (st.mtimeMs !== REGISTRY_MTIME) {
+                    reloadRegistry()
+                }
+            } catch {
+                // Registry missing is not a config failure; keep the loaded one.
+            }
+        }
         let st = null
         try {
             st = await stat(configPath)
@@ -739,7 +920,7 @@ const server = async (ctx, options = {}) => {
     }
 
     async function recordStatus(decision) {
-        last = { time: new Date().toISOString(), ...decision }
+        last = { time: nowIso(), ...decision }
         const status = {
             preset: cfg.preset,
             presetDisplay: cfg.presetDisplay,
@@ -791,59 +972,136 @@ const server = async (ctx, options = {}) => {
         }
     }
 
-    return {
-        "experimental.chat.messages.transform": async (_input, output) => {
+    // Shared processing core for both the V1 transform and the V2
+    // `context` hook. The WeakSet dedup guarantees a given messages array
+    // is processed exactly once even when both surfaces fire for the same
+    // exchange (P4, TODO-65).
+    async function processMessages(messages) {
+        if (processedMessageArrays.has(messages)) return
+        processedMessageArrays.add(messages)
+        try {
             try {
-                try {
-                    await refreshConfig()
-                } catch (error) {
-                    console.error(`[rtr-re-keeper] config reload refused: ${error?.message ?? error}`)
+                await refreshConfig()
+                await refreshCumulative()
+            } catch (error) {
+                console.error(`[rtr-re-keeper] config reload refused: ${error?.message ?? error}`)
+            }
+            if (!Array.isArray(messages) || messages.length === 0) return
+            if (isInternalRequest(messages)) return
+            // P1 (TODO-65): prompt-level /rtr commands in plain chat.
+            let lastUser = null
+            for (let i = messages.length - 1; i >= 0; i--) {
+                if (messages[i]?.info?.role === "user") {
+                    lastUser = messages[i]
+                    break
                 }
-                const messages = output?.messages
-                if (!Array.isArray(messages) || messages.length === 0) return
-                if (isInternalRequest(messages)) return
-                if (!cfg.enabled) {
-                    await recordStatus({ decision: "disabled-identity", total: 0, keepTokens: 0, evicted: 0, sinkPath: null })
+            }
+            if (lastUser) {
+                const pm = PROMPT_RTR_RE.exec(messageText(lastUser))
+                if (pm) {
+                    const reply = []
+                    await runRtrVerb(
+                        pm[1] ?? "",
+                        (pm[2] ?? "").trim().split(/\s+/).filter(Boolean),
+                        await commandCtx(),
+                        (t) => reply.push(t),
+                    )
+                    if (reply.length) {
+                        const parts = Array.isArray(lastUser.parts)
+                            ? lastUser.parts
+                            : (lastUser.parts = [])
+                        parts.push({ type: "text", text: reply.join("\n"), synthetic: true })
+                    }
                     return
                 }
-                const result = await applyKeeper(messages, cfg, sink)
-                if (result.changed) {
-                    messages.length = 0
-                    messages.push(...result.messages)
-                    await recordStatus({
-                        decision: "evicted",
-                        total: result.plan.total,
-                        keepTokens: result.plan.keepTokens,
-                        evicted: result.plan.evict.length,
-                        sinkPath: result.sinkPath,
-                    })
-                } else {
-                    await recordStatus({
-                        decision: "kept-verbatim",
-                        total: result.plan.total,
-                        keepTokens: result.plan.keepTokens,
-                        evicted: 0,
-                        sinkPath: null,
-                    })
+            }
+            if (!cfg.enabled) {
+                await recordStatus({ decision: "disabled-identity", total: 0, keepTokens: 0, evicted: 0, sinkPath: null })
+                return
+            }
+            // P2 (TODO-65): status injection split — full status on the first
+            // processed exchange, one-line reminder every REMINDER_EVERY
+            // exchanges, so the keeper's presence is visible without cost.
+            exchangeCount += 1
+            if (exchangeCount === 1 || exchangeCount % REMINDER_EVERY === 0) {
+                const last = messages[messages.length - 1]
+                if (last) {
+                    const parts = Array.isArray(last.parts) ? last.parts : (last.parts = [])
+                    const note =
+                        exchangeCount === 1
+                            ? formatStatus(cfg, last)
+                            : `RTR-RE Keeper active — ${cfg.profileCode}`
+                    parts.push({ type: "text", text: note, synthetic: true })
                 }
-            } catch (error) {
-                // Fail-open: a keeper fault must never lose context or
-                // break the request. The sink runs before any eviction,
-                // so an error here leaves the window exactly as it was.
-                console.error(`[rtr-re-keeper] ${error?.message ?? error}`)
-                try {
+            }
+            const result = await applyKeeper(messages, cfg, sink)
+            if (result.changed) {
+                messages.length = 0
+                messages.push(...result.messages)
+                await recordStatus({
+                    decision: "evicted",
+                    total: result.plan.total,
+                    keepTokens: result.plan.keepTokens,
+                    evicted: result.plan.evict.length,
+                    sinkPath: result.sinkPath,
+                })
+            } else {
+                await recordStatus({
+                    decision: "kept-verbatim",
+                    total: result.plan.total,
+                    keepTokens: result.plan.keepTokens,
+                    evicted: 0,
+                    sinkPath: null,
+                })
+            }
+        } catch (error) {
+            // Fail-open: a keeper fault must never lose context or
+            // break the request. The sink runs before any eviction,
+            // so an error here leaves the window exactly as it was.
+            console.error(`[rtr-re-keeper] ${error?.message ?? error}`)
+            try {
+                await recordStatus({
+                    decision: "error-fail-open",
+                    total: 0,
+                    keepTokens: 0,
+                    evicted: 0,
+                    sinkPath: null,
+                    error: String(error?.message ?? error),
+                })
+            } catch {
+                // Status itself must never break the request either.
+            }
+        }
+    }
+
+    // P4 (TODO-65): modern V2 hook surface alongside the V1 transform
+    // (opencode-thinking-fix pattern). The `context` hook observes the
+    // same messages; the WeakSet dedup keeps processing single.
+    if (typeof ctx?.session?.hook === "function") {
+        try {
+            await ctx.session.hook("context", async (event) => {
+                await processMessages(event?.messages)
+            })
+            await ctx.session.hook("compaction", async (event) => {
+                const messages = event?.messages
+                if (Array.isArray(messages) && messages.length) {
                     await recordStatus({
-                        decision: "error-fail-open",
+                        decision: "compaction-observer",
                         total: 0,
                         keepTokens: 0,
                         evicted: 0,
                         sinkPath: null,
-                        error: String(error?.message ?? error),
                     })
-                } catch {
-                    // Status itself must never break the request either.
                 }
-            }
+            })
+        } catch (error) {
+            console.error(`[rtr-re-keeper] V2 hook registration failed: ${error?.message ?? error}`)
+        }
+    }
+
+    return {
+        "experimental.chat.messages.transform": async (_input, output) => {
+            await processMessages(output?.messages)
         },
         "command.execute.before": async (input, output) => {
             if (input.command !== "rtr" && input.command !== "rtr-re") return
@@ -879,10 +1137,12 @@ server._test = {
     keeperConfigPath,
     keeperStatusPath,
     loadKeeperFileConfig,
+    readCumulativeFile,
     messageTokens,
     normalizePresetName,
     planKeepIndices,
     profileFields,
+    reloadRegistry,
     resolveCpuProfileName,
     resolveKeeperConfig,
     resolveModalityName,

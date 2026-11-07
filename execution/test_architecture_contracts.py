@@ -123,13 +123,18 @@ class TestArtifactsAndSurface(unittest.TestCase):
             ),
         )
         keeper = read(ROOT / "opencode-plugin" / "rtr-re-keeper.js")
-        self.assertIn("const PRESET_REGISTRY = loadPresetRegistry()", keeper)
+        # Finding d (TODO-65): the registry is reloadable, so the registry
+        # bindings are `let` and reloadRegistry re-derives them. The four
+        # witnesses (Python planner, registry JSON, keeper JS, directives)
+        # must still agree on the same bounds.
+        self.assertIn("let PRESET_REGISTRY = loadPresetRegistry()", keeper)
+        self.assertIn("function reloadRegistry(path)", keeper)
         self.assertIn(
-            "const DEFAULT_TRIGGER_TOKENS = DEFAULT_PRESET_VALUES.triggerTokens",
+            "let DEFAULT_TRIGGER_TOKENS = DEFAULT_PRESET_VALUES.triggerTokens",
             keeper,
         )
         self.assertIn(
-            "const DEFAULT_TARGET_TOKENS = DEFAULT_PRESET_VALUES.targetTokens",
+            "let DEFAULT_TARGET_TOKENS = DEFAULT_PRESET_VALUES.targetTokens",
             keeper,
         )
         self.assertIn(

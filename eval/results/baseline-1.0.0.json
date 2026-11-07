@@ -1,10 +1,10 @@
 {
   "schema": "rtr-re.baseline/1.0.0/v1",
   "release_arc": "1.0.0",
-  "frozen_at": "2026-11-06T18:55:03",
+  "frozen_at": "2026-11-07T02:17:31",
   "source_manifest": {
-    "versus": "b2b334339d0e43ec3f44379efa116aadb76883c71dc29146feab193106a7744a",
-    "engine_beneath": "bb5aa806f20207d801b6ad83d9b6378cc0b19c21724ba6fe039e3617dd44de74",
+    "versus": "4bf24b7f34e45ff4afb9b67545e72d5f418fcf1cb96e85306c0b7a8cd6da9f73",
+    "engine_beneath": "1707421cc79063136aa38cfe88120af5680385ba44a784ce7cbd361dcf77313b",
     "parity_matrix": "9757cb2154a029f2e8b49464805097c9d9ef36a9b89cf251326979d8336be330"
   },
   "retrieval": {
@@ -20,49 +20,49 @@
             "recall@1": 0.7273,
             "recall@3": 0.7922,
             "mrr": 0.7576,
-            "p50_ms": 2.9
+            "p50_ms": 3.8
           },
           "rag-dense-base": {
             "n": 77,
             "recall@1": 0.7013,
             "recall@3": 0.7532,
             "mrr": 0.7273,
-            "p50_ms": 7.8
+            "p50_ms": 8.6
           },
           "rag-hybrid": {
             "n": 77,
             "recall@1": 0.9351,
             "recall@3": 0.9481,
             "mrr": 0.9394,
-            "p50_ms": 5.0
+            "p50_ms": 6.9
           },
           "rag-hybrid-base": {
             "n": 77,
             "recall@1": 0.8701,
             "recall@3": 0.8961,
             "mrr": 0.8788,
-            "p50_ms": 10.0
+            "p50_ms": 12.0
           },
           "rtr-arctic": {
             "n": 77,
             "recall@1": 0.9091,
             "recall@3": 0.9351,
             "mrr": 0.9177,
-            "p50_ms": 12.8
+            "p50_ms": 17.1
           },
           "rtr-bge": {
             "n": 77,
             "recall@1": 0.8701,
             "recall@3": 0.8961,
             "mrr": 0.8788,
-            "p50_ms": 12.2
+            "p50_ms": 14.3
           },
           "rtr-full": {
             "n": 77,
             "recall@1": 0.9351,
             "recall@3": 0.9481,
             "mrr": 0.9394,
-            "p50_ms": 23.9
+            "p50_ms": 28.2
           }
         }
       },
@@ -75,49 +75,49 @@
             "recall@1": 0.2887,
             "recall@3": 0.4639,
             "mrr": 0.3677,
-            "p50_ms": 3.4
+            "p50_ms": 4.1
           },
           "rag-dense-base": {
             "n": 97,
             "recall@1": 0.3505,
             "recall@3": 0.4742,
             "mrr": 0.4055,
-            "p50_ms": 8.4
+            "p50_ms": 8.1
           },
           "rag-hybrid": {
             "n": 97,
             "recall@1": 0.4124,
             "recall@3": 0.5258,
             "mrr": 0.4622,
-            "p50_ms": 3.8
+            "p50_ms": 4.6
           },
           "rag-hybrid-base": {
             "n": 97,
             "recall@1": 0.4536,
             "recall@3": 0.5361,
             "mrr": 0.4897,
-            "p50_ms": 9.3
+            "p50_ms": 9.2
           },
           "rtr-arctic": {
             "n": 97,
             "recall@1": 0.4742,
             "recall@3": 0.5773,
             "mrr": 0.5189,
-            "p50_ms": 21.8
+            "p50_ms": 22.6
           },
           "rtr-bge": {
             "n": 97,
             "recall@1": 0.4536,
             "recall@3": 0.5361,
             "mrr": 0.4897,
-            "p50_ms": 15.3
+            "p50_ms": 15.7
           },
           "rtr-full": {
             "n": 97,
             "recall@1": 0.4845,
             "recall@3": 0.6082,
             "mrr": 0.5378,
-            "p50_ms": 35.7
+            "p50_ms": 37.2
           }
         }
       },
@@ -127,52 +127,52 @@
         "systems": {
           "rag-dense": {
             "n": 163,
-            "recall@1": 0.3252,
-            "recall@3": 0.4172,
-            "mrr": 0.362,
-            "p50_ms": 3.7
+            "recall@1": 0.3006,
+            "recall@3": 0.4356,
+            "mrr": 0.3558,
+            "p50_ms": 4.6
           },
           "rag-dense-base": {
             "n": 163,
-            "recall@1": 0.2945,
-            "recall@3": 0.3926,
-            "mrr": 0.3354,
-            "p50_ms": 8.6
+            "recall@1": 0.2883,
+            "recall@3": 0.3988,
+            "mrr": 0.3364,
+            "p50_ms": 8.8
           },
           "rag-hybrid": {
             "n": 163,
-            "recall@1": 0.5215,
-            "recall@3": 0.6074,
-            "mrr": 0.5593,
-            "p50_ms": 18.4
+            "recall@1": 0.546,
+            "recall@3": 0.638,
+            "mrr": 0.5879,
+            "p50_ms": 22.0
           },
           "rag-hybrid-base": {
             "n": 163,
-            "recall@1": 0.4908,
-            "recall@3": 0.6196,
-            "mrr": 0.5501,
-            "p50_ms": 20.7
+            "recall@1": 0.4969,
+            "recall@3": 0.6135,
+            "mrr": 0.5511,
+            "p50_ms": 25.8
           },
           "rtr-arctic": {
             "n": 163,
-            "recall@1": 0.5092,
-            "recall@3": 0.6135,
-            "mrr": 0.5573,
-            "p50_ms": 33.6
+            "recall@1": 0.6871,
+            "recall@3": 0.8221,
+            "mrr": 0.7464,
+            "p50_ms": 60.4
           },
           "rtr-bge": {
             "n": 163,
-            "recall@1": 0.4908,
-            "recall@3": 0.6196,
-            "mrr": 0.5501,
-            "p50_ms": 27.4
+            "recall@1": 0.6871,
+            "recall@3": 0.8282,
+            "mrr": 0.7515,
+            "p50_ms": 48.4
           },
           "rtr-full": {
             "n": 163,
-            "recall@1": 0.5399,
-            "recall@3": 0.6626,
-            "mrr": 0.593,
-            "p50_ms": 52.9
+            "recall@1": 0.7239,
+            "recall@3": 0.8896,
+            "mrr": 0.7996,
+            "p50_ms": 88.6
           }
         }
       },
@@ -185,49 +185,49 @@
             "recall@1": 0.3333,
             "recall@3": 0.6207,
             "mrr": 0.4579,
-            "p50_ms": 4.2
+            "p50_ms": 5.7
           },
           "rag-dense-base": {
             "n": 87,
             "recall@1": 0.3678,
             "recall@3": 0.5862,
             "mrr": 0.4579,
-            "p50_ms": 9.9
+            "p50_ms": 13.9
           },
           "rag-hybrid": {
             "n": 87,
             "recall@1": 0.5632,
             "recall@3": 0.7241,
             "mrr": 0.6284,
-            "p50_ms": 5.8
+            "p50_ms": 7.9
           },
           "rag-hybrid-base": {
             "n": 87,
             "recall@1": 0.5172,
             "recall@3": 0.6667,
             "mrr": 0.5805,
-            "p50_ms": 11.6
+            "p50_ms": 15.2
           },
           "rtr-arctic": {
             "n": 87,
             "recall@1": 0.5747,
             "recall@3": 0.8046,
             "mrr": 0.6648,
-            "p50_ms": 15.6
+            "p50_ms": 23.4
           },
           "rtr-bge": {
             "n": 87,
             "recall@1": 0.5287,
             "recall@3": 0.6667,
             "mrr": 0.5862,
-            "p50_ms": 14.8
+            "p50_ms": 20.1
           },
           "rtr-full": {
             "n": 87,
             "recall@1": 0.5747,
             "recall@3": 0.8506,
             "mrr": 0.6916,
-            "p50_ms": 29.7
+            "p50_ms": 35.5
           }
         }
       }
@@ -235,21 +235,21 @@
     "dtd_family_rtr_full_taxons": {
       "T1": {
         "n": 32,
-        "recall@1": 0.75,
-        "recall@3": 0.9062,
-        "mrr": 0.8229
+        "recall@1": 0.7188,
+        "recall@3": 0.875,
+        "mrr": 0.7917
       },
       "T10": {
         "n": 21,
         "recall@1": 0.619,
-        "recall@3": 0.8571,
-        "mrr": 0.7143
+        "recall@3": 0.8095,
+        "mrr": 0.7063
       },
       "T2": {
         "n": 12,
-        "recall@1": 0.8333,
+        "recall@1": 0.9167,
         "recall@3": 0.9167,
-        "mrr": 0.875
+        "mrr": 0.9167
       },
       "T6": {
         "n": 6,
@@ -259,15 +259,15 @@
       },
       "T7": {
         "n": 40,
-        "recall@1": 0.275,
-        "recall@3": 0.3,
-        "mrr": 0.2833
+        "recall@1": 0.675,
+        "recall@3": 0.825,
+        "mrr": 0.7417
       },
       "T8": {
         "n": 40,
-        "recall@1": 0.425,
-        "recall@3": 0.525,
-        "mrr": 0.4667
+        "recall@1": 0.775,
+        "recall@3": 0.975,
+        "mrr": 0.8667
       },
       "T9": {
         "n": 12,
@@ -277,26 +277,62 @@
       },
       "OVERALL": {
         "n": 163,
-        "recall@1": 0.5399,
-        "recall@3": 0.6626,
-        "mrr": 0.593,
-        "p50_ms": 52.9
+        "recall@1": 0.7239,
+        "recall@3": 0.8896,
+        "mrr": 0.7996,
+        "p50_ms": 88.6
       }
     }
   },
   "engine_beneath": {
     "summary": {
-      "cases": 14,
-      "passed": 14,
+      "cases": 27,
+      "passed": 27,
       "failed": 0,
       "pass": true
     },
     "cases": {
+      "compressor-double-duty-after-keeper-trim": {
+        "verdict": "pass",
+        "checks": {
+          "fires_over_trigger": 1.0,
+          "kept_within_keeper_cap": 1.0,
+          "kept_tokens_reduced": 1.0,
+          "evict_nonempty": 1.0
+        }
+      },
+      "compressor-evicted-retrievable-via-memory-search": {
+        "verdict": "pass",
+        "checks": {
+          "compressed": 1.0,
+          "sink_wrote_file": 1.0,
+          "memory_search_finds_evicted": 1.0
+        }
+      },
       "compressor-fires-only-past-trigger": {
         "verdict": "pass",
         "checks": {
           "no_compress_below_trigger": 1.0,
           "compress_above_trigger": 1.0
+        }
+      },
+      "compressor-incremental-ten-plus-fires": {
+        "verdict": "pass",
+        "checks": {
+          "all_twelve_cycles_fired": 1.0,
+          "all_partitions_exact": 1.0,
+          "all_token_reports_exact": 1.0,
+          "all_payloads_verbatim": 1.0,
+          "all_ndata_masked": 1.0,
+          "all_within_budget_slack": 1.0
+        }
+      },
+      "compressor-lexikon-interplay": {
+        "verdict": "pass",
+        "checks": {
+          "compressed": 1.0,
+          "lexikon_expands_to_evicted_term": 1.0,
+          "alias_query_retrieves_evicted": 1.0
         }
       },
       "compressor-never-compresses-protected": {
@@ -312,6 +348,24 @@
         "checks": {
           "window_measurably_smaller": 1.0,
           "evict_payload_carries_all_evicted": 1.0
+        }
+      },
+      "compressor-session-resume-cumulative": {
+        "verdict": "pass",
+        "checks": {
+          "session1_compressed": 1.0,
+          "cumulative_persisted_session1": 1.0,
+          "session2_resumed_compressed": 1.0,
+          "cumulative_grew_across_resume": 1.0,
+          "atomic_write_no_tmp_leftovers": 1.0
+        }
+      },
+      "content-model-feature-in-header": {
+        "verdict": "pass",
+        "checks": {
+          "header_has_content_models": 1.0,
+          "fragments_listed": 1.0,
+          "fragment_query_resolves": 1.0
         }
       },
       "corrupted-sink-mid-batch": {
@@ -345,6 +399,64 @@
           "sink_has_marker": 1.0
         }
       },
+      "optimizer-cpu-profile-applies-threads": {
+        "verdict": "pass",
+        "checks": {
+          "local_system_applies_8": 1.0,
+          "public_default_applies_4": 1.0,
+          "legacy_performance_still_works": 1.0
+        }
+      },
+      "optimizer-expansion-gated": {
+        "verdict": "pass",
+        "checks": {
+          "expansion_on_uses_lexikon": 1.0,
+          "expansion_off_gates_lexikon": 1.0
+        }
+      },
+      "optimizer-mjs-plan-context-aligned": {
+        "verdict": "pass",
+        "checks": {
+          "registry_preset_symbiose_ah": 1.0,
+          "plan_trigger_250k": 1.0,
+          "plan_target_100k": 1.0,
+          "plan_maxkeep_40": 1.0
+        }
+      },
+      "optimizer-modality-controls-hybrid": {
+        "verdict": "pass",
+        "checks": {
+          "rag_dense_hybrid_false": 1.0,
+          "rag_dense_expansion_false": 1.0,
+          "rtr_full_hybrid_true": 1.0,
+          "rtr_full_expansion_true": 1.0
+        }
+      },
+      "optimizer-parking-applies": {
+        "verdict": "pass",
+        "checks": {
+          "parking20_caps_to_3": 1.0,
+          "parking80_keeps_4": 1.0
+        }
+      },
+      "optimizer-profile-consumed-by-engine": {
+        "verdict": "pass",
+        "checks": {
+          "models_match_profile": 1.0,
+          "threads_match_profile": 1.0,
+          "profile_hybrid_flag": 1.0,
+          "profile_expansion_flag": 1.0
+        }
+      },
+      "parameter-entity-injection-blocked": {
+        "verdict": "pass",
+        "checks": {
+          "root_is_safe": 1.0,
+          "no_injected_attributes": 1.0,
+          "no_injected_elements": 1.0,
+          "param_entities_reported_as_data": 1.0
+        }
+      },
       "preset-axis-all-six": {
         "verdict": "pass",
         "checks": {
@@ -365,6 +477,7 @@
           "fusion-ah_bounds_exact": 1.0,
           "symbiose-ah_bounds_exact": 1.0,
           "re-symbiose_bounds_exact": 1.0,
+          "re-symbiose-mugen_bounds_exact": 1.0,
           "parking_arithmetic_all_cells": 1.0,
           "public_default_profile": 1.0,
           "local_system_profile": 1.0

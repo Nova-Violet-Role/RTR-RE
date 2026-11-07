@@ -1,8 +1,8 @@
-"""Freeze the 0.5.0 architecture baseline (TODO-29).
+"""Freeze the 1.0.0 architecture baseline (TODO-29).
 
 Reads the three immutable source artifacts and writes:
-  - eval/results/baseline-0.5.0.json  (machine-readable, frozen)
-  - eval/results/baseline-0.5.0.md    (human-readable)
+  - eval/results/baseline-1.0.0.json  (machine-readable, frozen)
+  - eval/results/baseline-1.0.0.md    (human-readable)
 
 Every score below is a copy of a measured run, never a claim. The sha256
 manifest pins the exact source artifacts so a later re-run can prove the
@@ -104,7 +104,7 @@ def main() -> int:
     )
 
     lines = [
-        "# RTR-RE baseline — 0.5.0 (frozen, TODO-29)",
+        "# RTR-RE baseline — 1.0.0 (frozen, TODO-29)",
         "",
         f"- Frozen at: {baseline['frozen_at']}",
         f"- Release arc: {baseline['release_arc']}",
@@ -134,7 +134,7 @@ def main() -> int:
         f"- Cases: {s['cases']} — passed {s['passed']}, failed {s['failed']} "
         f"({('PASS' if s['pass'] else 'FAIL')})"
     )
-    lines.append("- Per-case verdicts and checks: `eval/results/baseline-0.5.0.json`")
+    lines.append("- Per-case verdicts and checks: `eval/results/baseline-1.0.0.json`")
     lines += ["", "## Parity", ""]
     lines.append(
         "- `eval/results/parity-matrix-1.0.0.md` (four-column matrix, parity on shared retrieval core)"

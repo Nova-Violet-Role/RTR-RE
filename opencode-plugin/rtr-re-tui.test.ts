@@ -10,7 +10,7 @@ describe("rtr-re-tui", () => {
 
   test("preset registry loads and exposes keeper knobs", () => {
     // Importing the module already ran loadPresetRegistry(); the registry
-    // must be the 0.5.0 one with the three AH presets.
+    // must be the 1.0.0 one with the three AH presets.
     const fs = require("node:fs")
     const path = require("node:path")
     const here = path.dirname(fileURLToPath(import.meta.url))
@@ -23,8 +23,12 @@ describe("rtr-re-tui", () => {
     expect(found).toBeDefined()
     const data = JSON.parse(fs.readFileSync(found, "utf8"))
     expect(data.defaultKeeperPreset).toBe("symbiose-ah")
+    expect(data.futureDefaultKeeperPreset).toBe("re-symbiose-mugen")
     expect(data.keeperPresets["fusion-ah"].maxKeepMessages).toBe(30)
     expect(data.keeperPresets["symbiose-ah"].maxKeepMessages).toBe(40)
     expect(data.keeperPresets["re-symbiose"].maxKeepMessages).toBe(50)
+    expect(data.keeperPresets["re-symbiose-mugen"].triggerTokens).toBe(400000)
+    expect(data.keeperPresets["re-symbiose-mugen"].targetTokens).toBe(200000)
+    expect(data.keeperPresets["re-symbiose-mugen"].maxKeepMessages).toBe(200)
   })
 })

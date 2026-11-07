@@ -1,8 +1,12 @@
 <!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # 🔍 RTR-RE:Symbiose — Role-Type-Retrieval-RE:Symbiotized
+**Short name: RE:Symbiose. RRF-heuristic, DTD-semantic-capable retriever + symbiotized context engine.
+CPU-first. Local-first. Zero API cost.**
 
-**Short name: RE:Symbiose. RRF-heuristic, DTD-semantic-capable retriever + symbiotized context engine. CPU-first. Local-first. Zero API cost.**
+*People keep asking what RAG is. The shift that matters is from disconnected
+retrieved fragments toward living, typed, persistent context — and this
+codebase is built to measure that difference, not just claim it.*
 
 ### Two products, one family — the engine and the car
 
@@ -159,6 +163,37 @@ uv run python eval/bench_versus.py                 # full versus bench -> eval/r
 uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
 ```
 
+### 📈 The 1.1.0 measurement — amplified architecture, frozen floor
+
+Every number below re-runs with `uv run python eval/bench_versus.py` on this
+machine; the frozen floor lives in `eval/results/baseline-1.0.0.json`, and the
+current run in `eval/results/versus.json`.
+
+**RTR-full vs classic RAG (frozen 4×7, no-seed floor):** rtr-full ties or beats
+the best classic RAG system on every corpus at recall@1, and leads all four on
+recall@3 and MRR — dita-spec 0.9351 (ties rag-hybrid), dtd-commands 0.4845 vs
+0.4536, dtd-family 0.5460 (ties rag-hybrid), nt-studies 0.5747 vs 0.5632.
+
+**The DTD amplification lifts the hardest corpus:** with the structural inventory
+header and the lexikon seeded from DTD vocabulary (3800 terms), dtd-family
+rtr-full goes **R@1 0.5460 → 0.7239 (+0.1779)**, R@3 0.6503 → 0.8896
+(+0.2393), MRR 0.5930 → 0.7996 (+0.2066). Taxon deltas: T7 (attribute-semantic)
++0.425, T8 (entity-lane) +0.300, T1/T2/T6/T9/T10 at parity — no regression
+anywhere. The other three corpora hold exactly at the floor.
+
+**Engine Beneath — 27/27 cases pass:** the formal Lean battery
+(`formal/Symbiose.lean`) plus the evaluable case registry
+(`eval/engine_beneath_cases.py`) cover the keeper's recency-aware protection,
+the compressor's incremental, session-resume and double-duty behavior, evicted
+span retrievability via memory_search, the lexikon lane reaching evicted
+content, the optimizer consuming its own resolved profile, preset-axis parking
+arithmetic across 84 cells, and parameter-entity injection safety.
+
+**Presets are measured, not typed:** a fresh install defaults to Symbiose-AH!
+(250k/100k/40) with RTR-FULL at T4/P60; the future-default Re-Symbiose-Mugen
+(400k/200k/200) is recorded in the shared registry for when the architecture
+completes.
+
 Final freeze (2026-10-27, within-run reading): binary intense —
 rtr-full R@3 **0.756** (best), R@1 0.642 / MRR 0.689 at parity with the
 best same-size RAG arm; graded gold-v2 (773 judgments) — same-size
@@ -211,7 +246,7 @@ Lean, not just asserted in Python.
 
 | Component | Path | What it is |
 |---|---|---|
-| Keeper (0.5.0) | `opencode-plugin/rtr-re-keeper.js` | window edge: selects, protects (`todowrite`), prunes, sinks first; fails open |
+| Keeper (1.1.0) | `opencode-plugin/rtr-re-keeper.js` | window edge: selects, protects (`todowrite`), prunes, sinks first; fails open |
 | Compressor | `execution/context_budget.py` + `execution/symbiose_worker.py` | verbatim until trigger, drain to target, background tickets, never pauses the turn |
 | Manager | `execution/memory_engine.py` | memory MCP viewport: status/health/work-in-progress/retrieval, ≤512 tickets |
 | Engine-beneath | `formal/Symbiose.lean`, `eval/engine_beneath.py` | Lean-proven typed lanes and bounded loop |

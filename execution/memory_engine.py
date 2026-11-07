@@ -30,6 +30,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import chromadb
 from fastembed import TextEmbedding
 
+import context_budget as _cb
+
 # Setup paths. Every state path can be isolated by environment so dummy,
 # bench and test processes never have to touch the live registry/lexikon.
 USER_HOME = Path.home()
@@ -333,7 +335,12 @@ def query_prompt_for(model_name: str) -> str:
 def configured_embed_models() -> List[str]:
     raw = os.environ.get("OPENCODE_MEMORY_EMBED_MODELS", "")
     models = [m.strip() for m in raw.split(",") if m.strip()]
-    return models or list(DEFAULT_EMBED_MODELS)
+    if models:
+        return models
+    try:
+        return list(_cb.resolve_retrieval_profile()["models"])
+    except Exception:  # noqa: BLE001 — registry failure falls back to defaults
+        return list(DEFAULT_EMBED_MODELS)
 
 
 def configured_embed_threads() -> Any:
@@ -433,7 +440,10 @@ def resolve_threads_for(model_name: str) -> int:
 
     Explicit mapping wins: OPENCODE_MEMORY_EMBED_THREADS="4" (all models)
     or "arctic:4,bge:8" (substring match on the model slug).
-    Otherwise the RTR profile decides: balanced 4+4, performance 8+8.
+    Otherwise the legacy RTR_PROFILE env decides (balanced 4+4,
+    performance 8+8), then the shared registry CPU profile decides via
+    its effective per-model threads (parking-aware). The Optimizer's
+    resolved profile is the single source of truth for the default.
     """
     raw = os.environ.get("OPENCODE_MEMORY_EMBED_THREADS", "").strip()
     if raw:
@@ -458,7 +468,13 @@ def resolve_threads_for(model_name: str) -> int:
                 return n
         except Exception:
             pass
-    return 4 if configured_rtr_profile() == "balanced" else 8
+    legacy_raw = os.environ.get("OPENCODE_MEMORY_RTR_PROFILE", "").strip().lower()
+    if legacy_raw in ("balanced", "performance"):
+        return 4 if legacy_raw == "balanced" else 8
+    try:
+        return int(_cb.resolve_retrieval_profile()["effective_threads_per_model"])
+    except Exception:  # noqa: BLE001 — registry failure falls back to 4
+        return 4
 
 
 def model_slug(model_name: str) -> str:
@@ -773,6 +789,82 @@ def _content_model_fragments(decls) -> List[str]:
     return out
 
 
+_DTD_PUBLIC_RE = re.compile(r'PUBLIC\s+"([^"]*)"(?:\s+"([^"]*)")?')
+_DTD_SYSTEM_RE = re.compile(r'SYSTEM\s+"([^"]*)"')
+_DTD_MODULE_SWITCH_RE = re.compile(r'\s+"(IGNORE|INCLUDE)"')
+
+
+def _dtd_lineage(decls) -> List[Dict[str, Any]]:
+    """External entity references (PUBLIC/SYSTEM) as lineage tuples.
+
+    Each entry carries the entity name, the raw public id when present,
+    and the parsed owner/keyword split of the PUBLIC identifier (the
+    standard form is `owner//keyword//language`, e.g.
+    `-//OASIS//DTD DocBook V3.1//EN`). SYSTEM-only references carry their
+    system id. Entity bodies are never scanned — the scanner already
+    yields only top-level declarations (LAW.AMP.13), so an injected
+    reference inside an entity value cannot surface here.
+    """
+    out: List[Dict[str, Any]] = []
+    for kind, name, decl in decls:
+        if kind != "ENTITY" or not name:
+            continue
+        m = _DTD_PUBLIC_RE.search(decl)
+        if m is not None:
+            public_id = m.group(1)
+            parts = [p.strip() for p in public_id.split("//")]
+            owner = parts[1] if len(parts) > 1 else ""
+            keyword = parts[2] if len(parts) > 2 else ""
+            out.append(
+                {
+                    "name": name,
+                    "public_id": public_id,
+                    "owner": owner,
+                    "keyword": keyword,
+                    "system_id": m.group(2),
+                }
+            )
+            continue
+        m = _DTD_SYSTEM_RE.search(decl)
+        if m is not None:
+            out.append(
+                {
+                    "name": name,
+                    "public_id": None,
+                    "owner": "",
+                    "keyword": "",
+                    "system_id": m.group(1),
+                }
+            )
+    return out
+
+
+def _dtd_module_switches(decls) -> List[Dict[str, str]]:
+    """Customization-layer switches: %xxx.module "IGNORE"/"INCLUDE" entities.
+
+    The DocBook customization recipe switches whole modules off before
+    inclusion (`<!ENTITY % sect3.module "IGNORE">`). The switch set is a
+    signature of the customization layer (defguide examples/remv.sect4.dtd).
+    """
+    out: List[Dict[str, str]] = []
+    for kind, name, decl in decls:
+        if kind != "ENTITY" or not name or not name.endswith(".module"):
+            continue
+        m = _DTD_MODULE_SWITCH_RE.search(decl)
+        if m is not None:
+            out.append({"name": name, "value": m.group(1)})
+    return out
+
+
+def _dtd_role(decls) -> str:
+    """Driver vs module: a driver declares module switches or includes
+    external DTDs (PUBLIC/SYSTEM references); a module is a pure
+    declaration pool."""
+    if _dtd_module_switches(decls) or _dtd_lineage(decls):
+        return "driver"
+    return "module"
+
+
 def _scan_dtd_declarations(content: str):
     """Yield (kind, name, declaration_text) for each top-level DTD declaration.
 
@@ -1022,7 +1114,7 @@ def configured_suffixes() -> Tuple[str, ...]:
         )
         if out:
             return out
-    return (".md", ".nt", ".yaml", ".yml")
+    return (".md", ".nt", ".yaml", ".yml", ".dtd", ".mod", ".ent")
 
 
 def _matches_suffix(name: str) -> bool:
@@ -1271,9 +1363,13 @@ class MemoryEngine:
                     # Check if path or file has "wiki" in its name (priority)
                     has_wiki = any("wiki" in part.lower() for part in parts)
 
+                    # DTD-family files are first-class (TODO-64): discovered
+                    # anywhere, not just under directives/ or wiki paths.
+                    is_dtd = file_path.suffix.lower() in _DTD_SUFFIXES
+
                     # We prioritize all .md files in directives/ folder,
                     # and any .md files with "wiki" in their paths
-                    if is_directive or has_wiki:
+                    if is_directive or has_wiki or is_dtd:
                         category = "wiki" if has_wiki else "directive"
                         # If it's a concept subfolder inside directives, extract that subcategory
                         sub_category = None
@@ -1397,6 +1493,29 @@ class MemoryEngine:
         frags = _content_model_fragments(decls)
         if frags:
             header_lines.append("CONTENT MODELS: " + ", ".join(frags))
+        # Family signatures (TODO-64, proposals A-C): role, lineage and
+        # customization switches give dense retrieval the discriminator it
+        # lacks for families that share element vocabulary (measured T10
+        # collapse: DITA vs DocBook `appendix`).
+        role = _dtd_role(decls)
+        header_lines.append("ROLE: " + role)
+        lineage = _dtd_lineage(decls)
+        if lineage:
+            parts = []
+            for entry in lineage:
+                if entry["public_id"]:
+                    parts.append(
+                        f"{entry['name']} ({entry['owner']} · {entry['keyword']})"
+                    )
+                else:
+                    parts.append(f"{entry['name']} SYSTEM {entry['system_id']}")
+            header_lines.append("LINEAGE: " + "; ".join(parts))
+        switches = _dtd_module_switches(decls)
+        if switches:
+            header_lines.append(
+                "MODULE SWITCHES: "
+                + ", ".join(f"{s['name']}={s['value']}" for s in switches)
+            )
         header = "\n".join(header_lines)
         body = f"{header}\n\n{content}" if header else content
         section_text = f"Document: {rel_path}\nSection: Full Document\n\n{body}"
@@ -1853,18 +1972,27 @@ class MemoryEngine:
         """Split expansion into trusted (lexikon) and noisy (delta) lanes.
 
         Lexikon entries are curated/derived knowledge — they bypass the
-        relevance gate. Delta stems are guesses — gated by evidence.
+        relevance gate. Delta stems are guesses — gated by evidence. The
+        lexikon lane is gated by the Optimizer's resolved modality
+        `expansion` flag: classic RAG modalities (expansion=false) do not
+        expand through the lexikon.
         """
         lex_subs, delta_subs = [], []
+        expansion_enabled = True
+        try:
+            expansion_enabled = bool(_cb.resolve_retrieval_profile()["expansion"])
+        except Exception:  # noqa: BLE001
+            expansion_enabled = True
         if project:
-            try:
-                lex = self.lexikon_expansion(project, query)
-                if lex:
-                    cand = (query + " " + " ".join(lex)).strip()
-                    if cand != query:
-                        lex_subs.append(cand)
-            except Exception:
-                pass
+            if expansion_enabled:
+                try:
+                    lex = self.lexikon_expansion(project, query)
+                    if lex:
+                        cand = (query + " " + " ".join(lex)).strip()
+                        if cand != query:
+                            lex_subs.append(cand)
+                except Exception:
+                    pass
             try:
                 deltas = self.detect_workspace_deltas(project)
                 toks: List[str] = []
@@ -2100,13 +2228,26 @@ class MemoryEngine:
         return fused
 
     def search(
-        self, query: str, k: int = 3, project: str | None = None, hybrid: bool = True
+        self,
+        query: str,
+        k: int = 3,
+        project: str | None = None,
+        hybrid: bool | None = None,
     ) -> List[Dict[str, Any]]:
         """Semantic/Hybrid search across indexed wikis with Recency & Importance weighting (v2).
 
         RTR: multi-query expansion (pillar 1) fused over models with RRF,
         plus an optional PRF second pass (OPENCODE_MEMORY_PRF=1).
+
+        hybrid=None means the Optimizer's resolved modality decides (its
+        `hybrid` flag); an explicit bool always wins. The bench and CLI
+        pass explicit values; only the default is profile-driven.
         """
+        if hybrid is None:
+            try:
+                hybrid = bool(_cb.resolve_retrieval_profile()["hybrid"])
+            except Exception:  # noqa: BLE001
+                hybrid = True
         lex_subs, delta_subs = self.build_expansions(query, project)
         subs = [query] + [s for s in lex_subs if s != query]
         # Relevance gate (delta lane only): a delta-guess subquery votes only
@@ -3167,6 +3308,14 @@ project: {project}
                     and len(owner) > 2
                     and owner != a
                 ):
+                    # The definition carries the owner element. TODO-33
+                    # measured two type-in-definition variants and both
+                    # failed: CDATA (majority type) polluted the expansion
+                    # (T7 0.675 -> 0.600), and distinctive types (ID,
+                    # NMTOKEN, enumerated) regressed `operator` because
+                    # enumerated tokens (over/in/out/xor) are themselves
+                    # common words. The owner element remains the safest
+                    # expansion context.
                     seeds.append((a, owner))
             root = elems[0] if elems else ""
             for e in ents:

@@ -55,6 +55,8 @@ path. Each bench run uses an **isolated temp vector DB**
 | T8 entity-lane | rare entity/parameter-entity name (df==1) → its file | entity-lane recall (DTD) |
 | T9 content-model | distinctive sequence/choice content-model fragment → its file | content-model recall (DTD) |
 | T10 cross-family | term occurring in exactly two files from different families → one of them | cross-family vocabulary discrimination (DTD) |
+| T11 lineage | family keyword/owner from a file's PUBLIC lineage → that file | lineage discrimination (DTD, TODO-64) |
+| T12 customization-layer | module-switch name from a driver's customization layer → that driver | customization-layer recognition (DTD, TODO-64) |
 
 Metrics per taxon: recall@1, recall@3, MRR. Queries auto-derived (seed 20260928),
 T5 pairs runtime-validated (source present, synonym absent, single owner).
@@ -107,6 +109,59 @@ rtr-full 0.738/0.854/0.785. Isolation removed live-root leakage
 (36 staged → 66 indexed) and the numbers narrowed — we publish the
 isolated ones.
 
+### DTD cross-family transfer matrix (TODO-35)
+
+`results/transfer-matrix.json` measures vocabulary transfer between the
+15 DTD families (Jaccard + asymmetric containment per kind: elements,
+attributes, entities, notations). Findings:
+
+1. **Transfer is kind-specific.** DITA v1.2 → v1.3 elements transfer at
+   0.998 containment (535/536) but entities do not (34 vs 2174): version
+   pairs share structure, not entity vocabulary.
+2. **High overlap is mostly module inclusion.** xhtml11 embeds MathML
+   (mathml|xhtml11 Jaccard 0.861); JATS and DITA v1.3 distributions bundle
+   mathml3.dtd. The near-duplicate band is inclusion, not coincidence.
+3. **The moderate band is where T10 binds.** JATS↔DocBook (0.280),
+   DocBook↔DITA v1.3 (0.232), DITA v1.2↔v1.3 (0.183): shared vocabulary
+   exists, but each side has substantial unique structure — exactly the
+   cross-family discrimination failure T10 measures.
+4. **Most pairs are independent** (92/105 below 0.15): no transfer, no
+   discrimination risk.
+
+Lane decision: unified lanes for near-duplicate pairs (Jaccard ≥ 0.5,
+7 pairs); family-tagged lanes for moderate-overlap pairs (0.15–0.5,
+6 pairs), where cross-family discrimination (T10) is the binding
+constraint; independent lanes below 0.15 (92 pairs). The DTD corpus is
+therefore a **family-tagged lane**.
+
+### DTD per-family suites (TODO-36)
+
+14 families wired via `PER_FAMILY_CORPORA`/`ALL_CORPORA`; full 14×7 run,
+zero query errors. rtr-full leads 9 families, ties 2, loses 3
+(`dita-spec11`, `xhtml`, `xhtml11`) — all three losses are sibling-family
+bleed (DITA vs DITA-spec etc.), the exact failure the family-tagged lane
+addresses. Per-family boards: `results/per-family-scoreboard.md`.
+
+### The amplification — 1.0.0 (TODO-30/37)
+
+The frozen no-seed floor (above) vs the current architecture (structural
+inventory header + lexikon seeded from DTD vocabulary, 3800 terms):
+
+| dtd-family rtr-full | frozen floor | current | delta |
+|---|---|---|---|
+| R@1 | 0.5460 | 0.7239 | **+0.1779** |
+| R@3 | 0.6503 | 0.8896 | **+0.2393** |
+| MRR | 0.5930 | 0.7996 | **+0.2066** |
+| T7 (attribute-semantic) | 0.2500 | 0.6750 | **+0.4250** |
+| T8 (entity-lane) | 0.4750 | 0.7750 | **+0.3000** |
+| T9 (content-model) | 0.6667 | 0.6667 | 0.0000 (parity) |
+| T10 (cross-family) | 0.6190 | 0.6190 | 0.0000 (parity) |
+| T1/T2/T6 | — | — | at parity |
+
+No regression anywhere; the other three corpora hold exactly at the
+floor. The amplification is architecture, not bench-only: the inventory
+header and the lexikon seeding are shipped in the engine.
+
 ## Incident log (why you can trust these numbers)
 
 Mid-campaign the bench caught itself lying: hundreds of
@@ -131,8 +186,8 @@ Root causes found and fixed in-product:
   human labels. Measures retrieval mechanics, not graded relevance depth.
 - Margins on nt-studies/dtd-commands are narrow queries-wide; dita-spec is decisive.
 - The DTD-family corpus is the hardest: 60 real grammar files across 15 families,
-  with T7–T10 structural taxons. Cross-family discrimination (T10) is the
-  weakest lane and the amplification target.
+  with T7–T10 structural taxons. T7/T8 were amplified (see above); T10 remains
+  the hardest lane, held at parity with the floor.
 - Latency: RTR-full ~42–47ms p50 vs 5–20ms classic arms (in-process; MCP adds transport).
 - Dual-ensemble value concentrates in identifiers and cross-corpus robustness;
   per-model ablations ship in the same table so anyone can check our work.

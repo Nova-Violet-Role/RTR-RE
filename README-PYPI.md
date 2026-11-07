@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # RTR-RE:Symbiose (rtr-role-type-retrieval) — dense usage manual
 
-RTR-RE:Symbiose (Role-Type-Retrieval-RE:Symbiotized) 0.5.0: RRF-heuristic,
+RTR-RE:Symbiose (Role-Type-Retrieval-RE:Symbiotized) 1.1.0: RRF-heuristic,
 DTD-semantic-capable persistent memory + symbiotized context engine for
 coding agents. Dual ONNX ensemble on CPU, zero API cost, local only.
 Three offices: native Keeper plugin (window), background Compressor
@@ -117,7 +117,7 @@ partitioned per project. Reopen the same project name → memory restored.
 | `OPENCODE_MEMORY_STRUCT_LANE` | off | `rg`/`ccc`/`auto` = structural grep lane for code-shaped terms |
 | `OPENCODE_MEMORY_RTRRE_TRIGGER` | `250000` | Compressor trigger tokens (scale below your model input cap) |
 | `OPENCODE_MEMORY_RTRRE_TARGET` | `100000` | verbatim tail kept after the drain (target) |
-| `OPENCODE_MEMORY_RTRRE_PRESET` | `symbiose-ah` | keeper preset: `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40 · `re-symbiose` 320k/128k/50 · legacy `standard`/`calibrated`/`wide` |
+| `OPENCODE_MEMORY_RTRRE_PRESET` | `symbiose-ah` | keeper preset: `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40 · `re-symbiose` 320k/128k/50 · `re-symbiose-mugen` 400k/200k/200 (future default) · legacy `standard`/`calibrated`/`wide` |
 | `OPENCODE_MEMORY_RTR_PRESET_PROFILE` | `public-default` | CPU profile: `public-default` (T4/P60) or `local-system` (T8/P80) |
 | `OPENCODE_MEMORY_RETRIEVAL_MODALITY` | `rtr-full` | retrieval modality: `rtr-full` (dual), `rtr-arctic`, `rtr-bge`, `rag-hybrid-base`, `rag-dense-base`, `rag-hybrid`, `rag-dense`, `custom` |
 | `OPENCODE_MEMORY_CPU_PARKING_PERCENT` | profile default | CPU parking percent (20–80) — cores kept awake for embedding |
@@ -205,7 +205,7 @@ result; the window itself is untouched):
 /rtr hold 100000         preserved tail (target)
 /rtr trigger 250000      eviction starts here
 /rtr max 200             message cap
-/rtr preset fusion-ah|symbiose-ah|re-symbiose|standard|calibrated|wide
+/rtr preset fusion-ah|symbiose-ah|re-symbiose|re-symbiose-mugen|standard|calibrated|wide
 /rtr disable | /rtr enable
 ```
 
@@ -213,8 +213,9 @@ The ctrl+p palette (TUI plugin `rtr-re-tui.tsx`) exposes the same knobs as
 commands under **RTR Keeper**: status, enable, disable, preset, cpu, modality,
 threads, parking, trigger, target, max — each writes the same watched file, so
 every change applies on the next exchange with no restart. Presets (shared
-registry, 0.5.0): `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40
-(default) · `re-symbiose` 320k/128k/50 · legacy `standard`/`calibrated`/`wide`.
+registry, 1.1.0): `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40
+(default) · `re-symbiose` 320k/128k/50 · `re-symbiose-mugen` 400k/200k/200
+(future default) · legacy `standard`/`calibrated`/`wide`.
 The Keeper protects `todowrite` messages and the last user message; eviction is
 oldest-first, sink-first, fail-open.
 

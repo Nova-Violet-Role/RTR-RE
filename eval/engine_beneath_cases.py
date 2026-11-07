@@ -27,6 +27,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import re
 import tempfile
 import time
 from pathlib import Path
@@ -384,6 +386,7 @@ def case_preset_axis_full() -> Dict[str, Any]:
         "fusion-ah",
         "symbiose-ah",
         "re-symbiose",
+        "re-symbiose-mugen",
     ]
     expected_bounds = {
         "standard": (320000, 128000, 40),
@@ -392,6 +395,7 @@ def case_preset_axis_full() -> Dict[str, Any]:
         "fusion-ah": (200000, 100000, 30),
         "symbiose-ah": (250000, 100000, 40),
         "re-symbiose": (320000, 128000, 50),
+        "re-symbiose-mugen": (400000, 200000, 200),
     }
     for name in presets:
         _, bounds = keeper_preset(name)
@@ -799,6 +803,8 @@ def case_content_model_feature() -> Dict[str, Any]:
             encoding="utf-8",
         )
         old_db = os.environ.get("OPENCODE_MEMORY_DB_DIR")
+        old_suffixes = os.environ.get("OPENCODE_MEMORY_FILE_SUFFIXES")
+        old_models = os.environ.get("OPENCODE_MEMORY_EMBED_MODELS")
         old_roots = None
         try:
             os.environ["OPENCODE_MEMORY_DB_DIR"] = str(root / "db")
@@ -848,6 +854,14 @@ def case_content_model_feature() -> Dict[str, Any]:
                 os.environ.pop("OPENCODE_MEMORY_DB_DIR", None)
             else:
                 os.environ["OPENCODE_MEMORY_DB_DIR"] = old_db
+            if old_suffixes is None:
+                os.environ.pop("OPENCODE_MEMORY_FILE_SUFFIXES", None)
+            else:
+                os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = old_suffixes
+            if old_models is None:
+                os.environ.pop("OPENCODE_MEMORY_EMBED_MODELS", None)
+            else:
+                os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = old_models
     return _verdict(
         checks,
         ["header_has_content_models", "fragments_listed", "fragment_query_resolves"],
@@ -878,6 +892,8 @@ def case_parameter_entity_injection() -> Dict[str, Any]:
             encoding="utf-8",
         )
         old_db = os.environ.get("OPENCODE_MEMORY_DB_DIR")
+        old_suffixes = os.environ.get("OPENCODE_MEMORY_FILE_SUFFIXES")
+        old_models = os.environ.get("OPENCODE_MEMORY_EMBED_MODELS")
         try:
             os.environ["OPENCODE_MEMORY_DB_DIR"] = str(root / "db")
             os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = "BAAI/bge-small-en-v1.5"
@@ -926,6 +942,14 @@ def case_parameter_entity_injection() -> Dict[str, Any]:
                 os.environ.pop("OPENCODE_MEMORY_DB_DIR", None)
             else:
                 os.environ["OPENCODE_MEMORY_DB_DIR"] = old_db
+            if old_suffixes is None:
+                os.environ.pop("OPENCODE_MEMORY_FILE_SUFFIXES", None)
+            else:
+                os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = old_suffixes
+            if old_models is None:
+                os.environ.pop("OPENCODE_MEMORY_EMBED_MODELS", None)
+            else:
+                os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = old_models
     return _verdict(
         checks,
         [
@@ -938,6 +962,674 @@ def case_parameter_entity_injection() -> Dict[str, Any]:
         "parameter-entity-injection-blocked",
         "Entity bodies are data, never expanded",
     )
+
+
+_OPTIMIZER_ENV_KEYS = (
+    "OPENCODE_MEMORY_EMBED_MODELS",
+    "OPENCODE_MEMORY_EMBED_THREADS",
+    "OPENCODE_MEMORY_RTR_PROFILE",
+    "OPENCODE_MEMORY_RTR_PRESET_PROFILE",
+    "OPENCODE_MEMORY_CPU_PARKING_PERCENT",
+    "OPENCODE_MEMORY_RETRIEVAL_MODALITY",
+)
+
+
+def _save_optimizer_env() -> Dict[str, str | None]:
+    return {key: os.environ.get(key) for key in _OPTIMIZER_ENV_KEYS}
+
+
+def _restore_optimizer_env(saved: Dict[str, str | None]) -> None:
+    for key, value in saved.items():
+        if value is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = value
+
+
+@register_case("optimizer-profile-consumed-by-engine")
+def case_optimizer_profile_consumed() -> Dict[str, Any]:
+    """The engine consumes the Optimizer's resolved profile: models and
+    threads come from the registry profile when env is unset (single source
+    of truth), and the modality's hybrid/expansion flags resolve."""
+    from context_budget import resolve_retrieval_profile
+    from memory_engine import configured_embed_models, resolve_threads_for
+
+    saved = _save_optimizer_env()
+    try:
+        profile = resolve_retrieval_profile({})
+        models = configured_embed_models()
+        threads = resolve_threads_for("Snowflake/snowflake-arctic-embed-m")
+        hybrid = bool(profile["hybrid"])
+        expansion = bool(profile["expansion"])
+    finally:
+        _restore_optimizer_env(saved)
+    checks = {
+        "models_match_profile": 1.0 if models == profile["models"] else 0.0,
+        "threads_match_profile": 1.0
+        if threads == int(profile["effective_threads_per_model"])
+        else 0.0,
+        "profile_hybrid_flag": 1.0 if hybrid else 0.0,
+        "profile_expansion_flag": 1.0 if expansion else 0.0,
+    }
+    return _verdict(
+        checks,
+        [
+            "models_match_profile",
+            "threads_match_profile",
+            "profile_hybrid_flag",
+            "profile_expansion_flag",
+        ],
+        {
+            "profile_models": profile["models"],
+            "engine_models": models,
+            "profile_effective_threads": profile["effective_threads_per_model"],
+            "engine_threads": threads,
+            "hybrid": hybrid,
+            "expansion": expansion,
+        },
+        "optimizer-profile-consumed-by-engine",
+        "Engine consumes the Optimizer's resolved profile (models, threads, hybrid, expansion)",
+    )
+
+
+@register_case("optimizer-cpu-profile-applies-threads")
+def case_optimizer_cpu_profile_applies() -> Dict[str, Any]:
+    """The CPU profile actually applies to engine threads: local-system gives
+    8, public-default gives 4, and the legacy profile env still works."""
+    from memory_engine import resolve_threads_for
+
+    model = "Snowflake/snowflake-arctic-embed-m"
+    saved = _save_optimizer_env()
+    try:
+        os.environ.pop("OPENCODE_MEMORY_RTR_PROFILE", None)
+        os.environ.pop("OPENCODE_MEMORY_EMBED_THREADS", None)
+        os.environ["OPENCODE_MEMORY_RTR_PRESET_PROFILE"] = "local-system"
+        local_threads = resolve_threads_for(model)
+        os.environ["OPENCODE_MEMORY_RTR_PRESET_PROFILE"] = "public-default"
+        public_threads = resolve_threads_for(model)
+        os.environ.pop("OPENCODE_MEMORY_RTR_PRESET_PROFILE", None)
+        os.environ["OPENCODE_MEMORY_RTR_PROFILE"] = "performance"
+        legacy_threads = resolve_threads_for(model)
+    finally:
+        _restore_optimizer_env(saved)
+    checks = {
+        "local_system_applies_8": 1.0 if local_threads == 8 else 0.0,
+        "public_default_applies_4": 1.0 if public_threads == 4 else 0.0,
+        "legacy_performance_still_works": 1.0 if legacy_threads == 8 else 0.0,
+    }
+    return _verdict(
+        checks,
+        [
+            "local_system_applies_8",
+            "public_default_applies_4",
+            "legacy_performance_still_works",
+        ],
+        {
+            "local_system_threads": local_threads,
+            "public_default_threads": public_threads,
+            "legacy_performance_threads": legacy_threads,
+        },
+        "optimizer-cpu-profile-applies-threads",
+        "CPU profile selects the engine's real threads, not just the report",
+    )
+
+
+@register_case("optimizer-parking-applies")
+def case_optimizer_parking_applies() -> Dict[str, Any]:
+    """Parking percent shapes effective threads: P20 on 32 processors with 2
+    models caps the T4 budget at 3."""
+    from memory_engine import resolve_threads_for
+
+    model = "Snowflake/snowflake-arctic-embed-m"
+    saved = _save_optimizer_env()
+    try:
+        os.environ.pop("OPENCODE_MEMORY_RTR_PROFILE", None)
+        os.environ.pop("OPENCODE_MEMORY_EMBED_THREADS", None)
+        os.environ.pop("OPENCODE_MEMORY_RTR_PRESET_PROFILE", None)
+        os.environ["OPENCODE_MEMORY_CPU_PARKING_PERCENT"] = "20"
+        parked_threads = resolve_threads_for(model)
+        os.environ["OPENCODE_MEMORY_CPU_PARKING_PERCENT"] = "80"
+        wide_threads = resolve_threads_for(model)
+    finally:
+        _restore_optimizer_env(saved)
+    checks = {
+        "parking20_caps_to_3": 1.0 if parked_threads == 3 else 0.0,
+        "parking80_keeps_4": 1.0 if wide_threads == 4 else 0.0,
+    }
+    return _verdict(
+        checks,
+        ["parking20_caps_to_3", "parking80_keeps_4"],
+        {"parking20_threads": parked_threads, "parking80_threads": wide_threads},
+        "optimizer-parking-applies",
+        "Parking percent shapes the engine's effective threads",
+    )
+
+
+@register_case("optimizer-modality-controls-hybrid")
+def case_optimizer_modality_controls_hybrid() -> Dict[str, Any]:
+    """The modality's hybrid/expansion flags are the Optimizer's defaults:
+    rag-dense is non-hybrid and non-expanding; rtr-full is both."""
+    from context_budget import resolve_retrieval_profile
+
+    dense = resolve_retrieval_profile(
+        {"OPENCODE_MEMORY_RETRIEVAL_MODALITY": "rag-dense"}
+    )
+    full = resolve_retrieval_profile({"OPENCODE_MEMORY_RETRIEVAL_MODALITY": "rtr-full"})
+    checks = {
+        "rag_dense_hybrid_false": 1.0 if not dense["hybrid"] else 0.0,
+        "rag_dense_expansion_false": 1.0 if not dense["expansion"] else 0.0,
+        "rtr_full_hybrid_true": 1.0 if full["hybrid"] else 0.0,
+        "rtr_full_expansion_true": 1.0 if full["expansion"] else 0.0,
+    }
+    return _verdict(
+        checks,
+        [
+            "rag_dense_hybrid_false",
+            "rag_dense_expansion_false",
+            "rtr_full_hybrid_true",
+            "rtr_full_expansion_true",
+        ],
+        {
+            "rag_dense": {"hybrid": dense["hybrid"], "expansion": dense["expansion"]},
+            "rtr_full": {"hybrid": full["hybrid"], "expansion": full["expansion"]},
+        },
+        "optimizer-modality-controls-hybrid",
+        "Modality flags are the Optimizer's hybrid/expansion defaults",
+    )
+
+
+@register_case("optimizer-expansion-gated")
+def case_optimizer_expansion_gated() -> Dict[str, Any]:
+    """The lexikon lane is gated by the modality's expansion flag: on for
+    rtr-full, off for rag-dense; the delta lane stays in both."""
+    import os
+
+    from memory_engine import MemoryEngine
+
+    checks: Dict[str, float] = {}
+    evidence: Dict[str, Any] = {}
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-optx-") as temporary:
+        root = Path(temporary)
+        proj = root / "proj"
+        (proj / "state").mkdir(parents=True)
+        (proj / "state" / "lexikon.json").write_text(
+            json.dumps(
+                {
+                    "terms": {
+                        "alpha": {
+                            "term": "alpha",
+                            "definition": "alpha element",
+                            "aliases": [],
+                        }
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        old_db = os.environ.get("OPENCODE_MEMORY_DB_DIR")
+        saved = _save_optimizer_env()
+        try:
+            os.environ["OPENCODE_MEMORY_DB_DIR"] = str(root / "db")
+            engine = MemoryEngine()
+            try:
+                lex_on, _ = engine.build_expansions("alpha structure", str(proj))
+                checks["expansion_on_uses_lexikon"] = 1.0 if len(lex_on) >= 1 else 0.0
+                os.environ["OPENCODE_MEMORY_RETRIEVAL_MODALITY"] = "rag-dense"
+                lex_off, delta_off = engine.build_expansions(
+                    "alpha structure", str(proj)
+                )
+                checks["expansion_off_gates_lexikon"] = (
+                    1.0 if len(lex_off) == 0 else 0.0
+                )
+                evidence["lex_on"] = lex_on
+                evidence["lex_off"] = lex_off
+                evidence["delta_off"] = delta_off
+            finally:
+                engine.close()
+        finally:
+            if old_db is None:
+                os.environ.pop("OPENCODE_MEMORY_DB_DIR", None)
+            else:
+                os.environ["OPENCODE_MEMORY_DB_DIR"] = old_db
+            _restore_optimizer_env(saved)
+    return _verdict(
+        checks,
+        ["expansion_on_uses_lexikon", "expansion_off_gates_lexikon"],
+        evidence,
+        "optimizer-expansion-gated",
+        "Lexikon expansion is gated by the modality's expansion flag",
+    )
+
+
+@register_case("optimizer-mjs-plan-context-aligned")
+def case_optimizer_mjs_plan_context_aligned() -> Dict[str, Any]:
+    """The mjs (non-MCP) context-plan defaults agree with the shared preset
+    registry: symbiose-ah 250k/100k/40, never a hardcoded legacy value."""
+    import subprocess
+
+    core_js = Path(__file__).parent.parent / "mjs" / "hooks" / "rtr-core.js"
+    probe = Path(tempfile.mkdtemp(prefix="rtrre-eb-mjs-")) / "probe.cjs"
+    probe.write_text(
+        "const c = require(" + json.dumps(str(core_js)) + ");\n"
+        "const ctx = c.registryContextProfile();\n"
+        "const plan = c.planContext(300000, 60);\n"
+        "process.stdout.write(JSON.stringify({ctx, plan}));\n",
+        encoding="utf-8",
+    )
+    try:
+        result = subprocess.run(
+            ["node", str(probe)],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    finally:
+        probe.unlink(missing_ok=True)
+    parsed = {}
+    if result.returncode == 0:
+        try:
+            parsed = json.loads(result.stdout)
+        except Exception:  # noqa: BLE001
+            parsed = {}
+    ctx = parsed.get("ctx") or {}
+    plan = parsed.get("plan") or {}
+    checks = {
+        "registry_preset_symbiose_ah": 1.0
+        if ctx.get("preset") == "symbiose-ah"
+        else 0.0,
+        "plan_trigger_250k": 1.0 if plan.get("triggerTokens") == 250000 else 0.0,
+        "plan_target_100k": 1.0 if plan.get("targetTokens") == 100000 else 0.0,
+        "plan_maxkeep_40": 1.0 if plan.get("maxKeepMessages") == 40 else 0.0,
+    }
+    return _verdict(
+        checks,
+        [
+            "registry_preset_symbiose_ah",
+            "plan_trigger_250k",
+            "plan_target_100k",
+            "plan_maxkeep_40",
+        ],
+        {
+            "node_exit": result.returncode,
+            "registry": ctx,
+            "plan": plan,
+        },
+        "optimizer-mjs-plan-context-aligned",
+        "mjs context-plan defaults agree with the shared preset registry",
+    )
+
+
+@register_case("compressor-incremental-ten-plus-fires")
+def case_compressor_incremental_ten_plus() -> Dict[str, Any]:
+    """The Compressor fires repeatedly in one context: twelve incremental
+    cycles, each growing the live window past the trigger, compressing, and
+    verifying the plan is exact (partition, token report, verbatim payload).
+    The kept tail is the next cycle's context — the compressor must keep
+    succeeding on a context it already compressed, never degrading."""
+    _name, preset = keeper_preset("symbiose-ah")
+    trigger = int(preset["triggerTokens"])
+    target = int(preset["targetTokens"])
+    max_keep = int(preset["maxKeepMessages"])
+    cfg = {
+        "trigger_tokens": trigger,
+        "target_tokens": target,
+        "max_keep_messages": max_keep,
+    }
+    messages: List[Dict[str, Any]] = []
+    cycles: List[Dict[str, Any]] = []
+    for cycle in range(12):
+        while sum(estimate_tokens(m.get("text") or "") for m in messages) <= trigger:
+            if len(messages) % 7 == 0:
+                messages.append(_msg("user", "continue the work"))
+            else:
+                messages.append(_msg("assistant", _blob(12000)))
+        plan = plan_compression(messages, config=cfg)
+        n = len(messages)
+        keep_set = set(plan["keep"])
+        evict_set = set(plan["evict"])
+        partition_ok = keep_set.isdisjoint(evict_set) and (keep_set | evict_set) == set(
+            range(n)
+        )
+        recomputed = sum(
+            estimate_tokens(messages[i].get("text") or "") for i in plan["keep"]
+        )
+        tokens_ok = recomputed == plan["keep_tokens"]
+        verbatim_ok = all(
+            mask_ndata(messages[p["index"]].get("text")) == p["text"]
+            for p in plan["evict_payload"]
+        )
+        ndata_masked = all(
+            not re.search(r"[A-Za-z0-9+/]{64,}={0,2}", p["text"])
+            for p in plan["evict_payload"]
+        )
+        slack_ok = plan["keep_tokens"] <= target + 8000
+        cycle_ok = (
+            bool(plan["compress"])
+            and partition_ok
+            and tokens_ok
+            and verbatim_ok
+            and ndata_masked
+            and slack_ok
+        )
+        cycles.append(
+            {
+                "cycle": cycle + 1,
+                "messages": n,
+                "total_tokens": plan["total_tokens"],
+                "keep_tokens": plan["keep_tokens"],
+                "evicted_tokens": plan["total_tokens"] - plan["keep_tokens"],
+                "keep_ratio": round(plan["keep_tokens"] / plan["total_tokens"], 6),
+                "evicted": len(plan["evict"]),
+                "compress": plan["compress"],
+                "partition_ok": partition_ok,
+                "tokens_ok": tokens_ok,
+                "verbatim_ok": verbatim_ok,
+                "ndata_masked": ndata_masked,
+                "slack_ok": slack_ok,
+            }
+        )
+        messages = [messages[i] for i in plan["keep"]]
+    checks = {
+        "all_twelve_cycles_fired": 1.0 if all(c["compress"] for c in cycles) else 0.0,
+        "all_partitions_exact": 1.0 if all(c["partition_ok"] for c in cycles) else 0.0,
+        "all_token_reports_exact": 1.0 if all(c["tokens_ok"] for c in cycles) else 0.0,
+        "all_payloads_verbatim": 1.0 if all(c["verbatim_ok"] for c in cycles) else 0.0,
+        "all_ndata_masked": 1.0 if all(c["ndata_masked"] for c in cycles) else 0.0,
+        "all_within_budget_slack": 1.0 if all(c["slack_ok"] for c in cycles) else 0.0,
+    }
+    return _verdict(
+        checks,
+        [
+            "all_twelve_cycles_fired",
+            "all_partitions_exact",
+            "all_token_reports_exact",
+            "all_payloads_verbatim",
+            "all_ndata_masked",
+            "all_within_budget_slack",
+        ],
+        {"cycles": cycles},
+        "compressor-incremental-ten-plus-fires",
+        "Compressor fires 12 incremental times in one context, exact each time",
+    )
+
+
+@register_case("compressor-session-resume-cumulative")
+def case_compressor_session_resume_cumulative() -> Dict[str, Any]:
+    """The Compressor survives session resumes: the cumulative counter
+    persists atomically across worker instances (never reset), and
+    compression fires in every resumed session."""
+    cfg = {"trigger_tokens": 100, "target_tokens": 30, "max_keep_messages": 2}
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-resume-") as temporary:
+        root = Path(temporary)
+        cumulative_path = root / "cumulative.json"
+        sink = SessionSpanSink(root / "sessions")
+        worker1 = SymbioseWorker(
+            sink=sink, config=cfg, cumulative_path=str(cumulative_path)
+        )
+        try:
+            t1 = worker1.submit([_msg("assistant", _blob(12000)) for _ in range(6)])
+            r1 = worker1.wait(t1["id"], timeout=30)
+        finally:
+            worker1.close()
+        state1 = json.loads(cumulative_path.read_text(encoding="utf-8"))
+        cum1 = int(state1.get("cumulative_messages", 0))
+        worker2 = SymbioseWorker(
+            sink=sink, config=cfg, cumulative_path=str(cumulative_path)
+        )
+        try:
+            t2 = worker2.submit([_msg("assistant", _blob(12000)) for _ in range(6)])
+            r2 = worker2.wait(t2["id"], timeout=30)
+        finally:
+            worker2.close()
+        state2 = json.loads(cumulative_path.read_text(encoding="utf-8"))
+        cum2 = int(state2.get("cumulative_messages", 0))
+        tmp_leftovers = list((root).glob("cumulative.json.tmp"))
+        checks = {
+            "session1_compressed": 1.0
+            if r1.get("status") == "ready" and r1.get("evicted", 0) > 0
+            else 0.0,
+            "cumulative_persisted_session1": 1.0 if cum1 == 6 else 0.0,
+            "session2_resumed_compressed": 1.0
+            if r2.get("status") == "ready" and r2.get("evicted", 0) > 0
+            else 0.0,
+            "cumulative_grew_across_resume": 1.0 if cum2 == 12 else 0.0,
+            "atomic_write_no_tmp_leftovers": 1.0 if not tmp_leftovers else 0.0,
+        }
+        return _verdict(
+            checks,
+            [
+                "session1_compressed",
+                "cumulative_persisted_session1",
+                "session2_resumed_compressed",
+                "cumulative_grew_across_resume",
+                "atomic_write_no_tmp_leftovers",
+            ],
+            {
+                "cumulative_after_session1": cum1,
+                "cumulative_after_session2": cum2,
+                "session1_ticket": r1,
+                "session2_ticket": r2,
+                "tmp_leftovers": [str(p) for p in tmp_leftovers],
+            },
+            "compressor-session-resume-cumulative",
+            "Compressor survives session resumes; cumulative persists atomically",
+        )
+
+
+@register_case("compressor-double-duty-after-keeper-trim")
+def case_compressor_double_duty_after_keeper_trim() -> Dict[str, Any]:
+    """The Compressor acts where the keeper stops: when the keeper has
+    already trimmed by message count (small max_keep_messages) but the kept
+    window still exceeds the token trigger, the Compressor must still fire
+    and reduce tokens — the second line of defense."""
+    _name, preset = keeper_preset("symbiose-ah")
+    trigger = int(preset["triggerTokens"])
+    target = int(preset["targetTokens"])
+    cfg = {
+        "trigger_tokens": trigger,
+        "target_tokens": target,
+        "max_keep_messages": 10,
+    }
+    messages = [_msg("assistant", _blob(12000)) for _ in range(90)]
+    plan = plan_compression(messages, config=cfg)
+    checks = {
+        "fires_over_trigger": 1.0 if plan["compress"] else 0.0,
+        "kept_within_keeper_cap": 1.0 if len(plan["keep"]) <= 10 else 0.0,
+        "kept_tokens_reduced": 1.0
+        if plan["keep_tokens"] < plan["total_tokens"]
+        else 0.0,
+        "evict_nonempty": 1.0 if plan["evict"] else 0.0,
+    }
+    return _verdict(
+        checks,
+        [
+            "fires_over_trigger",
+            "kept_within_keeper_cap",
+            "kept_tokens_reduced",
+            "evict_nonempty",
+        ],
+        {
+            "total_tokens": plan["total_tokens"],
+            "keep_tokens": plan["keep_tokens"],
+            "kept_messages": len(plan["keep"]),
+            "evicted_messages": len(plan["evict"]),
+            "keep_ratio": round(plan["keep_tokens"] / plan["total_tokens"], 6),
+        },
+        "compressor-double-duty-after-keeper-trim",
+        "Compressor acts on tokens after the keeper has trimmed by count",
+    )
+
+
+def _index_evicted_sessions(
+    root: Path, messages: List[Dict[str, Any]], cfg: Dict[str, Any], digest: str
+) -> Dict[str, Any]:
+    """Shared setup for the retrievability and lexikon cases: compress,
+    sink evicted spans, index the project, return the engine + facts."""
+    import memory_engine as mem
+
+    proj = root / "projects"
+    sessions = proj / "directives" / "sessions"
+    sessions.mkdir(parents=True)
+    sink = SessionSpanSink(sessions)
+    plan = plan_compression(messages, config=cfg)
+    sink_path = sink(plan["evict_payload"], digest=digest)
+    old_db = os.environ.get("OPENCODE_MEMORY_DB_DIR")
+    old_suffixes = os.environ.get("OPENCODE_MEMORY_FILE_SUFFIXES")
+    old_models = os.environ.get("OPENCODE_MEMORY_EMBED_MODELS")
+    old_roots = mem.PROJECT_ROOTS
+    old_projects = mem.PROJECTS_DIR
+    old_registry = mem.REGISTRY_FILE
+    old_extra = mem.EXTRA_ROOTS_FILE
+    old_lex = mem.LEXIKON_GLOBAL_FILE
+    os.environ["OPENCODE_MEMORY_DB_DIR"] = str(root / "db")
+    os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = (
+        ".md,.nt,.yaml,.yml,.dita,.xml,.dtd,.mod,.ent"
+    )
+    os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = "BAAI/bge-small-en-v1.5"
+    mem.PROJECT_ROOTS = [proj]
+    mem.PROJECTS_DIR = proj
+    mem.REGISTRY_FILE = root / "registry.json"
+    mem.EXTRA_ROOTS_FILE = root / "extra_roots.json"
+    mem.LEXIKON_GLOBAL_FILE = root / "lexikon_global.json"
+    engine = mem.MemoryEngine()
+    stats = engine.index_all(force=True)
+    return {
+        "engine": engine,
+        "plan": plan,
+        "sink_path": Path(sink_path),
+        "stats": stats,
+        "restore": {
+            "old_db": old_db,
+            "old_suffixes": old_suffixes,
+            "old_models": old_models,
+            "old_roots": old_roots,
+            "old_projects": old_projects,
+            "old_registry": old_registry,
+            "old_extra": old_extra,
+            "old_lex": old_lex,
+        },
+    }
+
+
+def _restore_index_env(root: Path, facts: Dict[str, Any]) -> None:
+    import memory_engine as mem
+
+    rest = facts["restore"]
+    if rest["old_db"] is None:
+        os.environ.pop("OPENCODE_MEMORY_DB_DIR", None)
+    else:
+        os.environ["OPENCODE_MEMORY_DB_DIR"] = rest["old_db"]
+    if rest["old_suffixes"] is None:
+        os.environ.pop("OPENCODE_MEMORY_FILE_SUFFIXES", None)
+    else:
+        os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = rest["old_suffixes"]
+    if rest["old_models"] is None:
+        os.environ.pop("OPENCODE_MEMORY_EMBED_MODELS", None)
+    else:
+        os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = rest["old_models"]
+    mem.PROJECT_ROOTS = rest["old_roots"]
+    mem.PROJECTS_DIR = rest["old_projects"]
+    mem.REGISTRY_FILE = rest["old_registry"]
+    mem.EXTRA_ROOTS_FILE = rest["old_extra"]
+    mem.LEXIKON_GLOBAL_FILE = rest["old_lex"]
+
+
+@register_case("compressor-evicted-retrievable-via-memory-search")
+def case_compressor_evicted_retrievable() -> Dict[str, Any]:
+    """Evicted spans are retrievable: after compression sinks them and the
+    project is indexed, memory_search finds the distinctive evicted content
+    in the session file."""
+    _name, preset = keeper_preset("symbiose-ah")
+    cfg = {
+        "trigger_tokens": int(preset["triggerTokens"]),
+        "target_tokens": int(preset["targetTokens"]),
+        "max_keep_messages": int(preset["maxKeepMessages"]),
+    }
+    marker = "quasar-nebula-x7"
+    messages = [_msg("assistant", f"{marker} {_blob(12000)}") for _ in range(90)]
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-retr-") as temporary:
+        root = Path(temporary)
+        facts = _index_evicted_sessions(root, messages, cfg, "retr-test")
+        engine = facts["engine"]
+        try:
+            results = engine.search(marker, k=3, project=None)
+            top = [Path(r["metadata"]["source"]).name for r in results]
+            found = any(name.startswith("rtrre-retr-test.md") for name in top)
+            checks = {
+                "compressed": 1.0 if facts["plan"]["compress"] else 0.0,
+                "sink_wrote_file": 1.0 if facts["sink_path"].exists() else 0.0,
+                "memory_search_finds_evicted": 1.0 if found else 0.0,
+            }
+            return _verdict(
+                checks,
+                ["compressed", "sink_wrote_file", "memory_search_finds_evicted"],
+                {
+                    "sink_file": facts["sink_path"].name,
+                    "indexed_new": facts["stats"].get("new"),
+                    "top": top,
+                },
+                "compressor-evicted-retrievable-via-memory-search",
+                "Evicted spans are retrievable via memory_search after indexing",
+            )
+        finally:
+            engine.close()
+            _restore_index_env(root, facts)
+
+
+@register_case("compressor-lexikon-interplay")
+def case_compressor_lexikon_interplay() -> Dict[str, Any]:
+    """The lexikon lane reaches evicted content: after compression sinks and
+    indexes it, a lexikon alias seeded from the evicted vocabulary expands a
+    short query into the full compound, and the session file is retrieved."""
+    _name, preset = keeper_preset("symbiose-ah")
+    cfg = {
+        "trigger_tokens": int(preset["triggerTokens"]),
+        "target_tokens": int(preset["targetTokens"]),
+        "max_keep_messages": int(preset["maxKeepMessages"]),
+    }
+    compound = "quasarnebularx7"
+    messages = [_msg("assistant", f"{compound} {_blob(12000)}") for _ in range(90)]
+    with tempfile.TemporaryDirectory(prefix="rtrre-eb-lex-") as temporary:
+        root = Path(temporary)
+        facts = _index_evicted_sessions(root, messages, cfg, "lex-test")
+        engine = facts["engine"]
+        try:
+            proj = str(root / "projects")
+            engine.add_lexikon_term(
+                proj,
+                compound,
+                definition=f"{compound} evicted test compound",
+                aliases=["nebula"],
+            )
+            lex, _ = engine.build_expansions("nebula", proj)
+            expanded = any(compound in str(x) for x in lex)
+            results = engine.search("nebula", k=3, project=None)
+            top = [Path(r["metadata"]["source"]).name for r in results]
+            found = any(name.startswith("rtrre-lex-test.md") for name in top)
+            checks = {
+                "compressed": 1.0 if facts["plan"]["compress"] else 0.0,
+                "lexikon_expands_to_evicted_term": 1.0 if expanded else 0.0,
+                "alias_query_retrieves_evicted": 1.0 if found else 0.0,
+            }
+            return _verdict(
+                checks,
+                [
+                    "compressed",
+                    "lexikon_expands_to_evicted_term",
+                    "alias_query_retrieves_evicted",
+                ],
+                {
+                    "sink_file": facts["sink_path"].name,
+                    "expansions": [str(x) for x in lex],
+                    "top": top,
+                },
+                "compressor-lexikon-interplay",
+                "Lexikon lane reaches evicted content",
+            )
+        finally:
+            engine.close()
+            _restore_index_env(root, facts)
 
 
 def run_all() -> Dict[str, Any]:

@@ -1,14 +1,64 @@
 {
   "schema": "rtr-re.engine-beneath.cases/v1",
   "scope": "RE edition: full architecture case registry",
-  "run_at": "2026-11-06T22:40:48",
+  "run_at": "2026-11-07T15:49:58",
   "summary": {
-    "cases": 16,
-    "passed": 16,
+    "cases": 27,
+    "passed": 27,
     "failed": 0,
     "pass": true
   },
   "cases": [
+    {
+      "case": "compressor-double-duty-after-keeper-trim",
+      "description": "Compressor acts on tokens after the keeper has trimmed by count",
+      "checks": {
+        "fires_over_trigger": 1.0,
+        "kept_within_keeper_cap": 1.0,
+        "kept_tokens_reduced": 1.0,
+        "evict_nonempty": 1.0
+      },
+      "required": [
+        "fires_over_trigger",
+        "kept_within_keeper_cap",
+        "kept_tokens_reduced",
+        "evict_nonempty"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "total_tokens": 270000,
+        "keep_tokens": 30000,
+        "kept_messages": 10,
+        "evicted_messages": 80,
+        "keep_ratio": 0.111111
+      }
+    },
+    {
+      "case": "compressor-evicted-retrievable-via-memory-search",
+      "description": "Evicted spans are retrievable via memory_search after indexing",
+      "checks": {
+        "compressed": 1.0,
+        "sink_wrote_file": 1.0,
+        "memory_search_finds_evicted": 1.0
+      },
+      "required": [
+        "compressed",
+        "sink_wrote_file",
+        "memory_search_finds_evicted"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "sink_file": "rtrre-retr-test.md",
+        "indexed_new": 1,
+        "top": [
+          "rtrre-retr-test.md",
+          "rtrre-retr-test.md",
+          "rtrre-retr-test.md"
+        ]
+      }
+    },
     {
       "case": "compressor-fires-only-past-trigger",
       "description": "Compressor fires only past the shipped preset trigger",
@@ -29,6 +79,239 @@
         "below_compress": false,
         "above_total": 264000,
         "above_compress": true
+      }
+    },
+    {
+      "case": "compressor-incremental-ten-plus-fires",
+      "description": "Compressor fires 12 incremental times in one context, exact each time",
+      "checks": {
+        "all_twelve_cycles_fired": 1.0,
+        "all_partitions_exact": 1.0,
+        "all_token_reports_exact": 1.0,
+        "all_payloads_verbatim": 1.0,
+        "all_ndata_masked": 1.0,
+        "all_within_budget_slack": 1.0
+      },
+      "required": [
+        "all_twelve_cycles_fired",
+        "all_partitions_exact",
+        "all_token_reports_exact",
+        "all_payloads_verbatim",
+        "all_ndata_masked",
+        "all_within_budget_slack"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "cycles": [
+          {
+            "cycle": 1,
+            "messages": 98,
+            "total_tokens": 252070,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153045,
+            "keep_ratio": 0.392847,
+            "evicted": 60,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 2,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 3,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 4,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 5,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 6,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 7,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 8,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 9,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 10,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 11,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          },
+          {
+            "cycle": 12,
+            "messages": 97,
+            "total_tokens": 252065,
+            "keep_tokens": 99025,
+            "evicted_tokens": 153040,
+            "keep_ratio": 0.392855,
+            "evicted": 59,
+            "compress": true,
+            "partition_ok": true,
+            "tokens_ok": true,
+            "verbatim_ok": true,
+            "ndata_masked": true,
+            "slack_ok": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "compressor-lexikon-interplay",
+      "description": "Lexikon lane reaches evicted content",
+      "checks": {
+        "compressed": 1.0,
+        "lexikon_expands_to_evicted_term": 1.0,
+        "alias_query_retrieves_evicted": 1.0
+      },
+      "required": [
+        "compressed",
+        "lexikon_expands_to_evicted_term",
+        "alias_query_retrieves_evicted"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "sink_file": "rtrre-lex-test.md",
+        "expansions": [
+          "nebula quasarnebularx7 evicted test compound"
+        ],
+        "top": [
+          "rtrre-lex-test.md",
+          "rtrre-lex-test.md",
+          "rtrre-lex-test.md"
+        ]
       }
     },
     {
@@ -217,6 +500,85 @@
       }
     },
     {
+      "case": "compressor-session-resume-cumulative",
+      "description": "Compressor survives session resumes; cumulative persists atomically",
+      "checks": {
+        "session1_compressed": 1.0,
+        "cumulative_persisted_session1": 1.0,
+        "session2_resumed_compressed": 1.0,
+        "cumulative_grew_across_resume": 1.0,
+        "atomic_write_no_tmp_leftovers": 1.0
+      },
+      "required": [
+        "session1_compressed",
+        "cumulative_persisted_session1",
+        "session2_resumed_compressed",
+        "cumulative_grew_across_resume",
+        "atomic_write_no_tmp_leftovers"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "cumulative_after_session1": 6,
+        "cumulative_after_session2": 12,
+        "session1_ticket": {
+          "id": 1,
+          "hash": "3617f2b10759b6a8",
+          "status": "ready",
+          "input_messages": 6,
+          "input_chars": 72000,
+          "hash_ms": 0.239,
+          "submit_ms": 0.69,
+          "keep": [
+            5
+          ],
+          "evicted": 5,
+          "sink": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-resume-ku5jzqcr\\sessions\\rtrre-3617f2b10759b6a8.md",
+          "queue_ms": 0.716,
+          "plan_ms": 0.093,
+          "sink_ms": 0.277,
+          "elapsed_ms": 1.088,
+          "duration": "1.1 ms",
+          "total_tokens": 18000,
+          "keep_tokens": 3000,
+          "evicted_tokens": 15000,
+          "keep_ratio": 0.166667,
+          "kept_chars": 12000,
+          "evict_chars": 35,
+          "sink_bytes": 465,
+          "tokens_per_second": 16550202.036
+        },
+        "session2_ticket": {
+          "id": 1,
+          "hash": "3617f2b10759b6a8",
+          "status": "ready",
+          "input_messages": 6,
+          "input_chars": 72000,
+          "hash_ms": 0.209,
+          "submit_ms": 0.771,
+          "keep": [
+            5
+          ],
+          "evicted": 5,
+          "sink": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-resume-ku5jzqcr\\sessions\\rtrre-3617f2b10759b6a8.md",
+          "queue_ms": 0.806,
+          "plan_ms": 0.121,
+          "sink_ms": 0.36,
+          "elapsed_ms": 1.288,
+          "duration": "1.3 ms",
+          "total_tokens": 18000,
+          "keep_tokens": 3000,
+          "evicted_tokens": 15000,
+          "keep_ratio": 0.166667,
+          "kept_chars": 12000,
+          "evict_chars": 35,
+          "sink_bytes": 465,
+          "tokens_per_second": 13970816.489
+        },
+        "tmp_leftovers": []
+      }
+    },
+    {
       "case": "content-model-feature-in-header",
       "description": "Content-model fragments are listed in the inventory and resolve",
       "checks": {
@@ -325,12 +687,180 @@
       "failed_required": [],
       "evidence": {
         "sink": {
-          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-q0y7d2q5\\rtrre-8714a4e373a2b6e0.md",
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-fnd89rdw\\rtrre-8714a4e373a2b6e0.md",
           "exists": true,
           "bytes": 305,
           "sha256": "45ba312d9501e2438a91931e70fee15848f39dfdcb4774de2e4d37d546bda2e0",
           "span_markers": 2
         }
+      }
+    },
+    {
+      "case": "optimizer-cpu-profile-applies-threads",
+      "description": "CPU profile selects the engine's real threads, not just the report",
+      "checks": {
+        "local_system_applies_8": 1.0,
+        "public_default_applies_4": 1.0,
+        "legacy_performance_still_works": 1.0
+      },
+      "required": [
+        "local_system_applies_8",
+        "public_default_applies_4",
+        "legacy_performance_still_works"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "local_system_threads": 8,
+        "public_default_threads": 4,
+        "legacy_performance_threads": 8
+      }
+    },
+    {
+      "case": "optimizer-expansion-gated",
+      "description": "Lexikon expansion is gated by the modality's expansion flag",
+      "checks": {
+        "expansion_on_uses_lexikon": 1.0,
+        "expansion_off_gates_lexikon": 1.0
+      },
+      "required": [
+        "expansion_on_uses_lexikon",
+        "expansion_off_gates_lexikon"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "lex_on": [
+          "alpha structure element"
+        ],
+        "lex_off": [],
+        "delta_off": []
+      }
+    },
+    {
+      "case": "optimizer-mjs-plan-context-aligned",
+      "description": "mjs context-plan defaults agree with the shared preset registry",
+      "checks": {
+        "registry_preset_symbiose_ah": 1.0,
+        "plan_trigger_250k": 1.0,
+        "plan_target_100k": 1.0,
+        "plan_maxkeep_40": 1.0
+      },
+      "required": [
+        "registry_preset_symbiose_ah",
+        "plan_trigger_250k",
+        "plan_target_100k",
+        "plan_maxkeep_40"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "node_exit": 0,
+        "registry": {
+          "preset": "symbiose-ah",
+          "presetDisplay": "Symbiose-AH!",
+          "triggerTokens": 250000,
+          "targetTokens": 100000,
+          "maxKeepMessages": 40,
+          "cpuProfile": "public-default",
+          "modality": "rtr-full",
+          "threadsPerModel": 4,
+          "parkingPercent": 60,
+          "hybrid": true,
+          "expansion": true,
+          "models": [
+            "Snowflake/snowflake-arctic-embed-m",
+            "BAAI/bge-base-en-v1.5"
+          ]
+        },
+        "plan": {
+          "triggerTokens": 250000,
+          "targetTokens": 100000,
+          "maxKeepMessages": 40,
+          "maxSummaryChars": 20000,
+          "maxRestoreChars": 4000,
+          "totalTokens": 300000,
+          "messageCount": 60,
+          "decision": "evict to 100000 tokens (above trigger)"
+        }
+      }
+    },
+    {
+      "case": "optimizer-modality-controls-hybrid",
+      "description": "Modality flags are the Optimizer's hybrid/expansion defaults",
+      "checks": {
+        "rag_dense_hybrid_false": 1.0,
+        "rag_dense_expansion_false": 1.0,
+        "rtr_full_hybrid_true": 1.0,
+        "rtr_full_expansion_true": 1.0
+      },
+      "required": [
+        "rag_dense_hybrid_false",
+        "rag_dense_expansion_false",
+        "rtr_full_hybrid_true",
+        "rtr_full_expansion_true"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "rag_dense": {
+          "hybrid": false,
+          "expansion": false
+        },
+        "rtr_full": {
+          "hybrid": true,
+          "expansion": true
+        }
+      }
+    },
+    {
+      "case": "optimizer-parking-applies",
+      "description": "Parking percent shapes the engine's effective threads",
+      "checks": {
+        "parking20_caps_to_3": 1.0,
+        "parking80_keeps_4": 1.0
+      },
+      "required": [
+        "parking20_caps_to_3",
+        "parking80_keeps_4"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "parking20_threads": 3,
+        "parking80_threads": 4
+      }
+    },
+    {
+      "case": "optimizer-profile-consumed-by-engine",
+      "description": "Engine consumes the Optimizer's resolved profile (models, threads, hybrid, expansion)",
+      "checks": {
+        "models_match_profile": 1.0,
+        "threads_match_profile": 1.0,
+        "profile_hybrid_flag": 1.0,
+        "profile_expansion_flag": 1.0
+      },
+      "required": [
+        "models_match_profile",
+        "threads_match_profile",
+        "profile_hybrid_flag",
+        "profile_expansion_flag"
+      ],
+      "verdict": "pass",
+      "failed_required": [],
+      "evidence": {
+        "profile_models": [
+          "Snowflake/snowflake-arctic-embed-m",
+          "BAAI/bge-base-en-v1.5"
+        ],
+        "engine_models": [
+          "Snowflake/snowflake-arctic-embed-m",
+          "BAAI/bge-base-en-v1.5"
+        ],
+        "profile_effective_threads": 4,
+        "engine_threads": 4,
+        "hybrid": true,
+        "expansion": true
       }
     },
     {
@@ -351,7 +881,7 @@
       "verdict": "pass",
       "failed_required": [],
       "evidence": {
-        "header": "ROOT: safe\nENTITIES: evil, worse"
+        "header": "ROOT: safe\nENTITIES: evil, worse\nROLE: module"
       }
     },
     {
@@ -438,6 +968,7 @@
         "fusion-ah_bounds_exact": 1.0,
         "symbiose-ah_bounds_exact": 1.0,
         "re-symbiose_bounds_exact": 1.0,
+        "re-symbiose-mugen_bounds_exact": 1.0,
         "parking_arithmetic_all_cells": 1.0,
         "public_default_profile": 1.0,
         "local_system_profile": 1.0
@@ -449,6 +980,7 @@
         "fusion-ah_bounds_exact",
         "symbiose-ah_bounds_exact",
         "re-symbiose_bounds_exact",
+        "re-symbiose-mugen_bounds_exact",
         "parking_arithmetic_all_cells",
         "public_default_profile",
         "local_system_profile"
@@ -526,6 +1058,18 @@
             320000,
             128000,
             50
+          ]
+        },
+        "re-symbiose-mugen_bounds": {
+          "resolved": [
+            400000,
+            200000,
+            200
+          ],
+          "expected": [
+            400000,
+            200000,
+            200
           ]
         },
         "parking_matrix": {
@@ -1165,7 +1709,7 @@
         "evict": 161,
         "total_tokens": 200004,
         "keep_tokens": 39004,
-        "plan_ms": 0.926
+        "plan_ms": 1.145
       }
     },
     {
@@ -1189,7 +1733,7 @@
         "evict": 963,
         "total_tokens": 1004004,
         "keep_tokens": 39004,
-        "plan_ms": 5.326,
+        "plan_ms": 5.616,
         "cumulative_messages": 1001,
         "old_todo_index": 5,
         "old_todo_retained": false,

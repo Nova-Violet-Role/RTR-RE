@@ -11,10 +11,18 @@ splits a declaration.
 from __future__ import annotations
 
 import os
+import sys
 import unittest
 from pathlib import Path
 
-from execution.memory_engine import MemoryEngine, _scan_dtd_declarations
+# Add execution directory to sys.path (house convention, see test_memory.py)
+sys.path.insert(0, str(Path(__file__).parent.absolute()))
+
+from memory_engine import (
+    MemoryEngine,
+    _scan_dtd_declarations,
+    configured_suffixes,
+)  # noqa: E402
 
 SAMPLE_DTD = """<!-- sample DTD -->
 <!ELEMENT book (title, chapter+)>
@@ -248,6 +256,65 @@ class ChunkDtdWholeTests(unittest.TestCase):
     def test_empty_file_returns_empty(self):
         f = self._write("")
         self.assertEqual(self.engine.chunk_dtd_whole(f, "empty.dtd"), [])
+
+
+class DtdDiscoveryTests(unittest.TestCase):
+    """The dummy-run fixes (TODO-68): DTD files are first-class.
+
+    (1) configured_suffixes() must include .dtd/.mod/.ent by default, so
+    a normal project indexes DTDs without env wiring; (2) discover_wikis
+    must surface DTD files anywhere — not only under directives/ or wiki
+    paths — or the family-signature retrieval never engages.
+    """
+
+    def test_default_suffixes_include_dtd(self):
+        suffixes = configured_suffixes()
+        for s in (".dtd", ".mod", ".ent"):
+            self.assertIn(s, suffixes)
+
+    def test_env_suffixes_override_default(self):
+        old = os.environ.get("OPENCODE_MEMORY_FILE_SUFFIXES")
+        try:
+            os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = ".txt"
+            self.assertEqual(configured_suffixes(), (".txt",))
+        finally:
+            if old is None:
+                os.environ.pop("OPENCODE_MEMORY_FILE_SUFFIXES", None)
+            else:
+                os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = old
+
+    def test_discover_finds_dtd_outside_directives(self):
+        import tempfile
+
+        import memory_engine
+
+        engine = MemoryEngine()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "proj"
+            corpus = root / "corpus"
+            corpus.mkdir(parents=True)
+            (corpus / "book.dtd").write_text(
+                '<!ENTITY % dbnotn PUBLIC "-//OASIS//DTD DocBook V3.1//EN" "dbnotn.mod">\n',
+                encoding="utf-8",
+            )
+            old_extra = memory_engine.EXTRA_ROOTS_FILE
+            try:
+                extra = Path(tmp) / "extra.json"
+                extra.write_text(
+                    '["' + str(root).replace("\\", "\\\\") + '"]',
+                    encoding="utf-8",
+                )
+                # EXTRA_ROOTS_FILE is a module-level constant read at import;
+                # patch it directly (env after import has no effect).
+                memory_engine.EXTRA_ROOTS_FILE = extra
+                discovered = engine.discover_wikis()
+            finally:
+                memory_engine.EXTRA_ROOTS_FILE = old_extra
+            dtd = [d for d in discovered if d["filename"] == "book.dtd"]
+            self.assertEqual(len(dtd), 1)
+            self.assertTrue(
+                dtd[0]["rel_path"].replace("\\", "/").endswith("proj/corpus/book.dtd")
+            )
 
 
 if __name__ == "__main__":

@@ -244,7 +244,7 @@ CAPS = {"T2": 12, "T3": 12, "T4": 12, "T5": 12, "T6": 6}
 INTENSE_CAPS = {"T2": 40, "T3": 10**9, "T4": 36, "T5": 24, "T6": 20}
 # DTD taxon caps: raised so per-taxon verdicts are statistically meaningful
 # (T7-T10 at n=12 or below flip 0.08-0.17 on a single query).
-DTD_CAPS = {"T7": 40, "T8": 40, "T9": 40, "T10": 40}
+DTD_CAPS = {"T7": 40, "T8": 40, "T9": 40, "T10": 40, "T11": 40, "T12": 40}
 K = 3
 
 STOP = {
@@ -654,6 +654,32 @@ def derive_dtd_queries(proj, rng):
     rng.shuffle(cross_terms)
     for t in cross_terms[: DTD_CAPS["T10"]]:
         queries.append(("T10", t, cross[t][0]))
+    # T11: lineage discrimination — query the family keyword/owner from a
+    # file's PUBLIC lineage (TODO-64 proposal A/E). Isolates whether the
+    # LINEAGE inventory signal lets retrieval identify a family by its
+    # declared identity rather than its element vocabulary.
+    lineage_terms = []
+    for n, prof in docs.items():
+        for entry in prof.lineage:
+            kw = entry.get("keyword") or ""
+            if kw and kw not in STOP and len(kw) > 4:
+                lineage_terms.append((kw, n))
+    rng.shuffle(lineage_terms)
+    for kw, n in lineage_terms[: DTD_CAPS["T11"]]:
+        queries.append(("T11", kw, n))
+    # T12: customization-layer recognition — query a module-switch name from
+    # a driver's customization layer (TODO-64 proposal C/E). Isolates
+    # whether the MODULE SWITCHES inventory signal makes the customization
+    # intent retrievable.
+    switch_terms = []
+    for n, prof in docs.items():
+        for s in prof.module_switches:
+            nm = s.get("name") or ""
+            if nm and len(nm) > 4:
+                switch_terms.append((nm, n))
+    rng.shuffle(switch_terms)
+    for nm, n in switch_terms[: DTD_CAPS["T12"]]:
+        queries.append(("T12", nm, n))
     # T6: identifier/path lookup (filename stems).
     for n in names[: CAPS["T6"]]:
         queries.append(("T6", Path(n).stem, n))

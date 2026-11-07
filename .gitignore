@@ -21,3 +21,5 @@ eval/results/*-prefix.md
 eval/results/graded-pool.json
 eval/results/calibration.json
 eval/results/calibration.md
+# Runtime keeper memory (session spans) — regenerable, stays out of git
+directives/sessions/

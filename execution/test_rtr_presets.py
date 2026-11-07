@@ -90,6 +90,19 @@ class TestRetrievalProfile(unittest.TestCase):
                 self.assertEqual(cfg["threads_per_model"], 4)
                 self.assertEqual(cfg["parking_percent"], 60)
 
+    def test_mugen_preset_resolves_with_exact_bounds_and_alias(self):
+        cfg = symbiose_config({"OPENCODE_MEMORY_RTRRE_PRESET": "re-symbiose-mugen"})
+        self.assertEqual(cfg["preset"], "re-symbiose-mugen")
+        self.assertEqual(cfg["preset_display"], "Re-Symbiose-Mugen")
+        self.assertEqual(cfg["trigger_tokens"], 400000)
+        self.assertEqual(cfg["target_tokens"], 200000)
+        self.assertEqual(cfg["max_keep_messages"], 200)
+        alias_cfg = symbiose_config({"OPENCODE_MEMORY_RTRRE_PRESET": "mugen"})
+        self.assertEqual(alias_cfg["preset"], "re-symbiose-mugen")
+        self.assertEqual(alias_cfg["trigger_tokens"], 400000)
+        default_cfg = symbiose_config({})
+        self.assertEqual(default_cfg["preset"], "symbiose-ah")
+
     def test_modality_threads_and_parking_stay_independent(self):
         profile = resolve_retrieval_profile(
             {

@@ -819,8 +819,15 @@ def _symbiose_for(project: str) -> sw.SymbioseWorker:
         # only the plan report. Measured in dummy survey turn 9: a 55k
         # calibrated workload evicted nothing while the worker silently
         # retained the 200k library default.
+        # The cumulative counter file is the shared recency signal: the
+        # worker owns it (atomic temp+rename) and the JS keeper reads it,
+        # so both sides of the recency-aware protection (TODO-45) see the
+        # same count. Without it the protection would stay all-protect.
+        cumulative_path = Path(key) / ".opencode" / "rtr-re-cumulative.json"
         w = sw.SymbioseWorker(
-            sw.SessionSpanSink(sessions), config=context_budget.symbiose_config()
+            sw.SessionSpanSink(sessions),
+            config=context_budget.symbiose_config(),
+            cumulative_path=cumulative_path,
         )
         _symbiose_workers[key] = w
     return w

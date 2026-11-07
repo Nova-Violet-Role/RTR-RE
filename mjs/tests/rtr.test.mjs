@@ -68,12 +68,51 @@ test("auto-optimize: a write with no read before it earns no note", () => {
 
 test("context plan keeps verbatim below the trigger and evicts above it", () => {
     const under = core.planContext(100000, 50)
-    assert.equal(under.triggerTokens, 320000)
-    assert.equal(under.targetTokens, 128000)
+    assert.equal(under.triggerTokens, 250000)
+    assert.equal(under.targetTokens, 100000)
     assert.equal(under.maxKeepMessages, 40)
     assert.match(under.decision, /keep verbatim/)
     const over = core.planContext(400000, 90)
     assert.match(over.decision, /evict/)
+})
+
+test("context plan defaults come from the shared preset registry, not hardcoded values", () => {
+    const reg = core.registryContextProfile()
+    assert.ok(reg)
+    assert.equal(reg.preset, "symbiose-ah")
+    assert.equal(reg.triggerTokens, 250000)
+    assert.equal(reg.targetTokens, 100000)
+    assert.equal(reg.maxKeepMessages, 40)
+    assert.equal(reg.cpuProfile, "public-default")
+    assert.equal(reg.modality, "rtr-full")
+    assert.equal(reg.threadsPerModel, 4)
+    assert.equal(reg.parkingPercent, 60)
+    assert.equal(reg.hybrid, true)
+    assert.equal(reg.expansion, true)
+})
+
+test("optimizer note carries the resolved profile numbers when a provider is present", () => {
+    const note = core.buildOptimizeNote(core.registryContextProfile())
+    assert.match(note, /AUTO-OPTIMIZE/)
+    assert.match(note, /Symbiose-AH!/)
+    assert.match(note, /250000\/100000\/40/)
+    assert.match(note, /RTR-FULL/)
+    assert.match(note, /T4\/P60/)
+    assert.match(note, /hybrid=true expansion=true/)
+})
+
+test("optimizer with provider emits the data-rich note; without it, the static fallback", () => {
+    const withProvider = core.createAutoOptimizer({
+        getContext: () => core.registryContextProfile(),
+    })
+    const rich = withProvider.noteForToolAfter("read")
+    assert.match(rich ?? "", /AUTO-OPTIMIZE/)
+    assert.match(rich ?? "", /Symbiose-AH!/)
+
+    const plain = core.createAutoOptimizer()
+    const fallback = plain.noteForToolAfter("read")
+    assert.match(fallback ?? "", /AUTO-OPTIMIZE/)
+    assert.ok(!(fallback ?? "").includes("Symbiose-AH!"))
 })
 
 test("cli bridge builds measured rtr-cli arguments and refuses unknown commands by name", () => {

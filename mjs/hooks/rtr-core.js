@@ -94,10 +94,34 @@ const AUTO_OPTIMIZE_NOTE =
   'fewer elements, and name one concrete way it beats the obvious first ' +
   'version. Optimize this change only; name adjacent chances in one line.';
 
+// Data-rich note: when the optimizer has a context provider (the resolved
+// registry profile), the note carries the real numbers so the pass is
+// grounded in the actual configuration and retrieval learnings.
+function buildOptimizeNote(ctx) {
+  const head =
+    'AUTO-OPTIMIZE: before writing, run one unasked pass on the draft — ' +
+    'reuse what you just read, delete what earns nothing, simplify to ' +
+    'fewer elements, and name one concrete way it beats the obvious first ' +
+    'version. Optimize this change only; name adjacent chances in one line.';
+  if (!ctx || !ctx.preset) return head;
+  const parts = [
+    head,
+    `Context: ${ctx.presetDisplay} (${ctx.triggerTokens}/${ctx.targetTokens}/${ctx.maxKeepMessages}) · ` +
+      `${ctx.modality.toUpperCase()} · T${ctx.threadsPerModel}/P${ctx.parkingPercent} · ` +
+      `hybrid=${ctx.hybrid} expansion=${ctx.expansion}.`,
+  ];
+  if (ctx.expansion) {
+    parts.push('Lexikon expansion is on: attribute queries expand through seeded terms.');
+  } else {
+    parts.push('This modality has no lexikon expansion: match terms verbatim.');
+  }
+  return parts.join(' ');
+}
+
 const READ_TOOLS = new Set(['read']);
 const WRITE_TOOLS = new Set(['write', 'edit']);
 
-function createAutoOptimizer() {
+function createAutoOptimizer(provider) {
   let armed = true;
   return {
     noteForToolAfter(tool) {
@@ -108,7 +132,15 @@ function createAutoOptimizer() {
       }
       if (READ_TOOLS.has(name) && armed) {
         armed = false;
-        return AUTO_OPTIMIZE_NOTE;
+        let ctx = null;
+        if (provider && typeof provider.getContext === 'function') {
+          try {
+            ctx = provider.getContext();
+          } catch (e) {
+            ctx = null;
+          }
+        }
+        return buildOptimizeNote(ctx);
       }
       return null;
     },
@@ -122,16 +154,72 @@ function createAutoOptimizer() {
 // The RE:Symbiose budget arithmetic, same defaults the Python engine
 // reports (memory_context_plan): verbatim until the trigger, then evict
 // to the preserved tail. Pure arithmetic; loads and mutates nothing.
+// The defaults come from the shared preset registry (rtr_presets.json)
+// when it is reachable, so the non-MCP center agrees with the Python
+// planner; PLAN_DEFAULTS is the standalone fallback only.
+const REGISTRY_PATH = path.join(__dirname, '..', '..', 'execution', 'rtr_presets.json');
+
 const PLAN_DEFAULTS = {
-  triggerTokens: 320000,
-  targetTokens: 128000,
+  triggerTokens: 250000,
+  targetTokens: 100000,
   maxKeepMessages: 40,
   maxSummaryChars: 20000,
   maxRestoreChars: 4000,
 };
 
+let _registryCache = null;
+
+function loadRegistry() {
+  if (_registryCache !== null) return _registryCache;
+  try {
+    const data = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf8'));
+    if (data && data.defaultKeeperPreset && data.keeperPresets &&
+        data.keeperPresets[data.defaultKeeperPreset]) {
+      _registryCache = data;
+    } else {
+      _registryCache = {};
+    }
+  } catch (e) {
+    _registryCache = {};
+  }
+  return _registryCache;
+}
+
+function registryContextProfile() {
+  const reg = loadRegistry();
+  if (!reg || !reg.cpuProfiles || !reg.defaultCpuProfile) return null;
+  const profile = reg.cpuProfiles[reg.defaultCpuProfile];
+  if (!profile || !profile.modality) return null;
+  const preset = reg.keeperPresets[reg.defaultKeeperPreset];
+  const modality = (reg.modalities && reg.modalities[profile.modality]) || {};
+  return {
+    preset: reg.defaultKeeperPreset,
+    presetDisplay: (preset && preset.displayName) || reg.defaultKeeperPreset,
+    triggerTokens: Number(preset.triggerTokens),
+    targetTokens: Number(preset.targetTokens),
+    maxKeepMessages: Number(preset.maxKeepMessages),
+    cpuProfile: reg.defaultCpuProfile,
+    modality: profile.modality,
+    threadsPerModel: Number(profile.threadsPerModel),
+    parkingPercent: Number(profile.parkingPercent),
+    hybrid: Boolean(modality.hybrid),
+    expansion: Boolean(modality.expansion),
+    models: Array.isArray(modality.models) ? modality.models : [],
+  };
+}
+
 function planContext(totalTokens, messageCount, over = {}) {
-  const cfg = { ...PLAN_DEFAULTS, ...(over || {}) };
+  const reg = registryContextProfile();
+  const base = reg
+    ? {
+        triggerTokens: reg.triggerTokens,
+        targetTokens: reg.targetTokens,
+        maxKeepMessages: reg.maxKeepMessages,
+        maxSummaryChars: 20000,
+        maxRestoreChars: 4000,
+      }
+    : PLAN_DEFAULTS;
+  const cfg = { ...base, ...(over || {}) };
   const total = Number(totalTokens) || 0;
   const decision = total < cfg.triggerTokens
     ? 'keep verbatim (below trigger)'
@@ -221,11 +309,14 @@ module.exports = {
   WRITE_TOOLS,
   activate,
   buildCliArgs,
+  buildOptimizeNote,
   createAutoOptimizer,
   deactivate,
   getInstructions,
   getReminder,
   isActive,
+  loadRegistry,
   planContext,
+  registryContextProfile,
   writeHookOutput,
 };

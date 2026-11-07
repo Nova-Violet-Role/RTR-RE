@@ -81,6 +81,23 @@ class TestRtrStatusViewport(unittest.TestCase):
         finally:
             w.close()
 
+    def test_symbiose_worker_wires_cumulative_counter(self):
+        w = mcp_server._symbiose_for(self.proj)
+        try:
+            expected = Path(self.proj) / ".opencode" / "rtr-re-cumulative.json"
+            self.assertEqual(w._cumulative_path, expected)
+            msgs = [{"role": "assistant", "text": "x" * 4000, "tokens": 1000}]
+            ticket = w.submit(msgs)
+            w.wait(ticket["id"], timeout=10)
+            self.assertTrue(
+                expected.exists(), "cumulative counter file created by the worker"
+            )
+            state = json.loads(expected.read_text(encoding="utf-8"))
+            self.assertGreaterEqual(state["cumulative_messages"], len(msgs))
+        finally:
+            w.close()
+            mcp_server._symbiose_workers.pop(self.proj, None)
+
 
 if __name__ == "__main__":
     unittest.main()

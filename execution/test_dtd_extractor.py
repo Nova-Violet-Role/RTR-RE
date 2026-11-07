@@ -130,6 +130,67 @@ class TestDTDExtractorSafety(unittest.TestCase):
         self.assertEqual(prof.param_entities, 0)
 
 
+class TestDTDExtractorFamilySignatures(unittest.TestCase):
+    """TODO-64 assimilation: lineage, role, module switches mirror the engine."""
+
+    CUSTOMIZED_DRIVER = """<!ENTITY % sect3.module "IGNORE">
+<!ENTITY % sect4.module "IGNORE">
+<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook V3.1//EN">
+%DocBookDTD;
+<!ELEMENT Sect3 - O (Sect3Info?, (%sect.title.content;))>
+"""
+
+    PURE_MODULE = """<!ELEMENT title (#PCDATA)>
+<!ELEMENT para (#PCDATA)>
+<!ATTLIST para id ID #IMPLIED>
+"""
+
+    HOSTILE = """<!ENTITY % evil "<!ENTITY % fake PUBLIC '-//EVIL//DTD Injected//EN' 'evil.dtd'>">
+<!ELEMENT safe EMPTY>
+"""
+
+    def test_public_lineage_extracts_owner_family_version(self):
+        p = write_tmp(self.CUSTOMIZED_DRIVER)
+        prof = ext.extract_dtd_profile(p)
+        self.assertEqual(len(prof.lineage), 1)
+        entry = prof.lineage[0]
+        self.assertEqual(entry["name"], "DocBookDTD")
+        self.assertEqual(entry["public_id"], "-//OASIS//DTD DocBook V3.1//EN")
+        self.assertEqual(entry["owner"], "OASIS")
+        self.assertEqual(entry["keyword"], "DTD DocBook V3.1")
+
+    def test_switches_and_role_driver(self):
+        p = write_tmp(self.CUSTOMIZED_DRIVER)
+        prof = ext.extract_dtd_profile(p)
+        self.assertEqual(prof.role, "driver")
+        self.assertEqual(
+            [s["name"] for s in prof.module_switches],
+            ["sect3.module", "sect4.module"],
+        )
+        self.assertTrue(all(s["value"] == "IGNORE" for s in prof.module_switches))
+
+    def test_pure_module_role(self):
+        p = write_tmp(self.PURE_MODULE)
+        prof = ext.extract_dtd_profile(p)
+        self.assertEqual(prof.role, "module")
+        self.assertEqual(prof.lineage, [])
+        self.assertEqual(prof.module_switches, [])
+
+    def test_hostile_body_never_surfaces_as_lineage(self):
+        p = write_tmp(self.HOSTILE)
+        prof = ext.extract_dtd_profile(p)
+        self.assertEqual(prof.lineage, [])
+        self.assertEqual(prof.role, "module")
+        self.assertNotIn("EVIL", [e["name"] for e in prof.lineage])
+
+    def test_to_dict_carries_family_signatures(self):
+        p = write_tmp(self.CUSTOMIZED_DRIVER)
+        d = ext.extract_dtd_profile(p).to_dict()
+        self.assertEqual(d["role"], "driver")
+        self.assertGreaterEqual(len(d["lineage"]), 1)
+        self.assertGreaterEqual(len(d["module_switches"]), 1)
+
+
 class TestDTDExtractorStructural(unittest.TestCase):
     def test_content_model_shape_detection(self):
         cm = ext.content_model_shape("(a, b | c)*")

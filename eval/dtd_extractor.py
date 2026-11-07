@@ -140,6 +140,88 @@ def extract_attr_types(scanned: str) -> Dict[str, str]:
     return types
 
 
+PUBLIC_RE = re.compile(r'PUBLIC\s+"([^"]*)"(?:\s+"([^"]*)")?')
+SYSTEM_RE = re.compile(r'SYSTEM\s+"([^"]*)"')
+MODULE_SWITCH_RE = re.compile(r'\s+"(IGNORE|INCLUDE)"')
+
+
+def _entity_spans(text: str):
+    """Yield (name, is_param, decl) for each top-level ENTITY declaration."""
+    for decl in _decl_spans(text, "ENTITY"):
+        rest = decl[len("<!ENTITY") :].lstrip()
+        if not rest:
+            continue
+        is_param = rest.startswith("%")
+        if is_param:
+            rest = rest[1:].lstrip()
+        name = rest.split()[0]
+        yield name, is_param, decl
+
+
+def extract_lineage(text: str) -> List[Dict[str, Any]]:
+    """External entity references (PUBLIC/SYSTEM) as lineage tuples.
+
+    Mirrors the engine's _dtd_lineage (execution/memory_engine.py) so the
+    instrument and the engine speak the same vocabulary (TODO-64).
+    Entity bodies are never scanned — _decl_spans yields only top-level
+    declarations, so an injected reference inside an entity value cannot
+    surface here (LAW.AMP.13).
+    """
+    out: List[Dict[str, Any]] = []
+    for name, _is_param, decl in _entity_spans(text):
+        m = PUBLIC_RE.search(decl)
+        if m is not None:
+            public_id = m.group(1)
+            parts = [p.strip() for p in public_id.split("//")]
+            out.append(
+                {
+                    "name": name,
+                    "public_id": public_id,
+                    "owner": parts[1] if len(parts) > 1 else "",
+                    "keyword": parts[2] if len(parts) > 2 else "",
+                    "system_id": m.group(2),
+                }
+            )
+            continue
+        m = SYSTEM_RE.search(decl)
+        if m is not None:
+            out.append(
+                {
+                    "name": name,
+                    "public_id": None,
+                    "owner": "",
+                    "keyword": "",
+                    "system_id": m.group(1),
+                }
+            )
+    return out
+
+
+def extract_module_switches(text: str) -> List[Dict[str, str]]:
+    """Customization-layer switches: %xxx.module "IGNORE"/"INCLUDE" entities.
+
+    Mirrors the engine's _dtd_module_switches (TODO-64). The switch set is
+    a signature of the customization layer (defguide examples/remv.sect4.dtd).
+    """
+    out: List[Dict[str, str]] = []
+    for name, is_param, decl in _entity_spans(text):
+        if not is_param or not name.endswith(".module"):
+            continue
+        m = MODULE_SWITCH_RE.search(decl)
+        if m is not None:
+            out.append({"name": name, "value": m.group(1)})
+    return out
+
+
+def extract_role(text: str) -> str:
+    """Driver vs module: a driver declares module switches or includes
+    external DTDs (PUBLIC/SYSTEM references); a module is a pure
+    declaration pool. Mirrors the engine's _dtd_role (TODO-64)."""
+    if extract_module_switches(text) or extract_lineage(text):
+        return "driver"
+    return "module"
+
+
 def extract_content_model_fragments(scanned: str, limit: int = 100) -> List[str]:
     """Distinctive content-model fragments from ELEMENT declarations.
 
@@ -191,6 +273,9 @@ class DTDProfile:
     content_model_fragments: List[str] = field(default_factory=list)
     attribute_types: Dict[str, str] = field(default_factory=dict)
     attribute_owners: Dict[str, str] = field(default_factory=dict)
+    lineage: List[Dict[str, Any]] = field(default_factory=list)
+    module_switches: List[Dict[str, str]] = field(default_factory=list)
+    role: str = "module"
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -213,6 +298,9 @@ class DTDProfile:
             "content_model_fragments": self.content_model_fragments,
             "attribute_types": self.attribute_types,
             "attribute_owners": self.attribute_owners,
+            "lineage": self.lineage,
+            "module_switches": self.module_switches,
+            "role": self.role,
         }
 
 
@@ -275,6 +363,9 @@ def extract_dtd_profile(path: Path) -> DTDProfile:
         content_model_fragments=extract_content_model_fragments(scanned),
         attribute_types=extract_attr_types(scanned),
         attribute_owners=extract_attr_owners(scanned),
+        lineage=extract_lineage(text),
+        module_switches=extract_module_switches(text),
+        role=extract_role(text),
     )
 
 

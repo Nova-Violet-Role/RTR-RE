@@ -1,9 +1,45 @@
 {
   "name": "rtr-re-opencode-plugin",
-  "private": true,
-  "version": "0.5.0",
+  "version": "1.1.0",
   "description": "RTR-RE:Symbiose OpenCode plugins — keeper (server) and ctrl+p palette (tui)",
+  "keywords": [
+    "opencode-plugin",
+    "opencode",
+    "memory",
+    "keeper",
+    "context",
+    "symbiose",
+    "rag"
+  ],
+  "license": "AGPL-3.0-or-later OR EUPL-1.2",
+  "author": {
+    "name": "Nova-Violet Role ORG"
+  },
+  "homepage": "https://github.com/Nova-Violet-Role/rtr-role-type-retrieval",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nova-Violet-Role/rtr-role-type-retrieval.git",
+    "directory": "opencode-plugin"
+  },
+  "main": "./rtr-re-keeper.js",
+  "exports": {
+    ".": "./rtr-re-keeper.js",
+    "./keeper": "./rtr-re-keeper.js",
+    "./tui": "./rtr-re-tui.tsx"
+  },
+  "files": [
+    "rtr-re-keeper.js",
+    "rtr-re-tui.tsx",
+    "assets/",
+    "package.json"
+  ],
+  "scripts": {
+    "test": "bun test rtr-re-keeper.test.mjs rtr-re-tui.test.ts"
+  },
   "dependencies": {
     "solid-js": "^1.9.18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
