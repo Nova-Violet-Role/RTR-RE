@@ -213,9 +213,9 @@ The ctrl+p palette (TUI plugin `rtr-re-tui.tsx`) exposes the same knobs as
 commands under **RTR Keeper**: status, enable, disable, preset, cpu, modality,
 threads, parking, trigger, target, max — each writes the same watched file, so
 every change applies on the next exchange with no restart. Presets (shared
-registry, 1.1.0): `fusion-ah` 200k/100k/30 · `symbiose-ah` 250k/100k/40
-(default) · `re-symbiose` 320k/128k/50 · `re-symbiose-mugen` 400k/200k/200
-(future default) · legacy `standard`/`calibrated`/`wide`.
+registry, 1.1.0): `re-symbiose-mugen` 400k/200k/200 (default) · `symbiose-ah`
+250k/100k/40 · `fusion-ah` 200k/100k/30 · `re-symbiose` 320k/128k/50 ·
+legacy `standard`/`calibrated`/`wide`.
 The Keeper protects `todowrite` messages and the last user message; eviction is
 oldest-first, sink-first, fail-open.
 

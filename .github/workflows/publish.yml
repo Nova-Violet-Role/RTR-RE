@@ -1,0 +1,94 @@
+name: publish rtr-re
+
+# Draft (TODO-67 item 8). Executed only in TODO-41 after the operator
+# confirms. The workflow publishes the prepared dist/ set to all three
+# platforms simultaneously: GitHub release, PyPI, npm.
+#
+# Secrets required (repository settings):
+#   PYPI_TOKEN  — PyPI API token (upload only)
+#   NPM_TOKEN   — npm access token (publish)
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to publish (must match dist/ artifacts, e.g. 1.1.0)
+        required: true
+        type: string
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Artifacts must exist and match the version
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> "$GITHUB_ENV"
+          test -f "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl"
+          test -f "dist/rtr_role_type_retrieval-$VERSION.tar.gz"
+          test -f "dist/rtr-re-opencode-plugin-$VERSION.tgz"
+          test -f "dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz"
+      - name: Wheel metadata version check
+        run: |
+          VERSION="${{ env.version }}"
+          unzip -p "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl" \
+            '*/METADATA' | grep -E "^Version: $VERSION$"
+
+  publish-pypi:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Publish wheel + sdist to PyPI
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish dist/rtr_role_type_retrieval-${{ env.version }}-py3-none-any.whl dist/rtr_role_type_retrieval-${{ env.version }}.tar.gz
+
+  publish-npm:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Publish plugin package
+        run: npm publish dist/rtr-re-opencode-plugin-${{ env.version }}.tgz --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish mjs package
+        run: npm publish dist/nova-violet-role-rtr-re-mjs-${{ env.version }}.tgz --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  release-github:
+    needs: [publish-pypi, publish-npm]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create GitHub release with assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.version }}
+          name: RTR-RE:Symbiose v${{ env.version }}
+          body_path: RELEASE_NOTES.md
+          files: |
+            dist/rtr_role_type_retrieval-${{ env.version }}-py3-none-any.whl
+            dist/rtr_role_type_retrieval-${{ env.version }}.tar.gz
+            dist/rtr-re-opencode-plugin-${{ env.version }}.tgz
+            dist/nova-violet-role-rtr-re-mjs-${{ env.version }}.tgz
