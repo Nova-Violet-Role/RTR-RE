@@ -96,6 +96,17 @@ Plus the plumbing that makes it disappear: `uvx` delivery (no clone, no sync),
 multi-root projects with absolute paths anywhere, per-model ChromaDB
 collections, 4+4 / 8+8 thread profiles, polyglot indexing (`.md`, `.nt`, `.yaml`).
 
+### 🪶 Low-CPU friendly (measured)
+
+RTR-RE is compatible with **any CPU**. The thread/parking axes trade speed
+and memory, never retrieval quality — measured on a 32-thread host, scores
+are flat from T4 to T16 (R@1 0.7208 on the DTD+keeper-memory subset) and
+parking is quality-neutral. On low-end machines, **T2 or P20** make the
+SSD act as the RAM-consumption mitigation (swap-friendly), so a small-RAM
+system degrades gracefully instead of bloating. The dual-ONNX ensemble
+(the only architecture whose thread budget actually scales) still leads
+classic RAG at every operating point.
+
 ### 🏁 Bi-turbo philosophy & overseeding
 
 Two powerplants — Arctic precision, bge recall — fused by RRF. Rally engineers

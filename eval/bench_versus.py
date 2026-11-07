@@ -854,6 +854,10 @@ def write_mermaid(path, combined, n_queries, n_errors):
     lines = [
         "%% SPDX-FileCopyrightText: Nova-Violet Role ORG",
         "%% SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later",
+        "%% Friendly reminder: RTR-RE is low-CPU friendly. At T2 or P20 the",
+        "%% SSD acts as the RAM-consumption mitigation (swap-friendly), so",
+        "%% the architecture runs on any CPU — the thread/parking axes only",
+        "%% trade speed and memory, never retrieval quality (T4-T16 flat).",
         "xychart-beta",
         f'    title "RE:Symbiose vs RAG — combined ({n_queries} queries, real corpora, {n_errors} errors)"',
         "    x-axis [" + ", ".join(f'"{s}"' for s in systems) + "]",
@@ -952,6 +956,45 @@ def cleanup_extra(base):
         pass
 
 
+def _peak_rss_mb() -> float:
+    """Peak working-set of this process in MB (Windows psapi). 0 if N/A."""
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        class PROCESS_MEMORY_COUNTERS(ctypes.Structure):
+            _fields_ = [
+                ("cb", wintypes.DWORD),
+                ("PageFaultCount", wintypes.DWORD),
+                ("PeakWorkingSetSize", ctypes.c_size_t),
+                ("WorkingSetSize", ctypes.c_size_t),
+                ("QuotaPeakPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+                ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                ("PagefileUsage", ctypes.c_size_t),
+                ("PeakPagefileUsage", ctypes.c_size_t),
+            ]
+
+        psapi = ctypes.WinDLL("psapi.dll")
+        psapi.GetProcessMemoryInfo.argtypes = [
+            wintypes.HANDLE,
+            ctypes.POINTER(PROCESS_MEMORY_COUNTERS),
+            wintypes.DWORD,
+        ]
+        psapi.GetProcessMemoryInfo.restype = wintypes.BOOL
+        kernel32 = ctypes.WinDLL("kernel32")
+        kernel32.GetCurrentProcess.restype = wintypes.HANDLE
+        counters = PROCESS_MEMORY_COUNTERS()
+        counters.cb = ctypes.sizeof(PROCESS_MEMORY_COUNTERS)
+        h = kernel32.GetCurrentProcess()
+        if psapi.GetProcessMemoryInfo(h, ctypes.byref(counters), counters.cb):
+            return round(counters.PeakWorkingSetSize / (1024 * 1024), 1)
+    except Exception:
+        pass
+    return 0.0
+
+
 def main():
     ap = argparse.ArgumentParser(
         prog="bench_versus",
@@ -973,7 +1016,13 @@ def main():
         default=0,
         help="override parking percent (thread-scaling axis; 0 = profile default)",
     )
+    ap.add_argument(
+        "--out",
+        default="versus",
+        help="result basename under eval/results (default: versus)",
+    )
     args = ap.parse_args()
+    _t0 = time.time()
     if args.intense:
         CAPS.update(INTENSE_CAPS)
     if args.threads:
@@ -1139,6 +1188,13 @@ def main():
             "n": len(rows),
             "query_errors": qerr,
         }
+    _total_seconds = max(0.0, time.time() - _t0)
+    _peak_rss = _peak_rss_mb()
+    results["profile"]["peak_rss_mb"] = _peak_rss
+    results["profile"]["total_seconds"] = round(_total_seconds, 1)
+    results["profile"]["rss_mb_per_sec"] = (
+        round(_peak_rss / _total_seconds, 3) if _total_seconds else 0.0
+    )
     results["combined"] = combined
     for system, m in combined.items():
         o = m["metrics"]["OVERALL"]
@@ -1148,15 +1204,16 @@ def main():
         )
     n_q = len(next(iter(all_rows.values()), []))
     n_err = sum(m["query_errors"] for m in combined.values())
-    out = Path(__file__).parent / "results" / "versus.json"
+    base = Path(__file__).parent / "results" / args.out
+    out = base.with_suffix(".json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_bytes(json.dumps(results, indent=2).encode("utf-8"))
-    write_mermaid(Path(__file__).parent / "versus.mmd", combined, n_q, n_err)
-    board = Path(__file__).parent / "results" / "versus.md"
+    write_mermaid(base.with_suffix(".mmd"), combined, n_q, n_err)
+    board = base.with_suffix(".md")
     write_scoreboard(board, results)
     pfamily = Path(__file__).parent / "results" / "per-family-scoreboard.md"
     write_per_family_board(pfamily, results)
-    print(f"wrote {out} + versus.mmd + {board} + {pfamily}")
+    print(f"wrote {out} + {base.name}.mmd + {board} + {pfamily}")
 
 
 if __name__ == "__main__":

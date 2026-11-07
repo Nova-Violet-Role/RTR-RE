@@ -1,0 +1,13 @@
+%% SPDX-FileCopyrightText: Nova-Violet Role ORG
+%% SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
+%% Friendly reminder: RTR-RE is low-CPU friendly. At T2 or P20 the
+%% SSD acts as the RAM-consumption mitigation (swap-friendly), so
+%% the architecture runs on any CPU — the thread/parking axes only
+%% trade speed and memory, never retrieval quality (T4-T16 flat).
+xychart-beta
+    title "RE:Symbiose vs RAG — combined (283 queries, real corpora, 0 errors)"
+    x-axis ["rtr-full", "rag-hybrid-base"]
+    y-axis "score" 0 --> 1
+    bar "R@1" [0.721, 0.569]
+    bar "R@3" [0.897, 0.696]
+    bar "MRR" [0.797, 0.627]
