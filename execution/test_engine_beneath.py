@@ -49,8 +49,11 @@ class TestEngineBeneath(unittest.TestCase):
 
     def test_evaluation_traces_messages_into_the_real_sink(self):
         marker = "ENGINE-BENEATH-HARBOR-731"
+        # Long but CDATA (spaces break the 64+ unbroken-run NDATA regex), so
+        # the marker survives verbatim in the DTD-shaped sink (TODO-70).
+        long_cdata = (marker + " the keeper memory is infinite and retrievable. ") * 60
         messages = [
-            msg("assistant", marker + " " + "x" * 12000),
+            msg("assistant", long_cdata),
             msg("assistant", "protected skill record", tool="skill"),
             msg("assistant", "recent " + "y" * 12000),
             msg("user", "latest question"),

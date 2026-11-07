@@ -59,34 +59,64 @@ def content_hash(messages: List[Dict[str, Any]]) -> str:
 
 
 class SessionSpanSink:
-    """Write evicted spans as one session file the RTR indexer discovers.
+    """Write evicted spans as DTD-shaped memory records (TODO-70).
 
-    Files land under <project>/directives/sessions/ (is_directive in
-    discover_wikis), so the next index_all embeds both lanes with the
-    dual ONNX ensemble and DTD typing — no engine change needed.
+    Files land under <project>/.opencode/memory/ — the dedicated keeper
+    memory root (gitignored via .opencode/). Each file is a structural
+    DTD record: the span schema is declared (ELEMENT span + ATTLIST with
+    architectural role attributes, mirroring the arch-letter architectural-
+    form pattern), and the verbatim span content follows the declarations.
+    The RTR DTD chunker builds the inventory header from the declarations,
+    so every span is searchable by structure (role/lane/dtype/source), not
+    just text — the keeper memory is a first-class DTD corpus member.
+
+    Backward compatibility: existing .md spans under directives/sessions/
+    are still read by discovery; new spans are written DTD-shaped here.
     """
+
+    _SCHEMA = (
+        "<!-- RTR-RE:Symbiose keeper memory span v2 (DTD-shaped) -->\n"
+        '<!ENTITY % rtrre.span.module "INCLUDE">\n'
+        "<![%rtrre.span.module;[\n"
+        "<!ELEMENT span EMPTY>\n"
+        "<!ATTLIST span\n"
+        "    id ID #REQUIRED\n"
+        "    role (user|assistant|tool) #REQUIRED\n"
+        "    lane (read|write|think|plan|unknown) #IMPLIED\n"
+        "    dtype (CDATA|NDATA) #IMPLIED\n"
+        "    ts CDATA #IMPLIED\n"
+        "    source CDATA #IMPLIED\n"
+        "    session CDATA #IMPLIED>\n"
+        "]]>\n"
+        "<!-- verbatim span content follows -->\n"
+    )
 
     def __init__(self, directory: Path):
         self.directory = Path(directory)
 
     def __call__(self, spans: List[Dict[str, Any]], digest: str = "") -> str:
         self.directory.mkdir(parents=True, exist_ok=True)
-        name = f"rtrre-{digest or 'spans'}.md"
+        name = f"rtrre-{digest or 'spans'}.dtd"
         path = self.directory / name
-        lines = [
-            f"# RE:Symbiose evicted spans {digest}".rstrip(),
-            "",
-            "Verbatim substance evicted from the live window. "
-            "PCDATA/CDATA byte-exact; NDATA masked, never embedded.",
-            "",
-        ]
+        lines = [self._SCHEMA]
         for s in spans:
-            lines.append(f"## span {s.get('index', '?')}")
-            lines.append(f"role: {s.get('role', 'unknown')}")
-            lines.append(f"lane: {s.get('lane', 'read')}")
-            lines.append(f"dtype: {s.get('dtype', 'PCDATA')}")
-            lines.append("")
-            lines.append(str(s.get("text") or ""))
+            role = s.get("role", "unknown")
+            lane = s.get("lane", "read")
+            dtype = s.get("dtype", "PCDATA")
+            ts = str(s.get("ts", "") or "")
+            source = str(s.get("source", "") or "")
+            session = str(s.get("session", "") or "")
+            idx = s.get("index", "?")
+            lines.append(
+                f'<span id="span-{idx}" role="{role}" lane="{lane}" '
+                f'dtype="{dtype}" ts="{ts}" source="{source}" '
+                f'session="{session}">'
+            )
+            text = str(s.get("text") or "")
+            if dtype == "NDATA":
+                text = "[NDATA]"
+            lines.append(text)
+            lines.append("</span>")
             lines.append("")
         # Bytes, not text mode: Windows text translation would rewrite LF
         # as CRLF. Session spans are UTF-8 with LF endings, byte-exact.

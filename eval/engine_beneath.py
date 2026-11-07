@@ -197,6 +197,20 @@ def _ratio(numerator: int, denominator: int) -> float:
     return numerator / denominator if denominator else 1.0
 
 
+def _sink_span_count(sink_text: str) -> int:
+    """Count spans in the sink file, both standards.
+
+    Primary (TODO-70): DTD-shaped spans — one ``<span id="...">`` element
+    per evicted record. Legacy fallback: the pre-2.0 markdown marker
+    ``## span ``. The count must equal the expected evicted-span count for
+    the sink checks to pass.
+    """
+    dtd_spans = sink_text.count("<span id=")
+    if dtd_spans:
+        return dtd_spans
+    return sink_text.count("## span ")
+
+
 def evaluate_conversation(
     messages: Iterable[Mapping[str, Any]],
     *,
@@ -252,7 +266,7 @@ def evaluate_conversation(
             "exists": bool(sink_path and sink_path.exists()),
             "bytes": len(sink_bytes),
             "sha256": hashlib.sha256(sink_bytes).hexdigest() if sink_bytes else None,
-            "span_markers": sink_text.count("## span "),
+            "span_markers": _sink_span_count(sink_text),
         }
 
     records = lineage["messages"]

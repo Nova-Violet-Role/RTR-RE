@@ -250,14 +250,60 @@ class TestSessionSpanSink(unittest.TestCase):
                 },
             ]
             path = sink(spans)
+            self.assertTrue(str(path).endswith(".dtd"))
             raw = Path(path).read_bytes()
             self.assertNotIn(b"\r", raw)
             body = raw.decode("utf-8")
+            # DTD-shaped schema (architectural form, TODO-70)
+            self.assertIn("<!ELEMENT span EMPTY>", body)
+            self.assertIn("role (user|assistant|tool) #REQUIRED", body)
+            self.assertIn("lane (read|write|think|plan|unknown) #IMPLIED", body)
+            self.assertIn("dtype (CDATA|NDATA) #IMPLIED", body)
+            # verbatim content survives
             self.assertIn("read this exactly", body)
             self.assertIn("`code_token` stays", body)
-            self.assertIn("lane: read", body)
-            self.assertIn("lane: written", body)
-            self.assertIn("dtype: CDATA", body)
+            # architectural attributes on the span element
+            self.assertIn('<span id="span-0" role="user" lane="read"', body)
+            self.assertIn('<span id="span-1" role="assistant" lane="written"', body)
+            self.assertIn('dtype="CDATA"', body)
+            self.assertIn('dtype="NDATA"', body)
+            self.assertIn("</span>", body)
+
+    def test_sink_writes_dtd_extension_and_schema_first(self):
+        with tempfile.TemporaryDirectory() as td:
+            sink = SessionSpanSink(Path(td))
+            path = sink([{"index": 0, "role": "user", "text": "hi"}])
+            body = Path(path).read_text(encoding="utf-8")
+            # schema block precedes content
+            self.assertLess(body.index("<!ELEMENT span"), body.index("<span id="))
+
+    def test_engine_chunks_dtd_span_with_inventory_header(self):
+        import sys
+
+        sys.path.insert(0, str(Path(__file__).parent))
+        from memory_engine import MemoryEngine
+
+        engine = MemoryEngine()
+        with tempfile.TemporaryDirectory() as td:
+            sink = SessionSpanSink(Path(td))
+            path = sink(
+                [
+                    {
+                        "index": 0,
+                        "role": "assistant",
+                        "lane": "written",
+                        "dtype": "CDATA",
+                        "text": "the keeper memory is infinite",
+                    }
+                ],
+                digest="abc123",
+            )
+            chunks = engine.chunk_dtd_whole(Path(path), "rtrre-abc123.dtd")
+            self.assertTrue(chunks)
+            text = chunks[0]["text"]
+            self.assertIn("ATTLIST", text)
+            self.assertIn("role", text)
+            self.assertIn("the keeper memory is infinite", text)
 
 
 if __name__ == "__main__":

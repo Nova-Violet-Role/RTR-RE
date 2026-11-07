@@ -814,7 +814,7 @@ def _symbiose_for(project: str) -> sw.SymbioseWorker:
     key = str(mem.resolve_project_dir(project)) if project else "_default"
     w = _symbiose_workers.get(key)
     if w is None:
-        sessions = Path(key) / "directives" / "sessions"
+        sessions = Path(key) / ".opencode" / "memory"
         # Deployment calibration must govern the actual compressor, not
         # only the plan report. Measured in dummy survey turn 9: a 55k
         # calibrated workload evicted nothing while the worker silently
