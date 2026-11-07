@@ -41,6 +41,29 @@ scoreboard says so, in the same table.
 
 ---
 
+## 🚀 Try it now (60 seconds)
+
+```jsonc
+// opencode.jsonc — add the memory MCP server, then restart opencode
+"mcp": {
+  "memory": {
+    "type": "local",
+    "command": ["uvx", "--from", "rtr-role-type-retrieval", "rtr-mcp"],
+    "enabled": true,
+    "timeout": 180000
+  }
+}
+```
+
+Then ask your agent: *"what did we decide about the installer last week?"* —
+RTR-RE answers from its own memory, not from a fresh search. That's the
+whole point: the engine keeps what left the window, typed and retrievable.
+
+Full setup, knobs, and the CLI path: [Quick start](#-quick-start-opencode-60-seconds)
+and the [technical manual](README-PYPI.md).
+
+---
+
 ## 📜 About
 
 **RTR** is the persistent memory and retrieval layer for coding agents — first
@@ -166,6 +189,11 @@ agent CLI and local-LLM setup.
 documentation with a published taxonomy (self-retrieval, rare-term lookup,
 conceptual recall, scoped vs global), rendered as Mermaid and SVG.
 
+**The short version:** RTR-RE leads classic RAG on every corpus in the
+frozen 1.1.0 baseline (combined R@1 0.6857 vs 0.5825), the keeper-memory
+corpus retrieves evicted spans at R@1 1.0, and the infinite-memory claim
+is measured, not asserted. Every number re-runs on your machine.
+
 ![RTR vs RAG — recall@3 by taxon](eval/versus.svg)
 
 ```
@@ -173,6 +201,9 @@ uvx --from <wheel> python -m execution.rtr_eval   # release gate (no regressal)
 uv run python eval/bench_versus.py                 # full versus bench -> eval/results/
 uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
 ```
+
+Full tables, taxons, and the axis studies (thread-scaling, parking,
+MUGEN taring) live in `eval/results/` and the technical manual.
 
 ### 📈 The 1.1.0 measurement — amplified architecture, frozen floor
 
