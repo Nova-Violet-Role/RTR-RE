@@ -810,7 +810,7 @@ _symbiose_workers: dict = {}
 
 
 def _symbiose_for(project: str) -> sw.SymbioseWorker:
-    """One background worker per project, sinking to its sessions dir."""
+    """One background worker per project, sinking to its keeper memory root."""
     key = str(mem.resolve_project_dir(project)) if project else "_default"
     w = _symbiose_workers.get(key)
     if w is None:
@@ -838,7 +838,7 @@ def memory_symbiose_submit(project: str, messages_json: str) -> str:
     """Submit messages (JSON array) for background RE:Symbiose eviction.
 
     Returns a ticket immediately; compression never pauses the live turn.
-    Evicted read+written spans sink verbatim to directives/sessions/.
+    Evicted read+written spans sink verbatim to <project>/.opencode/memory/.
     """
     try:
         ticket = sw.submit_json(_symbiose_for(project), messages_json)

@@ -128,7 +128,7 @@ test("sink failure leaves the window untouched through the hook", async () => {
             { directory: join(dir, "a-file-not-a-dir") },
             { triggerTokens: 100, targetTokens: 40 },
         )
-        // Make directives/sessions creation fail: directory component is a file path.
+        // Make .opencode/memory creation fail: directory component is a file path.
         const { writeFileSync } = await import("node:fs")
         writeFileSync(join(dir, "a-file-not-a-dir"), "x")
         const messages = []
@@ -150,17 +150,24 @@ test("hook sinks verbatim spans with NDATA masked before evicting", async () => 
             { triggerTokens: 1000, targetTokens: 400 },
         )
         const blob = "QUJD".repeat(40)
-        const messages = [msg("assistant", `UNIQUE-MARKER ${blob} ` + "v".repeat(4000))]
+        const cdataLong = "the keeper memory is infinite and retrievable. ".repeat(120)
+        const messages = [
+            msg("assistant", "UNIQUE-MARKER " + cdataLong),
+            msg("assistant", blob),
+        ]
         for (let i = 0; i < 10; i++) messages.push(msg("assistant", "w".repeat(400)))
         messages.push(msg("user", "go"))
         await hooks["experimental.chat.messages.transform"]({}, { messages })
         const { readdirSync } = await import("node:fs")
-        const files = readdirSync(join(dir, "directives", "sessions"))
-        assert.equal(files.length, 1)
-        const body = readFileSync(join(dir, "directives", "sessions", files[0]), "utf8")
+        const files = readdirSync(join(dir, ".opencode", "memory"))
+        assert.equal(files.length, 2) // span file + paraphrase companion
+        const spans = files.filter((f) => f.endsWith(".dtd") && !f.includes("summary"))
+        assert.equal(spans.length, 1)
+        const body = readFileSync(join(dir, ".opencode", "memory", spans[0]), "utf8")
         assert.ok(body.includes("UNIQUE-MARKER"))
         assert.ok(!body.includes(blob))
         assert.ok(body.includes("[NDATA]"))
+        assert.ok(body.includes("<span id="))
         assert.ok(!body.includes("\r"))
     } finally {
         rmSync(dir, { recursive: true, force: true })
@@ -172,9 +179,11 @@ test("serializeSpans matches the Python sink shape", () => {
         [{ index: 0, role: "user", lane: "read", dtype: "PCDATA", text: "exact" }],
         "abc",
     )
-    assert.ok(out.startsWith("# RE:Symbiose evicted spans abc"))
-    assert.ok(out.includes("## span 0"))
-    assert.ok(out.includes("lane: read"))
+    assert.ok(out.spans.startsWith("<!-- RTR-RE:Symbiose keeper memory span v2"))
+    assert.ok(out.spans.includes("<!ELEMENT span EMPTY>"))
+    assert.ok(out.spans.includes('<span id="span-0" role="user" lane="read" dtype="PCDATA"'))
+    assert.ok(out.spans.includes("exact"))
+    assert.ok(out.summaries.includes('<paraphrase spanref="span-0" text="exact"'))
 })
 
 // --- Live control: watched config file ---

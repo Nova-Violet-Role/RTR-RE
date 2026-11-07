@@ -5,8 +5,8 @@
 //
 // Office: Keeper only. On every request it estimates the visible window;
 // above TRIGGER it keeps a bounded verbatim tail (TARGET), sinks the
-// evicted spans verbatim (NDATA masked) to directives/sessions/ for the
-// RTR memory MCP index, and only then rewrites the outgoing message
+// evicted spans verbatim (NDATA masked) to <project>/.opencode/memory/ for
+// the RTR memory MCP index, and only then rewrites the outgoing message
 // list. If the sink fails, nothing is evicted (fail-open): substance is
 // never lost to a failed write. The Compressor planner
 // (execution/context_budget.py) owns the same bounds in Python; this
@@ -541,34 +541,76 @@ function evictedSpans(messages, evict) {
     })
 }
 
-function serializeSpans(spans, digest) {
-    const lines = [
-        `# RE:Symbiose evicted spans ${digest}`.trimEnd(),
-        "",
-        "Verbatim substance evicted from the live window. " +
-            "PCDATA/CDATA byte-exact; NDATA masked, never embedded.",
-        "",
-    ]
-    const census = laneCensus(spans)
-    if (census.length) {
-        lines.push("## lane census")
-        for (const row of census) {
-            lines.push(`- ${row.lane}: ${row.count} spans, ~${row.tokens} tokens`)
+const SPAN_SCHEMA = [
+    "<!-- RTR-RE:Symbiose keeper memory span v2 (DTD-shaped) -->",
+    '<!ENTITY % rtrre.span.module "INCLUDE">',
+    "<![%rtrre.span.module;[",
+    "<!ELEMENT span EMPTY>",
+    "<!ATTLIST span",
+    "    id ID #REQUIRED",
+    "    role (user|assistant|tool) #REQUIRED",
+    "    lane (read|write|think|plan|unknown) #IMPLIED",
+    "    dtype (CDATA|NDATA) #IMPLIED",
+    "    ts CDATA #IMPLIED",
+    "    source CDATA #IMPLIED",
+    "    session CDATA #IMPLIED>",
+    "]]>",
+    "<!-- verbatim span content follows -->",
+    "",
+].join("\n")
+
+const SUMMARY_SCHEMA = [
+    "<!-- RTR-RE:Symbiose keeper paraphrase v2 (DTD-shaped) -->",
+    '<!ENTITY % rtrre.summary.module "INCLUDE">',
+    "<![%rtrre.summary.module;[",
+    "<!ELEMENT paraphrase EMPTY>",
+    "<!ATTLIST paraphrase",
+    "    spanref IDREF #REQUIRED",
+    "    text CDATA #REQUIRED",
+    "    ts CDATA #IMPLIED>",
+    "]]>",
+    "<!-- common-line anchors follow -->",
+    "",
+].join("\n")
+
+const ANCHOR_MAX = 160
+
+function anchorLine(text) {
+    for (const line of String(text ?? "").split("\n")) {
+        const stripped = line.trim()
+        if (stripped) {
+            return stripped.length > ANCHOR_MAX ? stripped.slice(0, ANCHOR_MAX) + "…" : stripped
         }
-        lines.push("")
     }
+    return ""
+}
+
+function serializeSpans(spans, digest) {
+    const lines = [SPAN_SCHEMA]
+    const summaries = [SUMMARY_SCHEMA]
     for (const s of spans) {
+        const role = s.role ?? "unknown"
+        const lane = s.lane ?? "read"
+        const dtype = s.dtype ?? "PCDATA"
+        const ts = String(s.ts ?? "")
+        const source = String(s.source ?? "")
+        const session = String(s.session ?? "")
+        const idx = s.index ?? "?"
         lines.push(
-            `## span ${s.index}`,
-            `role: ${s.role}`,
-            `lane: ${s.lane}`,
-            `dtype: ${s.dtype}`,
-            "",
-            s.text,
-            "",
+            `<span id="span-${idx}" role="${role}" lane="${lane}" ` +
+                `dtype="${dtype}" ts="${ts}" source="${source}" session="${session}">`,
         )
+        let text = String(s.text ?? "")
+        if (dtype === "NDATA") {
+            text = "[NDATA]"
+        }
+        lines.push(text, "</span>", "")
+        const anchor = anchorLine(text)
+        if (anchor) {
+            summaries.push(`<paraphrase spanref="span-${idx}" text="${anchor}" ts="${ts}"/>`)
+        }
     }
-    return lines.join("\n")
+    return { spans: lines.join("\n"), summaries: summaries.join("\n") }
 }
 
 function spansDigest(spans) {
@@ -642,7 +684,7 @@ async function applyKeeper(messages, cfg, sink) {
     const note =
         `[RTR-RE:Symbiose] ${plan.evict.length} earlier spans ` +
         `(~${evictedTokens} est. tokens) were evicted verbatim to ` +
-        `directives/sessions/rtrre-${digest}.md and are retrievable via ` +
+        `.opencode/memory/rtrre-${digest}.dtd and are retrievable via ` +
         `memory_search. Kept tail: ~${plan.keepTokens} tokens ` +
         `(target ${cfg.targetTokens}).`
     const host = kept.find((m) => roleOf(m) === "user") ?? kept[0]
@@ -665,11 +707,16 @@ async function applyKeeper(messages, cfg, sink) {
 
 function writeSink(directory) {
     return async (spans, digest) => {
-        const dir = join(directory, "directives", "sessions")
+        const dir = join(directory, ".opencode", "memory")
         await mkdir(dir, { recursive: true })
-        const path = join(dir, `rtrre-${digest || "spans"}.md`)
-        // LF via explicit join("\n") in serializeSpans; no translation.
-        await writeFile(path, serializeSpans(spans, digest), "utf8")
+        const path = join(dir, `rtrre-${digest || "spans"}.dtd`)
+        const serialized = serializeSpans(spans, digest)
+        // LF via explicit join("\n"); no translation.
+        await writeFile(path, serialized.spans, "utf8")
+        if (serialized.summaries !== SUMMARY_SCHEMA) {
+            const summaryPath = join(dir, `rtrre-summary-${digest || "spans"}.dtd`)
+            await writeFile(summaryPath, serialized.summaries, "utf8")
+        }
         return path
     }
 }
