@@ -49,6 +49,22 @@ The TUI plugin registers under the `palette` namespace (ctrl+p).
 - Plain chat: `/rtr status|hold|trigger|target|max|preset|enable|disable`
 - ctrl+p palette: `rtr.*` commands write the same watched config file.
 
+## The installer session
+
+The plugin package also ships the RTR-RE terminal installer (no browser,
+no network). Launch it from the terminal:
+
+```bash
+npx rtr-re-installer --theme network
+```
+
+The session is the same on every platform with a different personality:
+**The Network** (magenta/violet, node-graph progress) for npm, **The
+Instrument** (cool cyan, oscilloscope) for pip/uvx, **The Forge** (raw
+build-log) for GitHub. Three presets (Quick MUGEN, Custom, Hardcore with
+Recommended-from-Saimonokuma badges), adaptive arcade remixes of
+*Obsession*, and the MiDi-MoE-Symbiogen-000 easter egg.
+
 ## Tests
 
 ```bash

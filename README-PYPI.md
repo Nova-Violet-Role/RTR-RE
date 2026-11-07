@@ -245,6 +245,32 @@ uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels
 - **Empty results** — project must live under a discovery root or be touched once by absolute path (auto-registers); check `rtr-cli stats`.
 - **ChromaDB lock errors** — one writer at a time; close stale sessions.
 
+## 8a. The installer session (terminal-native)
+
+The installer runs entirely in the terminal — no browser, no HTTP, no
+network. Same experience on every platform, three personalities:
+
+```bash
+# pip / uvx — The Instrument (cool cyan, oscilloscope progress)
+uvx rtr-re-install --theme instrument
+
+# npm — The Network (magenta/violet, node-graph progress)
+npx rtr-re-installer --theme network
+
+# GitHub — The Forge (charcoal/emerald, raw build-log stream)
+python installer/launchers/python_launcher.py --theme forge
+```
+
+Flags: `--project DIR` (install target, default cwd), `--wheel PATH`
+(pip/uvx; installs the wheel), `--tarball PATH` (npm; installs the
+tarball). The session offers three presets — Quick (MUGEN one-click),
+Custom (component selection), Hardcore (full cockpit with
+Recommended-from-Saimonokuma badges) — plus adaptive arcade remixes of
+*Obsession* and the MiDi-MoE-Symbiogen-000 easter egg. The scene is a
+DTD family member (`installer/shell/dtd/rtrre-scene.mod`); the shell
+markup is validated against the declared vocabulary by
+`installer/shell/tools/conformance.py`.
+
 ## 8b. Tessersect media — four 480p collages, 135 s each
 
 Four distinct Moviola Torch collages (1-bit, 5 fps, 854x480, h264),

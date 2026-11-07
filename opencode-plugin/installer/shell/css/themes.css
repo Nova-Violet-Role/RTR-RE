@@ -1,0 +1,56 @@
+/* RTR-RE installer — platform personality themes.
+   One identity, three personalities: Instrument / Network / Forge. */
+
+/* ============ The Instrument — pip/uvx ============
+   cool cyan / electric blue · translucent glass · data-streams */
+body[data-theme="instrument"] {
+  --bg: #050a14;
+  --fg: #d7e6ff;
+  --fg-strong: #f2f8ff;
+  --fg-dim: #7f96bd;
+  --accent: #00e5ff;
+  --accent-2: #1e6fff;
+  --glow: rgba(0, 229, 255, 0.55);
+  --glow-soft: rgba(0, 229, 255, 0.14);
+  --edge: rgba(120, 190, 255, 0.22);
+  --panel: rgba(10, 22, 42, 0.55);
+  --panel-glass: rgba(10, 22, 42, 0.45);
+  --shadow: rgba(0, 0, 0, 0.55);
+  --ok: #3dffa8;
+}
+
+/* ============ The Network — npm ============
+   warm magenta / violet · crystalline nodes · glowing connections */
+body[data-theme="network"] {
+  --bg: #12060f;
+  --fg: #ffe4f1;
+  --fg-strong: #fff5fa;
+  --fg-dim: #b98aa8;
+  --accent: #ff3d8a;
+  --accent-2: #8a3dff;
+  --glow: rgba(255, 61, 138, 0.55);
+  --glow-soft: rgba(255, 61, 138, 0.15);
+  --edge: rgba(255, 140, 200, 0.24);
+  --panel: rgba(38, 10, 30, 0.55);
+  --panel-glass: rgba(38, 10, 30, 0.45);
+  --shadow: rgba(0, 0, 0, 0.55);
+  --ok: #b7ff6e;
+}
+
+/* ============ The Forge — GitHub ============
+   deep charcoal / emerald · metallic · repository structure */
+body[data-theme="forge"] {
+  --bg: #0b0d12;
+  --fg: #d5e2d8;
+  --fg-strong: #f0fff4;
+  --fg-dim: #7d8f84;
+  --accent: #00e676;
+  --accent-2: #00b0ff;
+  --glow: rgba(0, 230, 118, 0.5);
+  --glow-soft: rgba(0, 230, 118, 0.13);
+  --edge: rgba(120, 200, 150, 0.22);
+  --panel: rgba(18, 24, 22, 0.6);
+  --panel-glass: rgba(18, 24, 22, 0.5);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --ok: #00e676;
+}

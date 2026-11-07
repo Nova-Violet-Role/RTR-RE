@@ -183,6 +183,26 @@ agent CLI and local-LLM setup.
 
 ---
 
+## 🎮 The installer session (terminal-native)
+
+RTR-RE is not installed; it is *entered*. Every platform ships the same
+cinematic installer — a full terminal experience, no browser, no network.
+
+| Platform | Launch | Personality |
+|---|---|---|
+| pip / uvx | `uvx rtr-re-install` | **The Instrument** — cool cyan, oscilloscope progress, measurement readouts |
+| npm | `npx rtr-re-installer` | **The Network** — magenta/violet, node-graph progress, glowing connections |
+| GitHub | `python installer/launchers/python_launcher.py --theme forge` | **The Forge** — charcoal/emerald, raw terminal, build-log stream |
+
+The session: three presets (Quick MUGEN one-click, Custom component
+selection, Hardcore full cockpit with **Recommended from Saimonokuma**
+badges), arcade remixes of *Obsession* (See-Saw / Yuki Kajiura) that
+adapt tempo to your preset, and the **MiDi-MoE-Symbiogen-000** easter egg
+at the end. The scene itself is a DTD family member — declared in
+`installer/shell/dtd/rtrre-scene.mod`, rendered by our own engine.
+
+---
+
 ## 🧪 Evaluation
 
 `eval/` holds the versus bench: **RTR vs classic RAG**, measured on real

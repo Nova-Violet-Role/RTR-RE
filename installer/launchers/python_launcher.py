@@ -335,6 +335,33 @@ class InstallerUI:
             sys.stdout.flush()
             time.sleep(1 / 12)
 
+    # ---- personality renderers ----
+    def personality(self):
+        return self.theme  # instrument | network | forge
+
+    def render_progress(self, index, total, k, v):
+        """Draw one progress step in the theme's interface personality."""
+        pct = int((index + 1) / total * 100)
+        if self.personality() == "forge":
+            # Raw terminal: commands stream like a build log.
+            line = f"  $ {k}: {v}"
+            done = "✓" if index < total - 1 else "✓"
+            return f"  {self.paint(done, self.accent)} {line}"
+        if self.personality() == "network":
+            # Node graph: nodes light up and connect to the core.
+            nodes = "".join("●" if i <= index else "○" for i in range(total))
+            return f"  {self.paint(nodes, self.accent)} {pct:3d}%  {k}: {v}"
+        # instrument: oscilloscope waveform + measurement readout
+        wave = "▁▂▃▅▆▇█▇▆▅▃▂▁"
+        pos = int(pct / 100 * (len(wave) - 1))
+        w = wave[: pos + 1] + " " * (len(wave) - pos - 1)
+        return f"  {self.paint(w, self.accent)} {pct:3d}%  {k}: {v}"
+
+    def render_plan(self, plan):
+        if self.personality() == "forge":
+            return "\n".join(f"  $ {self.paint(k, self.accent)} {v}" for k, v in plan)
+        return "\n".join(f"    {k:<12} {v}" for k, v in plan)
+
     # ---- screens ----
     def screen_presets(self):
         sys.stdout.write(Term.CLEAR + self.header())
@@ -419,14 +446,13 @@ class InstallerUI:
     def screen_review(self):
         payload = {"preset": self.preset}
         if self.preset == "custom":
-            payload["components"] = sorted(self.components)
+            payload = {"preset": self.preset, "components": sorted(self.components)}
         elif self.preset == "hardcore":
-            payload.update(self.hardcore)
+            payload = {"preset": self.preset, **self.hardcore}
         plan = plan_for(payload)
         sys.stdout.write(Term.CLEAR + self.header())
         print(self.paint("  Install plan:\n", self.accent, bold=True))
-        for k, v in plan:
-            print(f"    {k:<12} {v}")
+        print(self.render_plan(plan))
         print()
         if input("  Install now? [Y/n]: ").strip().lower() in ("", "y", "yes"):
             self.screen_progress(payload, plan)
@@ -443,16 +469,16 @@ class InstallerUI:
         play_audio(self.preset)
         total = len(plan)
         for i, (k, v) in enumerate(plan):
-            pct = int((i + 1) / total * 100)
-            bar = "█" * (pct // 4) + "░" * (25 - pct // 4)
             sys.stdout.write(Term.move(6 + i, 1) + Term.clear_line())
-            print(f"    {self.paint(bar, self.accent)} {pct:3d}%  {k}: {v}")
+            print(self.render_progress(i, total, k, v))
             sys.stdout.flush()
             time.sleep(0.35)
         execute_plan(payload, self.project, self.wheel)
-        bar = "█" * 25
         sys.stdout.write(Term.move(6 + total, 1) + Term.clear_line())
-        print(f"    {self.paint(bar, self.accent2)} 100%  done")
+        if self.personality() == "forge":
+            print(f"  {self.paint('✓', self.accent2)} build complete — 100%")
+        else:
+            print(f"  {self.paint('█' * 25, self.accent2)} 100%  done")
         time.sleep(0.6)
         self.screen_done()
 

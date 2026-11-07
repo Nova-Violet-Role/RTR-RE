@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scene SYSTEM "../rtrre-scene.mod">
+<scene version="1.0" theme="network">
+  <camera drift="0.0018" parallax="0.0005" pitch="-0.14" distance="6.2"/>
+  <core radius="0.5" pulse="0.14" glow="0.55" points="240"/>
+  <floor reflect="0.28" y="-0.6"/>
+  <particles count="1000" spread="3.4" speed="0.75"
+    size-min="0.5" size-max="2.4"
+    color="1.0,0.24,0.54" color2="0.54,0.24,1.0" color-mix="0.55"/>
+</scene>

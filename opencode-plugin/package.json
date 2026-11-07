@@ -27,14 +27,20 @@
     "./keeper": "./rtr-re-keeper.js",
     "./tui": "./rtr-re-tui.tsx"
   },
+  "bin": {
+    "rtr-re-installer": "./installer-bin.mjs"
+  },
   "files": [
     "rtr-re-keeper.js",
     "rtr-re-tui.tsx",
     "assets/",
+    "installer-bin.mjs",
+    "installer/",
     "package.json"
   ],
   "scripts": {
-    "test": "bun test rtr-re-keeper.test.mjs rtr-re-tui.test.ts"
+    "test": "bun test rtr-re-keeper.test.mjs rtr-re-tui.test.ts",
+    "prepack": "node -e \"const fs=require('fs'),p=require('path');const src=p.join('..','installer');const dst=p.join('installer');fs.rmSync(dst,{recursive:true,force:true});fs.cpSync(src,dst,{recursive:true,filter:(s)=>!s.includes('__pycache__')});console.log('installer copied into package')\""
   },
   "dependencies": {
     "solid-js": "^1.9.18"
