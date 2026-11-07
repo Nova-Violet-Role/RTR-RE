@@ -112,27 +112,6 @@ export function nowIso() {
     return new Date().toISOString()
 }
 
-// --- P6: cross mjs-js skill ----------------------------------------------
-
-export function skillCandidates(here) {
-    return [
-        join(here, "skill", "rtr-skill.md"),
-        join(here, "..", "opencode-plugin", "skill", "rtr-skill.md"),
-        join(here, "..", "..", "opencode-plugin", "skill", "rtr-skill.md"),
-    ]
-}
-
-export function skillText(here) {
-    for (const path of skillCandidates(here)) {
-        try {
-            return readFileSync(path, "utf8")
-        } catch {
-            continue
-        }
-    }
-    return null
-}
-
 // --- P3: subagent brief ---------------------------------------------------
 
 export const BRIEF_NAME = "rtr-re-keeper-brief.md"
@@ -175,8 +154,6 @@ export default {
     nowIso,
     parseRtrPrompt,
     resolveRegistryPath,
-    skillCandidates,
-    skillText,
     withTimeout,
     writeSubagentBrief,
 }

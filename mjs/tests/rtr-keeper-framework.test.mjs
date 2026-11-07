@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: Nova-Violet Role ORG
 // SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
-// Framework tests (TODO-65): P1 prompt parser, P3 brief, P5 ESM, P6 skill.
+// Framework tests (TODO-65): P1 prompt parser, P3 brief, P5 ESM.
 
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
@@ -15,7 +15,6 @@ import {
     nowIso,
     parseRtrPrompt,
     resolveRegistryPath,
-    skillText,
     withTimeout,
     writeSubagentBrief,
 } from "../framework/rtr-keeper-framework.mjs"
@@ -63,15 +62,6 @@ test("P5: laneCensus groups spans by lane via Object.groupBy", () => {
 test("P5: nowIso returns an ISO instant", () => {
     const iso = nowIso()
     expect(iso).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
-})
-
-test("P6: skillText loads the shared ruleset from the repo", () => {
-    const here = join(import.meta.dirname, "..", "..", "opencode-plugin")
-    const text = skillText(here)
-    expect(text).not.toBeNull()
-    expect(text).toContain("RTR-RE:Symbiose Keeper — shared ruleset")
-    expect(text).toContain("One body,")
-    expect(text).toContain("two hosts")
 })
 
 test("P3: writeSubagentBrief writes the shared brief", () => {
