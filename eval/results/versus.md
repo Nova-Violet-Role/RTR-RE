@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # RE:Symbiose versus RAG — full scoreboard (generated, do not edit)
 
-Tool: RE:Symbiose versus v2 (isolated, same-size controls) | seed 20260928 | lexikon seeded 3822
+Tool: RE:Symbiose versus v2 (isolated, same-size controls) | seed 20260928 | lexikon seeded 3826
 
 ## nt-studies (36 files, 87 queries)
 
@@ -234,14 +234,33 @@ Tool: RE:Symbiose versus v2 (isolated, same-size controls) | seed 20260928 | lex
 | rtr-full | T8 | 40 | 0.8000 | 0.9500 | 0.8667 |
 | rtr-full | T9 | 12 | 0.6667 | 0.9167 | 0.7778 |
 
+## keeper-memory (40 files, 40 queries)
+
+| System | Taxon | n | R@1 | R@3 | MRR |
+|---|---|---|---|---|---|
+| rag-dense | OVERALL | 40 | 0.0750 | 0.5000 | 0.2875 |
+| rag-dense | T13 | 40 | 0.0750 | 0.5000 | 0.2875 |
+| rag-hybrid | OVERALL | 40 | 0.8500 | 0.8500 | 0.8500 |
+| rag-hybrid | T13 | 40 | 0.8500 | 0.8500 | 0.8500 |
+| rag-dense-base | OVERALL | 40 | 0.3250 | 0.8500 | 0.5875 |
+| rag-dense-base | T13 | 40 | 0.3250 | 0.8500 | 0.5875 |
+| rag-hybrid-base | OVERALL | 40 | 0.9750 | 0.9750 | 0.9750 |
+| rag-hybrid-base | T13 | 40 | 0.9750 | 0.9750 | 0.9750 |
+| rtr-arctic | OVERALL | 40 | 0.7500 | 0.7500 | 0.7500 |
+| rtr-arctic | T13 | 40 | 0.7500 | 0.7500 | 0.7500 |
+| rtr-bge | OVERALL | 40 | 0.9750 | 0.9750 | 0.9750 |
+| rtr-bge | T13 | 40 | 0.9750 | 0.9750 | 0.9750 |
+| rtr-full | OVERALL | 40 | 1.0000 | 1.0000 | 1.0000 |
+| rtr-full | T13 | 40 | 1.0000 | 1.0000 | 1.0000 |
+
 ## Combined
 
 | System | n | R@1 | R@3 | MRR | p50 ms | errors |
 |---|---|---|---|---|---|---|
-| rag-dense | 504 | 0.3552 | 0.5179 | 0.4246 | 6.2 | 0 |
-| rag-hybrid | 504 | 0.5694 | 0.7024 | 0.6283 | 15.1 | 0 |
-| rag-dense-base | 504 | 0.3671 | 0.5079 | 0.4282 | 14.0 | 0 |
-| rag-hybrid-base | 504 | 0.5516 | 0.6687 | 0.6035 | 22.0 | 0 |
-| rtr-arctic | 504 | 0.6647 | 0.8056 | 0.7239 | 38.5 | 0 |
-| rtr-bge | 504 | 0.6091 | 0.7460 | 0.6700 | 26.8 | 0 |
-| rtr-full | 504 | 0.6607 | 0.8333 | 0.7348 | 53.1 | 0 |
+| rag-dense | 544 | 0.3346 | 0.5165 | 0.4145 | 3.6 | 0 |
+| rag-hybrid | 544 | 0.5901 | 0.7132 | 0.6446 | 8.4 | 0 |
+| rag-dense-base | 544 | 0.3640 | 0.5331 | 0.4400 | 8.4 | 0 |
+| rag-hybrid-base | 544 | 0.5827 | 0.6912 | 0.6308 | 13.7 | 0 |
+| rtr-arctic | 544 | 0.6710 | 0.8015 | 0.7258 | 25.3 | 0 |
+| rtr-bge | 544 | 0.6360 | 0.7629 | 0.6924 | 16.5 | 0 |
+| rtr-full | 544 | 0.6857 | 0.8456 | 0.7543 | 41.0 | 0 |

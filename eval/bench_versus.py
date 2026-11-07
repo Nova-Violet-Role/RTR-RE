@@ -86,6 +86,17 @@ CORPORA = [
         "title": "dtd",
         "prefix_rel": True,
     },
+    # Keeper-memory corpus (TODO-70): DTD-shaped evicted spans, staged the
+    # way SessionSpanSink writes them (architectural-form ATTLIST + verbatim
+    # content). T13 queries target distinctive evicted content — the
+    # infinite-memory claim, measured in the official evaluation tool.
+    {
+        "name": "keeper-memory",
+        "src": None,
+        "mode": "generated",
+        "n": 40,
+        "title": "dtd",
+    },
 ]
 
 # Per-family DTD suites (TODO-36): one corpus per real family, staged from
@@ -245,6 +256,7 @@ INTENSE_CAPS = {"T2": 40, "T3": 10**9, "T4": 36, "T5": 24, "T6": 20}
 # DTD taxon caps: raised so per-taxon verdicts are statistically meaningful
 # (T7-T10 at n=12 or below flip 0.08-0.17 on a single query).
 DTD_CAPS = {"T7": 40, "T8": 40, "T9": 40, "T10": 40, "T11": 40, "T12": 40}
+KEEPER_CAPS = {"T13": 40}
 K = 3
 
 STOP = {
@@ -373,8 +385,62 @@ def tokens(text):
 BENCH_ROOT = None  # set by main(): the only discovery root (full isolation)
 
 
+def _stage_keeper_memory(spec, prefix):
+    """Stage DTD-shaped evicted spans exactly as SessionSpanSink writes them.
+
+    Each span file carries the architectural-form ATTLIST (id/role/lane/
+    dtype/ts/source/session) + verbatim content, and a distinctive marker
+    that exists nowhere else. T13 queries target those markers — the
+    infinite-memory retrievability claim (TODO-70).
+    """
+    import sys as _sys
+
+    _sys.path.insert(0, str(Path(__file__).parent.parent / "execution"))
+    from symbiose_worker import SessionSpanSink
+
+    base = BENCH_ROOT / f"bench-{prefix}"
+    if base.exists():
+        shutil.rmtree(base, ignore_errors=True)
+    base.mkdir(parents=True)
+    proj = base
+    memory_root = proj / ".opencode" / "memory"
+    memory_root.mkdir(parents=True)
+    sink = SessionSpanSink(memory_root)
+    rng = random.Random(SEED)
+    markers = []
+    staged = []
+    n = int(spec["n"])
+    for i in range(n):
+        marker = f"KEEPER-MEMORY-BENCH-{i:03d}-{rng.randrange(10**8):08d}"
+        markers.append(marker)
+        spans = [
+            {
+                "index": 0,
+                "role": "assistant",
+                "lane": "written",
+                "dtype": "CDATA",
+                "text": marker
+                + " the keeper memory is infinite and every evicted span remains retrievable forever.",
+            },
+            {
+                "index": 1,
+                "role": "user",
+                "lane": "read",
+                "dtype": "CDATA",
+                "text": "ordinary filler question about the weather.",
+            },
+        ]
+        path = sink(spans, digest=f"bench-{i:03d}")
+        staged.append(Path(path).name)
+    return base, proj, staged, markers
+
+
 def stage_corpus(spec, prefix):
     """Sample real docs -> temp bench project (original names, bytes intact)."""
+    if spec.get("mode") == "generated":
+        base, proj, staged, markers = _stage_keeper_memory(spec, prefix)
+        spec["_markers"] = markers
+        return base, proj, staged
     if spec.get("suffixes"):
         files = sorted(
             f
@@ -686,6 +752,21 @@ def derive_dtd_queries(proj, rng):
     return queries
 
 
+def derive_keeper_queries(proj, rng, markers):
+    """T13: evicted-span retrievability (TODO-70).
+
+    Each query is a distinctive marker that exists only inside one staged
+    DTD-shaped span file; the expected answer is that file. This measures
+    the infinite-memory claim: evicted content is retrievable at high
+    score through the real engine.
+    """
+    files = sorted((proj / ".opencode" / "memory").glob("rtrre-*.dtd"))
+    queries = []
+    for marker, f in zip(markers, files):
+        queries.append(("T13", marker, f.name))
+    return queries[: KEEPER_CAPS["T13"]]
+
+
 def run_system(engine, system, queries, proj):
     cfg = SYSTEMS[system]
     os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = cfg["models"]
@@ -880,9 +961,25 @@ def main():
     ap.add_argument("--seed", type=int, default=SEED)
     ap.add_argument("--intense", action="store_true", help="exploded per-taxon caps")
     ap.add_argument("--corpora", default="", help="comma list subset of corpora")
+    ap.add_argument(
+        "--threads",
+        type=int,
+        default=0,
+        help="override T-mode (thread-scaling axis; 0 = profile default)",
+    )
+    ap.add_argument(
+        "--parking",
+        type=int,
+        default=0,
+        help="override parking percent (thread-scaling axis; 0 = profile default)",
+    )
     args = ap.parse_args()
     if args.intense:
         CAPS.update(INTENSE_CAPS)
+    if args.threads:
+        os.environ["OPENCODE_MEMORY_EMBED_THREADS"] = str(args.threads)
+    if args.parking:
+        os.environ["OPENCODE_MEMORY_CPU_PARKING_PERCENT"] = str(args.parking)
     global BENCH_ROOT
     os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = (
         ".md,.nt,.yaml,.yml,.dita,.xml,.dtd,.mod,.ent"
@@ -914,9 +1011,29 @@ def main():
     # Global lexikon isolated: precedent runs expanded from the operator's
     # live glossary — an undeclared third corpus inside every RTR query.
     mem.LEXIKON_GLOBAL_FILE = iso / "lexikon_global.json"
+    # Profile metadata: every run is attributable to its preset/CPU/threads/
+    # parking axes (enables MUGEN taring and thread-scaling comparisons).
+    try:
+        import context_budget as _cb
+
+        _profile = _cb.resolve_context_profile()
+        profile_meta = {
+            "preset": _profile.get("preset"),
+            "preset_display": _profile.get("preset_display"),
+            "cpu_profile": _profile.get("cpu_profile"),
+            "modality": _profile.get("modality"),
+            "threads_per_model": _profile.get("threads_per_model"),
+            "effective_threads_per_model": _profile.get("effective_threads_per_model"),
+            "parking_percent": _profile.get("parking_percent"),
+            "logical_processors": _profile.get("logical_processors"),
+            "profile_code": _profile.get("profile_code"),
+        }
+    except Exception:
+        profile_meta = {"error": "profile resolution failed"}
     results = {
         "seed": args.seed,
         "tool": "RE:Symbiose versus v2 (isolated, same-size controls)",
+        "profile": profile_meta,
         "corpora": {},
         "lexikon_seeded": 0,
         "manifest": {},
@@ -942,16 +1059,23 @@ def main():
                 args.seed
                 + int(hashlib.sha256(spec["name"].encode()).hexdigest()[:8], 16)
             )
-            if spec["title"] == "dtd":
+            if spec.get("mode") == "generated":
+                queries = derive_keeper_queries(proj, crng, spec.get("_markers", []))
+            elif spec["title"] == "dtd":
                 queries = derive_dtd_queries(proj, crng)
             else:
                 queries = derive_queries(proj, crng, spec["title"])
             print(f"[{spec['name']}] derived {len(queries)} queries")
+            manifest_dir = (
+                proj / ".opencode" / "memory"
+                if spec.get("mode") == "generated"
+                else proj / "directives"
+            )
             results["manifest"][spec["name"]] = [
                 {
                     "file": n,
                     "sha256": hashlib.sha256(
-                        (proj / "directives" / n).read_bytes()
+                        (manifest_dir / n).read_bytes()
                     ).hexdigest(),
                 }
                 for n in staged
