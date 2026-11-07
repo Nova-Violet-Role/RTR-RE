@@ -84,6 +84,13 @@ def _blob(size: int) -> str:
     return "x" * size
 
 
+def _cdata_long(size: int) -> str:
+    """Long but CDATA text: spaces break the 64+ unbroken-run NDATA regex,
+    so markers survive verbatim in the DTD-shaped sink (TODO-70)."""
+    unit = "the keeper memory is infinite and retrievable. "
+    return unit * max(1, size // len(unit))
+
+
 def _verdict(
     checks: Dict[str, float],
     required: Sequence[str],
@@ -754,8 +761,8 @@ def case_live_engine_sink() -> Dict[str, Any]:
     """A real SessionSpanSink round-trips evicted spans to disk."""
     marker = "ENGINE-BENEATH-LIVE-SINK-902"
     messages = [
-        _msg("assistant", marker + " " + _blob(12000)),
-        _msg("assistant", _blob(12000)),
+        _msg("assistant", marker + " " + _cdata_long(12000)),
+        _msg("assistant", _cdata_long(12000)),
         _msg("user", "latest question"),
     ]
     with tempfile.TemporaryDirectory(prefix="rtrre-eb-live-") as temporary:
@@ -1469,7 +1476,7 @@ def _index_evicted_sessions(
     import memory_engine as mem
 
     proj = root / "projects"
-    sessions = proj / "directives" / "sessions"
+    sessions = proj / ".opencode" / "memory"
     sessions.mkdir(parents=True)
     sink = SessionSpanSink(sessions)
     plan = plan_compression(messages, config=cfg)
@@ -1547,7 +1554,7 @@ def case_compressor_evicted_retrievable() -> Dict[str, Any]:
         "max_keep_messages": int(preset["maxKeepMessages"]),
     }
     marker = "quasar-nebula-x7"
-    messages = [_msg("assistant", f"{marker} {_blob(12000)}") for _ in range(90)]
+    messages = [_msg("assistant", f"{marker} {_cdata_long(12000)}") for _ in range(90)]
     with tempfile.TemporaryDirectory(prefix="rtrre-eb-retr-") as temporary:
         root = Path(temporary)
         facts = _index_evicted_sessions(root, messages, cfg, "retr-test")
@@ -1555,7 +1562,7 @@ def case_compressor_evicted_retrievable() -> Dict[str, Any]:
         try:
             results = engine.search(marker, k=3, project=None)
             top = [Path(r["metadata"]["source"]).name for r in results]
-            found = any(name.startswith("rtrre-retr-test.md") for name in top)
+            found = any(name.startswith("rtrre-retr-test.dtd") for name in top)
             checks = {
                 "compressed": 1.0 if facts["plan"]["compress"] else 0.0,
                 "sink_wrote_file": 1.0 if facts["sink_path"].exists() else 0.0,
@@ -1589,7 +1596,9 @@ def case_compressor_lexikon_interplay() -> Dict[str, Any]:
         "max_keep_messages": int(preset["maxKeepMessages"]),
     }
     compound = "quasarnebularx7"
-    messages = [_msg("assistant", f"{compound} {_blob(12000)}") for _ in range(90)]
+    messages = [
+        _msg("assistant", f"{compound} {_cdata_long(12000)}") for _ in range(90)
+    ]
     with tempfile.TemporaryDirectory(prefix="rtrre-eb-lex-") as temporary:
         root = Path(temporary)
         facts = _index_evicted_sessions(root, messages, cfg, "lex-test")
@@ -1606,7 +1615,7 @@ def case_compressor_lexikon_interplay() -> Dict[str, Any]:
             expanded = any(compound in str(x) for x in lex)
             results = engine.search("nebula", k=3, project=None)
             top = [Path(r["metadata"]["source"]).name for r in results]
-            found = any(name.startswith("rtrre-lex-test.md") for name in top)
+            found = any(name.startswith("rtrre-lex-test.dtd") for name in top)
             checks = {
                 "compressed": 1.0 if facts["plan"]["compress"] else 0.0,
                 "lexikon_expands_to_evicted_term": 1.0 if expanded else 0.0,
