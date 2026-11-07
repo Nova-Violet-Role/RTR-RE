@@ -36,6 +36,7 @@ rtr-mcp = "execution.memory_mcp_server:main"
 rtr-cli = "execution.memory_cli:main"
 rtr-re-mcp = "execution.memory_mcp_server:main"
 rtr-re-install-opencode = "execution.install_opencode:main"
+rtr-re-install = "installer.launchers.python_launcher:main"
 
 
 [tool.hatch.build.targets.wheel]
@@ -54,6 +55,11 @@ exclude = ["directives/sessions"]
 [tool.hatch.build.targets.wheel.force-include]
 "opencode-plugin/rtr-re-keeper.js" = "execution/assets/rtr-re-keeper.js"
 "execution/rtr_presets.json" = "execution/rtr_presets.json"
+"installer/__init__.py" = "installer/__init__.py"
+"installer/launchers/__init__.py" = "installer/launchers/__init__.py"
+"installer/launchers/python_launcher.py" = "installer/launchers/python_launcher.py"
+"installer/shell" = "installer/shell"
+"installer/tools" = "installer/tools"
 "LICENSE-EUPL-1.2.txt" = "rtr_role_type_retrieval-1.1.0.dist-info/LICENSE-EUPL-1.2.txt"
 "LICENSE-AGPL-3.0.txt" = "rtr_role_type_retrieval-1.1.0.dist-info/LICENSE-AGPL-3.0.txt"
 "NOTICE" = "rtr_role_type_retrieval-1.1.0.dist-info/NOTICE"
