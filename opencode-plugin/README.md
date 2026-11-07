@@ -10,7 +10,6 @@ RTR-RE:Symbiose OpenCode plugins — the **Keeper** (server) and the
 | `rtr-re-keeper.js` | Keeper server plugin: eviction planning, DTD-shaped memory sink, recency-aware todowrite protection, `/rtr` prompt commands, status file |
 | `rtr-re-tui.tsx` | TUI plugin: eleven ctrl+p palette commands (`status`, `enable`, `disable`, `preset`, `cpu`, `modality`, `threads`, `parking`, `trigger`, `target`, `max`) |
 | `assets/rtr_presets.json` | Shared preset registry (keeper presets + CPU profiles + modalities) |
-| `skill/rtr-skill.md` | Cross mjs-js skill body (one ruleset, two hosts) |
 
 ## Install
 
