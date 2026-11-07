@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC
+  "-//Nova-Violet-Role//DTD RTR-RE Installer 1.0//EN"
+  "dtd/rtrre-installer.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" data-theme="instrument">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RTR-RE:Symbiose — Installer</title>
+<link rel="stylesheet" href="css/base.css"/>
+<link rel="stylesheet" href="css/themes.css"/>
+</head>
+<body data-theme="instrument">
+
+<!-- ============ WebGL 3D scene ============ -->
+<canvas id="scene"></canvas>
+
+<!-- ============ HUD ============ -->
+<header class="hud">
+  <div class="sigil" id="sigil">RTR-RE</div>
+  <div class="hud-right">
+    <div class="theme-badge" id="themeBadge">The Instrument</div>
+    <button class="audio-toggle" id="audioToggle" type="button" title="Toggle music">♪</button>
+  </div>
+</header>
+
+<!-- ============ Screens ============ -->
+<main id="app">
+
+  <!-- Screen: preset select -->
+  <section class="screen active" id="screen-presets">
+    <h1 class="title">Enter RTR-RE</h1>
+    <p class="subtitle">Choose how you want to arrive.</p>
+    <preset-grid class="preset-grid">
+      <preset-card class="preset-card" data-preset="quick">
+        <span class="preset-name">Quick Install</span>
+        <span class="preset-desc">Single preset · one click · arcade attract mode</span>
+        <span class="preset-value">MUGEN · 400k/200k/200</span>
+      </preset-card>
+      <preset-card class="preset-card" data-preset="custom">
+        <span class="preset-name">Custom Selection</span>
+        <span class="preset-desc">Minimal · choose components · balanced</span>
+        <span class="preset-value">Keeper · Compressor · Engine · Plugin</span>
+      </preset-card>
+      <preset-card class="preset-card" data-preset="hardcore">
+        <span class="preset-name">Hardcore</span>
+        <span class="preset-desc">Full control · every option · power-user cockpit</span>
+        <span class="preset-value">8 threads · P40 · recommended</span>
+      </preset-card>
+    </preset-grid>
+  </section>
+
+  <!-- Screen: custom component selection -->
+  <section class="screen" id="screen-custom">
+    <h2 class="title">Select components</h2>
+    <component-grid class="component-grid" id="componentGrid"></component-grid>
+    <div class="nav-row">
+      <button class="btn ghost" type="button" data-nav="back">Back</button>
+      <button class="btn primary" id="customReview" type="button">Review &amp; install</button>
+    </div>
+  </section>
+
+  <!-- Screen: hardcore cockpit -->
+  <section class="screen" id="screen-hardcore">
+    <h2 class="title">Hardcore cockpit</h2>
+    <cockpit class="cockpit">
+      <panel class="panel">
+        <h3>Threads</h3>
+        <input type="range" id="hcThreads" min="2" max="32" step="2" value="8"/>
+        <span class="readout" id="hcThreadsVal">8</span>
+        <recommend class="recommend" id="hcRecommend">★ Recommended from Saimonokuma: 8 threads — T8 is the speed sweet spot on 32-thread hosts.</recommend>
+      </panel>
+      <panel class="panel">
+        <h3>Parking</h3>
+        <input type="range" id="hcParking" min="20" max="80" step="10" value="40"/>
+        <span class="readout" id="hcParkingVal">40%</span>
+        <tip class="tip">Did you know: P20 on a small-RAM machine lets the SSD act as the memory mitigation.</tip>
+      </panel>
+      <panel class="panel">
+        <h3>Preset</h3>
+        <select id="hcPreset">
+          <option value="re-symbiose-mugen" selected="selected">MUGEN — 400k/200k/200 (infinite memory)</option>
+          <option value="symbiose-ah">Symbiose-AH! — 250k/100k/40</option>
+          <option value="fusion-ah">Fusion-AH! — 200k/100k/30</option>
+        </select>
+        <tip class="tip">Did you know: MUGEN (400k/200k/200) is the infinite-memory preset.</tip>
+      </panel>
+      <panel class="panel">
+        <h3>Modality</h3>
+        <select id="hcModality">
+          <option value="rtr-full" selected="selected">rtr-full (dual-ONNX)</option>
+          <option value="rtr-bge">rtr-bge (single)</option>
+          <option value="rtr-arctic">rtr-arctic (single)</option>
+        </select>
+        <tip class="tip">Did you know: scores are flat from T4 to T16 — threads buy speed, not quality.</tip>
+      </panel>
+    </cockpit>
+    <div class="nav-row">
+      <button class="btn ghost" type="button" data-nav="back">Back</button>
+      <button class="btn primary" id="hcInstall" type="button">Install</button>
+    </div>
+  </section>
+
+  <!-- Screen: review / plan -->
+  <section class="screen" id="screen-review">
+    <h2 class="title">Install plan</h2>
+    <plan class="plan" id="planList"></plan>
+    <div class="nav-row">
+      <button class="btn ghost" type="button" data-nav="back">Back</button>
+      <button class="btn primary" id="executeBtn" type="button">Install</button>
+    </div>
+  </section>
+
+  <!-- Screen: progress -->
+  <section class="screen" id="screen-progress">
+    <h2 class="title">Installing</h2>
+    <stream-track class="stream-track"><stream-fill class="stream-fill" id="streamFill"/></stream-track>
+    <div class="readout" id="progressReadout">0%</div>
+    <log class="log" id="progressLog"></log>
+  </section>
+
+  <!-- Screen: completion -->
+  <section class="screen" id="screen-done">
+    <h2 class="title">RTR-RE installed</h2>
+    <p class="subtitle">The memory is in. The world is entered.</p>
+    <easter-card class="easter-card" id="easterCard">
+      <button class="btn primary" id="easterBtn" type="button">Awaken MiDi-MoE-Symbiogen-000?</button>
+    </easter-card>
+    <easter-reveal class="easter-reveal" id="easterReveal" hidden="hidden">
+      <h3>MiDi-MoE-Symbiogen-000</h3>
+      <p class="citation" id="easterCitation"></p>
+    </easter-reveal>
+    <div class="nav-row">
+      <button class="btn ghost" id="closeBtn" type="button">Close</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ Scene declarations (DTD family members) ============ -->
+<script type="application/xml" id="scene-instrument"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scene SYSTEM "dtd/rtrre-scene.mod">
+<scene version="1.0" theme="instrument">
+  <camera drift="0.0012" parallax="0.0004" pitch="-0.16" distance="6.5"/>
+  <core radius="0.55" pulse="0.12" glow="0.5" points="220"/>
+  <floor reflect="0.35" y="-0.6"/>
+  <particles count="900" spread="3.2" speed="0.6"
+    size-min="0.6" size-max="2.2"
+    color="0.0,0.9,1.0" color2="0.12,0.44,1.0" color-mix="0.6"/>
+</scene>
+]]></script>
+<script type="application/xml" id="scene-network"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scene SYSTEM "dtd/rtrre-scene.mod">
+<scene version="1.0" theme="network">
+  <camera drift="0.0018" parallax="0.0005" pitch="-0.14" distance="6.2"/>
+  <core radius="0.5" pulse="0.14" glow="0.55" points="240"/>
+  <floor reflect="0.28" y="-0.6"/>
+  <particles count="1000" spread="3.4" speed="0.75"
+    size-min="0.5" size-max="2.4"
+    color="1.0,0.24,0.54" color2="0.54,0.24,1.0" color-mix="0.55"/>
+</scene>
+]]></script>
+<script type="application/xml" id="scene-forge"><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scene SYSTEM "dtd/rtrre-scene.mod">
+<scene version="1.0" theme="forge">
+  <camera drift="0.0009" parallax="0.0003" pitch="-0.18" distance="6.8"/>
+  <core radius="0.6" pulse="0.1" glow="0.6" points="200"/>
+  <floor reflect="0.42" y="-0.6"/>
+  <particles count="800" spread="3.0" speed="0.5"
+    size-min="0.7" size-max="2.0"
+    color="0.0,0.9,0.46" color2="0.0,0.69,1.0" color-mix="0.65"/>
+</scene>
+]]></script>
+
+<!-- ============ Bridge ============ -->
+<script src="js/themes.js"></script>
+<script src="js/bridge.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/presets.js"></script>
+<script src="js/shell.js"></script>
+</body>
+</html>
