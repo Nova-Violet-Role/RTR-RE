@@ -23,3 +23,11 @@ eval/results/calibration.json
 eval/results/calibration.md
 # Runtime keeper memory (session spans) — regenerable, stays out of git
 directives/sessions/
+
+# mjs plugin source files (shipped in sdist) — source deliverables, tracked
+!mjs/.opencode/
+!mjs/.opencode/plugins/
+!mjs/.opencode/plugins/rtr.mjs
+!mjs/.opencode/plugins/rtr-frontmatter.cjs
+!mjs/.opencode/command/
+!mjs/.opencode/command/rtr.md
