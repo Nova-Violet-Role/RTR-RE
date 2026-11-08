@@ -186,14 +186,13 @@ agent CLI and local-LLM setup.
 
 ## 🎮 The installer session (terminal-native)
 
-RTR-RE is not installed; it is *entered*. Every platform ships the same
-cinematic installer — a full terminal experience, no browser, no network.
+RTR-RE is not installed; it is *entered*. The npm route is the quickest:
 
-| Platform | Launch | Personality |
-|---|---|---|
-| pip / uvx | `uvx rtr-re-install` | **The Instrument** — cool cyan, oscilloscope progress, measurement readouts |
-| npm | `npx rtr-re-installer` | **The Network** — magenta/violet, node-graph progress, glowing connections |
-| GitHub | `python installer/launchers/python_launcher.py --theme forge` | **The Forge** — charcoal/emerald, raw terminal, build-log stream |
+```bash
+npx rtr-re-installer
+```
+
+(pip/uvx: `uvx rtr-re-install` · GitHub: `python installer/launchers/python_launcher.py --theme forge`)
 
 The session: three presets (Quick MUGEN one-click, Custom component
 selection, Hardcore full cockpit with **Recommended from Saimonokuma**
