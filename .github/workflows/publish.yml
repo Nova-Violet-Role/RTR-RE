@@ -110,6 +110,11 @@ jobs:
       VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
       - name: Install uv
         uses: astral-sh/setup-uv@v6
       - name: Publish wheel + sdist to PyPI
@@ -129,6 +134,11 @@ jobs:
       VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -163,6 +173,11 @@ jobs:
       RAW_VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
       - name: Resolve version
         run: |
           VERSION="${RAW_VERSION#v}"
