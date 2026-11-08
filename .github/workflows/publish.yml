@@ -31,13 +31,13 @@ jobs:
           test -f "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl"
           test -f "dist/rtr_role_type_retrieval-$VERSION.tar.gz"
           test -f "dist/rtr-re-opencode-plugin-$VERSION.tgz"
-          test -f "dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz"
+          test -f "dist/saimonokuma-rtr-re-mjs-$VERSION.tgz"
           echo "version=$VERSION" >> "$GITHUB_ENV"
           echo "resolved version: $VERSION"
           test -f "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl"
           test -f "dist/rtr_role_type_retrieval-$VERSION.tar.gz"
           test -f "dist/rtr-re-opencode-plugin-$VERSION.tgz"
-          test -f "dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz"
+          test -f "dist/saimonokuma-rtr-re-mjs-$VERSION.tgz"
       - name: Wheel metadata version check
         run: |
           VERSION="${{ env.version }}"
@@ -64,7 +64,7 @@ jobs:
           tar -xOf "$TGZ" package/package.json | grep -q '"rtr-re-installer"'
       - name: mjs tarball must exist and carry the plugin
         run: |
-          TGZ="dist/nova-violet-role-rtr-re-mjs-${{ env.version }}.tgz"
+          TGZ="dist/saimonokuma-rtr-re-mjs-${{ env.version }}.tgz"
           tar -tzf "$TGZ" | grep -qE "package/(index\.mjs|plugin\.json|package\.json)"
 
   publish-pypi:
@@ -109,7 +109,7 @@ jobs:
       - name: Publish mjs package
         run: |
           VERSION="${VERSION#v}"
-          npm publish "$GITHUB_WORKSPACE/dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz" --access public
+          npm publish "$GITHUB_WORKSPACE/dist/saimonokuma-rtr-re-mjs-$VERSION.tgz" --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -137,4 +137,4 @@ jobs:
             dist/rtr_role_type_retrieval-${{ env.version }}-py3-none-any.whl
             dist/rtr_role_type_retrieval-${{ env.version }}.tar.gz
             dist/rtr-re-opencode-plugin-${{ env.version }}.tgz
-            dist/nova-violet-role-rtr-re-mjs-${{ env.version }}.tgz
+            dist/saimonokuma-rtr-re-mjs-${{ env.version }}.tgz

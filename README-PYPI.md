@@ -288,19 +288,35 @@ nothing staged for the camera.
 
 <details>
 <summary>🎬 A · binary Versus (544 queries, 5 corpora) — 135 s</summary>
-<video src="media/tessersect-a-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+| | |
+|---|---|
+| <video src="media/tessersect-a-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
+
 </details>
 <details>
 <summary>🎬 B · graded gold-v2 (773 judgments) — 135 s</summary>
-<video src="media/tessersect-b-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+| | |
+|---|---|
+| <video src="media/tessersect-b-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
+
 </details>
 <details>
 <summary>🎬 C · live loop — Keeper/Compressor/Manager sink proof — 135 s</summary>
-<video src="media/tessersect-c-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+| | |
+|---|---|
+| <video src="media/tessersect-c-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
+
 </details>
 <details>
 <summary>🎬 D · dummy5 live instances — QUARTZ-999 sink 0.9650 — 135 s</summary>
-<video src="media/tessersect-d-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+| | |
+|---|---|
+| <video src="media/tessersect-d-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
+
 </details>
 
 | File | POV | Duration | Bytes | What it proves |

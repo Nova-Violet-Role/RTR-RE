@@ -28,7 +28,7 @@ Manual: copy `mjs/.opencode/` into your project or `~/.config/opencode/`
 paths the core expects — or clone this repo and add to `opencode.json`:
 
 ```json
-{ "plugin": ["@nova-violet-role/rtr-re-mjs"] }
+{ "plugin": ["@saimonokuma/rtr-re-mjs"] }
 ```
 
 ## Install (Claude Code / Codex)

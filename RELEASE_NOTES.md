@@ -36,7 +36,7 @@ CPU-first, local-first, zero API cost.
 - `uvx --from rtr-role-type-retrieval rtr-mcp` (MCP server)
 - `uv tool install rtr-role-type-retrieval` (CLI + installer)
 - `npm install rtr-re-opencode-plugin` (OpenCode keeper + ctrl+p palette)
-- `npm install @nova-violet-role/rtr-re-mjs` (no-MCP memory mode)
+- `npm install @saimonokuma/rtr-re-mjs` (no-MCP memory mode)
 
 ## License
 
