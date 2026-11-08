@@ -683,6 +683,37 @@ def memory_update_graph(project: str) -> str:
 
 
 @mcp.tool()
+def memory_reference_add(project: str, conversation_text: str = "") -> str:
+    """Bounded memory-reference insert: embed exactly this conversation text
+    into the chroma collections as a memory reference. This is the compact's
+    path — it never scans the corpus, never reindexes roots, and never runs
+    janitor/lexikon/graph; it only persists the compacted conversation so
+    memory_search can retrieve it (measured: the full session_commit
+    orchestrator on a fresh DB grew to ~20 GB and crashed the host)."""
+    try:
+        res = engine.add_memory_reference(project, conversation_text)
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Memory Reference Add Failure", [f"Error: {e}"], status="error"
+        )
+    if res.get("status") == "error":
+        return TUIRenderer.render_panel(
+            "Memory Reference Add Failure",
+            [res.get("message", "unknown")],
+            status="error",
+        )
+    return TUIRenderer.render_panel(
+        "Memory Reference Added",
+        [
+            f"Chunks added: {res.get('chunks_added', 0)}",
+            f"Project: {project}",
+            "Retrievable via memory_search.",
+        ],
+        status="success",
+    )
+
+
+@mcp.tool()
 def memory_session_commit(
     project: str, conversation_text: str = "", full_reindex: bool = False
 ) -> str:

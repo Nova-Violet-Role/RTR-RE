@@ -3879,6 +3879,89 @@ aliases: {fm_aliases}
             "links_added_or_normalized": links_added_count,
         }
 
+    def add_memory_reference(self, project: str, text: str = "") -> Dict[str, Any]:
+        """Bounded memory-reference insert: embed exactly this conversation text
+        into the RTR collections and return. No discovery, no registry scan,
+        no janitor/lexikon/graph, no corpus reindex — the compact's job is to
+        persist the compacted conversation as a chroma memory reference, not
+        to re-embed the world (measured: full index_all on a fresh DB grew to
+        ~20 GB and crashed the host session).
+        """
+        refused = self._require_writer("add_memory_reference")
+        if refused is not None:
+            return refused
+        wedged = _worker_refusal("add_memory_reference")
+        if wedged is not None:
+            return {"status": "error", "message": wedged}
+        text = (text or "").strip()
+        if not text:
+            return {"status": "success", "chunks_added": 0, "message": "empty text"}
+
+        stamp = time.strftime("%Y-%m-%dT%H:%M:%S")
+        rel_path = f"memoryref://{project}/compaction/{stamp}"
+        chunk_text = f"Compaction Memory Reference\nProject: {project}\n\n{text}"
+        chunks = [
+            {
+                "chunk_id": f"{rel_path}#chunk_0",
+                "text": chunk_text,
+                "title": "Compaction Memory Reference",
+                "raw_body": text,
+                "linked_concepts": [],
+            }
+        ]
+
+        try:
+            models = self.models
+            cols = self.collections
+        except Exception as e:
+            return {"status": "error", "message": f"model/collection init failed: {e}"}
+
+        added = 0
+        for slug, col in cols.items():
+            model_name = next(
+                (n for n in self.embed_model_names if model_slug(n) == slug),
+                slug,
+            )
+            try:
+                texts = [mask_ndata(c["text"]) for c in chunks]
+                embeddings = [
+                    [float(val) for val in e] for e in models[slug].embed(texts)
+                ]
+                col.add(
+                    ids=[c["chunk_id"] for c in chunks],
+                    embeddings=embeddings,
+                    documents=texts,
+                    metadatas=[
+                        {
+                            "rel_path": rel_path,
+                            "project": project_filter_key(project) or project,
+                            "category": "memory-reference",
+                            "subcategory": "compaction",
+                            "title": c["title"],
+                            "content_hash": hashlib.sha256(
+                                text.encode("utf-8")
+                            ).hexdigest(),
+                            "linked_concepts": "",
+                            "created_at": stamp,
+                            "updated_at": stamp,
+                            "last_accessed": str(time.time()),
+                            "access_count": "0",
+                            "importance": "high",
+                            "embed_model": model_name,
+                            "dtype_hist": dtype_histogram(c["text"]),
+                            "notations": "",
+                        }
+                        for c in chunks
+                    ],
+                )
+                added += len(chunks)
+            except Exception as e:
+                print(
+                    f"Failed memory-reference insert into {slug}: {e}",
+                    file=sys.stderr,
+                )
+        return {"status": "success", "chunks_added": added}
+
     def session_commit(
         self, project: str, conversation_text: str = "", full_reindex: bool = False
     ) -> Dict[str, Any]:
