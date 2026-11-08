@@ -11,7 +11,7 @@
   "homepage": "https://github.com/Nova-Violet-Role/rtr-role-type-retrieval",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nova-Violet-Role/rtr-role-type-retrieval.git",
+    "url": "git+https://github.com/Nova-Violet-Role/RTR-RE.git",
     "directory": "mjs"
   },
   "bugs": {

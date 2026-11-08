@@ -21,13 +21,19 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       - name: Artifacts must exist and match the version
         run: |
-          VERSION="${{ github.event.inputs.version || github.ref_name }}"
           VERSION="${VERSION#v}"
+          test -f "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl"
+          test -f "dist/rtr_role_type_retrieval-$VERSION.tar.gz"
+          test -f "dist/rtr-re-opencode-plugin-$VERSION.tgz"
+          test -f "dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz"
           echo "version=$VERSION" >> "$GITHUB_ENV"
+          echo "resolved version: $VERSION"
           test -f "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl"
           test -f "dist/rtr_role_type_retrieval-$VERSION.tar.gz"
           test -f "dist/rtr-re-opencode-plugin-$VERSION.tgz"
@@ -67,6 +73,8 @@ jobs:
     environment: pypi
     permissions:
       contents: read
+    env:
+      VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
@@ -74,7 +82,9 @@ jobs:
       - name: Publish wheel + sdist to PyPI
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: uv publish dist/rtr_role_type_retrieval-${{ env.version }}-py3-none-any.whl dist/rtr_role_type_retrieval-${{ env.version }}.tar.gz
+        run: |
+          VERSION="${VERSION#v}"
+          uv publish dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl dist/rtr_role_type_retrieval-$VERSION.tar.gz
 
   publish-npm:
     needs: verify
@@ -82,6 +92,8 @@ jobs:
     environment: npm
     permissions:
       contents: read
+    env:
+      VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -89,11 +101,15 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
       - name: Publish plugin package
-        run: npm publish dist/rtr-re-opencode-plugin-${{ env.version }}.tgz --access public
+        run: |
+          VERSION="${VERSION#v}"
+          npm publish dist/rtr-re-opencode-plugin-$VERSION.tgz --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish mjs package
-        run: npm publish dist/nova-violet-role-rtr-re-mjs-${{ env.version }}.tgz --access public
+        run: |
+          VERSION="${VERSION#v}"
+          npm publish dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -102,8 +118,15 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      RAW_VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+      - name: Resolve version
+        run: |
+          VERSION="${RAW_VERSION#v}"
+          echo "version=$VERSION" >> "$GITHUB_ENV"
+          echo "resolved release version: $VERSION"
       - name: Create GitHub release with assets
         uses: softprops/action-gh-release@v2
         with:
