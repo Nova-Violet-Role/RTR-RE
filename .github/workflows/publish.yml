@@ -103,13 +103,13 @@ jobs:
       - name: Publish plugin package
         run: |
           VERSION="${VERSION#v}"
-          npm publish dist/rtr-re-opencode-plugin-$VERSION.tgz --access public
+          npm publish "$GITHUB_WORKSPACE/dist/rtr-re-opencode-plugin-$VERSION.tgz" --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish mjs package
         run: |
           VERSION="${VERSION#v}"
-          npm publish dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz --access public
+          npm publish "$GITHUB_WORKSPACE/dist/nova-violet-role-rtr-re-mjs-$VERSION.tgz" --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
