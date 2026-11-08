@@ -41,25 +41,26 @@ scoreboard says so, in the same table.
 
 ---
 
-## 🚀 Try it now (60 seconds)
+## 🚀 Try it now — the installer
 
-```jsonc
-// opencode.jsonc — add the memory MCP server, then restart opencode
-"mcp": {
-  "memory": {
-    "type": "local",
-    "command": ["uvx", "--from", "rtr-role-type-retrieval", "rtr-mcp"],
-    "enabled": true,
-    "timeout": 180000
-  }
-}
-```
+RTR-RE is not installed; it is *entered*. Every platform ships the same
+cinematic terminal installer — no browser, no network, just your platform:
+
+| Platform | Launch | Personality |
+|---|---|---|
+| pip / uvx | `uvx rtr-re-install` | **The Instrument** — cool cyan, oscilloscope progress |
+| npm | `npx rtr-re-installer` | **The Network** — magenta/violet, node-graph progress |
+| GitHub | `git clone https://github.com/Nova-Violet-Role/RTR-RE.git && python installer/launchers/python_launcher.py --theme forge` | **The Forge** — charcoal/emerald, raw build-log stream |
+
+Three presets (Quick MUGEN one-click, Custom component selection, Hardcore
+full cockpit), arcade remixes of *Obsession* that adapt to your preset, and
+the **MiDi-MoE-Symbiogen-000** easter egg at the end.
 
 Then ask your agent: *"what did we decide about the installer last week?"* —
 RTR-RE answers from its own memory, not from a fresh search. That's the
 whole point: the engine keeps what left the window, typed and retrievable.
 
-Full setup, knobs, and the CLI path: [Quick start](#-quick-start-opencode-60-seconds)
+Manual setup, knobs, and the CLI path: [Quick start](#-quick-start-opencode)
 and the [technical manual](README-PYPI.md).
 
 ---
@@ -158,7 +159,7 @@ an overseeding report with numbers is a first-class contribution.
 
 ---
 
-## 🚀 Quick start (opencode, 60 seconds)
+## 🚀 Quick start (opencode, manual)
 
 ```jsonc
 // opencode.jsonc
