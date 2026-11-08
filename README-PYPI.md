@@ -279,59 +279,6 @@ DTD family member (`installer/shell/dtd/rtrre-scene.mod`); the shell
 markup is validated against the declared vocabulary by
 `installer/shell/tools/conformance.py`.
 
-## 8b. Tessersect media — four 480p collages, 135 s each
-
-Four distinct Moviola Torch collages (1-bit, 5 fps, 854x480, h264),
-subtitles baked into every frame, three POVs, live dummy-session work.
-Every number visible is frozen in `eval/results/` or the dummy survey —
-nothing staged for the camera.
-
-<details>
-<summary>🎬 A · binary Versus (544 queries, 5 corpora) — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-a-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-<details>
-<summary>🎬 B · graded gold-v2 (773 judgments) — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-b-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-<details>
-<summary>🎬 C · live loop — Keeper/Compressor/Manager sink proof — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-c-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-<details>
-<summary>🎬 D · dummy5 live instances — QUARTZ-999 sink 0.9650 — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-d-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-
-| File | POV | Duration | Bytes | What it proves |
-|---|---|---:|---:|---|
-| `media/tessersect-a-480p-sub.mp4` | A · binary Versus | 135 s | 693555 | 544 queries/5 corpora, R@3 full leads, R@1 full leads, vote truncation |
-| `media/tessersect-b-480p-sub.mp4` | B · graded gold-v2 | 135 s | 612697 | dense-base leads, NT-G1C mechanism, standout fix |
-| `media/tessersect-c-480p-sub.mp4` | C · live loop | 135 s | 633699 | Keeper/Compressor/Manager, dummy3+dummy4 sink proof |
-| `media/tessersect-d-480p-sub.mp4` | D · dummy5 live instances | 135 s | 534882 | fresh native-Keeper loop, QUARTZ-999 sink hit 0.9650 |
-
-Spec: preset torch, height 480, fps 5, 26 captioned frames at 5 s each.
-Reproduce: `uv run --with pillow --no-project python media/make_frames.py`,
-then slideshow each `media/frames-*/` directory at 5 s/image via the
-Moviola Torch preset; probe with `moviola_probe_media`. Full spec:
-`media/TECHSPEC.md`.
-
 ## 9. Licence
 
 Dual-licensed, copyleft, binding: **AGPL-3.0-or-later OR EUPL-1.2**

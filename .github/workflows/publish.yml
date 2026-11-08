@@ -19,12 +19,49 @@ on:
       - 'v*'
 
 jobs:
-  verify:
+  build:
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Build wheel + sdist
+        run: |
+          VERSION="${VERSION#v}"
+          uv build --out-dir dist
+          test -f "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl"
+          test -f "dist/rtr_role_type_retrieval-$VERSION.tar.gz"
+      - name: Pack npm plugin tarball
+        run: |
+          VERSION="${VERSION#v}"
+          npm pack --pack-destination dist ./opencode-plugin
+          test -f "dist/rtr-re-opencode-plugin-$VERSION.tgz"
+      - name: Pack mjs tarball
+        run: |
+          VERSION="${VERSION#v}"
+          npm pack --pack-destination dist ./mjs
+          test -f "dist/saimonokuma-rtr-re-mjs-$VERSION.tgz"
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  verify:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event.inputs.version || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
       - name: Artifacts must exist and match the version
         run: |
           VERSION="${VERSION#v}"
@@ -34,10 +71,6 @@ jobs:
           test -f "dist/saimonokuma-rtr-re-mjs-$VERSION.tgz"
           echo "version=$VERSION" >> "$GITHUB_ENV"
           echo "resolved version: $VERSION"
-          test -f "dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl"
-          test -f "dist/rtr_role_type_retrieval-$VERSION.tar.gz"
-          test -f "dist/rtr-re-opencode-plugin-$VERSION.tgz"
-          test -f "dist/saimonokuma-rtr-re-mjs-$VERSION.tgz"
       - name: Wheel metadata version check
         run: |
           VERSION="${{ env.version }}"

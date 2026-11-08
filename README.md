@@ -203,58 +203,6 @@ uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels
 Full tables, taxons, and the axis studies (thread-scaling, parking,
 MUGEN taring) live in `eval/results/` and the technical manual.
 
-### 🎬 Tessersect media — four 480p collages, 135 s each
-
-Four distinct Moviola Torch collages (1-bit grey, 5 fps, 854x480, h264),
-subtitles baked into every frame, four POVs: binary Versus, graded
-gold-v2, the live Keeper/Compressor/Manager loop with dummy3+dummy4
-sink proof, and dummy5 live instances (QUARTZ-999 sink hit 0.9650). Every visible number is frozen in `eval/results/` or the dummy
-survey — nothing staged for the camera.
-
-<details>
-<summary>🎬 A · binary Versus (544 queries, 5 corpora) — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-a-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-<details>
-<summary>🎬 B · graded gold-v2 (773 judgments) — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-b-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-<details>
-<summary>🎬 C · live loop — Keeper/Compressor/Manager sink proof — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-c-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-<details>
-<summary>🎬 D · dummy5 live instances — QUARTZ-999 sink 0.9650 — 135 s</summary>
-
-| | |
-|---|---|
-| <video src="media/tessersect-d-480p-sub.mp4" controls muted preload="metadata" width="480"></video> |
-
-</details>
-
-| Video | POV | Duration | Bytes | Frames |
-|---|---|---:|---:|---:|
-| `tessersect-a-480p-sub.mp4` | A · binary Versus (544 queries, 5 corpora) | 135 s | 693555 | 26 × 5 s |
-| `tessersect-b-480p-sub.mp4` | B · graded gold-v2 (773 judgments) | 135 s | 612697 | 26 × 5 s |
-| `tessersect-c-480p-sub.mp4` | C · live loop (sink proof) | 135 s | 633699 | 26 × 5 s |
-| `tessersect-d-480p-sub.mp4` | D · dummy5 live instances (QUARTZ-999 0.9650) | 135 s | 534882 | 26 × 5 s |
-
-Reproduce: `uv run --with pillow --no-project python media/make_frames.py`,
-then one Torch slideshow per `media/frames-*/` at 5 s/image, height 480;
-probe with `moviola_probe_media`. Spec: `media/TECHSPEC.md`.
-
 ### 🧬 Architecture expansion — Keeper × Compressor × Manager
 
 The Keeper (native plugin) selects/protects/prunes the host window
