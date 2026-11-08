@@ -133,16 +133,24 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
-      - name: Publish plugin package
+      - name: Publish plugin package (skip if version already exists)
         run: |
           VERSION="${VERSION#v}"
-          npm publish "$GITHUB_WORKSPACE/dist/rtr-re-opencode-plugin-$VERSION.tgz" --access public
+          if npm view "rtr-re-opencode-plugin@$VERSION" version >/dev/null 2>&1; then
+            echo "rtr-re-opencode-plugin@$VERSION already published — skipping"
+          else
+            npm publish "$GITHUB_WORKSPACE/dist/rtr-re-opencode-plugin-$VERSION.tgz" --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Publish mjs package
+      - name: Publish mjs package (skip if version already exists)
         run: |
           VERSION="${VERSION#v}"
-          npm publish "$GITHUB_WORKSPACE/dist/saimonokuma-rtr-re-mjs-$VERSION.tgz" --access public
+          if npm view "@saimonokuma/rtr-re-mjs@$VERSION" version >/dev/null 2>&1; then
+            echo "@saimonokuma/rtr-re-mjs@$VERSION already published — skipping"
+          else
+            npm publish "$GITHUB_WORKSPACE/dist/saimonokuma-rtr-re-mjs-$VERSION.tgz" --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
