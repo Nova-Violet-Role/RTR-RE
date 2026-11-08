@@ -4,40 +4,34 @@
 **Short name: RE:Symbiose. RRF-heuristic, DTD-semantic-capable retriever + symbiotized context engine.
 CPU-first. Local-first. Zero API cost.**
 
-*People keep asking what RAG is. The shift that matters is from disconnected
-retrieved fragments toward living, typed, persistent context — and this
-codebase is built to measure that difference, not just claim it.*
-
-### Two products, one family — the engine and the car
-
-**RTR** (the separate `rtr-role-type-retrieval` repo) is the **engine**: the
-retriever alone — dual-ONNX RRF ballot, DTD typing, Lexikon — built to
-annihilate RAG. It runs on its own for its own crowd.
-
-**RTR-RE** is the **car**: the RTR retriever **plus** the full context engine —
-the Keeper (window), the Compressor (drain), the Manager (memory MCP), the
-SymbioseWorker (background tickets), the engine-beneath (formal Lean battery),
-the installer, and the live-tuning palette. Every major incremental performance
-update to the Compressor and the Keeper lands here, not in RTR. The preset
-registry (`execution/rtr_presets.json`) is shared by both products; the keeper
-presets (trigger/target/max) are RTR-RE's section of it.
-
-Three offices, zero overlap: a **Keeper** (native OpenCode plugin,
-`opencode-plugin/rtr-re-keeper.js`) selects what stays in the window,
-a **Compressor** keeps everything verbatim until the trigger preset then cuts
-to the target preset without pausing the live turn, and **RTR
-manages** what left the window as typed, retrievable substance. Classic
-RAG — generic soup in, hope out — is not extended here; it is replaced
-by role-routed, DTD-typed retrieval, and the claim ships with the
-instruments that can falsify it (binary Versus + graded gold bench in
-`eval/`, every number re-runnable on your machine). Where same-size
-dense still leads — graded natural-language intents, measured — the
-scoreboard says so, in the same table.
-
 [![Ko-fi](https://img.shields.io/badge/Support-Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/saimonokuma) [![Open Source](https://img.shields.io/badge/Open-Source-9cf?style=for-the-badge)](https://github.com/Nova-Violet-Role) [![Copyleft](https://img.shields.io/badge/Licence-AGPL--3.0--or--later_OR_EUPL--1.2-634bA2?style=for-the-badge)](#-licence--philosophy)
 
 > *Retrieval is not search. It is routing by role, parsing by type — and where the
 > models disagree is where the ranking lives.*
+
+---
+
+### Two products, one family — the engine and the car
+
+**RTR** (the separate `rtr-role-type-retrieval` repo) is the **engine**: the
+retriever alone — dual-ONNX RRF ballot, DTD typing, Lexikon. It runs on its
+own for its own crowd.
+
+**RTR-RE** is the **car**: the RTR retriever **plus** the full context engine —
+the Keeper (window), the Compressor (drain), the Manager (memory MCP), the
+SymbioseWorker (background tickets), the engine-beneath (formal Lean battery),
+the installer, and the live-tuning palette. The preset registry
+(`execution/rtr_presets.json`) is shared by both products; the keeper presets
+(trigger/target/max) are RTR-RE's section of it.
+
+Three offices, zero overlap: the **Keeper** (native OpenCode plugin,
+`opencode-plugin/rtr-re-keeper.js`) selects what stays in the window; the
+**Compressor** keeps everything verbatim until the trigger preset, then cuts to
+the target preset without pausing the live turn; and **RTR manages** what left
+the window as typed, retrievable substance. Classic RAG is not extended here —
+it is replaced by role-routed, DTD-typed retrieval, and the claim ships with
+the instruments that can falsify it (binary Versus + graded gold bench in
+`eval/`, every number re-runnable on your machine).
 
 ---
 
@@ -53,8 +47,11 @@ cinematic terminal installer — no browser, no network, just your platform:
 | GitHub | `git clone https://github.com/Nova-Violet-Role/RTR-RE.git && python installer/launchers/python_launcher.py --theme forge` | **The Forge** — charcoal/emerald, raw build-log stream |
 
 Three presets (Quick MUGEN one-click, Custom component selection, Hardcore
-full cockpit), arcade remixes of *Obsession* that adapt to your preset, and
-the **MiDi-MoE-Symbiogen-000** easter egg at the end.
+full cockpit with **Recommended from Saimonokuma** badges), arcade remixes
+of *Obsession* (See-Saw / Yuki Kajiura) that adapt tempo to your preset, and
+the **MiDi-MoE-Symbiogen-000** easter egg at the end. The scene itself is a
+DTD family member — declared in `installer/shell/dtd/rtrre-scene.mod`,
+rendered by our own engine.
 
 Then ask your agent: *"what did we decide about the installer last week?"* —
 RTR-RE answers from its own memory, not from a fresh search. That's the
@@ -184,25 +181,6 @@ agent CLI and local-LLM setup.
 
 ---
 
-## 🎮 The installer session (terminal-native)
-
-RTR-RE is not installed; it is *entered*. The npm route is the quickest:
-
-```bash
-npx rtr-re-installer
-```
-
-(pip/uvx: `uvx rtr-re-install` · GitHub: `python installer/launchers/python_launcher.py --theme forge`)
-
-The session: three presets (Quick MUGEN one-click, Custom component
-selection, Hardcore full cockpit with **Recommended from Saimonokuma**
-badges), arcade remixes of *Obsession* (See-Saw / Yuki Kajiura) that
-adapt tempo to your preset, and the **MiDi-MoE-Symbiogen-000** easter egg
-at the end. The scene itself is a DTD family member — declared in
-`installer/shell/dtd/rtrre-scene.mod`, rendered by our own engine.
-
----
-
 ## 🧪 Evaluation
 
 `eval/` holds the versus bench: **RTR vs classic RAG**, measured on real
@@ -225,62 +203,45 @@ uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels
 Full tables, taxons, and the axis studies (thread-scaling, parking,
 MUGEN taring) live in `eval/results/` and the technical manual.
 
-### 📈 The 1.1.0 measurement — amplified architecture, frozen floor
-
-Every number below re-runs with `uv run python eval/bench_versus.py` on this
-machine; the frozen floor lives in `eval/results/baseline-1.0.0.json`, and the
-current run in `eval/results/versus.json`.
-
-**RTR-full vs classic RAG (frozen 4×7, no-seed floor):** rtr-full ties or beats
-the best classic RAG system on every corpus at recall@1, and leads all four on
-recall@3 and MRR — dita-spec 0.9351 (ties rag-hybrid), dtd-commands 0.4845 vs
-0.4536, dtd-family 0.5460 (ties rag-hybrid), nt-studies 0.5747 vs 0.5632.
-
-**The DTD amplification lifts the hardest corpus:** with the structural inventory
-header and the lexikon seeded from DTD vocabulary (3800 terms), dtd-family
-rtr-full goes **R@1 0.5460 → 0.7239 (+0.1779)**, R@3 0.6503 → 0.8896
-(+0.2393), MRR 0.5930 → 0.7996 (+0.2066). Taxon deltas: T7 (attribute-semantic)
-+0.425, T8 (entity-lane) +0.300, T1/T2/T6/T9/T10 at parity — no regression
-anywhere. The other three corpora hold exactly at the floor.
-
-**Engine Beneath — 27/27 cases pass:** the formal Lean battery
-(`formal/Symbiose.lean`) plus the evaluable case registry
-(`eval/engine_beneath_cases.py`) cover the keeper's recency-aware protection,
-the compressor's incremental, session-resume and double-duty behavior, evicted
-span retrievability via memory_search, the lexikon lane reaching evicted
-content, the optimizer consuming its own resolved profile, preset-axis parking
-arithmetic across 84 cells, and parameter-entity injection safety.
-
-**Presets are measured, not typed:** a fresh install defaults to
-Re-Symbiose-Mugen (400k/200k/200) with RTR-FULL at T4/P60 — the
-infinite-memory preset, now the shipped default; Symbiose-AH!
-(250k/100k/40) remains available as the balanced preset.
-
-Final freeze (2026-10-27, within-run reading): binary intense —
-rtr-full R@3 **0.756** (best), R@1 0.642 / MRR 0.689 at parity with the
-best same-size RAG arm; graded gold-v2 (773 judgments) — same-size
-dense leads combined nDCG@10 (0.817 vs rtr-full 0.780). Both tables,
-the per-query losses and the mechanism fix behind them are recorded in
-`artifacts/geometry/2026-10-27-final-freeze.md` and
-`2026-10-27-graded-fortification.md`. The numbers we lose are published
-in the same font as the ones we win.
-
-Gold v3 (additive lane-on gap adjudication, 785 judgments, labels frozen throughout) reruns the same verdict — see `artifacts/geometry/2026-10-27-graded-v3.md`. The formal battery builds against full Mathlib (pinned v4.33.0, 8713 jobs green, 20 standard-axiom records + 1 recorded native `m31_native`) — see `formal/MATHLIB_POLICY.md`.
-
 ### 🎬 Tessersect media — four 480p collages, 135 s each
 
 Four distinct Moviola Torch collages (1-bit grey, 5 fps, 854x480, h264),
-subtitles baked into all 104 frames, four POVs: binary Versus, graded
+subtitles baked into every frame, four POVs: binary Versus, graded
 gold-v2, the live Keeper/Compressor/Manager loop with dummy3+dummy4
 sink proof, and dummy5 live instances (QUARTZ-999 sink hit 0.9650). Every visible number is frozen in `eval/results/` or the dummy
 survey — nothing staged for the camera.
 
-| File | POV | Duration | Bytes | Frames |
+<details>
+<summary>🎬 A · binary Versus (544 queries, 5 corpora) — 135 s</summary>
+
+<video src="media/tessersect-a-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+<details>
+<summary>🎬 B · graded gold-v2 (773 judgments) — 135 s</summary>
+
+<video src="media/tessersect-b-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+<details>
+<summary>🎬 C · live loop — Keeper/Compressor/Manager sink proof — 135 s</summary>
+
+<video src="media/tessersect-c-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+<details>
+<summary>🎬 D · dummy5 live instances — QUARTZ-999 sink 0.9650 — 135 s</summary>
+
+<video src="media/tessersect-d-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+
+| Video | POV | Duration | Bytes | Frames |
 |---|---|---:|---:|---:|
-| `media/tessersect-a-480p.mp4` | A · binary Versus (544 queries, 5 corpora) | 135 s | 120717 | 26 × 5 s |
-| `media/tessersect-b-480p.mp4` | B · graded gold-v2 (773 judgments) | 135 s | 118339 | 26 × 5 s |
-| `media/tessersect-c-480p.mp4` | C · live loop (sink proof) | 135 s | 118112 | 26 × 5 s |
-| `media/tessersect-d-480p.mp4` | D · dummy5 live instances (QUARTZ-999 0.9650) | 135 s | 123855 | 26 × 5 s |
+| `tessersect-a-480p-sub.mp4` | A · binary Versus (544 queries, 5 corpora) | 135 s | 693555 | 26 × 5 s |
+| `tessersect-b-480p-sub.mp4` | B · graded gold-v2 (773 judgments) | 135 s | 612697 | 26 × 5 s |
+| `tessersect-c-480p-sub.mp4` | C · live loop (sink proof) | 135 s | 633699 | 26 × 5 s |
+| `tessersect-d-480p-sub.mp4` | D · dummy5 live instances (QUARTZ-999 0.9650) | 135 s | 534882 | 26 × 5 s |
 
 Reproduce: `uv run --with pillow --no-project python media/make_frames.py`,
 then one Torch slideshow per `media/frames-*/` at 5 s/image, height 480;

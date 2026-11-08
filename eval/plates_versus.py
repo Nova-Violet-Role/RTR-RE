@@ -15,7 +15,21 @@ from pathlib import Path
 HERE = Path(__file__).parent
 RESULTS = HERE / "results" / "versus.json"
 
-TAXONS = ["T1", "T2", "T3", "T4", "T5", "T6"]
+TAXONS = [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5",
+    "T6",
+    "T7",
+    "T8",
+    "T9",
+    "T10",
+    "T11",
+    "T12",
+    "T13",
+]
 TAXON_LABELS = {
     "T1": "T1 title-self",
     "T2": "T2 rare-term",
@@ -23,6 +37,13 @@ TAXON_LABELS = {
     "T4": "T4 scoped",
     "T5": "T5 paraphrase",
     "T6": "T6 ident",
+    "T7": "T7 attribute-semantic",
+    "T8": "T8 entity-lane",
+    "T9": "T9 content-model",
+    "T10": "T10 cross-family",
+    "T11": "T11 lineage",
+    "T12": "T12 customization-layer",
+    "T13": "T13 keeper-memory",
 }
 SERIES_FILL = {
     "rag-dense": "#b0b7c3",

@@ -16,7 +16,13 @@ missing, the rules say so out loud and the session continues on files.
 
 ## Install (OpenCode)
 
-Local: copy `mjs/.opencode/` into your project or `~/.config/opencode/`
+The npm installer route (terminal-native, no browser, no network):
+
+```bash
+npx rtr-re-installer
+```
+
+Manual: copy `mjs/.opencode/` into your project or `~/.config/opencode/`
 (plugins in those directories load automatically), plus `mjs/hooks/`,
 `mjs/skills/`, and `mjs/AGENTS.md` beside them at the same relative
 paths the core expects — or clone this repo and add to `opencode.json`:

@@ -28,10 +28,18 @@ included, and the shipped tree is the git history itself.
 By [Nova-Violet Role](https://github.com/Nova-Violet-Role) — non-profit.
 **AGPL-3.0-or-later OR EUPL-1.2.** Support: [ko-fi.com/saimonokuma](https://ko-fi.com/saimonokuma).
 
-## 1. Run it (pick one — no clone, no venv, no sync in any of them)
+## 1. Run it — the installer (terminal-native, no browser, no network)
 
 ```bash
-# A. Zero-install, every session (recommended): uvx caches + isolates automatically
+uvx rtr-re-install
+```
+
+Session details (presets, themes, flags, easter egg): [§8a](#8a-the-installer-session-terminal-native).
+
+Manual paths (no clone, no venv, no sync in any of them):
+
+```bash
+# A. Zero-install, every session: uvx caches + isolates automatically
 uvx --from rtr-role-type-retrieval rtr-mcp            # MCP server over stdio
 uvx --from rtr-role-type-retrieval rtr-cli stats      # CLI
 uvx --from rtr-role-type-retrieval rtr-re-install-opencode   # native Keeper plugin + config snippet
@@ -278,12 +286,37 @@ subtitles baked into every frame, three POVs, live dummy-session work.
 Every number visible is frozen in `eval/results/` or the dummy survey —
 nothing staged for the camera.
 
+<details>
+<summary>🎬 A · binary Versus (544 queries, 5 corpora) — 135 s</summary>
+
+<video src="media/tessersect-a-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+<details>
+<summary>🎬 B · graded gold-v2 (773 judgments) — 135 s</summary>
+
+<video src="media/tessersect-b-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+<details>
+<summary>🎬 C · live loop — Keeper/Compressor/Manager sink proof — 135 s</summary>
+
+<video src="media/tessersect-c-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+<details>
+<summary>🎬 D · dummy5 live instances — QUARTZ-999 sink 0.9650 — 135 s</summary>
+
+<video src="media/tessersect-d-480p-sub.mp4" controls muted preload="metadata" width="480"></video>
+
+</details>
+
 | File | POV | Duration | Bytes | What it proves |
 |---|---|---:|---:|---|
-| `media/tessersect-a-480p.mp4` | A · binary Versus | 135 s | 120717 | 544 queries/5 corpora, R@3 full leads, R@1 full leads, vote truncation |
-| `media/tessersect-b-480p.mp4` | B · graded gold-v2 | 135 s | 118339 | dense-base leads, NT-G1C mechanism, standout fix |
-| `media/tessersect-c-480p.mp4` | C · live loop | 135 s | 118112 | Keeper/Compressor/Manager, dummy3+dummy4 sink proof |
-| `media/tessersect-d-480p.mp4` | D · dummy5 live instances | 135 s | 123855 | fresh native-Keeper loop, QUARTZ-999 sink hit 0.9650 |
+| `media/tessersect-a-480p-sub.mp4` | A · binary Versus | 135 s | 693555 | 544 queries/5 corpora, R@3 full leads, R@1 full leads, vote truncation |
+| `media/tessersect-b-480p-sub.mp4` | B · graded gold-v2 | 135 s | 612697 | dense-base leads, NT-G1C mechanism, standout fix |
+| `media/tessersect-c-480p-sub.mp4` | C · live loop | 135 s | 633699 | Keeper/Compressor/Manager, dummy3+dummy4 sink proof |
+| `media/tessersect-d-480p-sub.mp4` | D · dummy5 live instances | 135 s | 534882 | fresh native-Keeper loop, QUARTZ-999 sink hit 0.9650 |
 
 Spec: preset torch, height 480, fps 5, 26 captioned frames at 5 s each.
 Reproduce: `uv run --with pillow --no-project python media/make_frames.py`,
