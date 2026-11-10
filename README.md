@@ -201,24 +201,68 @@ agent CLI and local-LLM setup.
 ## 🧪 Evaluation
 
 `eval/` holds the versus bench: **RTR vs classic RAG**, measured on real
-documentation with a published taxonomy (self-retrieval, rare-term lookup,
-conceptual recall, scoped vs global), rendered as Mermaid and SVG.
+documentation with a published taxonomy (`eval/TAXONOMY.md`), rendered as
+SVG (white + dark). Every number re-runs on your machine.
 
-**The short version:** RTR-RE leads classic RAG on every corpus in the
-frozen 1.1.0 baseline (combined R@1 0.6857 vs 0.5825), the keeper-memory
-corpus retrieves evicted spans at R@1 1.0, and the infinite-memory claim
-is measured, not asserted. Every number re-runs on your machine.
+**The short version (1.2.0 freeze, 544 queries, 5 corpora, 0 errors):**
+rtr-full leads every column combined (R@1 **0.689**, R@3 **0.846**, MRR
+**0.756**), keeper-memory retrieves evicted spans at 0.975, and the
+infinite-memory claim is measured, not asserted.
 
-![RTR vs RAG — recall@3 by taxon](eval/versus.svg)
+| Taxon | What it isolates |
+|---|---|
+| T1 title-self · T2 rare-term · T3 concept | general health, discrimination, conceptual recall |
+| T4 scoped · T5 paraphrase · T6 ident | isolation, lexikon lane, exact-match lane |
+| T7 attribute · T8 entity · T9 content-model | DTD structural recall |
+| T10 cross-family · T11 lineage · T12 customization | DTD family discrimination |
+| T13 keeper-memory | evicted-span retrievability (TODO-70) |
 
-```
-uvx --from rtr-role-type-retrieval python -m execution.rtr_eval   # release gate (no regression)
-uv run python eval/bench_versus.py                 # full versus bench -> eval/results/
-uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="eval/versus-dark.svg">
+  <img src="eval/versus.svg" alt="RTR vs RAG — recall@3 by taxon">
+</picture>
+
+<details>
+<summary>Graded gold-v2 (24 queries, 773 judgments) — dense leads prose, both tables printed</summary>
+
+nDCG@10 combined: rag-dense-base 0.8094, rtr-full 0.7944. The stricter
+instrument; prose corpora favor dense, term-dense favors fusion.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="eval/graded-dark.svg">
+  <img src="eval/graded.svg" alt="Graded nDCG@10 by query">
+</picture>
+
+</details>
+
+<details>
+<summary>Engine Beneath (27/27) + CPU preset performance (T2→T8 scaling)</summary>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="eval/engine-beneath-dark.svg">
+  <img src="eval/engine-beneath.svg" alt="Engine Beneath case scoreboard">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="eval/preset-perf-dark.svg">
+  <img src="eval/preset-perf.svg" alt="CPU preset performance">
+</picture>
+
+</details>
+
+<details>
+<summary>Reproduce everything (pypi · npm · git)</summary>
+
+```text
+uvx --from rtr-role-type-retrieval python -m execution.rtr_eval   # release gate (pypi)
+uv run python eval/bench_versus.py                 # full versus bench -> eval/results/ (git)
+node --test opencode-plugin/ mjs/tests/           # JS suites (npm-adjacent)
 ```
 
 Full tables, taxons, and the axis studies (thread-scaling, parking,
 MUGEN taring) live in `eval/results/` and the technical manual.
+
+</details>
 
 ### 🧬 Architecture expansion — Keeper × Compressor × Manager
 

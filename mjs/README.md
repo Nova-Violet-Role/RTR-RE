@@ -75,6 +75,43 @@ that same core (`createRequire`), so no rule exists in two places.
 
 Tests: `node --test tests/*.test.mjs` (also `npm test`).
 
+## 🧪 Evaluation
+
+The no-MCP edition shares the engine, the index, and the numbers: rtr-full
+leads combined (R@1 0.689, R@3 0.846, MRR 0.756, 544 queries, 0 errors).
+Install via npm, measure via pypi (`rtr-cli`), source on git.
+
+| Taxon | What it isolates |
+|---|---|
+| T1–T6 | title, rare-term, concept, scoped, paraphrase, ident |
+| T7–T12 | DTD structural + family discrimination |
+| T13 keeper-memory | evicted-span retrievability (0.975) |
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../eval/versus-dark.svg">
+  <img src="../eval/versus.svg" alt="RTR vs RAG — recall@3 by taxon">
+</picture>
+
+<details>
+<summary>Graded + Engine Beneath + CPU preset performance</summary>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../eval/graded-dark.svg">
+  <img src="../eval/graded.svg" alt="Graded nDCG@10 by query">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../eval/engine-beneath-dark.svg">
+  <img src="../eval/engine-beneath.svg" alt="Engine Beneath case scoreboard">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../eval/preset-perf-dark.svg">
+  <img src="../eval/preset-perf.svg" alt="CPU preset performance">
+</picture>
+
+</details>
+
 ## License
 
 Dual EUPL-1.2 / AGPL-3.0-or-later, Nova-Violet Role ORG. Forms mirror

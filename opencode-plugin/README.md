@@ -8,7 +8,7 @@ RTR-RE:Symbiose OpenCode plugins — the **Keeper** (server) and the
 | File | Role |
 |---|---|
 | `rtr-re-keeper.js` | Keeper server plugin: eviction planning, DTD-shaped memory sink, recency-aware todowrite protection, `/rtr` prompt commands, status file |
-| `rtr-re-tui.tsx` | TUI plugin: eleven ctrl+p palette commands (`status`, `enable`, `disable`, `preset`, `cpu`, `modality`, `threads`, `parking`, `trigger`, `target`, `max`) |
+| `rtr-re-tui.tsx` | TUI plugin: thirteen ctrl+p palette commands (`status`, `enable`, `disable`, `preset`, `cpu`, `modality`, `threads`, `parking`, `trigger`, `target`, `max`, `evict-tokens`, `evict-messages`) |
 | `assets/rtr_presets.json` | Shared preset registry (keeper presets + CPU profiles + modalities) |
 
 ## Install
@@ -48,6 +48,37 @@ The TUI plugin registers under the `palette` namespace (ctrl+p).
 
 - Plain chat: `/rtr status|hold|trigger|target|max|preset|enable|disable`
 - ctrl+p palette: `rtr.*` commands write the same watched config file.
+
+## 🧪 Evaluation
+
+Keeper behavior is frozen by gate (`mjs/scripts/keeper-behavior.mjs`: 8
+scenarios, version-pinned manifest) and proven by the Engine Beneath
+battery (27/27). Install via npm, measure via pypi, source on git —
+every number re-runs.
+
+| Taxon | What it isolates |
+|---|---|
+| T13 keeper-memory | evicted-span retrievability (rtr-full 0.975) |
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../eval/engine-beneath-dark.svg">
+  <img src="../eval/engine-beneath.svg" alt="Engine Beneath case scoreboard">
+</picture>
+
+<details>
+<summary>Full versus + graded plates</summary>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../eval/versus-dark.svg">
+  <img src="../eval/versus.svg" alt="RTR vs RAG — recall@3 by taxon">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../eval/graded-dark.svg">
+  <img src="../eval/graded.svg" alt="Graded nDCG@10 by query">
+</picture>
+
+</details>
 
 ## The installer session
 
