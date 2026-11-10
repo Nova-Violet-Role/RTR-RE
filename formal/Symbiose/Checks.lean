@@ -6,6 +6,7 @@ import Symbiose.Worker
 import Symbiose.Graded
 import Symbiose.Lane
 import Symbiose.Control
+import Symbiose.Live
 
 namespace Symbiose
 
@@ -45,6 +46,10 @@ theorem m31_native : Nat.Prime (2 ^ 31 - 1) := by native_decide
 #print axioms every_mutation_names_its_field
 #print axioms absent_is_not_a_verdict
 #print axioms present_needs_evidence
+#print axioms never_two_holders
+#print axioms acquire_succeeds_only_from_free
+#print axioms scoped_subset_of_discovered
+#print axioms strict_le_loose
 #print axioms m31_native
 
 end Symbiose
