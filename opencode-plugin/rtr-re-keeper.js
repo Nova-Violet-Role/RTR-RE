@@ -1233,7 +1233,21 @@ const server = async (ctx, options = {}) => {
                 return
             }
             if (cfg.manual && !oneShot) {
-                await recordStatus({ decision: "manual-identity", total: 0, keepTokens: 0, evicted: 0, sinkPath: null })
+                // Manual serves an exact window: already-sunk spans leave
+                // (hygiene, zero information loss), nothing new is evicted,
+                // and telemetry reports the real window, never zeros.
+                const sunkState = await loadSunkDigests(ctx.directory)
+                const probe = planKeepIndices(messages, cfg, sunkState.sunk)
+                if (probe.reEvicted.length === 0) {
+                    await recordStatus({ decision: "manual-identity", total: probe.total, keepTokens: probe.total, evicted: 0, sinkPath: null })
+                    return
+                }
+                const drop = new Set(probe.reEvicted)
+                const kept = messages.filter((_, i) => !drop.has(i))
+                const keepTokens = kept.reduce((a, m) => a + messageTokens(m), 0)
+                messages.length = 0
+                messages.push(...kept)
+                await recordStatus({ decision: "manual-trimmed", total: probe.total, keepTokens, evicted: drop.size, sinkPath: null })
                 return
             }
             // P2 (TODO-65): status injection split — full status on the first

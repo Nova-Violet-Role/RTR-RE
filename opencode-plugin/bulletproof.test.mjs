@@ -186,6 +186,44 @@ test("manual mode never auto-evicts but honors one-shots", async () => {
     }
 })
 
+test("manual trims served sunk spans without new sinking", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-manual-trim-"))
+    try {
+        const { mkdir, writeFile } = await import("node:fs/promises")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({ triggerTokens: 1000000, manual: true }),
+            "utf8",
+        )
+        const { spanDigest, messageText } = server._test
+        const messages = [
+            msg("assistant", "sunk-old-one here"),
+            msg("assistant", "sunk-old-two here"),
+            msg("assistant", "fresh middle here"),
+            msg("assistant", "fresh recent here"),
+            msg("user", "go"),
+        ]
+        const digests = [spanDigest(messageText(messages[0])), spanDigest(messageText(messages[1]))]
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-sunk.json"),
+            JSON.stringify({ v: 1, digests, debt: 0 }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, {})
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        assert.equal(messages.length, 3, "served sunk spans leave the window")
+        assert.ok(!messages.some((m) => messageText(m).includes("sunk-old")))
+        const status = JSON.parse(
+            readFileSync(join(dir, ".opencode", "rtr-re-keeper-status.json"), "utf8"),
+        )
+        assert.equal(status.decision, "manual-trimmed")
+        assert.ok(status.total > 0, "manual reports the real window")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
 test("mjs bridge builds the live-loop CLI shapes", () => {
     assert.deepEqual(
         core.buildCliArgs("symbiose-drain", { project: "demo", limit: 5 }),
