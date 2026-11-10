@@ -32,12 +32,6 @@ except ImportError:  # installed package layout (execution.*)
     from . import symbiose_worker as sw
 
 engine = MemoryEngine()
-if os.environ.get("OPENCODE_MEMORY_WARM_MODELS", "").strip().lower() in (
-    "1",
-    "true",
-    "yes",
-):
-    _ = engine.models  # eager dual warm only on explicit opt-in; default is lazy (loads on first index/search)
 
 mcp = FastMCP("memory")
 
@@ -1295,8 +1289,23 @@ def _ensure_span_indexer():
     return _span_indexer
 
 
+def _should_warm_models(env=None) -> bool:
+    """Warm ONNX models at server boot unless explicitly disabled.
+
+    The lazy-load spike (cold models materializing mid-request) cost
+    first upserts seconds plus a ~900MB RSS jump; a daemon pays it once
+    at boot instead. Opt out with OPENCODE_MEMORY_WARM_MODELS=0. Imports
+    never warm (tests stay fast); only main() warms.
+    """
+    src = os.environ if env is None else env
+    raw = str(src.get("OPENCODE_MEMORY_WARM_MODELS", "") or "").strip().lower()
+    return raw not in ("0", "false", "no", "off")
+
+
 def main():
     """Console-script entrypoint for uvx: run the MCP server over stdio."""
+    if _should_warm_models():
+        _ = engine.models
     _ensure_span_indexer()
     mcp.run(transport="stdio")
 

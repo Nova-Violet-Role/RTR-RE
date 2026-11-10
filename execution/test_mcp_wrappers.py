@@ -180,6 +180,13 @@ class TestMcpWrappers(unittest.TestCase):
         self.assertIn("Threads:", panel)
         self.assertIn("MainThread", panel)
 
+    def test_warm_models_defaults_on_explicit_off(self):
+        self.assertTrue(mcp_server._should_warm_models({}))
+        for off in ("0", "false", "no", "off"):
+            self.assertFalse(
+                mcp_server._should_warm_models({"OPENCODE_MEMORY_WARM_MODELS": off})
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
