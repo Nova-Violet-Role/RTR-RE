@@ -1,5 +1,5 @@
 {
   "name": "rtr-re",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "RTR-RE persistent memory without an MCP server: rtr-cli bridge, context budget discipline, and AUTO-OPTIMIZE between file reads and code writes."
 }

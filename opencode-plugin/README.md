@@ -16,7 +16,7 @@ RTR-RE:Symbiose OpenCode plugins — the **Keeper** (server) and the
 ```bash
 npm install rtr-re-opencode-plugin
 # or, from the repo:
-npm pack && npm install ./rtr-re-opencode-plugin-1.1.0.tgz
+npm pack && npm install ./rtr-re-opencode-plugin-1.2.0.tgz
 ```
 
 Add the plugin to your OpenCode config (`opencode.jsonc`):

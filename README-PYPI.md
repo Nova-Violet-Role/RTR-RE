@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # RTR-RE:Symbiose (rtr-role-type-retrieval) — dense usage manual
 
-RTR-RE:Symbiose (Role-Type-Retrieval-RE:Symbiotized) 1.1.0: RRF-heuristic,
+RTR-RE:Symbiose (Role-Type-Retrieval-RE:Symbiotized) 1.2.0: RRF-heuristic,
 DTD-semantic-capable persistent memory + symbiotized context engine for
 coding agents. Dual ONNX ensemble on CPU, zero API cost, local only.
 Three offices: native Keeper plugin (window), background Compressor
@@ -244,7 +244,7 @@ The ctrl+p palette (TUI plugin `rtr-re-tui.tsx`) exposes the same knobs as
 commands under **RTR Keeper**: status, enable, disable, preset, cpu, modality,
 threads, parking, trigger, target, max — each writes the same watched file, so
 every change applies on the next exchange with no restart. Presets (shared
-registry, 1.1.0): `re-symbiose-mugen` 400k/200k/200 (default) · `symbiose-ah`
+registry, 1.2.0): `re-symbiose-mugen` 400k/200k/200 (default) · `symbiose-ah`
 250k/100k/40 · `fusion-ah` 200k/100k/30 · `re-symbiose` 320k/128k/50 ·
 legacy `standard`/`calibrated`/`wide`.
 The Keeper protects `todowrite` messages and the last user message; eviction is

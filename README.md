@@ -242,7 +242,7 @@ Lean, not just asserted in Python.
 
 | Component | Path | What it is |
 |---|---|---|
-| Keeper (1.1.0) | `opencode-plugin/rtr-re-keeper.js` | window edge: selects, protects (`todowrite`), prunes, sinks first; fails open |
+| Keeper (1.2.0) | `opencode-plugin/rtr-re-keeper.js` | window edge: selects, protects (`todowrite`), prunes, sinks first; fails open |
 | Compressor | `execution/context_budget.py` + `execution/symbiose_worker.py` | verbatim until trigger, drain to target, background tickets, never pauses the turn |
 | Manager | `execution/memory_engine.py` | memory MCP viewport: status/health/work-in-progress/retrieval, ≤512 tickets |
 | Engine-beneath | `formal/Symbiose.lean`, `eval/engine_beneath.py` | Lean-proven typed lanes and bounded loop |

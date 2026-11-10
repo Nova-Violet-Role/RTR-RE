@@ -1,6 +1,6 @@
 {
   "schema": "rtr.keeper-behavior-manifest/v1",
-  "keeperVersion": "1.1.0",
+  "keeperVersion": "1.2.0",
   "scenarios": {
     "below-trigger-identity": {
       "compress": false,

@@ -266,7 +266,7 @@ function planContext(totalTokens, messageCount, over = {}) {
 }
 
 // --- rtr-cli bridge ------------------------------------------------------
-// Argument shapes measured from `rtr-cli <cmd> --help` (1.1.0). Unknown
+// Argument shapes measured from `rtr-cli <cmd> --help` (1.2.0). Unknown
 // commands and missing required fields are refused by name, never
 // guessed: a bridge that invents flags is worse than no bridge.
 function buildCliArgs(command, opts = {}) {

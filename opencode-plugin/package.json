@@ -1,6 +1,6 @@
 {
   "name": "rtr-re-opencode-plugin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "RTR-RE:Symbiose OpenCode plugins — keeper (server) and ctrl+p palette (tui)",
   "keywords": [
     "opencode-plugin",

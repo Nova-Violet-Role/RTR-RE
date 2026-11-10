@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rtr-role-type-retrieval"
-version = "1.1.0"
+version = "1.2.0"
 description = "RTR Role Type Retrieval — RRF-heuristic DTD semantic-capable retriever for opencode (dual ONNX ensemble, CPU-first)"
 readme = "README-PYPI.md"
 requires-python = ">=3.10"

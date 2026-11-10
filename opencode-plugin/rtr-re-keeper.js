@@ -27,7 +27,7 @@ import { join, dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 import { readFileSync, statSync } from "node:fs"
 
-const KEEPER_VERSION = "1.1.0"
+const KEEPER_VERSION = "1.2.0"
 
 function loadPresetRegistryFrom(path) {
     try {
