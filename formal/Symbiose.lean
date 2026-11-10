@@ -6,4 +6,5 @@ import Symbiose.Graded
 import Symbiose.Lane
 import Symbiose.Control
 import Symbiose.Live
+import Symbiose.Install
 import Symbiose.Checks

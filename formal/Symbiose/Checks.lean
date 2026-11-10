@@ -7,6 +7,7 @@ import Symbiose.Graded
 import Symbiose.Lane
 import Symbiose.Control
 import Symbiose.Live
+import Symbiose.Install
 
 namespace Symbiose
 
@@ -49,6 +50,11 @@ theorem m31_native : Nat.Prime (2 ^ 31 - 1) := by native_decide
 #print axioms manual_blocks_auto
 #print axioms oneshot_overrides_manual
 #print axioms auto_fires_over_trigger
+#print axioms manual_carries_no_bounds
+#print axioms every_preset_installs
+#print axioms valid_bounds_accepted
+#print axioms required_subset_accepted
+#print axioms manual_installs_guide
 #print axioms never_two_holders
 #print axioms acquire_succeeds_only_from_free
 #print axioms scoped_subset_of_discovered
