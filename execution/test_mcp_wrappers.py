@@ -173,6 +173,13 @@ class TestMcpWrappers(unittest.TestCase):
         self.assertIn("Registry Repaired", panel)
         self.assertIn(str(f), self.engine.load_registry())
 
+    def test_doctor_reports_rss_and_threads(self):
+        panel = mcp_server.memory_doctor()
+        self.assertIn("Process Doctor", panel)
+        self.assertIn("RSS:", panel)
+        self.assertIn("Threads:", panel)
+        self.assertIn("MainThread", panel)
+
 
 if __name__ == "__main__":
     unittest.main()

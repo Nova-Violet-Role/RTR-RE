@@ -1110,6 +1110,15 @@ const server = async (ctx, options = {}) => {
 
     async function recordStatus(decision) {
         last = { time: nowIso(), ...decision }
+        let heapMB = null
+        let cpuMs = null
+        try {
+            heapMB = Math.round(process.memoryUsage().heapUsed / 1048576)
+            const cpu = process.cpuUsage()
+            cpuMs = Math.round((cpu.user + cpu.system) / 1000)
+        } catch {
+            // Health is best-effort; never break status on it.
+        }
         const status = {
             preset: cfg.preset,
             presetDisplay: cfg.presetDisplay,
@@ -1121,6 +1130,8 @@ const server = async (ctx, options = {}) => {
             parkingPercent: cfg.parkingPercent,
             profileCode: cfg.profileCode,
             profileLabel: cfg.profileLabel,
+            heapMB,
+            cpuMs,
             enabled: cfg.enabled,
             triggerTokens: cfg.triggerTokens,
             targetTokens: cfg.targetTokens,

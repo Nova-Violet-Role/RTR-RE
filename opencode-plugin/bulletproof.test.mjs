@@ -65,6 +65,8 @@ test("status plus sunk store carry the viewport and restart contracts", async ()
         assert.equal(status.decision, "evicted")
         assert.ok(status.sinkPath)
         assert.equal(typeof status.debt, "number")
+        assert.equal(typeof status.heapMB, "number")
+        assert.equal(typeof status.cpuMs, "number")
         const sunk = JSON.parse(
             readFileSync(join(dir, ".opencode", "rtr-re-sunk.json"), "utf8"),
         )

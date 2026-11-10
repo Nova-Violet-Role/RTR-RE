@@ -1086,6 +1086,30 @@ def memory_keeper_evict_now(project: str, mode: str, amount: int) -> str:
 
 
 @mcp.tool()
+def memory_doctor() -> str:
+    """Process health: RSS, live threads with top frames, uptime.
+
+    Stdlib-only py-spy companion: when the server burns CPU or RAM,
+    this names the hot threads without attaching a profiler.
+    """
+    import threading
+    import time as _time
+
+    rss = mem.process_rss_mb()
+    frames = mem.thread_top_frames(limit=3)
+    uptime = _time.time() - _SERVER_STARTED_AT
+    lines = [
+        f"RSS: {rss:.0f} MB",
+        f"Uptime: {uptime:.0f}s",
+        f"Threads: {len(frames)}",
+        "",
+    ]
+    for name in sorted(frames):
+        lines.append(f"  {name}: {' <- '.join(frames[name])}")
+    return TUIRenderer.render_panel("Process Doctor", lines, status="stats")
+
+
+@mcp.tool()
 def memory_context_plan(total_tokens: int, message_count: int) -> str:
     """Report the RE:Symbiose budget decision for a session size.
 
@@ -1238,6 +1262,9 @@ def memory_rtr_status(project: str = "") -> str:
 
 
 _span_indexer = None
+
+
+_SERVER_STARTED_AT = time.time()
 
 
 def _ensure_span_indexer():
