@@ -10,4 +10,7 @@ This project is jointly licensed under:
 `SPDX-License-Identifier: AGPL-3.0-or-later OR EUPL-1.2`
 
 Every source file carries the SPDX header above. The full license texts
-ship in `LICENSES/` (`AGPL-3.0-or-later.txt`, `EUPL-1.2.txt`).
+ship in `LICENSES/` (`AGPL-3.0-or-later.txt`, `EUPL-1.2.txt`), with
+identical copies at the repository root (`LICENSE-AGPL-3.0.txt`,
+`LICENSE-EUPL-1.2.txt`) — the root copies are the ones the NOTICE and
+the Python build reference.

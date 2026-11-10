@@ -15,7 +15,7 @@
     "directory": "mjs"
   },
   "bugs": {
-    "url": "https://github.com/Nova-Violet-Role/rtr-role-type-retrieval/issues"
+    "url": "https://github.com/Nova-Violet-Role/RTR-RE/issues"
   },
   "main": "./.opencode/plugins/rtr.mjs",
   "exports": {

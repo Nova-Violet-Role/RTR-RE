@@ -1,0 +1,75 @@
+name: test rtr-re
+
+# Fast CI gate: encoding, Python unit suite, keeper, mjs, TUI.
+# Template lint lives in template-lint.yml (runs on its own paths).
+# Slow lanes stay manual and documented: benches (eval/bench_*.py),
+# Lean battery (formal/, lake build), measurement probes (eval/measure_*).
+# Exact suite commands are confirmed by TODO-27 (Python) and TODO-28 (JS).
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  encoding:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tracked text must be LF (git eol attributions)
+        run: |
+          test "$(git ls-files --eol | grep -c crlf)" = "0"
+
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Sync locked dependencies
+        run: |
+          uv sync --frozen
+      - name: Installer scene conformance
+        run: |
+          uv run --no-project python installer/shell/tools/conformance.py
+      - name: Full execution unit suite
+        run: |
+          uv run python -m unittest discover -s execution -p "test_*.py"
+
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Keeper suite
+        run: |
+          node --test opencode-plugin/rtr-re-keeper.test.mjs
+      - name: mjs suite
+        run: |
+          npm --prefix mjs test
+
+  bun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install plugin deps
+        working-directory: opencode-plugin
+        run: |
+          bun install
+      - name: TUI palette suite
+        working-directory: opencode-plugin
+        run: |
+          bun test rtr-re-tui.test.ts

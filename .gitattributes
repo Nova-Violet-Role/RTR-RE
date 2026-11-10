@@ -1,0 +1,17 @@
+# RTR-RE encoding gate: LF text everywhere, binaries untouched.
+* text=auto eol=lf
+*.mp3 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mp4 binary
+*.tgz binary
+*.tar.gz binary
+*.whl binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary

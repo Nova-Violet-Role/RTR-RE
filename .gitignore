@@ -3,6 +3,8 @@
 .cocoindex_code/
 .opencode/
 node_modules/
+# Generated prepack copy (npm builds it from ../installer) - never tracked
+opencode-plugin/installer/
 __pycache__/
 *.pyc
 .lake/
@@ -15,6 +17,8 @@ state/
 .ruff_cache/
 *.log
 media/frames-*/
+media/*.mp4
+media/*.srt
 eval/results/*-todo6.json
 eval/results/*-prefix.json
 eval/results/*-prefix.md

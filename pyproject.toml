@@ -29,7 +29,7 @@ dependencies = [
   "fastmcp>=4,<5",
   "pyyaml>=6,<7",
 ]
-urls = { Homepage = "https://github.com/Nova-Violet-Role/rtr-role-type-retrieval" }
+urls = { Homepage = "https://github.com/Nova-Violet-Role/RTR-RE" }
 
 [project.scripts]
 rtr-mcp = "execution.memory_mcp_server:main"
@@ -60,6 +60,3 @@ exclude = ["directives/sessions"]
 "installer/launchers/python_launcher.py" = "installer/launchers/python_launcher.py"
 "installer/shell" = "installer/shell"
 "installer/tools" = "installer/tools"
-"LICENSE-EUPL-1.2.txt" = "rtr_role_type_retrieval-1.1.0.dist-info/LICENSE-EUPL-1.2.txt"
-"LICENSE-AGPL-3.0.txt" = "rtr_role_type_retrieval-1.1.0.dist-info/LICENSE-AGPL-3.0.txt"
-"NOTICE" = "rtr_role_type_retrieval-1.1.0.dist-info/NOTICE"

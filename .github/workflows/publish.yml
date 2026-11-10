@@ -18,9 +18,17 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-rtr-re
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
@@ -53,6 +61,7 @@ jobs:
   verify:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       VERSION: ${{ github.event.inputs.version || github.ref_name }}
     steps:
@@ -93,16 +102,19 @@ jobs:
           tar -tzf "$TGZ" | grep -q "package/installer-bin.mjs"
           tar -tzf "$TGZ" | grep -q "package/installer/shell/dtd/rtrre-scene.mod"
           tar -tzf "$TGZ" | grep -q "package/installer/shell/assets/audio/obsession-quick.mp3"
+          tar -tzf "$TGZ" | grep -q "package/installer/shell/assets/audio/obsession-custom.mp3"
           tar -tzf "$TGZ" | grep -q "package/installer/shell/assets/audio/obsession-hardcore.mp3"
           tar -xOf "$TGZ" package/package.json | grep -q '"rtr-re-installer"'
       - name: mjs tarball must exist and carry the plugin
         run: |
           TGZ="dist/saimonokuma-rtr-re-mjs-${{ env.version }}.tgz"
-          tar -tzf "$TGZ" | grep -qE "package/(index\.mjs|plugin\.json|package\.json)"
+          tar -tzf "$TGZ" | grep -q "package/package.json"
+          tar -tzf "$TGZ" | grep -q "package/plugin.json"
 
   publish-pypi:
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: pypi
     permissions:
       contents: read
@@ -117,16 +129,21 @@ jobs:
           path: dist/
       - name: Install uv
         uses: astral-sh/setup-uv@v6
-      - name: Publish wheel + sdist to PyPI
+      - name: Publish wheel + sdist to PyPI (skip if version already exists)
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: |
           VERSION="${VERSION#v}"
-          uv publish dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl dist/rtr_role_type_retrieval-$VERSION.tar.gz
+          if curl -fsS "https://pypi.org/pypi/rtr-role-type-retrieval/$VERSION/json" >/dev/null 2>&1; then
+            echo "rtr-role-type-retrieval@$VERSION already published — skipping"
+          else
+            uv publish dist/rtr_role_type_retrieval-$VERSION-py3-none-any.whl dist/rtr_role_type_retrieval-$VERSION.tar.gz
+          fi
 
   publish-npm:
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: npm
     permissions:
       contents: read
@@ -167,6 +184,7 @@ jobs:
   release-github:
     needs: [publish-pypi, publish-npm]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
     env:
