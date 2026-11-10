@@ -71,8 +71,8 @@ function getInstructions() {
     'file read and the next code write, run one unasked optimize pass — ' +
     'reuse what you read, delete what earns nothing, simplify to fewer ' +
     'elements, and name one concrete way the code beats the obvious ' +
-    'first draft. Keep verbatim until 320000 tokens, then evict to a ' +
-    '128000-token tail of at most 40 messages; evicted is never deleted.';
+    'first draft. Keep verbatim until 400000 tokens, then evict to a ' +
+    '200000-token tail of at most 200 messages; evicted is never deleted.';
 }
 
 // Every-turn reminder. The full ruleset already lives in session context
@@ -191,9 +191,9 @@ function createAutoOptimizer(provider) {
 const REGISTRY_PATH = path.join(__dirname, '..', '..', 'execution', 'rtr_presets.json');
 
 const PLAN_DEFAULTS = {
-  triggerTokens: 250000,
-  targetTokens: 100000,
-  maxKeepMessages: 40,
+  triggerTokens: 400000,
+  targetTokens: 200000,
+  maxKeepMessages: 200,
   maxSummaryChars: 20000,
   maxRestoreChars: 4000,
 };
@@ -259,14 +259,14 @@ function planContext(totalTokens, messageCount, over = {}) {
     : PLAN_DEFAULTS;
   const cfg = { ...base, ...(over || {}) };
   const total = Number(totalTokens) || 0;
-  const decision = total < cfg.triggerTokens
-    ? 'keep verbatim (below trigger)'
-    : `evict to ${cfg.targetTokens} tokens (above trigger)`;
+    const decision = total <= cfg.triggerTokens
+      ? 'keep verbatim (below trigger)'
+      : `evict to ${cfg.targetTokens} tokens (above trigger)`;
   return { ...cfg, totalTokens: total, messageCount: Number(messageCount) || 0, decision };
 }
 
 // --- rtr-cli bridge ------------------------------------------------------
-// Argument shapes measured from `rtr-cli <cmd> --help` (0.4.1). Unknown
+// Argument shapes measured from `rtr-cli <cmd> --help` (1.1.0). Unknown
 // commands and missing required fields are refused by name, never
 // guessed: a bridge that invents flags is worse than no bridge.
 function buildCliArgs(command, opts = {}) {
@@ -305,9 +305,33 @@ function buildCliArgs(command, opts = {}) {
     case 'session-start':
     case 'lexikon-show':
       return [command, need('project')];
+    case 'session-commit': {
+      const args = ['session-commit', need('project')];
+      if (o.chat !== undefined && o.chat !== null && o.chat !== '') args.push('--chat', String(o.chat));
+      return args;
+    }
     case 'janitor': {
       const args = ['janitor'];
       if (o.dryRun) args.push('--dry-run');
+      return args;
+    }
+    case 'symbiose-submit': {
+      const args = ['symbiose-submit', need('project')];
+      if (o.messagesJson !== undefined && o.messagesJson !== null && o.messagesJson !== '') args.push(String(o.messagesJson));
+      if (o.messagesFile) args.push('--messages-file', String(o.messagesFile));
+      if (o.timeout !== undefined && o.timeout !== null && o.timeout !== '') args.push('--timeout', String(o.timeout));
+      return args;
+    }
+    case 'symbiose-drain': {
+      const args = ['symbiose-drain', need('project')];
+      if (o.limit !== undefined && o.limit !== null && o.limit !== '') args.push('--limit', String(o.limit));
+      return args;
+    }
+    case 'symbiose-compress': {
+      const args = ['symbiose-compress', need('project'), String(need('target'))];
+      if (o.messagesJson !== undefined && o.messagesJson !== null && o.messagesJson !== '') args.push(String(o.messagesJson));
+      if (o.messagesFile) args.push('--messages-file', String(o.messagesFile));
+      if (o.timeout !== undefined && o.timeout !== null && o.timeout !== '') args.push('--timeout', String(o.timeout));
       return args;
     }
     default:

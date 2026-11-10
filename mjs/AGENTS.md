@@ -25,19 +25,26 @@ Plain `/rtr` confirms on in one line and continues the current task.
   links, and indexes in one step.
 - Housekeeping when results smell stale: `rtr-cli janitor --dry-run`
   first, read the report, then run it for real only if the report is right.
+- Compressor, direct: `rtr-cli symbiose-compress <project> <target>`
+  fires to a verbatim tail with thinking intact; `rtr-cli symbiose-drain`
+  `<project>` consumes keeper sidecars; `rtr-cli symbiose-submit` uses presets.
 
 ## Context budget
 
-Keep verbatim until 320000 tokens; above that, evict to a 128000-token
-preserved tail of at most 40 messages. What leaves the window sinks to
-session files verbatim and stays retrievable through search — evicted is
-never deleted. Prefer a search over re-reading a long file you already
+Keep verbatim until 400000 tokens (Re-Symbiose-Mugen, the shipped
+default); above that, evict to a 200000-token preserved tail of at
+most 200 messages. What leaves the window sinks to session files
+verbatim and stays retrievable through search — evicted is never
+deleted. Prefer a search over re-reading a long file you already
 summarized this session.
 
 ## AUTO-OPTIMIZE
 
 Between every file read and the next code write, run one optimize pass on
-what you are about to write — unasked, every time, in this order:
+what you are about to write — unasked, every time, in this order. On
+OpenCode the plugin instigates the pass after your first read of a
+cycle; on Claude Code and Codex no hook instigates it yet, so run it
+yourself from this checklist.
 
 1. Reuse: a helper, pattern, or path already in what you read does part of
    this job. Use it instead of writing a second one.

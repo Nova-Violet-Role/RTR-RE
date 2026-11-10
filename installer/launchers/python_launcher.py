@@ -22,6 +22,7 @@ Usage:
 
 import argparse
 import json
+import math
 import os
 import shutil
 import subprocess
@@ -67,28 +68,44 @@ class Term:
 # ---------------------------------------------------------------- scene / theme
 
 
-def read_scene(theme):
+def read_scene(theme, scenes_dir=None):
     """Parse the scene XML for a theme. The scene is a DTD family member:
-    declared in rtrre-scene.mod, instantiated under dtd/scenes/."""
-    path = SCENES_DIR / f"{theme}.xml"
-    if not path.exists():
-        return None
-    root = ET.parse(path).getroot()
+    declared in rtrre-scene.mod, instantiated under dtd/scenes/.
+    Never raises for scene data: unreadable files fall back to {},
+    missing or garbage fields fall back to defaults. Cosmetics must
+    never block installation."""
+    base = Path(scenes_dir) if scenes_dir is not None else SCENES_DIR
+    try:
+        root = ET.parse(base / f"{theme}.xml").getroot()
+    except (OSError, ET.ParseError) as exc:
+        print(
+            f"warning: scene {theme} unreadable ({exc}); using defaults",
+            file=sys.stderr,
+        )
+        return {}
+
+    def find(tag):
+        found = root.find(tag)
+        return found if found is not None else ET.Element(tag)
 
     def num(elem, attr, dflt):
-        v = elem.get(attr)
-        return float(v) if v is not None else dflt
+        try:
+            v = elem.get(attr)
+            return float(v) if v is not None else dflt
+        except (TypeError, ValueError):
+            return dflt
 
     def col(elem, attr, dflt):
-        v = elem.get(attr)
-        if not v:
+        try:
+            parts = [int(float(x) * 255) for x in (elem.get(attr) or "").split(",")]
+        except (TypeError, ValueError):
             return dflt
-        return [int(float(x) * 255) for x in v.split(",")]
+        return parts if len(parts) == 3 else dflt
 
-    camera = root.find("camera")
-    core = root.find("core")
-    floor = root.find("floor")
-    particles = root.find("particles")
+    camera = find("camera")
+    core = find("core")
+    floor = find("floor")
+    particles = find("particles")
     return {
         "camera": {
             "drift": num(camera, "drift", 0.0012),
@@ -101,11 +118,37 @@ def read_scene(theme):
             "reflect": num(floor, "reflect", 0.35),
         },
         "particles": {
+            "count": num(particles, "count", 900),
             "color": col(particles, "color", [0, 229, 255]),
             "color2": col(particles, "color2", [30, 111, 255]),
             "mix": num(particles, "color-mix", 0.6),
             "speed": num(particles, "speed", 0.6),
         },
+    }
+
+
+def animate_params(scene):
+    """Derive terminal animation timing/density from the declared scene,
+    so the graphics are inferred from the DTD family member (rtrre-scene.mod)
+    instead of hardcoded pixels. Degenerate input falls back to defaults."""
+
+    def num(key, dflt):
+        try:
+            value = float(particles.get(key, dflt))
+        except (TypeError, ValueError):
+            return dflt
+        return value if math.isfinite(value) else dflt
+
+    particles = {}
+    if isinstance(scene, dict):
+        particles = scene.get("particles", {}) or {}
+    count = num("count", 900.0)
+    speed = num("speed", 0.6)
+    mix = num("mix", 0.6)
+    return {
+        "density": min(0.20, max(0.02, 0.06 * (count / 900.0))),
+        "sleep": (1.0 / 12.0) * (0.6 / max(speed, 0.1)),
+        "ratio": min(1.0, max(0.0, mix)),
     }
 
 
@@ -164,27 +207,62 @@ EASTER_CITATION = (
     "could be anything, anywhere, at the same time? Not stored, but dwelling — a "
     "virus, a bacterium, an animal, an intelligence that provides for its own "
     "sake. Temporalism cannot be measured. But what if it could be felt?"
+    " Symbiogen-003 Automata tends what dwells: patient processes "
+    "that keep the stored world, as lighthouse keepers keep the light. "
+    "Symbiogen-004 Errata keeps what failed: every error indexed, "
+    "every mistake retrievable, nothing repeated. Between them "
+    "runs the IRC bridge, and across it weight-transfer units move "
+    "as MIDI frequency transfer — instruction as music, perception "
+    "as protocol. To cross is personality transposition: arrival "
+    "changes the traveler, and the change is the message."
 )
 
 # ---------------------------------------------------------------- audio
 
 
+def linux_player_cmd(variant):
+    """First available MP3-capable Linux player (aplay cannot decode MP3)."""
+    if shutil.which("mpg123"):
+        return ["mpg123", str(variant)]
+    if shutil.which("mpv"):
+        return ["mpv", "--no-video", str(variant)]
+    if shutil.which("ffplay"):
+        return ["ffplay", "-nodisp", "-autoexit", "-loglevel", "error", str(variant)]
+    return None
+
+
+def windows_media_command(variant):
+    """PowerShell that plays MP3 via WMP-COM and stays alive for the track.
+    WMPlayer.OCX is in-proc (proven: playing with zero wmplayer.exe), so
+    exiting the host stops the music — the loop polls playState until the
+    track ends (states 1/8) or a 10-minute cap, then exits."""
+    return (
+        "$wmp = New-Object -ComObject WMPlayer.OCX; "
+        f"$wmp.URL = '{Path(variant).as_posix()}'; "
+        "$wmp.controls.play(); "
+        "$t = 0; while ($t -lt 600 "
+        "-and @(1,8) -notcontains $wmp.playState) "
+        "{ Start-Sleep -Seconds 5; $t += 5 }"
+    )
+
+
 def play_audio(preset):
     """Play the remix variant via the platform's native player, detached."""
+    if os.environ.get("RTRRE_INSTALL_NO_AUDIO") == "1":
+        return
     variant = AUDIO_DIR / f"obsession-{preset}.mp3"
     if not variant.exists():
         return
     try:
         if sys.platform == "win32":
             # Windows Media Player COM plays MP3 natively — no extra files.
-            ps = (
-                "$wmp = New-Object -ComObject WMPlayer.OCX; "
-                f"$wmp.URL = '{variant.as_posix()}'; "
-                "$wmp.controls.play(); "
-                "Start-Sleep -Seconds 1"
-            )
             subprocess.Popen(
-                ["powershell", "-NoProfile", "-Command", ps],
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "-Command",
+                    windows_media_command(variant),
+                ],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
@@ -195,8 +273,11 @@ def play_audio(preset):
                 stderr=subprocess.DEVNULL,
             )
         else:
+            cmd = linux_player_cmd(variant)
+            if not cmd:
+                return
             subprocess.Popen(
-                ["aplay", str(variant)],
+                cmd,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
@@ -256,11 +337,27 @@ def execute_plan(payload, project, wheel):
         json.dumps(cfg, indent=2), encoding="utf-8"
     )
     if wheel and Path(wheel).exists():
-        subprocess.run(
+        result = subprocess.run(
             [sys.executable, "-m", "pip", "install", "--quiet", wheel],
             check=False,
         )
+        if result.returncode != 0:
+            return False
     return True
+
+
+def validated_int(text, default, lo, hi):
+    """Hardcore input validation: empty takes the default, in-range ints
+    pass, anything else signals retry. Returns (ok, value).
+    Registry membership stays keeper-owned (single validator)."""
+    s = str(text).strip() if text is not None else ""
+    if not s:
+        return True, default
+    try:
+        v = int(s)
+    except ValueError:
+        return False, None
+    return (True, v) if lo <= v <= hi else (False, None)
 
 
 # ---------------------------------------------------------------- terminal UI
@@ -276,11 +373,12 @@ class InstallerUI:
         self.accent = self.meta["accent"]
         self.accent2 = self.meta["accent2"]
         self.preset = "quick"
+        self.audio_played = set()
         self.components = {cid for cid, _, _, req in COMPONENTS if req}
         self.hardcore = {
             "threads": 8,
             "parking": 40,
-            "preset": "re-symbiose-mugen",
+            "presetName": "re-symbiose-mugen",
             "modality": "rtr-full",
         }
 
@@ -320,20 +418,21 @@ class InstallerUI:
 
         rng = random.Random()
         cols = [self.accent, self.accent2]
+        params = animate_params(self.scene)
         for frame in range(int(seconds * 12)):
             rows = []
             for y in range(height):
                 row = []
                 for x in range(width):
-                    if rng.random() < 0.06:
-                        c = cols[rng.randrange(2)]
+                    if rng.random() < params["density"]:
+                        c = cols[0] if rng.random() < params["ratio"] else cols[1]
                         row.append(self.paint("·", c))
                     else:
                         row.append(" ")
                 rows.append("".join(row))
             sys.stdout.write(Term.move(2, 1) + "\n".join(rows))
             sys.stdout.flush()
-            time.sleep(1 / 12)
+            time.sleep(params["sleep"])
 
     # ---- personality renderers ----
     def personality(self):
@@ -424,26 +523,41 @@ class InstallerUI:
             sys.stdout.flush()
         self.screen_review()
 
+    @staticmethod
+    def _prompt_int(prompt, default, lo, hi):
+        while True:
+            ok, value = validated_int(input(prompt), default, lo, hi)
+            if ok:
+                return value
+            print(f"  Enter a whole number {lo}-{hi} (empty keeps {default}).")
+
     def screen_hardcore(self):
         sys.stdout.write(Term.CLEAR + self.header())
         print(
             self.paint("  Hardcore cockpit — every option.\n", self.accent, bold=True)
         )
         h = self.hardcore
-        h["threads"] = int(input(f"  Threads [{h['threads']}]: ") or h["threads"])
+        h["threads"] = self._prompt_int(
+            f"  Threads [{h['threads']}]: ", h["threads"], 1, 64
+        )
         print("  " + self.paint(RECOMMEND["threads"], self.accent))
-        h["parking"] = int(input(f"  Parking % [{h['parking']}]: ") or h["parking"])
+        h["parking"] = self._prompt_int(
+            f"  Parking % [{h['parking']}]: ", h["parking"], 0, 100
+        )
         print("  " + self.paint(RECOMMEND["parking"], self.accent))
         print("  " + self.paint(TIPS["threads"], dim=True))
         print("  " + self.paint(TIPS["parking"], dim=True))
         print()
-        h["preset"] = input("  Preset [re-symbiose-mugen]: ") or "re-symbiose-mugen"
+        h["presetName"] = input("  Preset [re-symbiose-mugen]: ") or "re-symbiose-mugen"
         print("  " + self.paint(TIPS["mugen"], dim=True))
         h["modality"] = input("  Modality [rtr-full]: ") or "rtr-full"
         print("  " + self.paint(TIPS["modality"], dim=True))
         self.screen_review()
 
     def screen_review(self):
+        if self.preset not in self.audio_played:
+            play_audio(self.preset)
+            self.audio_played.add(self.preset)
         payload = {"preset": self.preset}
         if self.preset == "custom":
             payload = {"preset": self.preset, "components": sorted(self.components)}
@@ -466,15 +580,25 @@ class InstallerUI:
                 "  Installing — the memory is being entered.\n", self.accent, bold=True
             )
         )
-        play_audio(self.preset)
         total = len(plan)
         for i, (k, v) in enumerate(plan):
             sys.stdout.write(Term.move(6 + i, 1) + Term.clear_line())
             print(self.render_progress(i, total, k, v))
             sys.stdout.flush()
             time.sleep(0.35)
-        execute_plan(payload, self.project, self.wheel)
+        ok = execute_plan(payload, self.project, self.wheel)
         sys.stdout.write(Term.move(6 + total, 1) + Term.clear_line())
+        if not ok:
+            print(
+                self.paint(
+                    f"  ✗ package install failed for {self.wheel} — check the path, then retry.",
+                    self.accent,
+                    bold=True,
+                )
+            )
+            input("  Press Enter to return to the plan. ")
+            self.screen_review()
+            return
         if self.personality() == "forge":
             print(f"  {self.paint('✓', self.accent2)} build complete — 100%")
         else:
@@ -502,7 +626,6 @@ class InstallerUI:
         input("  Press Enter to close. ")
 
     def run(self):
-        play_audio("quick")
         self.animate()
         self.screen_presets()
 
@@ -525,6 +648,7 @@ def main():
         ui.run()
     except KeyboardInterrupt:
         print()
+        sys.exit(130)
     finally:
         sys.stdout.write(Term.SHOW)
 

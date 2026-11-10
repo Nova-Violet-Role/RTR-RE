@@ -6,4 +6,4 @@ If $ARGUMENTS is off (or "stop rtr" / "normal mode"): say so in one line and sto
 
 If $ARGUMENTS is empty or on: confirm rtr-re is on in one line, then carry on with whatever was being discussed.
 
-If $ARGUMENTS names a memory action (search, stats, index, write, session-start, session-commit, janitor, explain): run it through rtr-cli and report the measured result, or say in one line that rtr-cli is not installed.
+If $ARGUMENTS names a memory action (search, stats, index, write, session-start, session-commit, janitor, explain, symbiose-submit, symbiose-drain, symbiose-compress): run it through rtr-cli and report the measured result, or say in one line that rtr-cli is not installed.

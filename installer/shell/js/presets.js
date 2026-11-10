@@ -31,4 +31,12 @@ const EASTER_CITATION =
   "the measurable. MiDi-MoE-Symbiogen-000 asks the same question: what if data " +
   "could be anything, anywhere, at the same time? Not stored, but dwelling — a " +
   "virus, a bacterium, an animal, an intelligence that provides for its own " +
-  "sake. Temporalism cannot be measured. But what if it could be felt?"
+  "sake. Temporalism cannot be measured. But what if it could be felt?" +
+  " Symbiogen-003 Automata tends what dwells: patient processes " +
+  "that keep the stored world, as lighthouse keepers keep the light. " +
+  "Symbiogen-004 Errata keeps what failed: every error indexed, " +
+  "every mistake retrievable, nothing repeated. Between them " +
+  "runs the IRC bridge, and across it weight-transfer units move " +
+  "as MIDI frequency transfer — instruction as music, perception " +
+  "as protocol. To cross is personality transposition: arrival " +
+  "changes the traveler, and the change is the message."

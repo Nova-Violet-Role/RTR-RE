@@ -162,10 +162,15 @@ function freeze() {
         keeperVersion: keeper._test.KEEPER_VERSION,
         scenarios: runAll(),
     }
-    mkdir(dirname(MANIFEST), { recursive: true }).then(() => {
-        writeFileSync(MANIFEST, JSON.stringify(data, null, 2) + "\n", "utf8")
-        console.log(`keeper behavior manifest frozen: ${MANIFEST}`)
-    })
+    mkdir(dirname(MANIFEST), { recursive: true })
+        .then(() => {
+            writeFileSync(MANIFEST, JSON.stringify(data, null, 2) + "\n", "utf8")
+            console.log(`keeper behavior manifest frozen: ${MANIFEST}`)
+        })
+        .catch((error) => {
+            console.error(`keeper-behavior: freeze failed: ${error?.message ?? error}`)
+            process.exit(2)
+        })
 }
 
 function check() {

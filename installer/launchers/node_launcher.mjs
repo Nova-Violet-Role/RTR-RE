@@ -15,7 +15,7 @@ import { spawn } from "node:child_process"
 import fs from "node:fs"
 import { promises as fsp } from "node:fs"
 import path from "node:path"
-import { fileURLToPath } from "node:url"
+import { fileURLToPath, pathToFileURL } from "node:url"
 import readline from "node:readline"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -39,24 +39,37 @@ const Term = {
 
 // ---------------------------------------------------------------- scene / theme
 
-function readScene(theme) {
+export function readScene(theme, scenesDir = SCENES_DIR) {
   // Parse the scene XML. The scene is a DTD family member declared in
   // rtrre-scene.mod; the XML is ours, simple, and attribute-level — a
   // tiny regex extractor is sufficient and dependency-free.
-  const file = path.join(SCENES_DIR, `${theme}.xml`)
-  const xml = fs.readFileSync(file, "utf8")
+  // Never throws for scene data: unreadable files fall back to {},
+  // missing or garbage fields fall back to defaults.
+  const file = path.join(scenesDir, `${theme}.xml`)
+  let xml
+  try {
+    xml = fs.readFileSync(file, "utf8")
+  } catch (e) {
+    console.error(`warning: scene ${theme} unreadable (${e.message}); using defaults`)
+    return {}
+  }
   const attr = (elem, name, dflt) => {
     const m = xml.match(new RegExp(`<${elem}[^>]*\\b${name}="([^"]*)"`))
     return m ? m[1] : dflt
   }
-  const num = (elem, name, dflt) => parseFloat(attr(elem, name, dflt))
+  const num = (elem, name, dflt) => {
+    const v = parseFloat(attr(elem, name, dflt))
+    return Number.isFinite(v) ? v : dflt
+  }
   const col = (elem, name, dflt) => {
     const v = attr(elem, name, "")
     if (!v) return dflt
-    return v.split(",").map((x) => Math.round(parseFloat(x) * 255))
+    const xs = v.split(",").map((x) => Math.round(parseFloat(x) * 255))
+    return xs.length === 3 && xs.every(Number.isFinite) ? xs : dflt
   }
   return {
     particles: {
+      count: num("particles", "count", 900),
       color: col("particles", "color", [0, 229, 255]),
       color2: col("particles", "color2", [30, 111, 255]),
       mix: num("particles", "color-mix", 0.6),
@@ -65,6 +78,22 @@ function readScene(theme) {
     core: { glow: col("core", "glow", [128, 128, 255]) },
     floor: { reflect: num("floor", "reflect", 0.35) },
     camera: { drift: num("camera", "drift", 0.0012) },
+  }
+}
+
+export function animateParams(scene) {
+  const particles = scene?.particles ?? {}
+  const num = (key, dflt) => {
+    const v = Number(particles[key] ?? dflt)
+    return Number.isFinite(v) ? v : dflt
+  }
+  const count = num("count", 900)
+  const speed = num("speed", 0.6)
+  const mix = num("mix", 0.6)
+  return {
+    density: Math.min(0.20, Math.max(0.02, 0.06 * (count / 900))),
+    sleep: (1 / 12) * (0.6 / Math.max(speed, 0.1)),
+    ratio: Math.min(1, Math.max(0, mix)),
   }
 }
 
@@ -107,31 +136,87 @@ const EASTER_CITATION =
   "the measurable. MiDi-MoE-Symbiogen-000 asks the same question: what if data " +
   "could be anything, anywhere, at the same time? Not stored, but dwelling — a " +
   "virus, a bacterium, an animal, an intelligence that provides for its own " +
-  "sake. Temporalism cannot be measured. But what if it could be felt?"
+  "sake. Temporalism cannot be measured. But what if it could be felt?" +
+  " Symbiogen-003 Automata tends what dwells: patient processes " +
+  "that keep the stored world, as lighthouse keepers keep the light. " +
+  "Symbiogen-004 Errata keeps what failed: every error indexed, " +
+  "every mistake retrievable, nothing repeated. Between them " +
+  "runs the IRC bridge, and across it weight-transfer units move " +
+  "as MIDI frequency transfer — instruction as music, perception " +
+  "as protocol. To cross is personality transposition: arrival " +
+  "changes the traveler, and the change is the message."
 
 // ---------------------------------------------------------------- audio
 
+export function whichSync(name) {
+  const pathEnv = process.env.PATH || ""
+  const dirs = pathEnv.split(path.delimiter).filter(Boolean)
+  const exts = process.platform === "win32" ? (process.env.PATHEXT || ".EXE").split(";") : [""]
+  for (const dir of dirs) {
+    for (const ext of exts) {
+      const candidate = path.join(dir, process.platform === "win32" ? name + ext.toLowerCase() : name)
+      try {
+        if (fs.statSync(candidate).isFile()) return candidate
+      } catch { /* next */ }
+    }
+  }
+  return null
+}
+
+export function linuxPlayerCmd(variant, which = whichSync) {
+  if (which("mpg123")) return ["mpg123", variant]
+  if (which("mpv")) return ["mpv", "--no-video", variant]
+  if (which("ffplay")) return ["ffplay", "-nodisp", "-autoexit", "-loglevel", "error", variant]
+  return null
+}
+
+export function validatedInt(text, dflt, lo, hi) {
+  const s = String(text ?? "").trim()
+  if (!s) return [true, dflt]
+  const v = Number(s)
+  if (!Number.isInteger(v)) return [false, null]
+  return lo <= v && v <= hi ? [true, v] : [false, null]
+}
+
+export function windowsMediaCommand(variant) {
+  const url = String(variant).replace(/\\/g, "/")
+  return `$wmp = New-Object -ComObject WMPlayer.OCX; $wmp.URL = '${url}'; $wmp.controls.play(); ` +
+    `$t = 0; while ($t -lt 600 -and @(1,8) -notcontains $wmp.playState) { Start-Sleep -Seconds 5; $t += 5 }`
+}
+
 function playAudio(preset) {
+  if (process.env.RTRRE_INSTALL_NO_AUDIO === "1") return
   const variant = path.join(AUDIO_DIR, `obsession-${preset}.mp3`)
-  if (!fsp.stat(variant).catch(() => null)) return
+  try {
+    if (!fs.statSync(variant).isFile()) return
+  } catch {
+    return
+  }
   const platform = process.platform
   let cmd, args
   if (platform === "win32") {
     cmd = "powershell"
     args = ["-NoProfile", "-Command",
-      `$wmp = New-Object -ComObject WMPlayer.OCX; $wmp.URL = '${variant.replace(/\\/g, "/")}'; $wmp.controls.play(); Start-Sleep -Seconds 1`]
+      windowsMediaCommand(variant)]
   } else if (platform === "darwin") {
     cmd = "afplay"; args = [variant]
   } else {
-    cmd = "aplay"; args = [variant]
+    const chain = linuxPlayerCmd(variant)
+    if (!chain) return
+    ;[cmd, ...args] = chain
   }
-  const p = spawn(cmd, args, { stdio: "ignore", detached: true })
-  p.unref()
+  try {
+    const p = spawn(cmd, args, { stdio: "ignore", detached: true })
+    p.on("error", () => {})
+    p.unref()
+  } catch {
+    // Audio must never break the installer.
+  }
 }
 
 // ---------------------------------------------------------------- install actions
 
-function planFor(payload) {
+export function planFor(payload) {
   const preset = payload.preset || "quick"
   if (preset === "quick") {
     return [
@@ -163,7 +248,7 @@ function planFor(payload) {
   ]
 }
 
-async function executePlan(payload, project, tarball) {
+export async function executePlan(payload, project, tarball) {
   const preset = payload.preset || "quick"
   const cfgDir = path.join(project, ".opencode")
   await fsp.mkdir(cfgDir, { recursive: true })
@@ -179,10 +264,12 @@ async function executePlan(payload, project, tarball) {
   }
   await fsp.writeFile(path.join(cfgDir, "rtr-re-keeper.json"), JSON.stringify(cfg, null, 2), "utf8")
   if (tarball && (await fsp.stat(tarball).catch(() => null))) {
-    await new Promise((resolve) => {
-      const p = spawn("npm", ["install", "--no-save", tarball], { stdio: "ignore" })
+    const code = await new Promise((resolve) => {
+      const p = spawn("npm", ["install", "--no-save", "--loglevel=error", tarball], { stdio: "inherit" })
       p.on("close", resolve)
+      p.on("error", () => resolve(1))
     })
+    if (code !== 0) return false
   }
   return true
 }
@@ -199,8 +286,9 @@ class InstallerUI {
     this.accent = this.meta.accent
     this.accent2 = this.meta.accent2
     this.preset = "quick"
+    this.audioPlayed = new Set()
     this.components = new Set(COMPONENTS.filter((c) => c[3]).map((c) => c[0]))
-    this.hardcore = { threads: 8, parking: 40, preset: "re-symbiose-mugen", modality: "rtr-full" }
+    this.hardcore = { threads: 8, parking: 40, presetName: "re-symbiose-mugen", modality: "rtr-full" }
     // async iterator: works both interactively (TTY) and with piped stdin
     this.rl = readline.createInterface({ input: process.stdin, output: process.stdout })
     this.lines = this.rl[Symbol.asyncIterator]()
@@ -236,17 +324,18 @@ class InstallerUI {
 
   async animate(seconds = 1.2, width = 60, height = 8) {
     const cols = [this.accent, this.accent2]
+    const params = animateParams(this.scene)
     for (let frame = 0; frame < Math.round(seconds * 12); frame++) {
       const rows = []
       for (let y = 0; y < height; y++) {
         let row = ""
         for (let x = 0; x < width; x++) {
-          row += Math.random() < 0.06 ? this.paint("·", cols[Math.floor(Math.random() * 2)]) : " "
+          row += Math.random() < params.density ? this.paint("·", Math.random() < params.ratio ? cols[0] : cols[1]) : " "
         }
         rows.push(row)
       }
       process.stdout.write(Term.move(2, 1) + rows.join("\n"))
-      await new Promise((r) => setTimeout(r, 1000 / 12))
+      await new Promise((r) => setTimeout(r, params.sleep * 1000))
     }
   }
 
@@ -288,18 +377,26 @@ class InstallerUI {
     await this.screenReview()
   }
 
+  async promptInt(prompt, dflt, lo, hi) {
+    for (;;) {
+      const [ok, value] = validatedInt(await this.q(prompt), dflt, lo, hi)
+      if (ok) return value
+      console.log(`  Enter a whole number ${lo}-${hi} (empty keeps ${dflt}).`)
+    }
+  }
+
   async screenHardcore() {
     process.stdout.write(Term.CLEAR + this.header())
     console.log(this.paint("  Hardcore cockpit — every option.\n", this.accent, true))
     const h = this.hardcore
-    h.threads = parseInt((await this.q(`  Threads [${h.threads}]: `)) || h.threads, 10)
+    h.threads = await this.promptInt(`  Threads [${h.threads}]: `, h.threads, 1, 64)
     console.log("  " + this.paint(RECOMMEND.threads, this.accent))
-    h.parking = parseInt((await this.q(`  Parking % [${h.parking}]: `)) || h.parking, 10)
+    h.parking = await this.promptInt(`  Parking % [${h.parking}]: `, h.parking, 0, 100)
     console.log("  " + this.paint(RECOMMEND.parking, this.accent))
     console.log("  " + this.paint(TIPS.threads, null, false, true))
     console.log("  " + this.paint(TIPS.parking, null, false, true))
     console.log()
-    h.preset = (await this.q("  Preset [re-symbiose-mugen]: ")) || "re-symbiose-mugen"
+    h.presetName = (await this.q("  Preset [re-symbiose-mugen]: ")) || "re-symbiose-mugen"
     console.log("  " + this.paint(TIPS.mugen, null, false, true))
     h.modality = (await this.q("  Modality [rtr-full]: ")) || "rtr-full"
     console.log("  " + this.paint(TIPS.modality, null, false, true))
@@ -335,6 +432,10 @@ class InstallerUI {
   }
 
   async screenReview() {
+    if (!this.audioPlayed.has(this.preset)) {
+      playAudio(this.preset)
+      this.audioPlayed.add(this.preset)
+    }
     const payload = { preset: this.preset }
     if (this.preset === "custom") payload.components = [...this.components].sort()
     else if (this.preset === "hardcore") Object.assign(payload, this.hardcore)
@@ -351,7 +452,6 @@ class InstallerUI {
   async screenProgress(payload, plan) {
     process.stdout.write(Term.CLEAR + this.header())
     console.log(this.paint("  Installing — the memory is being entered.\n", this.accent, true))
-    playAudio(this.preset)
     const total = plan.length
     for (let i = 0; i < total; i++) {
       const [k, v] = plan[i]
@@ -359,8 +459,14 @@ class InstallerUI {
       console.log(this.renderProgress(i, total, k, v))
       await new Promise((r) => setTimeout(r, 350))
     }
-    await executePlan(payload, this.project, this.tarball)
+    const ok = await executePlan(payload, this.project, this.tarball)
     process.stdout.write(Term.move(6 + total, 1) + Term.clearLine())
+    if (!ok) {
+      console.log(this.paint(`  ✗ package install failed for ${this.tarball} — check the path, then retry.`, this.accent, true))
+      await this.q("  Press Enter to return to the plan. ")
+      await this.screenReview()
+      return
+    }
     if (this.personality() === "forge") {
       console.log(`  ${this.paint("✓", this.accent2)} build complete — 100%`)
     } else {
@@ -384,7 +490,6 @@ class InstallerUI {
   }
 
   async run() {
-    playAudio("quick")
     await this.animate()
     await this.screenPresets()
     this.rl.close()
@@ -393,22 +498,44 @@ class InstallerUI {
 
 // ---------------------------------------------------------------- main
 
-const args = process.argv.slice(2)
-function argValue(name) {
-  const i = args.indexOf(name)
-  return i >= 0 ? args[i + 1] : undefined
+export function parseArgs(argv = process.argv.slice(2), env = process.env) {
+  const argValue = (name) => {
+    const i = argv.indexOf(name)
+    return i >= 0 ? argv[i + 1] : undefined
+  }
+  const theme = argValue("--theme") || env.RTRRE_INSTALL_THEME || env.RTRRE_THEME || "network"
+  if (!THEMES[theme]) {
+    throw new Error(`rtr-re-installer: unknown theme ${theme}; expected instrument|network|forge`)
+  }
+  return {
+    theme,
+    project: argValue("--project") || env.RTRRE_INSTALL_PROJECT || process.cwd(),
+    tarball: argValue("--tarball") || env.RTRRE_INSTALL_TARBALL,
+  }
 }
 
-const theme = argValue("--theme") || process.env.RTRRE_INSTALL_THEME || "network"
-const project = argValue("--project") || process.env.RTRRE_INSTALL_PROJECT || process.cwd()
-const tarball = argValue("--tarball") || process.env.RTRRE_INSTALL_TARBALL
+export async function main(argv, env) {
+  const { theme, project, tarball } = parseArgs(argv, env)
+  process.on("SIGINT", () => {
+    process.stdout.write(Term.SHOW)
+    process.exit(130)
+  })
+  process.stdout.write(Term.HIDE)
+  const ui = new InstallerUI(theme, project, tarball)
+  try {
+    await ui.run()
+  } catch (e) {
+    console.error(e)
+  } finally {
+    process.stdout.write(Term.SHOW)
+  }
+}
 
-process.stdout.write(Term.HIDE)
-const ui = new InstallerUI(theme, project, tarball)
-try {
-  await ui.run()
-} catch (e) {
-  console.error(e)
-} finally {
-  process.stdout.write(Term.SHOW)
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  try {
+    await main()
+  } catch (e) {
+    console.error(e?.message ?? e)
+    process.exit(2)
+  }
 }

@@ -52,7 +52,7 @@
 <!-- ============ HUD ============ -->
 
 <!ELEMENT header (div, div) >
-<!ELEMENT div (#PCDATA | button)* >
+<!ELEMENT div (#PCDATA | button | c-name | c-desc)* >
 <!ATTLIST div
     id ID #IMPLIED
     class CDATA #IMPLIED
@@ -108,7 +108,7 @@
 <!-- ============ Preset selection ============ -->
 
 <!ELEMENT preset-grid (preset-card+) >
-<!ELEMENT preset-card (span, span, span) >
+<!ELEMENT preset-card (preset-name, preset-desc, preset-value) >
 <!ATTLIST preset-card
     data-preset CDATA #REQUIRED
 >
@@ -130,7 +130,7 @@
 <!-- ============ Cockpit (hardcore) ============ -->
 
 <!ELEMENT cockpit (panel+) >
-<!ELEMENT panel (h3, input?, span, div?, select?) >
+<!ELEMENT panel (h3, input?, select?, readout?, recommend?, tip?) >
 <!ELEMENT readout (#PCDATA) >
 <!ELEMENT recommend (#PCDATA) >
 <!ELEMENT tip (#PCDATA) >
@@ -138,7 +138,7 @@
 <!-- ============ Plan / progress ============ -->
 
 <!ELEMENT plan (plan-item*) >
-<!ELEMENT plan-item (span, span) >
+<!ELEMENT plan-item (k, v) >
 <!ELEMENT k (#PCDATA) >
 <!ELEMENT v (#PCDATA) >
 
@@ -158,7 +158,7 @@
 <!-- ============ Completion / easter egg ============ -->
 
 <!ELEMENT easter-card (button) >
-<!ELEMENT easter-reveal (h3, p) >
+<!ELEMENT easter-reveal (h3, citation) >
 <!ATTLIST easter-reveal
     hidden CDATA #IMPLIED
 >

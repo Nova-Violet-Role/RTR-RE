@@ -56,6 +56,7 @@ const Bridge = (() => {
           ["engine", "rtr-full · dual-ONNX"],
           ["profile", "local-system · T8/P80"],
           ["plugin", "keeper + ctrl+p palette"],
+          ["memory", ".opencode/memory/ (DTD-shaped)"],
         ],
         hardcore: [
           ["preset", body?.presetName || "re-symbiose-mugen"],

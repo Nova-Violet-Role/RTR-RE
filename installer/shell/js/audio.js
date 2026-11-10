@@ -3,7 +3,7 @@
 // preset-adaptive tempo/intensity. Uses HTMLAudioElement (works on
 // file://) with playbackRate for live tempo adaptation.
 //
-// Remix variants (produced offline, see tools/make_obsession_remix.sh):
+// Remix variants (produced offline, see installer/tools/make_obsession_remix.py):
 //   assets/audio/obsession-quick.mp3      (normal / slightly upbeat)
 //   assets/audio/obsession-custom.mp3     (moderately faster)
 //   assets/audio/obsession-hardcore.mp3   (significantly faster)

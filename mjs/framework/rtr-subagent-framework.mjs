@@ -162,7 +162,13 @@ export async function spawnSubagent(client, parentSessionID, prompt, options = {
     })
 
     if (projectDir) {
-        await recordFork(projectDir, parentSessionID, forkedSessionID, prompt)
+        try {
+            await recordFork(projectDir, parentSessionID, forkedSessionID, prompt)
+        } catch (err) {
+            // Tracking is auxiliary: the fork exists and runs. Never fail
+            // the spawn (orphaning a live fork) on a mapping write error.
+            console.error(`[rtr-subagent] mapping write failed: ${err?.message ?? err}`)
+        }
     }
     return forkedSessionID
 }

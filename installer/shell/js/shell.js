@@ -38,8 +38,8 @@
       el.dataset.id = c.id
       el.innerHTML =
         `<span class="dot"></span>` +
-        `<div><div class="c-name">${c.name}${c.required ? " ·" : ""}</div>` +
-        `<div class="c-desc">${c.desc}</div></div>`
+        `<div><c-name class="c-name">${c.name}${c.required ? " ·" : ""}</c-name>` +
+        `<c-desc class="c-desc">${c.desc}</c-desc></div>`
       if (c.required) selectedComponents.add(c.id)
       el.addEventListener("click", () => toggleComponent(el, c))
       grid.appendChild(el)
@@ -74,7 +74,7 @@
       for (const [k, v] of res.steps || []) {
         const item = document.createElement("plan-item")
         item.className = "plan-item"
-        item.innerHTML = `<span class="k">${k}</span><span class="v">${v}</span>`
+        item.innerHTML = `<k class="k">${k}</k><v class="v">${v}</v>`
         list.appendChild(item)
       }
     })

@@ -33,19 +33,19 @@
     <p class="subtitle">Choose how you want to arrive.</p>
     <preset-grid class="preset-grid">
       <preset-card class="preset-card" data-preset="quick">
-        <span class="preset-name">Quick Install</span>
-        <span class="preset-desc">Single preset · one click · arcade attract mode</span>
-        <span class="preset-value">MUGEN · 400k/200k/200</span>
+        <preset-name class="preset-name">Quick Install</preset-name>
+        <preset-desc class="preset-desc">Single preset · one click · arcade attract mode</preset-desc>
+        <preset-value class="preset-value">MUGEN · 400k/200k/200</preset-value>
       </preset-card>
       <preset-card class="preset-card" data-preset="custom">
-        <span class="preset-name">Custom Selection</span>
-        <span class="preset-desc">Minimal · choose components · balanced</span>
-        <span class="preset-value">Keeper · Compressor · Engine · Plugin</span>
+        <preset-name class="preset-name">Custom Selection</preset-name>
+        <preset-desc class="preset-desc">Minimal · choose components · balanced</preset-desc>
+        <preset-value class="preset-value">5 required + your picks</preset-value>
       </preset-card>
       <preset-card class="preset-card" data-preset="hardcore">
-        <span class="preset-name">Hardcore</span>
-        <span class="preset-desc">Full control · every option · power-user cockpit</span>
-        <span class="preset-value">8 threads · P40 · recommended</span>
+        <preset-name class="preset-name">Hardcore</preset-name>
+        <preset-desc class="preset-desc">Full control · every option · power-user cockpit</preset-desc>
+        <preset-value class="preset-value">8 threads · P40 · recommended</preset-value>
       </preset-card>
     </preset-grid>
   </section>
@@ -66,14 +66,21 @@
     <cockpit class="cockpit">
       <panel class="panel">
         <h3>Threads</h3>
-        <input type="range" id="hcThreads" min="2" max="32" step="2" value="8"/>
-        <span class="readout" id="hcThreadsVal">8</span>
+        <select id="hcThreads">
+          <option value="2">2</option>
+          <option value="4">4</option>
+          <option value="6">6</option>
+          <option value="8" selected="selected">8</option>
+          <option value="12">12</option>
+          <option value="16">16</option>
+        </select>
+        <readout class="readout" id="hcThreadsVal">8</readout>
         <recommend class="recommend" id="hcRecommend">★ Recommended from Saimonokuma: 8 threads — T8 is the speed sweet spot on 32-thread hosts.</recommend>
       </panel>
       <panel class="panel">
         <h3>Parking</h3>
         <input type="range" id="hcParking" min="20" max="80" step="10" value="40"/>
-        <span class="readout" id="hcParkingVal">40%</span>
+        <readout class="readout" id="hcParkingVal">40%</readout>
         <tip class="tip">Did you know: P20 on a small-RAM machine lets the SSD act as the memory mitigation.</tip>
       </panel>
       <panel class="panel">
@@ -115,7 +122,7 @@
   <section class="screen" id="screen-progress">
     <h2 class="title">Installing</h2>
     <stream-track class="stream-track"><stream-fill class="stream-fill" id="streamFill"/></stream-track>
-    <div class="readout" id="progressReadout">0%</div>
+    <readout class="readout" id="progressReadout">0%</readout>
     <log class="log" id="progressLog"></log>
   </section>
 
@@ -128,7 +135,7 @@
     </easter-card>
     <easter-reveal class="easter-reveal" id="easterReveal" hidden="hidden">
       <h3>MiDi-MoE-Symbiogen-000</h3>
-      <p class="citation" id="easterCitation"></p>
+      <citation class="citation" id="easterCitation"></citation>
     </easter-reveal>
     <div class="nav-row">
       <button class="btn ghost" id="closeBtn" type="button">Close</button>

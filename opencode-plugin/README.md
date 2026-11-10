@@ -55,7 +55,7 @@ The plugin package also ships the RTR-RE terminal installer (no browser,
 no network). Launch it from the terminal:
 
 ```bash
-npx rtr-re-installer --theme network
+npx --package rtr-re-opencode-plugin rtr-re-installer --theme network
 ```
 
 The session is the same on every platform with a different personality:
