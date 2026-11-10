@@ -78,6 +78,14 @@ LEFT = 200
 RIGHT = 64
 
 
+def _is_hit(got_name, expected):
+    """Mirror of bench_versus._is_hit (kept inline so plates stay
+    dependency-free): str equality or membership in an expected set."""
+    if isinstance(expected, (list, tuple, set, frozenset)):
+        return got_name in expected
+    return got_name == expected
+
+
 def combined_taxon_recall3(data, systems):
     """Weighted recall@3 per taxon per system across corpora."""
     table = {s: {} for s in systems}
@@ -89,7 +97,7 @@ def combined_taxon_recall3(data, systems):
                     if r["taxon"] != t:
                         continue
                     total += 1
-                    if r["expected"] in r["got"][:3]:
+                    if any(_is_hit(n, r["expected"]) for n in r["got"][:3]):
                         hits += 1
             table[s][t] = hits / total if total else 0.0
     return table
