@@ -226,6 +226,41 @@ test("manual trims served sunk spans without new sinking", async () => {
     }
 })
 
+test("one-shot evict-tokens neutralizes the message cap", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-oneshot-cap-"))
+    try {
+        const { mkdir, writeFile } = await import("node:fs/promises")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({ triggerTokens: 1000000, maxKeepMessages: 5, manual: true }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, {})
+        const { messageText } = server._test
+        const messages = []
+        for (let i = 0; i < 10; i++) {
+            messages.push(msg("assistant", `${i} ` + "x".repeat(2000)))
+        }
+        messages.push(msg("user", "go"))
+        const fileCfg = JSON.parse(
+            readFileSync(join(dir, ".opencode", "rtr-re-keeper.json"), "utf8"),
+        )
+        fileCfg.evictTokensNow = 1000
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify(fileCfg),
+            "utf8",
+        )
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        // 10 x ~500 tokens, quota 1000: oldest 2 leave, the cap stays out.
+        assert.equal(messages.length, 9)
+        assert.ok(messageText(messages[0]).startsWith("2 "))
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
 test("mjs bridge builds the live-loop CLI shapes", () => {
     assert.deepEqual(
         core.buildCliArgs("symbiose-drain", { project: "demo", limit: 5 }),

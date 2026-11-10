@@ -1289,16 +1289,23 @@ const server = async (ctx, options = {}) => {
             let ovCfg = cfg
             if (oneShot) {
                 const probe = planKeepIndices(messages, cfg, sunkStore)
+                const freshCount = messages.length - probe.reEvicted.length
                 if (oneShotTokens > 0) {
                     ovTarget = Math.max(0, probe.effectiveTotal - oneShotTokens)
-                } else if (oneShotMessages > 0) {
+                } else {
                     // Messages-only: neutralize the token target so the
-                    // count binds instead of the (possibly tiny) target.
+                    // count quota binds instead of the (possibly tiny)
+                    // target.
                     ovTarget = probe.effectiveTotal
                 }
                 if (oneShotMessages > 0) {
-                    const freshCount = messages.length - probe.reEvicted.length
                     ovCfg = { ...cfg, maxKeepMessages: Math.max(0, freshCount - oneShotMessages) }
+                } else {
+                    // Tokens-only: neutralize the message cap so only the
+                    // token quota binds. Without this the 200-message cap
+                    // massacres big windows (measured: 498 evicted for a
+                    // 30k quota).
+                    ovCfg = { ...cfg, maxKeepMessages: freshCount }
                 }
             }
             const result = await applyKeeper(messages, ovCfg, sink, sunkStore, ovTarget, oneShot)
