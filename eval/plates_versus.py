@@ -261,10 +261,10 @@ def main():
     table = combined_taxon_recall3(data, systems)
     ov = overall(data, systems)
     (HERE / "versus.svg").write_text(
-        render(data, systems, table, ov, dark=False), encoding="utf-8"
+        render(data, systems, table, ov, dark=False), encoding="utf-8", newline="\n"
     )
     (HERE / "versus-dark.svg").write_text(
-        render(data, systems, table, ov, dark=True), encoding="utf-8"
+        render(data, systems, table, ov, dark=True), encoding="utf-8", newline="\n"
     )
     print("wrote eval/versus.svg + eval/versus-dark.svg")
 

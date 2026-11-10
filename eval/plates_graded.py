@@ -225,10 +225,10 @@ def main():
     )
     write_md(RESULTS / "graded-plates.md", data, systems, by_q, lane_on)
     (HERE / "graded.svg").write_text(
-        render(data, systems, by_q, dark=False), encoding="utf-8"
+        render(data, systems, by_q, dark=False), encoding="utf-8", newline="\n"
     )
     (HERE / "graded-dark.svg").write_text(
-        render(data, systems, by_q, dark=True), encoding="utf-8"
+        render(data, systems, by_q, dark=True), encoding="utf-8", newline="\n"
     )
     print(
         "wrote eval/results/graded-plates.md + eval/graded.svg + eval/graded-dark.svg"
