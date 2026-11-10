@@ -18,7 +18,8 @@ Taxonomy (taxionometry):
   T5 paraphrase .. TRUE synonym absent corpus-wide (BM25 blind, dense must win)
   T6 ident ....... filename stems + opaque digit/underscore ids (exact lane)
 
-Metrics: recall@1, recall@3, MRR per taxon per system + macro overall.
+Metrics: recall@1, recall@3, MRR per taxon per system + micro OVERALL
+(pooled rows) and macro OVERALL_MACRO (mean of taxon rates).
 Deterministic (seeded). Writes eval/results/versus.json + eval/versus.mmd.
 
 Run:  python eval/bench_versus.py   (with the deployment env for caches)
@@ -577,31 +578,41 @@ def derive_queries(proj, rng, title_mode="md"):
         if len(owners[src]) != 1:
             continue
         valid_pairs.append((src, syn, owners[src][0]))
+    seed_failed = False
     try:
         eng0 = MemoryEngine()
-        for src, syn, owner_n in valid_pairs:
-            stem = " ".join(
-                t for t in re.findall(r"\w+", Path(owner_n).stem.lower()) if len(t) > 2
-            )
-            eng0.add_lexikon_term(
-                str(proj),
-                src,
-                definition=f"{src} {stem}",
-                aliases=[syn],
-            )
-        eng0.close()
+        try:
+            for src, syn, owner_n in valid_pairs:
+                stem = " ".join(
+                    t
+                    for t in re.findall(r"\w+", Path(owner_n).stem.lower())
+                    if len(t) > 2
+                )
+                eng0.add_lexikon_term(
+                    str(proj),
+                    src,
+                    definition=f"{src} {stem}",
+                    aliases=[syn],
+                )
+        finally:
+            eng0.close()
     except Exception as e:
         print(f"lexikon seed failed: {e}", file=sys.stderr)
-    derive_queries._lex_seeded_count = len(valid_pairs)
+        seed_failed = True
+    # J3: an unseeded T5 lane is meaningless — skip its queries visibly
+    # instead of scoring them against an empty lexikon.
+    derive_queries._lex_seeded_count = 0 if seed_failed else len(valid_pairs)
+    derive_queries._t5_seed_failed = seed_failed
     by_owner = defaultdict(list)
-    for src, syn, owner_n in valid_pairs:
-        by_owner[owner_n].append(syn)
-    for owner_n in sorted(by_owner):
-        syns = by_owner[owner_n]
-        if len(syns) >= 2:
-            queries.append(("T5", " ".join(sorted(syns)[:3]), owner_n))
-        if sum(1 for q in queries if q[0] == "T5") >= CAPS["T5"]:
-            break
+    if not seed_failed:
+        for src, syn, owner_n in valid_pairs:
+            by_owner[owner_n].append(syn)
+        for owner_n in sorted(by_owner):
+            syns = by_owner[owner_n]
+            if len(syns) >= 2:
+                queries.append(("T5", " ".join(sorted(syns)[:3]), owner_n))
+            if sum(1 for q in queries if q[0] == "T5") >= CAPS["T5"]:
+                break
     # T6: identifier/path lookup (filename stems + opaque content ids)
     for n in names[: CAPS["T6"]]:
         queries.append(("T6", Path(n).stem, n))
@@ -719,7 +730,8 @@ def derive_dtd_queries(proj, rng):
     )
     rng.shuffle(cross_terms)
     for t in cross_terms[: DTD_CAPS["T10"]]:
-        queries.append(("T10", t, cross[t][0]))
+        # J4: both df==2 owners are valid answers (sorted for JSON-stable rows).
+        queries.append(("T10", t, sorted(cross[t])))
     # T11: lineage discrimination — query the family keyword/owner from a
     # file's PUBLIC lineage (TODO-64 proposal A/E). Isolates whether the
     # LINEAGE inventory signal lets retrieval identify a family by its
@@ -795,17 +807,69 @@ def run_system(engine, system, queries, proj):
     return rows
 
 
+BOOTSTRAP_REPS = 1000
+
+
+def bootstrap_ci(values, reps=BOOTSTRAP_REPS, seed=SEED):
+    """Seeded 95% percentile bootstrap CI for per-row scores (25-power)."""
+    rng = random.Random(seed)
+    n = len(values)
+    if n == 0:
+        return [0.0, 0.0]
+    means = sorted(
+        sum(values[rng.randrange(n)] for _ in range(n)) / n for _ in range(reps)
+    )
+    return [round(means[int(0.025 * reps)], 4), round(means[int(0.975 * reps)], 4)]
+
+
+def _is_hit(got_name, expected):
+    """A returned name hits when it equals the expected file (str) or is a
+    member of the expected set (J4: T10 df==2 rows carry both owners)."""
+    if isinstance(expected, (list, tuple, set, frozenset)):
+        return got_name in expected
+    return got_name == expected
+
+
 def metrics(rows):
     out = {}
+    if not rows:
+        # J1: a missing corpus yields zero rows; report a zero OVERALL so
+        # the gate fails it as a regression instead of crashing the bench.
+        out["OVERALL"] = {
+            "n": 0,
+            "recall@1": 0.0,
+            "recall@3": 0.0,
+            "mrr": 0.0,
+            "ci95_recall@1": [0.0, 0.0],
+            "ci95_recall@3": [0.0, 0.0],
+            "ci95_mrr": [0.0, 0.0],
+            "p50_ms": 0,
+        }
+        out["OVERALL_MACRO"] = {
+            "n": 0,
+            "n_taxons": 0,
+            "recall@1": 0.0,
+            "recall@3": 0.0,
+            "mrr": 0.0,
+        }
+        return out
     by_taxon = defaultdict(list)
     for r in rows:
         by_taxon[r["taxon"]].append(r)
     for taxon, rs in sorted(by_taxon.items()):
-        r1 = sum(1 for r in rs if r["got"][:1] == [r["expected"]]) / len(rs)
-        r3 = sum(1 for r in rs if r["expected"] in r["got"][:3]) / len(rs)
+        r1 = sum(
+            1 for r in rs if r["got"][:1] and _is_hit(r["got"][0], r["expected"])
+        ) / len(rs)
+        r3 = sum(
+            1 for r in rs if any(_is_hit(n, r["expected"]) for n in r["got"][:3])
+        ) / len(rs)
         mrr = sum(
             next(
-                (1.0 / (i + 1) for i, n in enumerate(r["got"]) if n == r["expected"]),
+                (
+                    1.0 / (i + 1)
+                    for i, n in enumerate(r["got"])
+                    if _is_hit(n, r["expected"])
+                ),
                 0.0,
             )
             for r in rs
@@ -817,30 +881,48 @@ def metrics(rows):
             "mrr": round(mrr, 4),
         }
     allq = len(rows)
+    s1 = [
+        1.0 if (r["got"][:1] and _is_hit(r["got"][0], r["expected"])) else 0.0
+        for r in rows
+    ]
+    s3 = [
+        1.0 if any(_is_hit(n, r["expected"]) for n in r["got"][:3]) else 0.0
+        for r in rows
+    ]
+    sm = [
+        next(
+            (
+                1.0 / (i + 1)
+                for i, n in enumerate(r["got"])
+                if _is_hit(n, r["expected"])
+            ),
+            0.0,
+        )
+        for r in rows
+    ]
     out["OVERALL"] = {
         "n": allq,
+        "recall@1": round(sum(s1) / allq, 4),
+        "recall@3": round(sum(s3) / allq, 4),
+        "mrr": round(sum(sm) / allq, 4),
+        "ci95_recall@1": bootstrap_ci(s1),
+        "ci95_recall@3": bootstrap_ci(s3),
+        "ci95_mrr": bootstrap_ci(sm),
+        "p50_ms": sorted(r["ms"] for r in rows)[len(rows) // 2],
+    }
+    # J8: macro overall (mean of per-taxon rates) alongside the micro
+    # OVERALL, so uneven taxon caps cannot dominate the verdict.
+    taxon_rates = [m for t, m in out.items() if t != "OVERALL"]
+    out["OVERALL_MACRO"] = {
+        "n": allq,
+        "n_taxons": len(taxon_rates),
         "recall@1": round(
-            sum(1 for r in rows if r["got"][:1] == [r["expected"]]) / allq, 4
+            sum(m["recall@1"] for m in taxon_rates) / len(taxon_rates), 4
         ),
         "recall@3": round(
-            sum(1 for r in rows if r["expected"] in r["got"][:3]) / allq, 4
+            sum(m["recall@3"] for m in taxon_rates) / len(taxon_rates), 4
         ),
-        "mrr": round(
-            sum(
-                next(
-                    (
-                        1.0 / (i + 1)
-                        for i, n in enumerate(r["got"])
-                        if n == r["expected"]
-                    ),
-                    0.0,
-                )
-                for r in rows
-            )
-            / allq,
-            4,
-        ),
-        "p50_ms": sorted(r["ms"] for r in rows)[len(rows) // 2],
+        "mrr": round(sum(m["mrr"] for m in taxon_rates) / len(taxon_rates), 4),
     }
     return out
 
@@ -898,13 +980,16 @@ def write_scoreboard(path, results):
         lines.append("")
     lines.append("## Combined")
     lines.append("")
-    lines.append("| System | n | R@1 | R@3 | MRR | p50 ms | errors |")
-    lines.append("|---|---|---|---|---|---|---|")
+    lines.append("| System | n | R@1 | R@3 | MRR | mR@1 | p50 ms | errors |")
+    lines.append("|---|---|---|---|---|---|---|---|")
     for system, data in results["combined"].items():
         o = data["metrics"]["OVERALL"]
+        om = data["metrics"].get("OVERALL_MACRO") or {}
+        mr1 = om.get("recall@1")
+        mr1s = f"{mr1:.4f}" if mr1 is not None else "n/a"
         lines.append(
             f"| {system} | {data['n']} | {o['recall@1']:.4f} | {o['recall@3']:.4f} "
-            f"| {o['mrr']:.4f} | {o['p50_ms']} | {data['query_errors']} |"
+            f"| {o['mrr']:.4f} | {mr1s} | {o['p50_ms']} | {data['query_errors']} |"
         )
     path.write_bytes(("\n".join(lines) + "\n").encode("utf-8"))
 
@@ -1108,12 +1193,14 @@ def main():
                 args.seed
                 + int(hashlib.sha256(spec["name"].encode()).hexdigest()[:8], 16)
             )
+            t5_failed = False
             if spec.get("mode") == "generated":
                 queries = derive_keeper_queries(proj, crng, spec.get("_markers", []))
             elif spec["title"] == "dtd":
                 queries = derive_dtd_queries(proj, crng)
             else:
                 queries = derive_queries(proj, crng, spec["title"])
+                t5_failed = bool(getattr(derive_queries, "_t5_seed_failed", False))
             print(f"[{spec['name']}] derived {len(queries)} queries")
             manifest_dir = (
                 proj / ".opencode" / "memory"
@@ -1129,7 +1216,13 @@ def main():
                 }
                 for n in staged
             ]
-            results["lexikon_seeded"] += getattr(derive_queries, "_lex_seeded_count", 0)
+            # J10: _lex_seeded_count is set only by derive_queries, so add it
+            # only for corpora derived that way — keeper/dtd corpora would
+            # otherwise re-add the previous md corpus's stale value.
+            if spec.get("mode") != "generated" and spec["title"] != "dtd":
+                results["lexikon_seeded"] += getattr(
+                    derive_queries, "_lex_seeded_count", 0
+                )
             engine = MemoryEngine()
             mem.resolve_project_dir(str(proj))
             os.environ["OPENCODE_MEMORY_EMBED_MODELS"] = INDEX_MODELS
@@ -1144,14 +1237,19 @@ def main():
                 sys.exit(2)
             print(f"[{spec['name']}] indexed: new={st['new']} failed={st['failed']}")
             engine.close()
-            corp = {"files": len(staged), "queries": len(queries), "systems": {}}
+            corp = {
+                "files": len(staged),
+                "queries": len(queries),
+                "systems": {},
+                "t5_seed_failed": t5_failed,
+            }
             for system in systems:
                 eng = MemoryEngine()
                 errbuf = io.StringIO()
                 with contextlib.redirect_stderr(errbuf):
                     rows = run_system(eng, system, queries, proj)
                 eng.close()
-                qerr = errbuf.getvalue().count("Query failed on ")
+                qerr = sum(1 for r in rows if r["error"])
                 for r in rows:
                     r["corpus"] = spec["name"]
                     all_rows[system].append(r)

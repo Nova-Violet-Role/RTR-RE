@@ -1,0 +1,4117 @@
+{
+  "seed": 20260928,
+  "tool": "RE:Symbiose versus v2 (isolated, same-size controls)",
+  "profile": {
+    "preset": "re-symbiose-mugen",
+    "preset_display": "Re-Symbiose-Mugen",
+    "cpu_profile": "public-default",
+    "modality": "rtr-full",
+    "threads_per_model": 4,
+    "effective_threads_per_model": 4,
+    "parking_percent": 60,
+    "logical_processors": 32,
+    "profile_code": "re-symbiose-mugen/rtr-full/t4/p60",
+    "peak_rss_mb": 2170.9,
+    "total_seconds": 14.0,
+    "rss_mb_per_sec": 154.868
+  },
+  "corpora": {
+    "dtd-daisy": {
+      "files": 11,
+      "queries": 94,
+      "systems": {
+        "rtr-full": {
+          "metrics": {
+            "T1": {
+              "n": 10,
+              "recall@1": 0.7,
+              "recall@3": 1.0,
+              "mrr": 0.8333
+            },
+            "T11": {
+              "n": 2,
+              "recall@1": 0.5,
+              "recall@3": 1.0,
+              "mrr": 0.75
+            },
+            "T2": {
+              "n": 12,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "T6": {
+              "n": 6,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "T7": {
+              "n": 14,
+              "recall@1": 0.7143,
+              "recall@3": 0.7857,
+              "mrr": 0.75
+            },
+            "T8": {
+              "n": 40,
+              "recall@1": 0.975,
+              "recall@3": 0.975,
+              "mrr": 0.975
+            },
+            "T9": {
+              "n": 10,
+              "recall@1": 0.7,
+              "recall@3": 1.0,
+              "mrr": 0.8333
+            },
+            "OVERALL": {
+              "n": 94,
+              "recall@1": 0.8723,
+              "recall@3": 0.9574,
+              "mrr": 0.9113,
+              "ci95_recall@1": [
+                0.7979,
+                0.9362
+              ],
+              "ci95_recall@3": [
+                0.9149,
+                0.9894
+              ],
+              "ci95_mrr": [
+                0.8546,
+                0.9574
+              ],
+              "p50_ms": 30.9
+            },
+            "OVERALL_MACRO": {
+              "n": 94,
+              "n_taxons": 7,
+              "recall@1": 0.7985,
+              "recall@3": 0.9658,
+              "mrr": 0.8774
+            }
+          },
+          "rows": [
+            {
+              "taxon": "T1",
+              "query": "bookmarkSet",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-2.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 1089.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "distInfo",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "oeb12.ent",
+                "oebpkg12.dtd"
+              ],
+              "ms": 32.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "dtbook",
+              "expected": "dtbook-2005-1.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 32.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "dtbook",
+              "expected": "dtbook-2005-2.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "dtbook",
+              "expected": "dtbook-2005-3.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 30.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "smil",
+              "expected": "dtbsmil-2005-1.dtd",
+              "got": [
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd",
+                "bookmark-2005-1.dtd"
+              ],
+              "ms": 30.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "smil",
+              "expected": "dtbsmil-2005-2.dtd",
+              "got": [
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd",
+                "bookmark-2005-1.dtd"
+              ],
+              "ms": 30.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "ncx",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "package",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 31.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "resources",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "resource-2005-1.dtd",
+                "oeb12.ent",
+                "oebpkg12.dtd"
+              ],
+              "ms": 30.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "tour",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 30.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "dc:Publisher",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 30.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "nodeSet",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "resource-2005-1.dtd",
+                "oeb12.ent",
+                "bookmark-2005-1.dtd"
+              ],
+              "ms": 30.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "itemref",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "bookmark-2005-1.dtd",
+                "distInfo-2005-1.dtd"
+              ],
+              "ms": 29.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "package",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 31.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "tours",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "content",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "oebpkg12.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 30.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "dc:Title",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 30.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "navTarget",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "bookmark-2005-1.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 30.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "pageTarget",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 30.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "manifest",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 29.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "dc:Source",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "playOrder",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "oeb12.ent",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 49.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "media-type",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 46.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "unique-identifier",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 47.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "label",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 47.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "value",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 45.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "file-as",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 48.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "mediaRef",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 49.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "media",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 46.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "event",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 46.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "pkgRef",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "oebpkg12.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 50.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "bookStruct",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "distInfo-2005-1.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 48.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "fallback",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "bookmark-2005-1.dtd",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 47.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "xmlns",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "ncx-2005-1.dtd",
+                "bookmark-2005-1.dtd"
+              ],
+              "ms": 48.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "role",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 47.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "oplus",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 30.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "darr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 30.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "minus",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 30.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "quot",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "distInfo-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 30.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "emsp",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 30.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "alpha",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "ncx-2005-1.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 30.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "hellip",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "bookmark-2005-1.dtd"
+              ],
+              "ms": 30.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "lsquo",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "distInfo-2005-1.dtd",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 30.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "scaron",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 30.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "macr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 29.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Aacute",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 30.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "sup1",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 30.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Alpha",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "ncx-2005-1.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 30.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "divide",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 30.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "auml",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "ncx-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 30.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "omicron",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 30.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Theta",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 30.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "harr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 30.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "empty",
+              "expected": "oeb12.ent",
+              "got": [
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 30.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "egrave",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 31.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "bull",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 30.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "larr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 30.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "DCMetadataOpt",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 47.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "yacute",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "bookmark-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 31.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Prime",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 30.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "frac14",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 30.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "radic",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "oelig",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 31.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Ntilde",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "ncx-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 31.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Ugrave",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "resource-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 31.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "sup2",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 30.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "omega",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 30.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "XpathSubset",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "resource-2005-1.dtd",
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 46.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "rang",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "resource-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "ucirc",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "bookmark-2005-1.dtd"
+              ],
+              "ms": 30.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "oslash",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 29.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "weierp",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 29.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "AElig",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 30.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "pound",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 30.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "plusmn",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 30.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "title, uid, lastmark?, (bookmark | hilite",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "bookmark-2005-1.dtd",
+                "distInfo-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 35.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "book+, fileSet?",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 31.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "%dtbookcontent;",
+              "expected": "dtbook-2005-1.dtd",
+              "got": [
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "%dtbookcontent;",
+              "expected": "dtbook-2005-2.dtd",
+              "got": [
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "%dtbookcontent;",
+              "expected": "dtbook-2005-3.dtd",
+              "got": [
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head, body",
+              "expected": "dtbsmil-2005-1.dtd",
+              "got": [
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 29.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head, body",
+              "expected": "dtbsmil-2005-2.dtd",
+              "got": [
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 30.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head, docTitle, docAuthor*, navMap, pageList?, navList*",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 39.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "metadata, manifest, spine, tours?, guide?",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 33.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head?, scope+",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "resource-2005-1.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 30.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T11",
+              "query": "DTD OEB 1.2 Entities",
+              "expected": "oeb12.ent",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 31.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T11",
+              "query": "DTD OEB 1.2 Entities",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 31.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "bookmark-2005-1",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 32.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "distInfo-2005-1",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 31.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbook-2005-1",
+              "expected": "dtbook-2005-1.dtd",
+              "got": [
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 31.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbook-2005-2",
+              "expected": "dtbook-2005-2.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 30.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbook-2005-3",
+              "expected": "dtbook-2005-3.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 29.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbsmil-2005-1",
+              "expected": "dtbsmil-2005-1.dtd",
+              "got": [
+                "dtbsmil-2005-1.dtd",
+                "dtbsmil-2005-2.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 31.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            }
+          ],
+          "query_errors": 0
+        },
+        "rag-dense-base": {
+          "metrics": {
+            "T1": {
+              "n": 10,
+              "recall@1": 0.7,
+              "recall@3": 1.0,
+              "mrr": 0.8333
+            },
+            "T11": {
+              "n": 2,
+              "recall@1": 0.5,
+              "recall@3": 1.0,
+              "mrr": 0.75
+            },
+            "T2": {
+              "n": 12,
+              "recall@1": 0.4167,
+              "recall@3": 0.8333,
+              "mrr": 0.6111
+            },
+            "T6": {
+              "n": 6,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "T7": {
+              "n": 14,
+              "recall@1": 0.1429,
+              "recall@3": 0.4286,
+              "mrr": 0.2857
+            },
+            "T8": {
+              "n": 40,
+              "recall@1": 0.925,
+              "recall@3": 0.975,
+              "mrr": 0.9458
+            },
+            "T9": {
+              "n": 10,
+              "recall@1": 0.4,
+              "recall@3": 0.7,
+              "mrr": 0.5167
+            },
+            "OVERALL": {
+              "n": 94,
+              "recall@1": 0.6596,
+              "recall@3": 0.8511,
+              "mrr": 0.7465,
+              "ci95_recall@1": [
+                0.5638,
+                0.7553
+              ],
+              "ci95_recall@3": [
+                0.7766,
+                0.9255
+              ],
+              "ci95_mrr": [
+                0.6738,
+                0.8209
+              ],
+              "p50_ms": 7.4
+            },
+            "OVERALL_MACRO": {
+              "n": 94,
+              "n_taxons": 7,
+              "recall@1": 0.5835,
+              "recall@3": 0.8481,
+              "mrr": 0.7061
+            }
+          },
+          "rows": [
+            {
+              "taxon": "T1",
+              "query": "bookmarkSet",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 287.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "distInfo",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "oeb12.ent",
+                "oebpkg12.dtd"
+              ],
+              "ms": 8.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "dtbook",
+              "expected": "dtbook-2005-1.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "dtbook",
+              "expected": "dtbook-2005-2.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "dtbook",
+              "expected": "dtbook-2005-3.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "smil",
+              "expected": "dtbsmil-2005-1.dtd",
+              "got": [
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "smil",
+              "expected": "dtbsmil-2005-2.dtd",
+              "got": [
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "ncx",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "oeb12.ent",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 7.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "package",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T1",
+              "query": "resources",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "resource-2005-1.dtd",
+                "oeb12.ent",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "tour",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "dc:Publisher",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "nodeSet",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "oeb12.ent",
+                "resource-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "itemref",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "package",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "tours",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "content",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "dc:Title",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 8.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "navTarget",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "bookmark-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "pageTarget",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "bookmark-2005-1.dtd",
+                "ncx-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "manifest",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T2",
+              "query": "dc:Source",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "playOrder",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 9.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "media-type",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "distInfo-2005-1.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 10.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "unique-identifier",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 11.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "label",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 10.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "value",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "oeb12.ent",
+                "resource-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 10.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "file-as",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 8.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "mediaRef",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "oeb12.ent",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "media",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "oeb12.ent",
+                "distInfo-2005-1.dtd",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "event",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "pkgRef",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "bookStruct",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "fallback",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "bookmark-2005-1.dtd",
+                "distInfo-2005-1.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "xmlns",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "resource-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T7",
+              "query": "role",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "oplus",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "distInfo-2005-1.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "darr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "minus",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "quot",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "distInfo-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "emsp",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "alpha",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "hellip",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "lsquo",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "distInfo-2005-1.dtd",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "scaron",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "macr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Aacute",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "sup1",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-1.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Alpha",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "divide",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "auml",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "omicron",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Theta",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "ncx-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "harr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "empty",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "egrave",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "bull",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "larr",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "resource-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "DCMetadataOpt",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "oeb12.ent",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "yacute",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Prime",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "frac14",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "radic",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "oelig",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Ntilde",
+              "expected": "oeb12.ent",
+              "got": [
+                "ncx-2005-1.dtd",
+                "oeb12.ent",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "Ugrave",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "sup2",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "omega",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "XpathSubset",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "rang",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "resource-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "ucirc",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "resource-2005-1.dtd",
+                "ncx-2005-1.dtd"
+              ],
+              "ms": 7.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "oslash",
+              "expected": "oeb12.ent",
+              "got": [
+                "dtbsmil-2005-1.dtd",
+                "dtbsmil-2005-2.dtd",
+                "oeb12.ent"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "weierp",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "AElig",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-2.dtd",
+                "oebpkg12.dtd"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "pound",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "dtbsmil-2005-2.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T8",
+              "query": "plusmn",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "dtbsmil-2005-1.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "title, uid, lastmark?, (bookmark | hilite",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 9.2,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "book+, fileSet?",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.8,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "%dtbookcontent;",
+              "expected": "dtbook-2005-1.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "%dtbookcontent;",
+              "expected": "dtbook-2005-2.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "%dtbookcontent;",
+              "expected": "dtbook-2005-3.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head, body",
+              "expected": "dtbsmil-2005-1.dtd",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head, body",
+              "expected": "dtbsmil-2005-2.dtd",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head, docTitle, docAuthor*, navMap, pageList?, navList*",
+              "expected": "ncx-2005-1.dtd",
+              "got": [
+                "ncx-2005-1.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 11.0,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "metadata, manifest, spine, tours?, guide?",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oebpkg12.dtd",
+                "distInfo-2005-1.dtd",
+                "dtbook-2005-3.dtd"
+              ],
+              "ms": 8.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T9",
+              "query": "head?, scope+",
+              "expected": "resource-2005-1.dtd",
+              "got": [
+                "oeb12.ent",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T11",
+              "query": "DTD OEB 1.2 Entities",
+              "expected": "oeb12.ent",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T11",
+              "query": "DTD OEB 1.2 Entities",
+              "expected": "oebpkg12.dtd",
+              "got": [
+                "oeb12.ent",
+                "oebpkg12.dtd",
+                "resource-2005-1.dtd"
+              ],
+              "ms": 7.4,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "bookmark-2005-1",
+              "expected": "bookmark-2005-1.dtd",
+              "got": [
+                "bookmark-2005-1.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.7,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "distInfo-2005-1",
+              "expected": "distInfo-2005-1.dtd",
+              "got": [
+                "distInfo-2005-1.dtd",
+                "oeb12.ent",
+                "oebpkg12.dtd"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbook-2005-1",
+              "expected": "dtbook-2005-1.dtd",
+              "got": [
+                "dtbook-2005-1.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbook-2005-2",
+              "expected": "dtbook-2005-2.dtd",
+              "got": [
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbook-2005-3",
+              "expected": "dtbook-2005-3.dtd",
+              "got": [
+                "dtbook-2005-3.dtd",
+                "dtbook-2005-2.dtd",
+                "dtbook-2005-1.dtd"
+              ],
+              "ms": 7.9,
+              "error": "",
+              "corpus": "dtd-daisy"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtbsmil-2005-1",
+              "expected": "dtbsmil-2005-1.dtd",
+              "got": [
+                "dtbsmil-2005-1.dtd",
+                "dtbook-2005-1.dtd",
+                "dtbsmil-2005-2.dtd"
+              ],
+              "ms": 7.5,
+              "error": "",
+              "corpus": "dtd-daisy"
+            }
+          ],
+          "query_errors": 0
+        }
+      },
+      "t5_seed_failed": false
+    },
+    "dtd-xdita": {
+      "files": 5,
+      "queries": 43,
+      "systems": {
+        "rtr-full": {
+          "metrics": {
+            "T1": {
+              "n": 3,
+              "recall@1": 0.6667,
+              "recall@3": 1.0,
+              "mrr": 0.8333
+            },
+            "T11": {
+              "n": 4,
+              "recall@1": 0.5,
+              "recall@3": 1.0,
+              "mrr": 0.7083
+            },
+            "T2": {
+              "n": 12,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "T6": {
+              "n": 5,
+              "recall@1": 0.6,
+              "recall@3": 1.0,
+              "mrr": 0.8
+            },
+            "T7": {
+              "n": 6,
+              "recall@1": 0.8333,
+              "recall@3": 1.0,
+              "mrr": 0.8889
+            },
+            "T8": {
+              "n": 11,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "T9": {
+              "n": 2,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "OVERALL": {
+              "n": 43,
+              "recall@1": 0.8605,
+              "recall@3": 1.0,
+              "mrr": 0.9225,
+              "ci95_recall@1": [
+                0.7442,
+                0.9535
+              ],
+              "ci95_recall@3": [
+                1.0,
+                1.0
+              ],
+              "ci95_mrr": [
+                0.8566,
+                0.9767
+              ],
+              "p50_ms": 18.9
+            },
+            "OVERALL_MACRO": {
+              "n": 43,
+              "n_taxons": 7,
+              "recall@1": 0.8,
+              "recall@3": 1.0,
+              "mrr": 0.8901
+            }
+          },
+          "rows": [
+            {
+              "taxon": "T1",
+              "query": "b",
+              "expected": "dtd__lw-highlightDomain.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 643.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T1",
+              "query": "map",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 18.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T1",
+              "query": "topic",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 18.4,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "section",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 18.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "audio",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 17.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "stentry",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 18.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "video-poster",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd"
+              ],
+              "ms": 17.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "shortdesc",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 18.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "media-source",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 16.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "media-loop",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 15.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "video",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 16.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "simpletable",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd"
+              ],
+              "ms": 18.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "topicref",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 17.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "prolog",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 15.5,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "media-track",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 18.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "keys",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 33.4,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "xml:space",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd"
+              ],
+              "ms": 32.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "type",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 33.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "locktitle",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 33.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "processing-role",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 32.2,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "callout",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.dtd"
+              ],
+              "ms": 17.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "list-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 32.5,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "topic-type",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-topic.dtd",
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.dtd"
+              ],
+              "ms": 17.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "processing-role",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 32.4,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "simple-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 33.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "all-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 32.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "control-variables",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 33.2,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "fn-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 35.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "fn-reuse",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 38.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "map-type",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-map.dtd",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 18.5,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "fig-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 33.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "display-atts",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 33.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T9",
+              "query": "topicmeta?, (topicref | keydef",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 20.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T9",
+              "query": "title, shortdesc?, prolog?, body?",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 19.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Highlight Domain",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 18.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Topic",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.dtd",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 17.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Highlight Domain",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 19.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Map",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-map.dtd",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 18.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-highlightDomain",
+              "expected": "dtd__lw-highlightDomain.mod",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 19.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-map",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-map.dtd",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 18.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-map",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.dtd",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 18.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-topic",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-topic.dtd",
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 18.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-topic",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.dtd",
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 18.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            }
+          ],
+          "query_errors": 0
+        },
+        "rag-dense-base": {
+          "metrics": {
+            "T1": {
+              "n": 3,
+              "recall@1": 0.6667,
+              "recall@3": 1.0,
+              "mrr": 0.7778
+            },
+            "T11": {
+              "n": 4,
+              "recall@1": 0.5,
+              "recall@3": 1.0,
+              "mrr": 0.7083
+            },
+            "T2": {
+              "n": 12,
+              "recall@1": 0.75,
+              "recall@3": 1.0,
+              "mrr": 0.8611
+            },
+            "T6": {
+              "n": 5,
+              "recall@1": 0.6,
+              "recall@3": 1.0,
+              "mrr": 0.8
+            },
+            "T7": {
+              "n": 6,
+              "recall@1": 0.1667,
+              "recall@3": 0.6667,
+              "mrr": 0.3889
+            },
+            "T8": {
+              "n": 11,
+              "recall@1": 0.3636,
+              "recall@3": 0.9091,
+              "mrr": 0.5758
+            },
+            "T9": {
+              "n": 2,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "OVERALL": {
+              "n": 43,
+              "recall@1": 0.5349,
+              "recall@3": 0.9302,
+              "mrr": 0.7016,
+              "ci95_recall@1": [
+                0.3953,
+                0.6977
+              ],
+              "ci95_recall@3": [
+                0.8605,
+                1.0
+              ],
+              "ci95_mrr": [
+                0.6008,
+                0.8101
+              ],
+              "p50_ms": 7.0
+            },
+            "OVERALL_MACRO": {
+              "n": 43,
+              "n_taxons": 7,
+              "recall@1": 0.5781,
+              "recall@3": 0.9394,
+              "mrr": 0.7303
+            }
+          },
+          "rows": [
+            {
+              "taxon": "T1",
+              "query": "b",
+              "expected": "dtd__lw-highlightDomain.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 285.4,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T1",
+              "query": "map",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 8.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T1",
+              "query": "topic",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "section",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "audio",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 6.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "stentry",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "video-poster",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "shortdesc",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "media-source",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "media-loop",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "video",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "simpletable",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-map.dtd",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "topicref",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "prolog",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T2",
+              "query": "media-track",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "keys",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "xml:space",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 6.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "type",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 6.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "locktitle",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 6.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "processing-role",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T7",
+              "query": "callout",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.dtd"
+              ],
+              "ms": 7.2,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "list-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "topic-type",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 6.5,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "processing-role",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 6.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "simple-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 6.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "all-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "control-variables",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 6.5,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "fn-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "fn-reuse",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "map-type",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 7.0,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "fig-blocks",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T8",
+              "query": "display-atts",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 6.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T9",
+              "query": "topicmeta?, (topicref | keydef",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 7.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T9",
+              "query": "title, shortdesc?, prolog?, body?",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-map.mod",
+                "dtd__lw-highlightDomain.mod"
+              ],
+              "ms": 7.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Highlight Domain",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Topic",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Highlight Domain",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 6.8,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T11",
+              "query": "ELEMENTS LIGHTWEIGHT DITA Map",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-map.dtd",
+                "dtd__lw-map.mod",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 6.7,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-highlightDomain",
+              "expected": "dtd__lw-highlightDomain.mod",
+              "got": [
+                "dtd__lw-highlightDomain.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.dtd"
+              ],
+              "ms": 8.2,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-map",
+              "expected": "dtd__lw-map.dtd",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 7.6,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-map",
+              "expected": "dtd__lw-map.mod",
+              "got": [
+                "dtd__lw-map.mod",
+                "dtd__lw-map.dtd",
+                "dtd__lw-topic.mod"
+              ],
+              "ms": 7.3,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-topic",
+              "expected": "dtd__lw-topic.dtd",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 7.1,
+              "error": "",
+              "corpus": "dtd-xdita"
+            },
+            {
+              "taxon": "T6",
+              "query": "dtd__lw-topic",
+              "expected": "dtd__lw-topic.mod",
+              "got": [
+                "dtd__lw-topic.mod",
+                "dtd__lw-topic.dtd",
+                "dtd__lw-map.mod"
+              ],
+              "ms": 7.9,
+              "error": "",
+              "corpus": "dtd-xdita"
+            }
+          ],
+          "query_errors": 0
+        }
+      },
+      "t5_seed_failed": false
+    }
+  },
+  "lexikon_seeded": 38,
+  "manifest": {
+    "dtd-daisy": [
+      {
+        "file": "bookmark-2005-1.dtd",
+        "sha256": "739594adc72e4696a43e7ff8b6b13b61e57311a2f5837878b9b60fecf316db7d"
+      },
+      {
+        "file": "distInfo-2005-1.dtd",
+        "sha256": "fb239c6817eeef79841f9c36d032cbff18abcc073a139c46478955ba6184a9da"
+      },
+      {
+        "file": "dtbook-2005-1.dtd",
+        "sha256": "c7445faf2bf4be9adfd8ba4f5a18d7f6dbb629801d0f602a2317138d96b6d999"
+      },
+      {
+        "file": "dtbook-2005-2.dtd",
+        "sha256": "a260ca0cc339af0987132068c33da317fd2d81ae2f1e896cc039af703f8688aa"
+      },
+      {
+        "file": "dtbook-2005-3.dtd",
+        "sha256": "c730da6899e551a60a30439cfa1d6407a291745d7f99320dfa70a5d7ec4b1861"
+      },
+      {
+        "file": "dtbsmil-2005-1.dtd",
+        "sha256": "2c8c284e604d055c78982aaf7ffadb01cee6f4f5d4be6e24dc5b7bae726e4829"
+      },
+      {
+        "file": "dtbsmil-2005-2.dtd",
+        "sha256": "9c34d366614114d408cab07517ea27f56813e93a29bd5d2fdea0d3d047cefab8"
+      },
+      {
+        "file": "ncx-2005-1.dtd",
+        "sha256": "4853d31f314a50cc309a129234701cf2e4b0d5d72ca80956907619a9b4cfff6d"
+      },
+      {
+        "file": "oeb12.ent",
+        "sha256": "f60d22ba9449d25a9b34b3a038f4c5dd5093eae8c471d4a39ffbdff801baf3c8"
+      },
+      {
+        "file": "oebpkg12.dtd",
+        "sha256": "a6f9976ef4a756d24718b437ff3234ff61ef19565108ab0967e2ae5f0a028d1d"
+      },
+      {
+        "file": "resource-2005-1.dtd",
+        "sha256": "1e9874ae8a2ee25ec96dee0a781661db8ce97351c7199628e37556300112477c"
+      }
+    ],
+    "dtd-xdita": [
+      {
+        "file": "dtd__lw-highlightDomain.mod",
+        "sha256": "57fbdb3e5e06396f37ea3c3f58ce58d0102180efd01cfb7e648eaa68ae95c937"
+      },
+      {
+        "file": "dtd__lw-map.dtd",
+        "sha256": "bd227fd3697edb396f8e56d8133ecaa89507f9ffdf3a4085419cae38c8fb9a6b"
+      },
+      {
+        "file": "dtd__lw-map.mod",
+        "sha256": "6f105ad26ee43a51187f2381bcd4b5c7f7a99c37b9b0e41effae8c6ffe644a9c"
+      },
+      {
+        "file": "dtd__lw-topic.dtd",
+        "sha256": "dbf9b614aa885a379ff6869650a4cd120c11de2e142fe1ac0da91d9d7fae37ff"
+      },
+      {
+        "file": "dtd__lw-topic.mod",
+        "sha256": "78e87f30816a9aa98559b1902742a097f7a16720960d23c175498a2215fd145c"
+      }
+    ]
+  },
+  "combined": {
+    "rtr-full": {
+      "metrics": {
+        "T1": {
+          "n": 13,
+          "recall@1": 0.6923,
+          "recall@3": 1.0,
+          "mrr": 0.8333
+        },
+        "T11": {
+          "n": 6,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "mrr": 0.7222
+        },
+        "T2": {
+          "n": 24,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0
+        },
+        "T6": {
+          "n": 11,
+          "recall@1": 0.8182,
+          "recall@3": 1.0,
+          "mrr": 0.9091
+        },
+        "T7": {
+          "n": 20,
+          "recall@1": 0.75,
+          "recall@3": 0.85,
+          "mrr": 0.7917
+        },
+        "T8": {
+          "n": 51,
+          "recall@1": 0.9804,
+          "recall@3": 0.9804,
+          "mrr": 0.9804
+        },
+        "T9": {
+          "n": 12,
+          "recall@1": 0.75,
+          "recall@3": 1.0,
+          "mrr": 0.8611
+        },
+        "OVERALL": {
+          "n": 137,
+          "recall@1": 0.8686,
+          "recall@3": 0.9708,
+          "mrr": 0.9148,
+          "ci95_recall@1": [
+            0.8102,
+            0.9197
+          ],
+          "ci95_recall@3": [
+            0.9416,
+            0.9927
+          ],
+          "ci95_mrr": [
+            0.8735,
+            0.9489
+          ],
+          "p50_ms": 30.6
+        },
+        "OVERALL_MACRO": {
+          "n": 137,
+          "n_taxons": 7,
+          "recall@1": 0.7844,
+          "recall@3": 0.9758,
+          "mrr": 0.8711
+        }
+      },
+      "n": 137,
+      "query_errors": 0
+    },
+    "rag-dense-base": {
+      "metrics": {
+        "T1": {
+          "n": 13,
+          "recall@1": 0.6923,
+          "recall@3": 1.0,
+          "mrr": 0.8205
+        },
+        "T11": {
+          "n": 6,
+          "recall@1": 0.5,
+          "recall@3": 1.0,
+          "mrr": 0.7222
+        },
+        "T2": {
+          "n": 24,
+          "recall@1": 0.5833,
+          "recall@3": 0.9167,
+          "mrr": 0.7361
+        },
+        "T6": {
+          "n": 11,
+          "recall@1": 0.8182,
+          "recall@3": 1.0,
+          "mrr": 0.9091
+        },
+        "T7": {
+          "n": 20,
+          "recall@1": 0.15,
+          "recall@3": 0.5,
+          "mrr": 0.3167
+        },
+        "T8": {
+          "n": 51,
+          "recall@1": 0.8039,
+          "recall@3": 0.9608,
+          "mrr": 0.866
+        },
+        "T9": {
+          "n": 12,
+          "recall@1": 0.5,
+          "recall@3": 0.75,
+          "mrr": 0.5972
+        },
+        "OVERALL": {
+          "n": 137,
+          "recall@1": 0.6204,
+          "recall@3": 0.8759,
+          "mrr": 0.7324,
+          "ci95_recall@1": [
+            0.5401,
+            0.6934
+          ],
+          "ci95_recall@3": [
+            0.8248,
+            0.927
+          ],
+          "ci95_mrr": [
+            0.6764,
+            0.7895
+          ],
+          "p50_ms": 7.2
+        },
+        "OVERALL_MACRO": {
+          "n": 137,
+          "n_taxons": 7,
+          "recall@1": 0.5782,
+          "recall@3": 0.8754,
+          "mrr": 0.7097
+        }
+      },
+      "n": 137,
+      "query_errors": 0
+    }
+  }
+}

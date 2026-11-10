@@ -131,6 +131,91 @@ def lane_decision(matrix: dict) -> dict:
     }
 
 
+def _find_pair(matrix: dict, a: str, b: str):
+    want = {a, b}
+    for p in matrix["pairs"]:
+        if {p["family_a"], p["family_b"]} == want:
+            return p
+    return None
+
+
+def _directed_containment(pair, src: str, kind: str):
+    """(containment, inter, src_size, dst_size) of src in the other family."""
+    k = pair["per_kind"][kind]
+    if pair["family_a"] == src:
+        return k["a_in_b"], k["|a∩b|"], k["|a|"], k["|b|"]
+    return k["b_in_a"], k["|a∩b|"], k["|b|"], k["|a|"]
+
+
+_SHORT_NAMES = {
+    "JATS-DTDs": "JATS",
+    "docbook": "DocBook",
+    "org.oasis-open.dita.v1_2": "DITA v1.2",
+    "org.oasis-open.dita.v1_3": "DITA v1.3",
+}
+
+
+def render_findings(matrix: dict, decision: dict):
+    """Findings computed from the matrix (J23: never hardcoded)."""
+    lines = ["## Findings", ""]
+    dita2, dita3 = "org.oasis-open.dita.v1_2", "org.oasis-open.dita.v1_3"
+    p = _find_pair(matrix, dita2, dita3)
+    if p is None:
+        lines.append(
+            "1. **Transfer is kind-specific.** DITA v1.2 → v1.3 pair "
+            "not observed in this catalogue."
+        )
+    else:
+        el = _directed_containment(p, dita2, "elements")
+        en = _directed_containment(p, dita2, "entities")
+        lines.append(
+            f"1. **Transfer is kind-specific.** DITA v1.2 → v1.3 elements transfer"
+            f" at {el[0]:.3f} containment ({el[1]}/{el[2]}), but entities do not"
+            f" ({en[2]} vs {en[3]}): version pairs share structure, not entity"
+            " vocabulary."
+        )
+    p2 = _find_pair(matrix, "xhtml11", "mathml")
+    if p2 is None:
+        lines.append(
+            "2. **High overlap pattern not observed** (no xhtml11/mathml pair"
+            " in this catalogue)."
+        )
+    else:
+        lines.append(
+            "2. **High overlap is mostly module inclusion.** xhtml11 embeds MathML"
+            f" (mathml|xhtml11 Jaccard {p2['combined_jaccard']:.3f}). The"
+            " near-duplicate band is inclusion, not coincidence."
+        )
+    triples = [
+        ("JATS-DTDs", "docbook"),
+        ("docbook", "org.oasis-open.dita.v1_3"),
+        ("org.oasis-open.dita.v1_2", "org.oasis-open.dita.v1_3"),
+    ]
+    shown = []
+    for a, b in triples:
+        q = _find_pair(matrix, a, b)
+        label = f"{_SHORT_NAMES.get(a, a)}↔{_SHORT_NAMES.get(b, b)}"
+        shown.append(
+            f"{label} ({q['combined_jaccard']:.3f})" if q else f"{label} (not observed)"
+        )
+    lines.append(
+        f"3. **The moderate band is where T10 binds.** {', '.join(shown)}: shared"
+        " vocabulary exists, but each side has substantial unique structure —"
+        " exactly the cross-family discrimination failure T10 measures."
+    )
+    total = (
+        decision["near_duplicate_pairs"]
+        + decision["moderate_overlap_pairs"]
+        + decision["low_overlap_pairs"]
+    )
+    lines.append(
+        f"4. **Most pairs are independent** ({decision['low_overlap_pairs']}/{total}"
+        " below 0.15): no transfer, no discrimination risk."
+    )
+    lines.append("")
+    return lines
+
+
 def render_md(matrix: dict, decision: dict) -> str:
     lines = [
         "# DTD Cross-Family Transfer Matrix (TODO-35)",
@@ -147,37 +232,20 @@ def render_md(matrix: dict, decision: dict) -> str:
         "",
         "## Top 25 pairs by combined Jaccard",
         "",
-        "| A | B | Jaccard | A-in-B | B-in-A | elements | attributes | entities |",
-        "|---|---|---|---|---|---|---|---|",
+        "| A | B | Jaccard | A-in-B | B-in-A | elements | attributes | entities | notations |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for p in matrix["pairs"][:25]:
         ek = p["per_kind"]["elements"]["jaccard"]
         ak = p["per_kind"]["attributes"]["jaccard"]
         nk = p["per_kind"]["entities"]["jaccard"]
+        nt = p["per_kind"]["notations"]["jaccard"]
         lines.append(
             f"| {p['family_a']} | {p['family_b']} | "
             f"{p['combined_jaccard']:.3f} | {p['combined_containment_a_in_b']:.3f} | "
-            f"{p['combined_containment_b_in_a']:.3f} | {ek:.3f} | {ak:.3f} | {nk:.3f} |"
+            f"{p['combined_containment_b_in_a']:.3f} | {ek:.3f} | {ak:.3f} | {nk:.3f} | {nt:.3f} |"
         )
-    lines += [
-        "",
-        "## Findings",
-        "",
-        "1. **Transfer is kind-specific.** DITA v1.2 → v1.3 elements transfer"
-        " at 0.998 containment (535/536), but entities do not (34 vs 2174):"
-        " version pairs share structure, not entity vocabulary.",
-        "2. **High overlap is mostly module inclusion.** xhtml11 embeds MathML"
-        " (mathml|xhtml11 Jaccard 0.861); JATS and DITA v1.3 distributions"
-        " bundle mathml3.dtd. The near-duplicate band is inclusion, not"
-        " coincidence.",
-        "3. **The moderate band is where T10 binds.** JATS↔DocBook (0.280),"
-        " DocBook↔DITA v1.3 (0.232), DITA v1.2↔v1.3 (0.183): shared"
-        " vocabulary exists, but each side has substantial unique structure —"
-        " exactly the cross-family discrimination failure T10 measures.",
-        "4. **Most pairs are independent** (92/105 below 0.15): no transfer,"
-        " no discrimination risk.",
-        "",
-    ]
+    lines += ["", *render_findings(matrix, decision)]
     lines += ["", "## Full pair table", ""]
     lines.append("| A | B | Jaccard | A-in-B | B-in-A |")
     lines.append("|---|---|---|---|---|")
@@ -197,8 +265,10 @@ def main() -> int:
     decision = lane_decision(matrix)
     payload = {"matrix": matrix, "decision": decision}
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    OUT_JSON.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    OUT_MD.write_text(render_md(matrix, decision), encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(payload, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
+    OUT_MD.write_text(render_md(matrix, decision), encoding="utf-8", newline="\n")
     print(f"wrote {OUT_JSON}")
     print(f"wrote {OUT_MD}")
     print(

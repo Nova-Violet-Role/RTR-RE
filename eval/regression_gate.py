@@ -34,10 +34,21 @@ RESULTS = Path(__file__).parent / "results"
 
 
 def _newest_baseline() -> Path:
-    """Default = the newest frozen baseline (release arcs sort lexicographically:
-    1.0.0 < 1.1.0 < ...). The 1.0.0 baseline stays available as an explicit
-    reference argument for cross-arc comparison (TODO-68 division)."""
-    candidates = sorted(RESULTS.glob("baseline-*.json"))
+    """Default = the newest frozen baseline (release arcs sort by version
+    tuple: 1.0.0 < 1.1.0 < ... < 1.10.0). The 1.0.0 baseline stays
+    available as an explicit reference argument for cross-arc
+    comparison (TODO-68 division)."""
+
+    def _version_key(path: Path) -> tuple:
+        key = []
+        for chunk in path.stem[len("baseline-") :].split("."):
+            try:
+                key.append((0, int(chunk)))
+            except ValueError:
+                key.append((1, chunk))
+        return tuple(key)
+
+    candidates = sorted(RESULTS.glob("baseline-*.json"), key=_version_key)
     return candidates[-1] if candidates else RESULTS / "baseline-1.0.0.json"
 
 

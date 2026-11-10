@@ -12,39 +12,39 @@ unified lanes for near-duplicate pairs (Jaccard >= 0.5); per-family or family-ta
 
 ## Top 25 pairs by combined Jaccard
 
-| A | B | Jaccard | A-in-B | B-in-A | elements | attributes | entities |
-|---|---|---|---|---|---|---|---|
-| mathml | xhtml11 | 0.861 | 0.906 | 0.946 | 0.717 | 0.359 | 0.931 |
-| JATS-DTDs | mathml | 0.743 | 0.792 | 0.922 | 0.327 | 0.204 | 0.971 |
-| org.oasis-open.dita.v1_3 | xhtml11 | 0.716 | 0.750 | 0.939 | 0.261 | 0.307 | 0.969 |
-| mathml | org.oasis-open.dita.v1_3 | 0.677 | 0.888 | 0.740 | 0.192 | 0.358 | 0.921 |
-| JATS-DTDs | xhtml11 | 0.665 | 0.728 | 0.885 | 0.276 | 0.066 | 0.930 |
-| JATS-DTDs | org.oasis-open.dita.v1_3 | 0.595 | 0.757 | 0.735 | 0.184 | 0.143 | 0.912 |
-| daisy | xhtml | 0.508 | 0.581 | 0.801 | 0.231 | 0.086 | 1.000 |
-| org.dita.specialization.dita11 | org.oasis-open.dita.v1_2 | 0.482 | 0.809 | 0.543 | 0.544 | 0.259 | 0.294 |
-| docbook | mathml | 0.295 | 0.596 | 0.368 | 0.001 | 0.049 | 0.431 |
-| JATS-DTDs | docbook | 0.280 | 0.335 | 0.631 | 0.048 | 0.074 | 0.429 |
-| docbook | xhtml11 | 0.253 | 0.514 | 0.332 | 0.000 | 0.051 | 0.373 |
-| docbook | org.oasis-open.dita.v1_3 | 0.232 | 0.554 | 0.285 | 0.043 | 0.053 | 0.365 |
-| org.oasis-open.dita.v1_2 | org.oasis-open.dita.v1_3 | 0.183 | 0.953 | 0.185 | 0.582 | 0.156 | 0.016 |
-| docbook | xhtml | 0.143 | 0.155 | 0.662 | 0.038 | 0.042 | 0.216 |
-| daisy | docbook | 0.143 | 0.513 | 0.165 | 0.045 | 0.065 | 0.216 |
-| org.dita.specialization.dita11 | org.oasis-open.xdita.v0_2_2 | 0.115 | 0.120 | 0.729 | 0.126 | 0.081 | 0.077 |
-| xhtml | xhtml11 | 0.105 | 0.725 | 0.109 | 0.000 | 0.165 | 0.120 |
-| mathml | xhtml | 0.103 | 0.107 | 0.741 | 0.000 | 0.165 | 0.112 |
-| org.dita.specialization.dita11 | org.oasis-open.dita.v1_3 | 0.101 | 0.793 | 0.103 | 0.316 | 0.107 | 0.005 |
-| daisy | xhtml11 | 0.098 | 0.517 | 0.107 | 0.000 | 0.064 | 0.120 |
-| daisy | mathml | 0.096 | 0.526 | 0.105 | 0.000 | 0.074 | 0.112 |
-| org.oasis-open.dita.v1_3 | xhtml | 0.088 | 0.091 | 0.756 | 0.030 | 0.038 | 0.116 |
-| daisy | org.oasis-open.dita.v1_3 | 0.082 | 0.533 | 0.088 | 0.022 | 0.029 | 0.116 |
-| JATS-DTDs | daisy | 0.080 | 0.086 | 0.505 | 0.018 | 0.048 | 0.100 |
-| JATS-DTDs | xhtml | 0.077 | 0.080 | 0.649 | 0.019 | 0.025 | 0.100 |
+| A | B | Jaccard | A-in-B | B-in-A | elements | attributes | entities | notations |
+|---|---|---|---|---|---|---|---|---|
+| mathml | xhtml11 | 0.861 | 0.906 | 0.946 | 0.717 | 0.359 | 0.931 | 1.000 |
+| JATS-DTDs | mathml | 0.743 | 0.792 | 0.922 | 0.327 | 0.204 | 0.971 | 0.000 |
+| org.oasis-open.dita.v1_3 | xhtml11 | 0.716 | 0.750 | 0.939 | 0.261 | 0.307 | 0.969 | 0.000 |
+| mathml | org.oasis-open.dita.v1_3 | 0.677 | 0.888 | 0.740 | 0.192 | 0.358 | 0.921 | 0.000 |
+| JATS-DTDs | xhtml11 | 0.665 | 0.728 | 0.885 | 0.276 | 0.066 | 0.930 | 0.000 |
+| JATS-DTDs | org.oasis-open.dita.v1_3 | 0.595 | 0.757 | 0.735 | 0.184 | 0.143 | 0.912 | 0.000 |
+| daisy | xhtml | 0.508 | 0.581 | 0.801 | 0.231 | 0.086 | 1.000 | 0.000 |
+| org.dita.specialization.dita11 | org.oasis-open.dita.v1_2 | 0.482 | 0.809 | 0.543 | 0.544 | 0.259 | 0.294 | 0.000 |
+| docbook | mathml | 0.295 | 0.596 | 0.368 | 0.001 | 0.049 | 0.431 | 0.000 |
+| JATS-DTDs | docbook | 0.280 | 0.335 | 0.631 | 0.048 | 0.074 | 0.429 | 0.026 |
+| docbook | xhtml11 | 0.253 | 0.514 | 0.332 | 0.000 | 0.051 | 0.373 | 0.000 |
+| docbook | org.oasis-open.dita.v1_3 | 0.232 | 0.554 | 0.285 | 0.043 | 0.053 | 0.365 | 0.000 |
+| org.oasis-open.dita.v1_2 | org.oasis-open.dita.v1_3 | 0.183 | 0.953 | 0.185 | 0.582 | 0.156 | 0.016 | 0.000 |
+| docbook | xhtml | 0.143 | 0.155 | 0.662 | 0.038 | 0.042 | 0.216 | 0.000 |
+| daisy | docbook | 0.143 | 0.513 | 0.165 | 0.045 | 0.065 | 0.216 | 0.000 |
+| org.dita.specialization.dita11 | org.oasis-open.xdita.v0_2_2 | 0.115 | 0.120 | 0.729 | 0.126 | 0.081 | 0.077 | 0.000 |
+| xhtml | xhtml11 | 0.105 | 0.725 | 0.109 | 0.000 | 0.165 | 0.120 | 0.000 |
+| mathml | xhtml | 0.103 | 0.107 | 0.741 | 0.000 | 0.165 | 0.112 | 0.000 |
+| org.dita.specialization.dita11 | org.oasis-open.dita.v1_3 | 0.101 | 0.793 | 0.103 | 0.316 | 0.107 | 0.005 | 0.000 |
+| daisy | xhtml11 | 0.098 | 0.517 | 0.107 | 0.000 | 0.064 | 0.120 | 0.000 |
+| daisy | mathml | 0.096 | 0.526 | 0.105 | 0.000 | 0.074 | 0.112 | 0.000 |
+| org.oasis-open.dita.v1_3 | xhtml | 0.088 | 0.091 | 0.756 | 0.030 | 0.038 | 0.116 | 0.000 |
+| daisy | org.oasis-open.dita.v1_3 | 0.082 | 0.533 | 0.088 | 0.022 | 0.029 | 0.116 | 0.000 |
+| JATS-DTDs | daisy | 0.080 | 0.086 | 0.505 | 0.018 | 0.048 | 0.100 | 0.000 |
+| JATS-DTDs | xhtml | 0.077 | 0.080 | 0.649 | 0.019 | 0.025 | 0.100 | 0.000 |
 
 ## Findings
 
-1. **Transfer is kind-specific.** DITA v1.2 → v1.3 elements transfer at 0.998 containment (535/536), but entities do not (34 vs 2174): version pairs share structure, not entity vocabulary.
-2. **High overlap is mostly module inclusion.** xhtml11 embeds MathML (mathml|xhtml11 Jaccard 0.861); JATS and DITA v1.3 distributions bundle mathml3.dtd. The near-duplicate band is inclusion, not coincidence.
-3. **The moderate band is where T10 binds.** JATS↔DocBook (0.280), DocBook↔DITA v1.3 (0.232), DITA v1.2↔v1.3 (0.183): shared vocabulary exists, but each side has substantial unique structure — exactly the cross-family discrimination failure T10 measures.
+1. **Transfer is kind-specific.** DITA v1.2 → v1.3 elements transfer at 0.998 containment (534/535), but entities do not (34 vs 2174): version pairs share structure, not entity vocabulary.
+2. **High overlap is mostly module inclusion.** xhtml11 embeds MathML (mathml|xhtml11 Jaccard 0.861). The near-duplicate band is inclusion, not coincidence.
+3. **The moderate band is where T10 binds.** JATS↔DocBook (0.280), DocBook↔DITA v1.3 (0.232), DITA v1.2↔DITA v1.3 (0.183): shared vocabulary exists, but each side has substantial unique structure — exactly the cross-family discrimination failure T10 measures.
 4. **Most pairs are independent** (92/105 below 0.15): no transfer, no discrimination risk.
 
 

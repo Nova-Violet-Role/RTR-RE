@@ -1,0 +1,2945 @@
+{
+  "seed": 20260928,
+  "tool": "RE:Symbiose versus v2 (isolated, same-size controls)",
+  "profile": {
+    "preset": "re-symbiose-mugen",
+    "preset_display": "Re-Symbiose-Mugen",
+    "cpu_profile": "public-default",
+    "modality": "rtr-full",
+    "threads_per_model": 4,
+    "effective_threads_per_model": 4,
+    "parking_percent": 60,
+    "logical_processors": 32,
+    "profile_code": "re-symbiose-mugen/rtr-full/t4/p60",
+    "peak_rss_mb": 3694.6,
+    "total_seconds": 177.8,
+    "rss_mb_per_sec": 20.78
+  },
+  "corpora": {
+    "dtd-commands": {
+      "files": 48,
+      "queries": 97,
+      "systems": {
+        "rag-dense": {
+          "metrics": {
+            "T1": {
+              "n": 48,
+              "recall@1": 0.2292,
+              "recall@3": 0.3958,
+              "mrr": 0.3056
+            },
+            "T2": {
+              "n": 12,
+              "recall@1": 0.1667,
+              "recall@3": 0.25,
+              "mrr": 0.1944
+            },
+            "T3": {
+              "n": 12,
+              "recall@1": 0.25,
+              "recall@3": 0.5,
+              "mrr": 0.375
+            },
+            "T4": {
+              "n": 12,
+              "recall@1": 0.0833,
+              "recall@3": 0.4167,
+              "mrr": 0.2361
+            },
+            "T5": {
+              "n": 1,
+              "recall@1": 0.0,
+              "recall@3": 0.0,
+              "mrr": 0.0
+            },
+            "T6": {
+              "n": 12,
+              "recall@1": 0.9167,
+              "recall@3": 1.0,
+              "mrr": 0.9444
+            },
+            "OVERALL": {
+              "n": 97,
+              "recall@1": 0.2887,
+              "recall@3": 0.4639,
+              "mrr": 0.3677,
+              "p50_ms": 3.3
+            }
+          },
+          "rows": [
+            {
+              "taxon": "T1",
+              "query": "\u23f3 Args",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 636.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd01 Args",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 4.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "Add Todo Item",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md",
+                "check-todos-dtd.md"
+              ],
+              "ms": 4.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udee7 Arguments",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 3.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf31 Arguments",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 3.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddf3\ufe0f Task",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "goetia-dtd.md",
+                "ask-me-everything-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 3.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\ude84 Args",
+              "expected": "atharvan-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd0d Args",
+              "expected": "audit-skill-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 4.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udcda Args",
+              "expected": "babel-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf00 Args",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddc3\ufe0f Args",
+              "expected": "catalog-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udded Route",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "corpus-dtd.md",
+                "ccc-dtd.md",
+                "loci-dtd.md"
+              ],
+              "ms": 3.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\u26d3\ufe0f Arguments",
+              "expected": "chain-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 2.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "Check Todos",
+              "expected": "check-todos-dtd.md",
+              "got": [
+                "check-todos-dtd.md",
+                "check-todos-dtd.md",
+                "add-to-todos-dtd.md"
+              ],
+              "ms": 3.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddfc Args",
+              "expected": "clean-unclean-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udeab Arguments",
+              "expected": "code-blacklist-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 3.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddbc\ufe0f Arguments",
+              "expected": "codebase-architect-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 3.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udd47 Args",
+              "expected": "coin-flip-best-of-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udfc1 Competitive Research: [Space/Problem]",
+              "expected": "competitive-dtd.md",
+              "got": [
+                "competitive-dtd.md",
+                "competitive-dtd.md",
+                "competitive-dtd.md"
+              ],
+              "ms": 5.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddc4\ufe0f Route",
+              "expected": "corpus-dtd.md",
+              "got": [
+                "corpus-dtd.md",
+                "ccc-dtd.md",
+                "loci-dtd.md"
+              ],
+              "ms": 3.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd22 Args",
+              "expected": "count-the-library-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf93 Args",
+              "expected": "create-agent-skill-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "---",
+              "expected": "debug-dtd.md",
+              "got": [
+                "competitive-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "feasibility-dtd.md"
+              ],
+              "ms": 3.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udd3f Deep Dive: [Topic]",
+              "expected": "deep-dive-dtd.md",
+              "got": [
+                "deep-dive-dtd.md",
+                "deep-dive-dtd.md",
+                "deep-dive-dtd.md"
+              ],
+              "ms": 3.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddc2\ufe0f Args",
+              "expected": "eisenhower-matrix-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udeaa Args",
+              "expected": "eleusis-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udeb4 Arguments",
+              "expected": "enhance-codebase-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 3.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddea Feasibility Assessment: [Project/Idea]",
+              "expected": "feasibility-dtd.md",
+              "got": [
+                "feasibility-dtd.md",
+                "feasibility-dtd.md",
+                "feasibility-dtd.md"
+              ],
+              "ms": 4.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\u26d4 Arguments",
+              "expected": "file-blacklist-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 3.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddf1 Problem",
+              "expected": "first-principles-dtd.md",
+              "got": [
+                "first-principles-dtd.md",
+                "5-whys-dtd.md",
+                "create-agent-skill-dtd.md"
+              ],
+              "ms": 3.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddee Args",
+              "expected": "formula-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf33 Args",
+              "expected": "four-branches-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udc19 Args",
+              "expected": "git-gh-amplification-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd31 Args",
+              "expected": "goetia-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udc0b Task",
+              "expected": "hadal-deep-dive-dtd.md",
+              "got": [
+                "goetia-dtd.md",
+                "ask-me-everything-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udebc Task",
+              "expected": "hadopelagia-deep-dive-dtd.md",
+              "got": [
+                "goetia-dtd.md",
+                "ask-me-everything-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 2.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udcdc Args",
+              "expected": "havamal-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "Change 1: SKILL.md - [Section name]",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "heal-skill-dtd.md",
+                "create-agent-skill-dtd.md",
+                "create-agent-skill-dtd.md"
+              ],
+              "ms": 4.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd70\ufe0f History Research: [Problem/Approach]",
+              "expected": "history-dtd.md",
+              "got": [
+                "deep-dive-dtd.md",
+                "history-dtd.md",
+                "history-dtd.md"
+              ],
+              "ms": 3.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd03 Args",
+              "expected": "inversion-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf04 Landscape Map: [Domain/Space]",
+              "expected": "landscape-dtd.md",
+              "got": [
+                "landscape-dtd.md",
+                "landscape-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 3.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udfdb\ufe0f Args",
+              "expected": "loci-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\ude92 Args",
+              "expected": "occams-razor-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd11 Args",
+              "expected": "one-thing-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf10 Open Source Research: [Need]",
+              "expected": "open-source-dtd.md",
+              "got": [
+                "open-source-dtd.md",
+                "open-source-dtd.md",
+                "competitive-dtd.md"
+              ],
+              "ms": 3.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udcb1 Args",
+              "expected": "opportunity-cost-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 2.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd00 Options Comparison: [Decision]",
+              "expected": "options-dtd.md",
+              "got": [
+                "10-10-10-dtd.md",
+                "options-dtd.md",
+                "opportunity-cost-dtd.md"
+              ],
+              "ms": 3.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udd8b Arguments",
+              "expected": "overhaul-codebase-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 2.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "examine",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "git-gh-amplification-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "enhance-codebase-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "player",
+              "expected": "landscape-dtd.md",
+              "got": [
+                "landscape-dtd.md",
+                "landscape-dtd.md",
+                "eleusis-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "square",
+              "expected": "codebase-architect-dtd.md",
+              "got": [
+                "babel-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "refusals",
+              "expected": "file-blacklist-dtd.md",
+              "got": [
+                "code-blacklist-dtd.md",
+                "code-blacklist-dtd.md",
+                "file-blacklist-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "recall_test",
+              "expected": "loci-dtd.md",
+              "got": [
+                "loci-dtd.md",
+                "audit-skill-dtd.md",
+                "first-principles-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "negativa",
+              "expected": "inversion-dtd.md",
+              "got": [
+                "amplify-codebase-dtd.md",
+                "enhance-codebase-dtd.md",
+                "overhaul-codebase-dtd.md"
+              ],
+              "ms": 2.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "operate",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "competitive-dtd.md",
+                "one-thing-dtd.md",
+                "four-branches-dtd.md"
+              ],
+              "ms": 3.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "unintended",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "enhance-codebase-dtd.md",
+                "amplify-codebase-dtd.md",
+                "overhaul-codebase-dtd.md"
+              ],
+              "ms": 2.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "python",
+              "expected": "open-source-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "loci-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "if_blocked",
+              "expected": "feasibility-dtd.md",
+              "got": [
+                "options-dtd.md",
+                "file-blacklist-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "prefers",
+              "expected": "open-source-dtd.md",
+              "got": [
+                "options-dtd.md",
+                "10-10-10-dtd.md",
+                "options-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "successful",
+              "expected": "history-dtd.md",
+              "got": [
+                "loci-dtd.md",
+                "inversion-dtd.md",
+                "clean-unclean-dtd.md"
+              ],
+              "ms": 2.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "minutes recommendation",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "open-source-dtd.md",
+                "eisenhower-matrix-dtd.md",
+                "options-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "cause links",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "5-whys-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "omitted todos",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "check-todos-dtd.md",
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "length bounds",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "count-the-library-dtd.md",
+                "count-the-library-dtd.md",
+                "count-the-library-dtd.md"
+              ],
+              "ms": 2.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "expose fifteen",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "enhance-codebase-dtd.md",
+                "amplify-codebase-dtd.md",
+                "overhaul-codebase-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "uncapped running",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "options-dtd.md",
+                "file-blacklist-dtd.md",
+                "code-blacklist-dtd.md"
+              ],
+              "ms": 2.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "rite verification",
+              "expected": "atharvan-dtd.md",
+              "got": [
+                "clean-unclean-dtd.md",
+                "clean-unclean-dtd.md",
+                "clean-unclean-dtd.md"
+              ],
+              "ms": 3.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "style areas",
+              "expected": "audit-skill-dtd.md",
+              "got": [
+                "landscape-dtd.md",
+                "landscape-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "enumerate catalog",
+              "expected": "babel-dtd.md",
+              "got": [
+                "catalog-dtd.md",
+                "babel-dtd.md",
+                "catalog-dtd.md"
+              ],
+              "ms": 2.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "brainstorm semantic",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "brainstorm-meta-clear-section-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "options-dtd.md"
+              ],
+              "ms": 2.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "index directions",
+              "expected": "catalog-dtd.md",
+              "got": [
+                "catalog-dtd.md",
+                "ccc-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 2.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "semantic lookup",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "open-source-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "options-dtd.md"
+              ],
+              "ms": 2.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\u23f3 Args",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 9.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\udd01 Args",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 8.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "Add Todo Item",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md",
+                "check-todos-dtd.md"
+              ],
+              "ms": 8.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83e\udee7 Arguments",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 8.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83c\udf31 Arguments",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "havamal-dtd.md",
+                "code-blacklist-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 8.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\uddf3\ufe0f Task",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "goetia-dtd.md",
+                "ask-me-everything-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 8.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83e\ude84 Args",
+              "expected": "atharvan-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 8.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\udd0d Args",
+              "expected": "audit-skill-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 8.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\udcda Args",
+              "expected": "babel-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 8.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83c\udf00 Args",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 7.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\uddc3\ufe0f Args",
+              "expected": "catalog-dtd.md",
+              "got": [
+                "create-agent-skill-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 8.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83e\udded Route",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "corpus-dtd.md",
+                "ccc-dtd.md",
+                "loci-dtd.md"
+              ],
+              "ms": 8.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T5",
+              "query": "canvass transmute",
+              "expected": "codebase-architect-dtd.md",
+              "got": [
+                "amplify-codebase-dtd.md",
+                "overhaul-codebase-dtd.md",
+                "enhance-codebase-dtd.md"
+              ],
+              "ms": 2.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "10-10-10-dtd",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "10-10-10-dtd.md",
+                "10-10-10-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 3.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "5-whys-dtd",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "5-whys-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 3.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "add-to-todos-dtd",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md"
+              ],
+              "ms": 3.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "ai-slop-dtd",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "ai-slop-dtd.md",
+                "ai-slop-dtd.md",
+                "ai-slop-dtd.md"
+              ],
+              "ms": 3.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "amplify-codebase-dtd",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "amplify-codebase-dtd.md",
+                "amplify-codebase-dtd.md",
+                "git-gh-amplification-dtd.md"
+              ],
+              "ms": 4.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "ask-me-everything-dtd",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "ask-me-everything-dtd.md",
+                "ask-me-everything-dtd.md",
+                "ask-me-everything-dtd.md"
+              ],
+              "ms": 4.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "apply_changes",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "heal-skill-dtd.md",
+                "add-to-todos-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 3.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "amplify_run",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "amplify-codebase-dtd.md",
+                "amplify-codebase-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 3.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "proposed_edit",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "opportunity-cost-dtd.md",
+                "10-10-10-dtd.md",
+                "heal-skill-dtd.md"
+              ],
+              "ms": 3.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "runs_alone",
+              "expected": "chain-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "options-dtd.md",
+                "file-blacklist-dtd.md"
+              ],
+              "ms": 3.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "the_one",
+              "expected": "one-thing-dtd.md",
+              "got": [
+                "one-thing-dtd.md",
+                "eleusis-dtd.md",
+                "one-thing-dtd.md"
+              ],
+              "ms": 3.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "clear_section",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "brainstorm-meta-clear-section-dtd.md",
+                "5-whys-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md"
+              ],
+              "ms": 2.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            }
+          ],
+          "query_errors": 0
+        },
+        "rtr-bge": {
+          "metrics": {
+            "T1": {
+              "n": 48,
+              "recall@1": 0.3125,
+              "recall@3": 0.3958,
+              "mrr": 0.3472
+            },
+            "T2": {
+              "n": 12,
+              "recall@1": 0.5,
+              "recall@3": 0.5833,
+              "mrr": 0.5417
+            },
+            "T3": {
+              "n": 12,
+              "recall@1": 0.5833,
+              "recall@3": 0.75,
+              "mrr": 0.6667
+            },
+            "T4": {
+              "n": 12,
+              "recall@1": 0.3333,
+              "recall@3": 0.4167,
+              "mrr": 0.3611
+            },
+            "T5": {
+              "n": 1,
+              "recall@1": 0.0,
+              "recall@3": 0.0,
+              "mrr": 0.0
+            },
+            "T6": {
+              "n": 12,
+              "recall@1": 1.0,
+              "recall@3": 1.0,
+              "mrr": 1.0
+            },
+            "OVERALL": {
+              "n": 97,
+              "recall@1": 0.4536,
+              "recall@3": 0.5361,
+              "mrr": 0.4897,
+              "p50_ms": 14.0
+            }
+          },
+          "rows": [
+            {
+              "taxon": "T1",
+              "query": "\u23f3 Args",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 805.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd01 Args",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 17.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "Add Todo Item",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md",
+                "check-todos-dtd.md"
+              ],
+              "ms": 16.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udee7 Arguments",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 13.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf31 Arguments",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 14.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddf3\ufe0f Task",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "ask-me-everything-dtd.md",
+                "goetia-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 13.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\ude84 Args",
+              "expected": "atharvan-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd0d Args",
+              "expected": "audit-skill-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udcda Args",
+              "expected": "babel-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 14.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf00 Args",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddc3\ufe0f Args",
+              "expected": "catalog-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 14.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udded Route",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "ccc-dtd.md",
+                "corpus-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 14.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\u26d3\ufe0f Arguments",
+              "expected": "chain-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 14.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "Check Todos",
+              "expected": "check-todos-dtd.md",
+              "got": [
+                "check-todos-dtd.md",
+                "check-todos-dtd.md",
+                "add-to-todos-dtd.md"
+              ],
+              "ms": 14.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddfc Args",
+              "expected": "clean-unclean-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udeab Arguments",
+              "expected": "code-blacklist-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 13.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddbc\ufe0f Arguments",
+              "expected": "codebase-architect-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 13.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udd47 Args",
+              "expected": "coin-flip-best-of-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udfc1 Competitive Research: [Space/Problem]",
+              "expected": "competitive-dtd.md",
+              "got": [
+                "competitive-dtd.md",
+                "competitive-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 18.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddc4\ufe0f Route",
+              "expected": "corpus-dtd.md",
+              "got": [
+                "ccc-dtd.md",
+                "corpus-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 13.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd22 Args",
+              "expected": "count-the-library-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf93 Args",
+              "expected": "create-agent-skill-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 15.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "---",
+              "expected": "debug-dtd.md",
+              "got": [
+                "coin-flip-best-of-dtd.md",
+                "occams-razor-dtd.md",
+                "history-dtd.md"
+              ],
+              "ms": 13.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udd3f Deep Dive: [Topic]",
+              "expected": "deep-dive-dtd.md",
+              "got": [
+                "deep-dive-dtd.md",
+                "deep-dive-dtd.md",
+                "deep-dive-dtd.md"
+              ],
+              "ms": 17.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\uddc2\ufe0f Args",
+              "expected": "eisenhower-matrix-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 14.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udeaa Args",
+              "expected": "eleusis-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 15.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udeb4 Arguments",
+              "expected": "enhance-codebase-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 15.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddea Feasibility Assessment: [Project/Idea]",
+              "expected": "feasibility-dtd.md",
+              "got": [
+                "feasibility-dtd.md",
+                "feasibility-dtd.md",
+                "feasibility-dtd.md"
+              ],
+              "ms": 18.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\u26d4 Arguments",
+              "expected": "file-blacklist-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 14.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddf1 Problem",
+              "expected": "first-principles-dtd.md",
+              "got": [
+                "first-principles-dtd.md",
+                "5-whys-dtd.md",
+                "competitive-dtd.md"
+              ],
+              "ms": 15.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\uddee Args",
+              "expected": "formula-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 15.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf33 Args",
+              "expected": "four-branches-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 14.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udc19 Args",
+              "expected": "git-gh-amplification-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 14.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd31 Args",
+              "expected": "goetia-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 14.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udc0b Task",
+              "expected": "hadal-deep-dive-dtd.md",
+              "got": [
+                "ask-me-everything-dtd.md",
+                "goetia-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 13.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udebc Task",
+              "expected": "hadopelagia-deep-dive-dtd.md",
+              "got": [
+                "ask-me-everything-dtd.md",
+                "goetia-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udcdc Args",
+              "expected": "havamal-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "Change 1: SKILL.md - [Section name]",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "heal-skill-dtd.md",
+                "create-agent-skill-dtd.md",
+                "four-branches-dtd.md"
+              ],
+              "ms": 14.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd70\ufe0f History Research: [Problem/Approach]",
+              "expected": "history-dtd.md",
+              "got": [
+                "history-dtd.md",
+                "history-dtd.md",
+                "deep-dive-dtd.md"
+              ],
+              "ms": 16.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd03 Args",
+              "expected": "inversion-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf04 Landscape Map: [Domain/Space]",
+              "expected": "landscape-dtd.md",
+              "got": [
+                "landscape-dtd.md",
+                "landscape-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 17.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udfdb\ufe0f Args",
+              "expected": "loci-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\ude92 Args",
+              "expected": "occams-razor-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd11 Args",
+              "expected": "one-thing-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83c\udf10 Open Source Research: [Need]",
+              "expected": "open-source-dtd.md",
+              "got": [
+                "open-source-dtd.md",
+                "open-source-dtd.md",
+                "open-source-dtd.md"
+              ],
+              "ms": 17.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udcb1 Args",
+              "expected": "opportunity-cost-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83d\udd00 Options Comparison: [Decision]",
+              "expected": "options-dtd.md",
+              "got": [
+                "options-dtd.md",
+                "10-10-10-dtd.md",
+                "opportunity-cost-dtd.md"
+              ],
+              "ms": 15.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T1",
+              "query": "\ud83e\udd8b Arguments",
+              "expected": "overhaul-codebase-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "examine",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "audit-skill-dtd.md",
+                "history-dtd.md",
+                "audit-skill-dtd.md"
+              ],
+              "ms": 13.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "player",
+              "expected": "landscape-dtd.md",
+              "got": [
+                "landscape-dtd.md",
+                "eleusis-dtd.md",
+                "create-agent-skill-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "square",
+              "expected": "codebase-architect-dtd.md",
+              "got": [
+                "codebase-architect-dtd.md",
+                "babel-dtd.md",
+                "codebase-architect-dtd.md"
+              ],
+              "ms": 13.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "refusals",
+              "expected": "file-blacklist-dtd.md",
+              "got": [
+                "file-blacklist-dtd.md",
+                "code-blacklist-dtd.md",
+                "file-blacklist-dtd.md"
+              ],
+              "ms": 17.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "recall_test",
+              "expected": "loci-dtd.md",
+              "got": [
+                "loci-dtd.md",
+                "audit-skill-dtd.md",
+                "first-principles-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "negativa",
+              "expected": "inversion-dtd.md",
+              "got": [
+                "inversion-dtd.md",
+                "ai-slop-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "operate",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "enhance-codebase-dtd.md",
+                "enhance-codebase-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 12.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "unintended",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "enhance-codebase-dtd.md",
+                "amplify-codebase-dtd.md",
+                "overhaul-codebase-dtd.md"
+              ],
+              "ms": 15.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "python",
+              "expected": "open-source-dtd.md",
+              "got": [
+                "one-thing-dtd.md",
+                "open-source-dtd.md",
+                "count-the-library-dtd.md"
+              ],
+              "ms": 13.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "if_blocked",
+              "expected": "feasibility-dtd.md",
+              "got": [
+                "feasibility-dtd.md",
+                "code-blacklist-dtd.md",
+                "file-blacklist-dtd.md"
+              ],
+              "ms": 13.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "prefers",
+              "expected": "open-source-dtd.md",
+              "got": [
+                "options-dtd.md",
+                "options-dtd.md",
+                "options-dtd.md"
+              ],
+              "ms": 13.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T2",
+              "query": "successful",
+              "expected": "history-dtd.md",
+              "got": [
+                "inversion-dtd.md",
+                "babel-dtd.md",
+                "occams-razor-dtd.md"
+              ],
+              "ms": 13.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "minutes recommendation",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "options-dtd.md",
+                "10-10-10-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 13.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "cause links",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "5-whys-dtd.md",
+                "chain-dtd.md"
+              ],
+              "ms": 13.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "omitted todos",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "add-to-todos-dtd.md",
+                "check-todos-dtd.md",
+                "check-todos-dtd.md"
+              ],
+              "ms": 15.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "length bounds",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "coin-flip-best-of-dtd.md",
+                "count-the-library-dtd.md",
+                "count-the-library-dtd.md"
+              ],
+              "ms": 16.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "expose fifteen",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "file-blacklist-dtd.md",
+                "goetia-dtd.md",
+                "atharvan-dtd.md"
+              ],
+              "ms": 15.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "uncapped running",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "coin-flip-best-of-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "coin-flip-best-of-dtd.md"
+              ],
+              "ms": 16.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "rite verification",
+              "expected": "atharvan-dtd.md",
+              "got": [
+                "clean-unclean-dtd.md",
+                "atharvan-dtd.md",
+                "clean-unclean-dtd.md"
+              ],
+              "ms": 22.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "style areas",
+              "expected": "audit-skill-dtd.md",
+              "got": [
+                "audit-skill-dtd.md",
+                "landscape-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "enumerate catalog",
+              "expected": "babel-dtd.md",
+              "got": [
+                "babel-dtd.md",
+                "catalog-dtd.md",
+                "catalog-dtd.md"
+              ],
+              "ms": 13.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "brainstorm semantic",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "brainstorm-meta-clear-section-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md"
+              ],
+              "ms": 18.6,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "index directions",
+              "expected": "catalog-dtd.md",
+              "got": [
+                "catalog-dtd.md",
+                "ccc-dtd.md",
+                "eisenhower-matrix-dtd.md"
+              ],
+              "ms": 12.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T3",
+              "query": "semantic lookup",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "ccc-dtd.md",
+                "corpus-dtd.md",
+                "landscape-dtd.md"
+              ],
+              "ms": 14.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\u23f3 Args",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 12.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\udd01 Args",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "Add Todo Item",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md",
+                "check-todos-dtd.md"
+              ],
+              "ms": 14.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83e\udee7 Arguments",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 13.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83c\udf31 Arguments",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "git-gh-amplification-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\uddf3\ufe0f Task",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "ask-me-everything-dtd.md",
+                "goetia-dtd.md",
+                "hadal-deep-dive-dtd.md"
+              ],
+              "ms": 13.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83e\ude84 Args",
+              "expected": "atharvan-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 12.8,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\udd0d Args",
+              "expected": "audit-skill-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\udcda Args",
+              "expected": "babel-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 12.7,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83c\udf00 Args",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83d\uddc3\ufe0f Args",
+              "expected": "catalog-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "coin-flip-best-of-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T4",
+              "query": "\ud83e\udded Route",
+              "expected": "ccc-dtd.md",
+              "got": [
+                "ccc-dtd.md",
+                "corpus-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 13.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T5",
+              "query": "canvass transmute",
+              "expected": "codebase-architect-dtd.md",
+              "got": [
+                "overhaul-codebase-dtd.md",
+                "overhaul-codebase-dtd.md",
+                "babel-dtd.md"
+              ],
+              "ms": 35.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "10-10-10-dtd",
+              "expected": "10-10-10-dtd.md",
+              "got": [
+                "10-10-10-dtd.md",
+                "10-10-10-dtd.md",
+                "10-10-10-dtd.md"
+              ],
+              "ms": 14.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "5-whys-dtd",
+              "expected": "5-whys-dtd.md",
+              "got": [
+                "5-whys-dtd.md",
+                "5-whys-dtd.md",
+                "5-whys-dtd.md"
+              ],
+              "ms": 14.2,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "add-to-todos-dtd",
+              "expected": "add-to-todos-dtd.md",
+              "got": [
+                "add-to-todos-dtd.md",
+                "add-to-todos-dtd.md",
+                "check-todos-dtd.md"
+              ],
+              "ms": 18.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "ai-slop-dtd",
+              "expected": "ai-slop-dtd.md",
+              "got": [
+                "ai-slop-dtd.md",
+                "ai-slop-dtd.md",
+                "ai-slop-dtd.md"
+              ],
+              "ms": 25.9,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "amplify-codebase-dtd",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "amplify-codebase-dtd.md",
+                "amplify-codebase-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 30.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "ask-me-everything-dtd",
+              "expected": "ask-me-everything-dtd.md",
+              "got": [
+                "ask-me-everything-dtd.md",
+                "ask-me-everything-dtd.md",
+                "ask-me-everything-dtd.md"
+              ],
+              "ms": 18.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "apply_changes",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "heal-skill-dtd.md",
+                "overhaul-codebase-dtd.md",
+                "history-dtd.md"
+              ],
+              "ms": 13.3,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "amplify_run",
+              "expected": "amplify-codebase-dtd.md",
+              "got": [
+                "amplify-codebase-dtd.md",
+                "amplify-codebase-dtd.md",
+                "amplify-codebase-dtd.md"
+              ],
+              "ms": 16.4,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "proposed_edit",
+              "expected": "heal-skill-dtd.md",
+              "got": [
+                "heal-skill-dtd.md",
+                "feasibility-dtd.md",
+                "feasibility-dtd.md"
+              ],
+              "ms": 15.1,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "runs_alone",
+              "expected": "chain-dtd.md",
+              "got": [
+                "chain-dtd.md",
+                "chain-dtd.md",
+                "code-blacklist-dtd.md"
+              ],
+              "ms": 14.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "the_one",
+              "expected": "one-thing-dtd.md",
+              "got": [
+                "one-thing-dtd.md",
+                "one-thing-dtd.md",
+                "one-thing-dtd.md"
+              ],
+              "ms": 16.5,
+              "error": "",
+              "corpus": "dtd-commands"
+            },
+            {
+              "taxon": "T6",
+              "query": "clear_section",
+              "expected": "brainstorm-meta-clear-section-dtd.md",
+              "got": [
+                "brainstorm-meta-clear-section-dtd.md",
+                "clean-unclean-dtd.md",
+                "brainstorm-meta-clear-section-dtd.md"
+              ],
+              "ms": 15.0,
+              "error": "",
+              "corpus": "dtd-commands"
+            }
+          ],
+          "query_errors": 0
+        }
+      }
+    }
+  },
+  "lexikon_seeded": 4,
+  "manifest": {
+    "dtd-commands": [
+      {
+        "file": "10-10-10-dtd.md",
+        "sha256": "8cb49a28aad465dff96b1b4022215a39d404342b6779b28ecac3326a0f7e84d7"
+      },
+      {
+        "file": "5-whys-dtd.md",
+        "sha256": "285337e918f6022b3ba9858fa90f74f799c7f699b4776c1beec4726950042bd5"
+      },
+      {
+        "file": "add-to-todos-dtd.md",
+        "sha256": "8c1bc45c46cfcdaaf6b3d0568a05294482fb406dfd93f95de10b6429420dc51d"
+      },
+      {
+        "file": "ai-slop-dtd.md",
+        "sha256": "0cffcf84d61e2d2810d82a6869912ce0d520f5b5f1e187b6f3335155678defd6"
+      },
+      {
+        "file": "amplify-codebase-dtd.md",
+        "sha256": "1c031a91dfd1bd612f5f002a44c0ea088b03ed7706cfa272baefde0c6447ce60"
+      },
+      {
+        "file": "ask-me-everything-dtd.md",
+        "sha256": "92a63c1511ca9340eb9dd46a1fc8137181ded7a3de708b8521109ed0b31b3b20"
+      },
+      {
+        "file": "atharvan-dtd.md",
+        "sha256": "881a2b3bdb8c6c343878f8b2daec578bb9471a2a86c52f81ae6a860a41963b11"
+      },
+      {
+        "file": "audit-skill-dtd.md",
+        "sha256": "a67f3af9322579fcfae03321ce2cf61a8d9782b3a8c71d682dcebf720d6db2f8"
+      },
+      {
+        "file": "babel-dtd.md",
+        "sha256": "ad57236b15a6c0c8d6205586e7d9ccd7fbbbbeb2f43bdf19e732c25b538d88bd"
+      },
+      {
+        "file": "brainstorm-meta-clear-section-dtd.md",
+        "sha256": "649c63bf906f48cf5171b295011c54c7550affdecd2f555bee3ecd3b581483d7"
+      },
+      {
+        "file": "catalog-dtd.md",
+        "sha256": "aeca3239eea7998e9963b3b8cd8819e73832514c6950f1acdb1cdc994b4022c2"
+      },
+      {
+        "file": "ccc-dtd.md",
+        "sha256": "d7c35029baf5cf9179177a1e02e48178219768bba7af8c698953808f1149f23e"
+      },
+      {
+        "file": "chain-dtd.md",
+        "sha256": "5bed6955fbd0a544eb31963b36a61da5b93151b99065baca3649fd4c351e256c"
+      },
+      {
+        "file": "check-todos-dtd.md",
+        "sha256": "a87c154c5d6893daddfb20610b687347728fafa7c61aa8c4e7ed9c61899b9eca"
+      },
+      {
+        "file": "clean-unclean-dtd.md",
+        "sha256": "8f6cc666bc3c91f2543de79135f978aa002bc545be9fb174d9fce4f66aa3931e"
+      },
+      {
+        "file": "code-blacklist-dtd.md",
+        "sha256": "215805f4cd0aa3fdab529363dac93de5c87131445c42d5c8af922a2ff4d87532"
+      },
+      {
+        "file": "codebase-architect-dtd.md",
+        "sha256": "341dbf0d84c2a9a753e249fa073d2a6df61d1ad80c8fc8eceefcb32231b00a4d"
+      },
+      {
+        "file": "coin-flip-best-of-dtd.md",
+        "sha256": "df9c97202f9f2b29276c44512c4942e09f43ed01768a28ec624f432017499c7d"
+      },
+      {
+        "file": "competitive-dtd.md",
+        "sha256": "9cb6c843304ef4199bdac2a69a0c8ad3e47f517f7b867517eb8fef2e7001fb3b"
+      },
+      {
+        "file": "corpus-dtd.md",
+        "sha256": "2a8adca8c4a55a5ab795154930fa08a0bf59a468890dd9bcdb0b7bd51c428830"
+      },
+      {
+        "file": "count-the-library-dtd.md",
+        "sha256": "7cdf27473e288e85b82892e3b52768765995d870f37f4c162a04b4f53090b805"
+      },
+      {
+        "file": "create-agent-skill-dtd.md",
+        "sha256": "f76afdba6411c3248112ddf2e87d508679a8ff00f19f0d6d9579aa9a6183b2b8"
+      },
+      {
+        "file": "debug-dtd.md",
+        "sha256": "3b6cc2ca1a93058bcc54a6aaf016cb245119f52853f90f0323cb80616a5d8fac"
+      },
+      {
+        "file": "deep-dive-dtd.md",
+        "sha256": "9dfc6a2f554fef44e67165a67e5429a181f14e33538ce31065c2122a0f9973e1"
+      },
+      {
+        "file": "eisenhower-matrix-dtd.md",
+        "sha256": "ab13329d5b5c2b4cae6a8c6a371a4f43571ec550007daddb15feaa954a8dd029"
+      },
+      {
+        "file": "eleusis-dtd.md",
+        "sha256": "9bbbf6cff57d390aad335d7de87ad4c120046622d10bd4606437fc021d07b68f"
+      },
+      {
+        "file": "enhance-codebase-dtd.md",
+        "sha256": "b9f2038ec1a20bc2fae9f7aa4b40352ad755331a2d07be572167a238c87de6b1"
+      },
+      {
+        "file": "feasibility-dtd.md",
+        "sha256": "ac7e6ac99331f4bb6aba71ee9b4cb0d540d830027645f9d4bb8a8b711cd1a69c"
+      },
+      {
+        "file": "file-blacklist-dtd.md",
+        "sha256": "8a8c5eddd4ab5a80c373d16c1554db88e0580bf76423cb801fa9822ebf8a5bc8"
+      },
+      {
+        "file": "first-principles-dtd.md",
+        "sha256": "fe0da0e48d4224ffea78b26e7d972da6673c5df7447784137b738d94102bc949"
+      },
+      {
+        "file": "formula-dtd.md",
+        "sha256": "a227caa5de5775b5a42f08148ed1cfacf47931401d183fcf831f8e93be71cf4f"
+      },
+      {
+        "file": "four-branches-dtd.md",
+        "sha256": "f08691ae2357afd9d8d28c3c8788a6cbb4b813011f545617fabb77afdf600ade"
+      },
+      {
+        "file": "git-gh-amplification-dtd.md",
+        "sha256": "1ecbc1f900084f9840537b38df0fe5951bda14012f97285cc947e380a9a98365"
+      },
+      {
+        "file": "goetia-dtd.md",
+        "sha256": "62c3299209c136376575f19f0dbcb65810e1101e8bed1f57ecb5797bb676c4c2"
+      },
+      {
+        "file": "hadal-deep-dive-dtd.md",
+        "sha256": "a74bdc2086af83c8c8a151e2efee91fddc14cc452eebbe6df28114c2390a5f2b"
+      },
+      {
+        "file": "hadopelagia-deep-dive-dtd.md",
+        "sha256": "8e58497095664cf126d54bc68b703c63457ae650cd56f7238663fd23fb088a92"
+      },
+      {
+        "file": "havamal-dtd.md",
+        "sha256": "6c3c6263a02a75adfdb2a287a29e508e11f8f493bed1e6367b0a3d91790a2305"
+      },
+      {
+        "file": "heal-skill-dtd.md",
+        "sha256": "cadcbab8e24601731dcbb5c6b6e5f34b7050965339e249857e982fbec3fa4b13"
+      },
+      {
+        "file": "history-dtd.md",
+        "sha256": "a7163c440869da483545be35fb70c0b7e164f386887b4b0fdc3677c0515d212a"
+      },
+      {
+        "file": "inversion-dtd.md",
+        "sha256": "01abe3ea0756d5d2674e10a389a3676c8afac62711751608aeb2c3425a38d783"
+      },
+      {
+        "file": "landscape-dtd.md",
+        "sha256": "5d6fc7b36279bfbda5dd4e2e64cb57776153ba56372f73fea0859815696cefa0"
+      },
+      {
+        "file": "loci-dtd.md",
+        "sha256": "c42370c60461886bf83552eb459d641d109be7da0eeed348e9d389205b94521d"
+      },
+      {
+        "file": "occams-razor-dtd.md",
+        "sha256": "a9f71bd13df8924b948f21e2ba84620c6cb1ddcb8395654723ee6cae444d1124"
+      },
+      {
+        "file": "one-thing-dtd.md",
+        "sha256": "22506678b44db4941b8a9fc04ea8ce0b6b7b7ae3a91af63ca2e0a309d21c3039"
+      },
+      {
+        "file": "open-source-dtd.md",
+        "sha256": "f47f9978f49fe88580060f8daa363116250a69581f1c970552addfad6c939d51"
+      },
+      {
+        "file": "opportunity-cost-dtd.md",
+        "sha256": "b079bdc0056f29d03a4645d6abd1f9b6d6def8234b4765402f87fdd6683578ce"
+      },
+      {
+        "file": "options-dtd.md",
+        "sha256": "5738947bd2144ea5cc8af0266575d8ab267beddd0cc6d193a0570565e5d70b7a"
+      },
+      {
+        "file": "overhaul-codebase-dtd.md",
+        "sha256": "c94e56d927a5be21b9d8dedfcc9073ce8797ed085b6973d723cd710cdd5580ca"
+      }
+    ]
+  },
+  "combined": {
+    "rag-dense": {
+      "metrics": {
+        "T1": {
+          "n": 48,
+          "recall@1": 0.2292,
+          "recall@3": 0.3958,
+          "mrr": 0.3056
+        },
+        "T2": {
+          "n": 12,
+          "recall@1": 0.1667,
+          "recall@3": 0.25,
+          "mrr": 0.1944
+        },
+        "T3": {
+          "n": 12,
+          "recall@1": 0.25,
+          "recall@3": 0.5,
+          "mrr": 0.375
+        },
+        "T4": {
+          "n": 12,
+          "recall@1": 0.0833,
+          "recall@3": 0.4167,
+          "mrr": 0.2361
+        },
+        "T5": {
+          "n": 1,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "mrr": 0.0
+        },
+        "T6": {
+          "n": 12,
+          "recall@1": 0.9167,
+          "recall@3": 1.0,
+          "mrr": 0.9444
+        },
+        "OVERALL": {
+          "n": 97,
+          "recall@1": 0.2887,
+          "recall@3": 0.4639,
+          "mrr": 0.3677,
+          "p50_ms": 3.3
+        }
+      },
+      "n": 97,
+      "query_errors": 0
+    },
+    "rtr-bge": {
+      "metrics": {
+        "T1": {
+          "n": 48,
+          "recall@1": 0.3125,
+          "recall@3": 0.3958,
+          "mrr": 0.3472
+        },
+        "T2": {
+          "n": 12,
+          "recall@1": 0.5,
+          "recall@3": 0.5833,
+          "mrr": 0.5417
+        },
+        "T3": {
+          "n": 12,
+          "recall@1": 0.5833,
+          "recall@3": 0.75,
+          "mrr": 0.6667
+        },
+        "T4": {
+          "n": 12,
+          "recall@1": 0.3333,
+          "recall@3": 0.4167,
+          "mrr": 0.3611
+        },
+        "T5": {
+          "n": 1,
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "mrr": 0.0
+        },
+        "T6": {
+          "n": 12,
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0
+        },
+        "OVERALL": {
+          "n": 97,
+          "recall@1": 0.4536,
+          "recall@3": 0.5361,
+          "mrr": 0.4897,
+          "p50_ms": 14.0
+        }
+      },
+      "n": 97,
+      "query_errors": 0
+    }
+  }
+}

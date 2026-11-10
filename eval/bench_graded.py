@@ -39,6 +39,8 @@ from memory_engine import MemoryEngine
 
 CUTOFFS = (3, 5, 10, 20)
 
+GRADED_FILE_SUFFIXES = ".md,.nt,.yaml,.yml,.dita,.xml," + ",".join(bench.DTD_SUFFIXES)
+
 
 def doc_ranking(engine, cfg, query, proj, chunk_k):
     filt = str(proj) if cfg["scoped"] else None
@@ -54,6 +56,15 @@ def doc_ranking(engine, cfg, query, proj, chunk_k):
         if name not in docs:
             docs.append(name)
     return docs, round((time.time() - t0) * 1000, 1), err
+
+
+def skipped_corpora(specs, queries_all):
+    """Names of corpora with no gold queries (J16: recorded, never silent)."""
+    return sorted(
+        spec["name"]
+        for spec in specs
+        if not [q for q in queries_all.values() if q["corpus"] == spec["name"]]
+    )
 
 
 def score_query(ranking, qrels, depth=20):
@@ -72,9 +83,9 @@ def aggregate(rows):
     keys = [f"ndcg@{k}" for k in CUTOFFS] + ["err@10", "gprec@10", "ap"]
     out = {"n": len(rows)}
     for key in keys:
-        out[key] = (
-            round(statistics.fmean(r["scores"][key] for r in rows), 4) if rows else 0.0
-        )
+        vals = [r["scores"][key] for r in rows]
+        out[key] = round(statistics.fmean(vals), 4) if rows else 0.0
+        out[f"ci95_{key}"] = bench.bootstrap_ci(vals) if rows else [0.0, 0.0]
     out["unjudged_returned"] = sum(r["scores"]["unjudged_returned"] for r in rows)
     out["p50_ms"] = sorted(r["ms"] for r in rows)[len(rows) // 2] if rows else 0
     return out
@@ -130,7 +141,7 @@ def main() -> int:
     )
     corpora = [c.strip() for c in args.corpora.split(",") if c.strip()]
 
-    os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = ".md,.nt,.yaml,.yml,.dita,.xml"
+    os.environ["OPENCODE_MEMORY_FILE_SUFFIXES"] = GRADED_FILE_SUFFIXES
     iso = Path(tempfile.mkdtemp(prefix="rtr-graded-iso-"))
     bench.BENCH_ROOT = iso / "roots"
     bench.BENCH_ROOT.mkdir(parents=True)
@@ -153,15 +164,21 @@ def main() -> int:
         "judgments": 0,
         "corpora": {},
         "combined": {},
+        "skipped_corpora": [],
     }
     all_rows = {s: [] for s in systems}
     pool_input = {s: {} for s in systems}
+    selected = [c for c in bench.CORPORA if not corpora or c["name"] in corpora]
+    # J16: skipped corpora are recorded, never silent.
+    results["skipped_corpora"] = skipped_corpora(selected, queries_all)
+    for name in results["skipped_corpora"]:
+        print(f"[{name}] skipped: gold has no queries for this corpus")
     try:
-        for spec in [c for c in bench.CORPORA if not corpora or c["name"] in corpora]:
+        for spec in [
+            c for c in selected if c["name"] not in results["skipped_corpora"]
+        ]:
             name = spec["name"]
             queries = [q for q in queries_all.values() if q["corpus"] == name]
-            if not queries:
-                continue
             os.environ["OPENCODE_MEMORY_DB_DIR"] = str(iso / f"db-{name}")
             mem.REGISTRY_FILE = iso / f"registry-{name}.json"
             base, proj, staged = bench.stage_corpus(spec, name)

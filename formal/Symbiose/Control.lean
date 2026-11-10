@@ -82,7 +82,8 @@ theorem invalid_file_keeps_last_good (old : KeeperCfg) (m m' : Nat) :
 -- Pass 3: command totality. Every verb in exactly one class. -/
 inductive RtrVerb where
   | status | help | enable | disable | preset
-  | hold | trigger | target | max | unknown
+  | hold | trigger | target | max | cpu | modality | threads | parking
+  | unknown
   deriving DecidableEq, Repr
 
 inductive VerbClass where
@@ -99,6 +100,10 @@ def verbClass : RtrVerb → VerbClass
   | .trigger => .mutate
   | .target => .mutate
   | .max => .mutate
+  | .cpu => .mutate
+  | .modality => .mutate
+  | .threads => .mutate
+  | .parking => .mutate
   | .unknown => .refuse
 
 theorem verb_total (v : RtrVerb) :
@@ -112,7 +117,8 @@ theorem status_never_mutates : verbClass .status ≠ .mutate := by
 
 theorem every_mutation_names_its_field (v : RtrVerb) (h : verbClass v = .mutate) :
     v = .enable ∨ v = .disable ∨ v = .preset ∨ v = .hold ∨
-      v = .trigger ∨ v = .target ∨ v = .max := by
+      v = .trigger ∨ v = .target ∨ v = .max ∨ v = .cpu ∨
+      v = .modality ∨ v = .threads ∨ v = .parking := by
   cases v <;> simp_all [verbClass]
 
 -- Pass 4: presence honesty. Absence is absence, never a verdict. -/

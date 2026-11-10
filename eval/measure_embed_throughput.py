@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import sys
 import time
+from pathlib import Path
 
-from execution.memory_engine import MemoryEngine
+sys.path.insert(0, str(Path(__file__).parent.parent / "execution"))
+
+from memory_engine import MemoryEngine
 
 N = 2000
 TEXT = (
