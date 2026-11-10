@@ -92,8 +92,13 @@ class TestSeedDtdLexikon(unittest.TestCase):
         tmp, proj = self._stage_tiny()
         try:
             crng = random.Random(42)
-            count = mem.MemoryEngine().seed_dtd_lexikon(str(proj))
-            lex = mem.MemoryEngine().get_lexikon(str(proj))
+            eng1, eng2 = mem.MemoryEngine(), mem.MemoryEngine()
+            try:
+                count = eng1.seed_dtd_lexikon(str(proj))
+                lex = eng2.get_lexikon(str(proj))
+            finally:
+                eng1.close()
+                eng2.close()
             terms = lex
             # rareattr: df==1, owner doc -> seeded; element context lives
             # in the definition, not the aliases, so T1/T10 queries that
@@ -119,7 +124,11 @@ class TestSeedDtdLexikon(unittest.TestCase):
         tmp, proj = self._stage_tiny()
         try:
             crng = random.Random(42)
-            mem.MemoryEngine().seed_dtd_lexikon(str(proj))
+            seeder = mem.MemoryEngine()
+            try:
+                seeder.seed_dtd_lexikon(str(proj))
+            finally:
+                seeder.close()
             eng = mem.MemoryEngine()
             expanded = eng.lexikon_expansion(str(proj), "rareattr")
             self.assertIn("doc", expanded)
@@ -144,13 +153,71 @@ class TestSeedDtdLexikon(unittest.TestCase):
             mem.PROJECT_ROOTS = [proj.parent]
             mem.PROJECTS_DIR = proj.parent
             crng = random.Random(42)
-            mem.MemoryEngine().seed_dtd_lexikon(str(proj))
-            lex = mem.MemoryEngine().get_lexikon(str(proj))
+            eng1, eng2 = mem.MemoryEngine(), mem.MemoryEngine()
+            try:
+                eng1.seed_dtd_lexikon(str(proj))
+                lex = eng2.get_lexikon(str(proj))
+            finally:
+                eng1.close()
+                eng2.close()
             terms = lex
             # dupattr appears in two files -> df==2 -> not seeded
             self.assertNotIn("dupattr", terms)
         finally:
             tmp.cleanup()
+
+    def test_seeding_ignores_noise_dirs(self):
+        tmp = tempfile.TemporaryDirectory()
+        try:
+            proj = Path(tmp.name) / "bench-noise"
+            d = proj / "directives"
+            (d / "node_modules").mkdir(parents=True)
+            (d / "node_modules" / "vend.dtd").write_text(
+                "<!ELEMENT vendored EMPTY>\n<!ATTLIST vendored noiseattr CDATA #IMPLIED>\n",
+                encoding="utf-8",
+            )
+            (d / "own.dtd").write_text(
+                "<!ELEMENT owned EMPTY>\n<!ATTLIST owned ownattr CDATA #IMPLIED>\n",
+                encoding="utf-8",
+            )
+            mem.PROJECT_ROOTS = [proj.parent]
+            mem.PROJECTS_DIR = proj.parent
+            eng = mem.MemoryEngine()
+            try:
+                eng.seed_dtd_lexikon(str(proj))
+                lex = eng.get_lexikon(str(proj))
+            finally:
+                eng.close()
+            self.assertIn("ownattr", lex)
+            self.assertNotIn("noiseattr", lex)
+        finally:
+            tmp.cleanup()
+
+
+class TestGlossaryDtdEscaping(unittest.TestCase):
+    def test_special_chars_are_escaped_in_attributes(self):
+        engine = mem.MemoryEngine()
+        try:
+            with tempfile.TemporaryDirectory() as d:
+                terms = {
+                    'a"b&c<d>': {
+                        "term": 'a"b&c<d>',
+                        "aliases": ['x"y'],
+                        "definition": "e&f",
+                        "source": "hand",
+                        "updated": "2026-11-09",
+                    }
+                }
+                path = engine._write_glossary_dtd(Path(d), terms)
+                self.assertIsNotNone(path)
+                assert path is not None
+                text = path.read_text(encoding="utf-8")
+                self.assertNotIn('a"b&c<d>', text)
+                self.assertIn("&amp;", text)
+                self.assertIn("&lt;", text)
+                self.assertIn("&gt;", text)
+        finally:
+            engine.close()
 
 
 if __name__ == "__main__":

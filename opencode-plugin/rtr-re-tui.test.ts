@@ -9,8 +9,8 @@ describe("rtr-re-tui", () => {
   })
 
   test("preset registry loads and exposes keeper knobs", () => {
-    // Importing the module already ran loadPresetRegistry(); the registry
-    // must be the 1.0.0 one with the three AH presets.
+    // Importing the module already ran loadPresetRegistry(); it must
+    // expose the keeper presets asserted below.
     const fs = require("node:fs")
     const path = require("node:path")
     const here = path.dirname(fileURLToPath(import.meta.url))

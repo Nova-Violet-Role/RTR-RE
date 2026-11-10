@@ -11,10 +11,13 @@ from context_budget import (
     TRIGGER_TOKENS,
     MAX_KEEP_MESSAGES,
     MAX_SUMMARY_CHARS,
+    CPU_PROFILE_ENV,
     bounded_restore,
     enforce_summary_budget,
     estimate_tokens,
     plan_compression,
+    resolve_retrieval_profile,
+    span_lane,
 )
 
 
@@ -33,12 +36,174 @@ class TestContextBudget(unittest.TestCase):
         self.assertEqual(MAX_KEEP_MESSAGES, 200)
         self.assertEqual(MAX_SUMMARY_CHARS, 20000)
 
+    def test_cpu_profile_source_reports_env_when_explicit(self):
+        profile = resolve_retrieval_profile({CPU_PROFILE_ENV: "local-system"})
+        self.assertEqual(profile["cpu_profile"], "local-system")
+        self.assertEqual(profile["sources"]["cpu_profile"], "env")
+        defaulted = resolve_retrieval_profile({})
+        self.assertEqual(
+            defaulted["sources"]["cpu_profile"],
+            f"cpu-profile:{defaulted['cpu_profile']}",
+        )
+
+    def test_thinking_parts_count_and_sink(self):
+        thinker = {
+            "role": "assistant",
+            "parts": [{"type": "reasoning", "reasoning": "deliberate " * 2000}],
+        }
+        msgs = [thinker, msg("user", "hi")]
+        plan = plan_compression(
+            msgs, trigger_tokens=100, target_tokens=50, max_keep_messages=200
+        )
+        self.assertGreater(plan["total_tokens"], 1000)
+        self.assertTrue(plan["compress"])
+        self.assertEqual(plan["evict_payload"][0]["lane"], "think")
+        self.assertIn("deliberate", plan["evict_payload"][0]["text"])
+
+    def test_think_lane_for_thinking_only_messages(self):
+        only = {
+            "role": "assistant",
+            "parts": [{"type": "reasoning", "reasoning": "hmm"}],
+        }
+        mixed = {
+            "role": "assistant",
+            "text": "answer",
+            "parts": [{"type": "reasoning", "reasoning": "hmm"}],
+        }
+        plain = {"role": "assistant", "text": "answer"}
+        self.assertEqual(span_lane(only), "think")
+        self.assertEqual(span_lane(mixed), "written")
+        self.assertEqual(span_lane(plain), "written")
+
     def test_below_trigger_is_noop(self):
         msgs = [msg("user", "hello"), msg("assistant", "hi")]
         plan = plan_compression(msgs)
         self.assertFalse(plan["compress"])
         self.assertEqual(plan["keep"], [0, 1])
         self.assertEqual(plan["evict"], [])
+
+    def test_plan_reports_loop_bound_target_with_zero_overrun(self):
+        msgs = [msg("user", "x" * 400) for _ in range(11)]
+        plan = plan_compression(
+            msgs, trigger_tokens=1000, target_tokens=400, max_keep_messages=40
+        )
+        self.assertEqual(plan["loop_bound"], "target")
+        self.assertEqual(plan["overrun_tokens"], 0)
+        self.assertEqual(plan["overrun_by"], "none")
+
+    def test_plan_reports_loop_bound_max_keep(self):
+        msgs = [msg("user", "x" * 40) for _ in range(120)]
+        plan = plan_compression(
+            msgs, trigger_tokens=1000, target_tokens=400, max_keep_messages=40
+        )
+        self.assertEqual(plan["loop_bound"], "maxKeep")
+        self.assertEqual(plan["overrun_tokens"], 0)
+        self.assertEqual(plan["overrun_by"], "none")
+
+    def test_plan_reports_protection_overrun_in_protect_all_mode(self):
+        # Unbounded overrun accounting lives here (young session, nothing
+        # archived yet); gated-mode capping is pinned by the budget tests.
+        msgs = []
+        for i in range(40):
+            if 25 <= i <= 35:
+                msgs.append(msg("tool", "x" * 40, tool="todowrite"))
+            else:
+                msgs.append(msg("user", "x" * 40))
+        for _ in range(20):
+            msgs.append(msg("user", "x" * 1200))
+        plan = plan_compression(
+            msgs,
+            trigger_tokens=1000,
+            target_tokens=400,
+            max_keep_messages=40,
+            config={"cumulative_messages": 500},
+        )
+        self.assertEqual(plan["loop_bound"], "target")
+        # 11 todowrite pulls x 10 tokens (40 chars, no envelope on
+        # top-level text) = 110.
+        self.assertEqual(plan["overrun_tokens"], 110)
+        self.assertEqual(plan["overrun_by"], "protection")
+
+    def test_protection_budget_caps_gap_pulls_newest_first(self):
+        msgs = []
+        for i in range(60):
+            if 20 <= i < 50:
+                msgs.append(msg("tool", "x" * 40, tool="todowrite"))
+            elif i < 20:
+                msgs.append(msg("user", "x" * 40))
+            else:
+                msgs.append(msg("user", "x" * 1200))
+        plan = plan_compression(
+            msgs,
+            trigger_tokens=2000,
+            target_tokens=400,
+            max_keep_messages=40,
+            config={"cumulative_messages": 5000},
+        )
+        # Budget 100 (25% of 400); each pull 10 tokens -> 10 newest kept.
+        self.assertEqual(plan["overrun_tokens"], 100)
+        self.assertEqual(plan["overrun_by"], "protection")
+        for i in range(40, 50):
+            self.assertIn(i, plan["keep"])
+        for i in range(20, 40):
+            self.assertNotIn(i, plan["keep"])
+
+    def test_protection_budget_keeps_newest_protected_as_floor(self):
+        msgs = [msg("user", "x" * 40) for _ in range(20)]
+        msgs.append(msg("tool", "x" * 4000, tool="todowrite"))
+        msgs.extend(msg("user", "x" * 40) for _ in range(21, 40))
+        msgs.extend(msg("user", "x" * 1200) for _ in range(20))
+        plan = plan_compression(
+            msgs,
+            trigger_tokens=2000,
+            target_tokens=400,
+            max_keep_messages=40,
+            config={"cumulative_messages": 5000},
+        )
+        self.assertIn(20, plan["keep"])
+        # (4000 + 3) // 4 = 1000 tokens, kept over the 100 budget as floor.
+        self.assertEqual(plan["overrun_tokens"], 1000)
+        self.assertEqual(plan["overrun_by"], "protection")
+
+    def test_under_trigger_plan_reports_loop_bound_none(self):
+        msgs = [msg("user", "hi"), msg("assistant", "hello")]
+        plan = plan_compression(msgs)
+        self.assertFalse(plan["compress"])
+        self.assertEqual(plan["loop_bound"], "none")
+        self.assertEqual(plan["overrun_tokens"], 0)
+        self.assertEqual(plan["overrun_by"], "none")
+
+    def test_live_baseline_triggers_ticket_floor_relief(self):
+        # RRD-108: saturated window + small ticket -> compress to floor.
+        msgs = [msg("user", "x" * 40) for _ in range(50)]
+        plan = plan_compression(
+            msgs,
+            trigger_tokens=1000,
+            target_tokens=400,
+            config={"live_tokens": 2000},
+        )
+        self.assertTrue(plan["compress"])
+        self.assertEqual(plan["keep"], [49])
+        self.assertEqual(plan["evict"], list(range(49)))
+
+    def test_live_baseline_shifts_ticket_budget(self):
+        # Combined 1050 > trigger 1000; ticket keeps 300 of its own 950.
+        msgs = [msg("user", "x" * 40) for _ in range(95)]
+        plan = plan_compression(
+            msgs,
+            trigger_tokens=1000,
+            target_tokens=400,
+            config={"live_tokens": 100},
+        )
+        self.assertTrue(plan["compress"])
+        self.assertEqual(len(plan["keep"]), 30)
+        self.assertEqual(plan["keep_tokens"], 300)
+
+    def test_absent_live_baseline_keeps_today_behavior(self):
+        msgs = [msg("user", "x" * 40) for _ in range(50)]
+        plan = plan_compression(msgs, trigger_tokens=1000, target_tokens=400)
+        self.assertFalse(plan["compress"])
+        self.assertEqual(plan["keep"], list(range(50)))
 
     def test_acceptance_keeps_bounded_tail(self):
         # 120 messages, each ~4500 tokens (18000 chars) = ~540k total > 400k.

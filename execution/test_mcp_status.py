@@ -55,10 +55,12 @@ class TestRtrStatusViewport(unittest.TestCase):
         payload = mcp_server.rtr_status_payload(self.proj)
         self.assertTrue(payload["keeper"]["active"])
         self.assertEqual(payload["keeper"]["trigger_tokens"], 40000)
+        self.assertEqual(payload["keeper"]["max_keep_messages"], 40)
         self.assertEqual(payload["keeper"]["last_decision"], "evicted")
         panel = mcp_server.memory_rtr_status(self.proj)
         self.assertIn("ACTIVE", panel)
         self.assertIn("40000", panel)
+        self.assertIn("max_keep=40", panel)
 
     def test_corrupt_status_file_reports_parse_error(self):
         (Path(self.proj) / ".opencode" / "rtr-re-keeper-status.json").write_text(

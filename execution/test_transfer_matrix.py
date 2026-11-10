@@ -129,5 +129,63 @@ class TestMatrixStructure(unittest.TestCase):
         self.assertIn("unified", decision["decision"])
 
 
+class TestRenderNotations(unittest.TestCase):
+    def test_top25_table_carries_notations_column(self):
+        fam = {
+            "a": {
+                "elements": {"x"},
+                "attributes": set(),
+                "entities": set(),
+                "notations": {"n1", "n2", "n3"},
+            },
+            "b": {
+                "elements": {"x"},
+                "attributes": set(),
+                "entities": set(),
+                "notations": {"n3", "n4"},
+            },
+        }
+        matrix = tm.build_matrix(fam)
+        decision = tm.lane_decision(matrix)
+        md = tm.render_md(matrix, decision)
+        self.assertIn("| notations |", md)
+        # notations {n1,n2,n3} vs {n3,n4}: Jaccard 1/4, unique in the row.
+        self.assertIn("0.250", md)
+
+
+class TestComputedFindings(unittest.TestCase):
+    def _dita_matrix(self):
+        fam = {
+            "org.oasis-open.dita.v1_2": {
+                "elements": {"x", "y"},
+                "attributes": set(),
+                "entities": {"e1"},
+                "notations": set(),
+            },
+            "org.oasis-open.dita.v1_3": {
+                "elements": {"x", "y", "z"},
+                "attributes": set(),
+                "entities": {"e2", "e3"},
+                "notations": set(),
+            },
+        }
+        matrix = tm.build_matrix(fam)
+        return matrix, tm.lane_decision(matrix)
+
+    def test_finding_derives_dita_transfer_from_matrix(self):
+        # J23: findings must compute from the matrix, never hardcode.
+        # v1.2 elements {x,y} fully contained in v1.3 {x,y,z}.
+        matrix, decision = self._dita_matrix()
+        md = tm.render_md(matrix, decision)
+        self.assertIn("1.000", md)
+        self.assertIn("(2/2)", md)
+        self.assertIn("1 vs 2", md)
+
+    def test_missing_pairs_report_not_observed(self):
+        matrix, decision = self._dita_matrix()
+        md = tm.render_md(matrix, decision)
+        self.assertIn("not observed", md)
+
+
 if __name__ == "__main__":
     unittest.main()

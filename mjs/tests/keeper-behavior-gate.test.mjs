@@ -68,3 +68,22 @@ test("gate exits 2 on missing manifest", () => {
         rmSync(dir, { recursive: true, force: true })
     }
 })
+
+test("freeze exits 2 when the manifest cannot be written", () => {
+    const dir = mkdtempSync(join(tmpdir(), "keeper-gate-"))
+    try {
+        const blocker = join(dir, "blocker")
+        writeFileSync(blocker, "x", "utf8")
+        assert.throws(
+            () =>
+                execFileSync(process.execPath, [GATE, "freeze"], {
+                    env: { ...process.env, KEEPER_MANIFEST: join(blocker, "m.json") },
+                    encoding: "utf8",
+                    stdio: ["ignore", "pipe", "pipe"],
+                }),
+            /freeze failed/,
+        )
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})

@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: Nova-Violet Role ORG
 // SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 // Subagent framework tests (TODO-65 P3): spawn, tracking, idle, prune.
-
 import { mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { test, expect } from "bun:test"
+import test from "node:test"
+import assert from "node:assert/strict"
 import {
     SUBAGENT_TITLE_PREFIX,
     instantNowIso,
@@ -70,16 +70,16 @@ test("spawnSubagent forks, titles, prompts and records the mapping", async () =>
             projectDir: dir,
             briefText: "# RTR-RE Keeper brief",
         })
-        expect(id).toBe("fork-1")
-        expect(client.calls.fork).toBe(1)
-        expect(client.calls.promptAsync).toBe(1)
-        expect(client.state.titles["fork-1"]).toBe(`${SUBAGENT_TITLE_PREFIX}Parent Task`)
-        expect(client.state.lastPrompt).toContain("# RTR-RE Keeper brief")
-        expect(client.state.lastPrompt).toContain("do the thing")
+        assert.strictEqual(id, "fork-1")
+        assert.strictEqual(client.calls.fork, 1)
+        assert.strictEqual(client.calls.promptAsync, 1)
+        assert.strictEqual(client.state.titles["fork-1"], `${SUBAGENT_TITLE_PREFIX}Parent Task`)
+        assert.ok(client.state.lastPrompt.includes("# RTR-RE Keeper brief"))
+        assert.ok(client.state.lastPrompt.includes("do the thing"))
         const mappings = await loadMappings(dir)
-        expect(mappings).toHaveLength(1)
-        expect(mappings[0].parentSessionID).toBe("parent-1")
-        expect(mappings[0].forkedSessionID).toBe("fork-1")
+        assert.strictEqual(mappings.length, 1)
+        assert.strictEqual(mappings[0].parentSessionID, "parent-1")
+        assert.strictEqual(mappings[0].forkedSessionID, "fork-1")
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }
@@ -93,9 +93,25 @@ test("spawnSubagentWithRetry re-forks when the fork vanished", async () => {
         const id = await spawnSubagentWithRetry(client, "parent-1", "again", {
             projectDir: dir,
         })
-        expect(id).toBe("fork-2")
-        expect(client.calls.fork).toBe(2)
-        expect(client.calls.promptAsync).toBe(2)
+        assert.strictEqual(id, "fork-2")
+        assert.strictEqual(client.calls.fork, 2)
+        assert.strictEqual(client.calls.promptAsync, 2)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("spawnSubagent returns the fork id when mapping persistence fails", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtr-sa-"))
+    try {
+        const blocker = join(dir, "blocker")
+        await (await import("node:fs/promises")).writeFile(blocker, "x", "utf8")
+        const client = mockClient()
+        const id = await spawnSubagent(client, "parent-1", "again", {
+            projectDir: blocker,
+        })
+        assert.strictEqual(id, "fork-1")
+        assert.strictEqual(client.calls.promptAsync, 1)
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }
@@ -105,10 +121,10 @@ test("isTrackedIdle recognizes tracked fork idles only", async () => {
     const dir = mkdtempSync(join(tmpdir(), "rtr-sa-"))
     try {
         await recordFork(dir, "parent-1", "fork-9", "p")
-        expect(await isTrackedIdle({ type: "session.idle", properties: { sessionID: "fork-9" } }, dir)).toBe(true)
-        expect(await isTrackedIdle({ type: "session.idle", properties: { sessionID: "other" } }, dir)).toBe(false)
-        expect(await isTrackedIdle({ type: "session.updated", properties: { sessionID: "fork-9" } }, dir)).toBe(false)
-        expect(await isTrackedIdle({}, dir)).toBe(false)
+        assert.strictEqual(await isTrackedIdle({ type: "session.idle", properties: { sessionID: "fork-9" } }, dir), true)
+        assert.strictEqual(await isTrackedIdle({ type: "session.idle", properties: { sessionID: "other" } }, dir), false)
+        assert.strictEqual(await isTrackedIdle({ type: "session.updated", properties: { sessionID: "fork-9" } }, dir), false)
+        assert.strictEqual(await isTrackedIdle({}, dir), false)
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }
@@ -125,11 +141,11 @@ test("makeIdleHandler fires onComplete for a tracked fork", async () => {
             completed = info
         })
         await handler({ event: { type: "session.idle", properties: { sessionID: "fork-9" } } })
-        expect(completed).not.toBeNull()
-        expect(completed.sessionID).toBe("fork-9")
-        expect(completed.title).toBe("Parent Task")
+        assert.notStrictEqual(completed, null)
+        assert.strictEqual(completed.sessionID, "fork-9")
+        assert.strictEqual(completed.title, "Parent Task")
         await handler({ event: { type: "session.idle", properties: { sessionID: "other" } } })
-        expect(completed.sessionID).toBe("fork-9") // unchanged
+        assert.strictEqual(completed.sessionID, "fork-9") // unchanged
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }
@@ -140,7 +156,7 @@ test("pruneStaleMappings drops old mappings using duration arithmetic", async ()
     try {
         const old = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
         const fresh = instantNowIso()
-        expect(msSince(fresh)).toBeLessThan(1000)
+        assert.ok(msSince(fresh) < 1000)
         const mappings = [
             { parentSessionID: "p-old", forkedSessionID: "f-old", createdAt: old, lastUsedAt: old },
             { parentSessionID: "p-fresh", forkedSessionID: "f-fresh", createdAt: fresh, lastUsedAt: fresh },
@@ -150,10 +166,10 @@ test("pruneStaleMappings drops old mappings using duration arithmetic", async ()
         await mkdir(join(dir, ".opencode", "subagents"), { recursive: true })
         await (await import("node:fs/promises")).writeFile(file, JSON.stringify(mappings), "utf8")
         const pruned = await pruneStaleMappings(dir)
-        expect(pruned).toBe(1)
+        assert.strictEqual(pruned, 1)
         const remaining = await loadMappings(dir)
-        expect(remaining).toHaveLength(1)
-        expect(remaining[0].forkedSessionID).toBe("f-fresh")
+        assert.strictEqual(remaining.length, 1)
+        assert.strictEqual(remaining[0].forkedSessionID, "f-fresh")
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }

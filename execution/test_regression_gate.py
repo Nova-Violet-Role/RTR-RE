@@ -32,6 +32,17 @@ class TestRegressionGate(unittest.TestCase):
         p.write_text(json.dumps(obj), encoding="utf-8")
         return str(p)
 
+    def test_newest_baseline_prefers_double_digit_minor(self):
+        with tempfile.TemporaryDirectory() as td:
+            for name in ("baseline-9.9.9.json", "baseline-10.0.0.json"):
+                (Path(td) / name).write_text("{}", encoding="utf-8")
+            real_results = gate.RESULTS
+            gate.RESULTS = Path(td)
+            try:
+                self.assertEqual(gate._newest_baseline().name, "baseline-10.0.0.json")
+            finally:
+                gate.RESULTS = real_results
+
     def test_real_state_passes(self):
         self.assertEqual(gate.main([]), 0)
 

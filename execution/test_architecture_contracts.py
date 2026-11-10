@@ -80,7 +80,12 @@ class TestArtifactsAndSurface(unittest.TestCase):
 
     def test_mcp_surface_has_symbiose_tools(self):
         src = read(ROOT / "execution" / "memory_mcp_server.py")
-        self.assertIn("config=context_budget.symbiose_config()", src)
+        worker_src = read(ROOT / "execution" / "symbiose_worker.py")
+        # Deployment calibration governs the compressor via the worker
+        # factory (moved from inline construction in the drain era; same
+        # rationale comment kept at the factory).
+        self.assertIn("sw.open_project_worker(key)", src)
+        self.assertIn("context_budget.symbiose_config()", worker_src)
         for tool in [
             "memory_context_plan",
             "memory_symbiose_submit",

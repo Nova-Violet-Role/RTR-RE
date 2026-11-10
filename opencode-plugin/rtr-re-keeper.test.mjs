@@ -11,8 +11,10 @@ import server from "./rtr-re-keeper.js"
 const {
     applyKeeper,
     estimateTokens,
+    evictedSpans,
     handleRtrCommand,
     loadKeeperFileConfig,
+    messageTokens,
     planKeepIndices,
     readCumulativeFile,
     reloadRegistry,
@@ -121,6 +123,77 @@ test("tool chain is repaired to its call (fixpoint parity)", () => {
     assert.deepEqual([...plan.keep].sort((a, b) => a - b), [0, 1, 2])
 })
 
+test("plan reports loopBound target with zero overrun when the budget binds", () => {
+    const messages = []
+    for (let i = 0; i < 11; i++) messages.push(msg("user", "x".repeat(400)))
+    const plan = planKeepIndices(messages, cfg({ triggerTokens: 1000, targetTokens: 400, maxKeepMessages: 40 }))
+    assert.equal(plan.loopBound, "target")
+    assert.equal(plan.overrunTokens, 0)
+    assert.equal(plan.overrunBy, "none")
+})
+
+test("plan reports loopBound maxKeep when the message cap binds", () => {
+    const messages = []
+    for (let i = 0; i < 120; i++) messages.push(msg("user", "x".repeat(40)))
+    const plan = planKeepIndices(messages, cfg({ triggerTokens: 1000, targetTokens: 400, maxKeepMessages: 40 }))
+    assert.equal(plan.loopBound, "maxKeep")
+    assert.equal(plan.overrunTokens, 0)
+    assert.equal(plan.overrunBy, "none")
+})
+
+test("plan reports protection overrun with tokens in protect-all mode", () => {
+    // Unbounded overrun accounting lives here (young session, nothing
+    // archived yet); gated-mode capping is pinned by the budget tests.
+    const messages = []
+    for (let i = 0; i < 40; i++) {
+        if (i >= 25 && i <= 35) messages.push(msg("tool", "x".repeat(40), { tool: "todowrite" }))
+        else messages.push(msg("user", "x".repeat(40)))
+    }
+    for (let i = 0; i < 20; i++) messages.push(msg("user", "x".repeat(1200)))
+    const plan = planKeepIndices(
+        messages,
+        cfg({ triggerTokens: 1000, targetTokens: 400, maxKeepMessages: 40, cumulativeMessages: 500 }),
+    )
+    assert.equal(plan.loopBound, "target")
+    // 11 todowrite pulls x 14 tokens each: partText counts tool name (9)
+    // + JSON input (2) + output (40) + joins = 53 chars -> 14 tokens.
+    assert.equal(plan.overrunTokens, 154)
+    assert.equal(plan.overrunBy, "protection")
+})
+
+test("under-trigger plan reports loopBound none", () => {
+    const messages = [msg("user", "hi"), msg("assistant", "hello")]
+    const plan = planKeepIndices(messages, cfg({ triggerTokens: 1000, targetTokens: 400 }))
+    assert.equal(plan.compress, false)
+    assert.equal(plan.loopBound, "none")
+    assert.equal(plan.overrunTokens, 0)
+    assert.equal(plan.overrunBy, "none")
+})
+
+test("plan pre-partitions sunk spans out without re-sinking", () => {
+    const { spanDigest, messageText } = server._test
+    const olds = []
+    for (let i = 0; i < 5; i++) olds.push(msg("user", `old ${i} ` + "x".repeat(1200)))
+    const fresh = msg("user", "fresh " + "x".repeat(1200))
+    const messages = [...olds, fresh]
+    const sunk = new Map()
+    for (const m of olds) sunk.set(spanDigest(messageText(m)), 302)
+    const plan = planKeepIndices(messages, cfg({ triggerTokens: 1000, targetTokens: 400 }), sunk)
+    assert.deepEqual(plan.evict, [0, 1, 2, 3, 4])
+    assert.deepEqual(plan.reEvicted, [0, 1, 2, 3, 4])
+    assert.equal(plan.newlySunk, 0)
+    assert.deepEqual([...plan.keep].sort((a, b) => a - b), [5])
+    assert.equal(plan.effectiveTotal, plan.keepTokens)
+})
+
+test("plan honors a debt-tightened target override", () => {
+    const messages = []
+    for (let i = 0; i < 120; i++) messages.push(msg("user", "x".repeat(40)))
+    const plan = planKeepIndices(messages, cfg({ triggerTokens: 1000, targetTokens: 400 }), new Map(), 390)
+    assert.equal(plan.keepTokens, 390)
+    assert.equal(plan.keep.size, 39)
+})
+
 test("sink failure leaves the window untouched through the hook", async () => {
     const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
     try {
@@ -160,7 +233,8 @@ test("hook sinks verbatim spans with NDATA masked before evicting", async () => 
         await hooks["experimental.chat.messages.transform"]({}, { messages })
         const { readdirSync } = await import("node:fs")
         const files = readdirSync(join(dir, ".opencode", "memory"))
-        assert.equal(files.length, 2) // span file + paraphrase companion
+        const dtd = files.filter((f) => f.endsWith(".dtd"))
+        assert.equal(dtd.length, 2) // span file + paraphrase companion (.submit.json aside)
         const spans = files.filter((f) => f.endsWith(".dtd") && !f.includes("summary"))
         assert.equal(spans.length, 1)
         const body = readFileSync(join(dir, ".opencode", "memory", spans[0]), "utf8")
@@ -169,6 +243,114 @@ test("hook sinks verbatim spans with NDATA masked before evicting", async () => 
         assert.ok(body.includes("[NDATA]"))
         assert.ok(body.includes("<span id="))
         assert.ok(!body.includes("\r"))
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("re-eviction trims served sunk spans without re-sinking", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const { spanDigest, messageText } = server._test
+        const olds = []
+        for (let i = 0; i < 5; i++) olds.push(msg("user", `old ${i} ` + "x".repeat(1200)))
+        const fresh = msg("user", "fresh " + "x".repeat(1200))
+        const messages = [...olds, fresh]
+        const digests = olds.map((m) => spanDigest(messageText(m)))
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        writeFileSync(join(dir, ".opencode", "rtr-re-sunk.json"), JSON.stringify({ v: 1, digests }))
+        const hooks = await server({ directory: dir }, { triggerTokens: 1000, targetTokens: 400 })
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        assert.equal(messages.length, 1)
+        assert.ok(messages[0].parts[0].text.startsWith("fresh "))
+        const { readdirSync, existsSync: exists } = await import("node:fs")
+        const memDir = join(dir, ".opencode", "memory")
+        const files = exists(memDir) ? readdirSync(memDir) : []
+        assert.ok(!files.some((f) => f.endsWith(".submit.json")), "no sidecar on pure re-eviction")
+        const status = JSON.parse(readFileSync(join(dir, ".opencode", "rtr-re-keeper-status.json"), "utf8"))
+        assert.equal(status.decision, "re-evicted")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("corrupt sunk store heals empty and rewrites valid", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const messages = [msg("user", "hello " + "x".repeat(4000))]
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        writeFileSync(join(dir, ".opencode", "rtr-re-sunk.json"), "{not json")
+        const hooks = await server({ directory: dir }, { triggerTokens: 1000, targetTokens: 400 })
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const healed = JSON.parse(readFileSync(join(dir, ".opencode", "rtr-re-sunk.json"), "utf8"))
+        assert.deepEqual(healed.digests, [])
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("protection budget caps gap pulls newest-first in gated mode", () => {
+    const { messageTokens } = server._test
+    const messages = []
+    for (let i = 0; i < 60; i++) {
+        if (i >= 20 && i < 50) messages.push(msg("tool", "x".repeat(40), { tool: "todowrite" }))
+        else if (i < 20) messages.push(msg("user", "x".repeat(40)))
+        else messages.push(msg("user", "x".repeat(1200)))
+    }
+    const plan = planKeepIndices(
+        messages,
+        cfg({ triggerTokens: 2000, targetTokens: 400, maxKeepMessages: 40, cumulativeMessages: 5000 }),
+    )
+    // Budget 100 (25% of 400); each pull 14 tokens -> 7 newest kept (98).
+    const perPull = messageTokens(msg("tool", "x".repeat(40), { tool: "todowrite" }))
+    assert.equal(plan.overrunTokens, 7 * perPull)
+    assert.equal(plan.overrunBy, "protection")
+    for (let i = 43; i <= 49; i++) assert.ok(plan.keep.has(i), `keeps protected ${i}`)
+    for (let i = 20; i <= 42; i++) assert.ok(!plan.keep.has(i), `sheds protected ${i}`)
+})
+
+test("protection budget always keeps the newest protected as floor", () => {
+    const { messageTokens } = server._test
+    const messages = []
+    for (let i = 0; i < 20; i++) messages.push(msg("user", "x".repeat(40)))
+    messages.push(msg("tool", "x".repeat(4000), { tool: "todowrite" }))
+    for (let i = 21; i < 40; i++) messages.push(msg("user", "x".repeat(40)))
+    for (let i = 0; i < 20; i++) messages.push(msg("user", "x".repeat(1200)))
+    const plan = planKeepIndices(
+        messages,
+        cfg({ triggerTokens: 2000, targetTokens: 400, maxKeepMessages: 40, cumulativeMessages: 5000 }),
+    )
+    assert.ok(plan.keep.has(20), "newest protected kept over budget")
+    assert.equal(plan.overrunTokens, messageTokens(messages[20]))
+    assert.equal(plan.overrunBy, "protection")
+})
+
+test("debt from over-target firing tightens the next firing", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server({ directory: dir }, { triggerTokens: 1000, targetTokens: 400 })
+        const leanA = []
+        for (let i = 0; i < 60; i++) leanA.push(msg("user", `a${String(i).padStart(3, "0")}#` + "x".repeat(35)))
+        const fat = msg("user", "fat " + "x".repeat(1996))
+        const m1 = [...leanA, fat]
+        await hooks["experimental.chat.messages.transform"]({}, { messages: m1 })
+        const s1 = JSON.parse(readFileSync(join(dir, ".opencode", "rtr-re-keeper-status.json"), "utf8"))
+        // Firing 2: sunk A filtered; 110 fresh lean; debt tightens the walk.
+        // Expectations derive from firing 1's reported debt (robust to the
+        // P2 status injection riding on the fat message, pinned separately).
+        const leanB = []
+        for (let i = 0; i < 110; i++) leanB.push(msg("user", `b${String(i).padStart(3, "0")}#` + "x".repeat(35)))
+        const m2 = [...leanA, ...leanB]
+        await hooks["experimental.chat.messages.transform"]({}, { messages: m2 })
+        const eff = 400 - Math.floor(s1.debt / 10)
+        const served = Math.floor(eff / 10)
+        assert.equal(m2.length, served)
+        const status = JSON.parse(readFileSync(join(dir, ".opencode", "rtr-re-keeper-status.json"), "utf8"))
+        assert.equal(status.effectiveTarget, eff)
+        assert.equal(status.debt, Math.max(0, Math.round(s1.debt * 0.8 + (served * 10 - 400))))
+        const sunk = JSON.parse(readFileSync(join(dir, ".opencode", "rtr-re-sunk.json"), "utf8"))
+        assert.equal(sunk.digests.length, 60 + (110 - served))
+        assert.equal(sunk.debt, status.debt)
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }
@@ -184,6 +366,70 @@ test("serializeSpans matches the Python sink shape", () => {
     assert.ok(out.spans.includes('<span id="span-0" role="user" lane="read" dtype="PCDATA"'))
     assert.ok(out.spans.includes("exact"))
     assert.ok(out.summaries.includes('<paraphrase spanref="span-0" text="exact"'))
+})
+
+test("serializeSpans escapes attributes and covers producer values", () => {
+    const out = serializeSpans(
+        [{ index: 0, role: "system", lane: "written", dtype: "PCDATA", text: 'say "hi"', ts: 'a"b', source: "s", session: "x" }],
+        "abc",
+    )
+    assert.ok(out.spans.includes("role (user|assistant|tool|system|unknown) #REQUIRED"))
+    assert.ok(out.spans.includes("lane (read|written|think|plan|unknown) #IMPLIED"))
+    assert.ok(out.spans.includes("dtype (PCDATA|CDATA|NDATA) #IMPLIED"))
+    assert.ok(out.spans.includes('role="system"'))
+    assert.ok(out.spans.includes('ts="a&quot;b"'))
+    assert.ok(!out.spans.includes('ts="a"b"'))
+    assert.ok(out.summaries.includes('text="say &quot;hi&quot;"'))
+})
+
+test("hook writes a submit sidecar per firing for the worker drain", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server(
+            { directory: dir },
+            { triggerTokens: 100, targetTokens: 40 },
+        )
+        const messages = []
+        for (let i = 0; i < 10; i++) messages.push(msg("assistant", "q".repeat(400)))
+        messages.push(msg("user", "go"))
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const { readdirSync } = await import("node:fs")
+        const files = readdirSync(join(dir, ".opencode", "memory")).filter((f) => f.endsWith(".submit.json"))
+        assert.equal(files.length, 1)
+        const sidecar = JSON.parse(readFileSync(join(dir, ".opencode", "memory", files[0]), "utf8"))
+        assert.equal(typeof sidecar.digest, "string")
+        assert.equal(typeof sidecar.ts, "string")
+        assert.ok(Array.isArray(sidecar.messages))
+        assert.ok(sidecar.messages.length > 0)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("reasoning parts count toward the window (DB-verified shape)", () => {
+    const thinking = {
+        info: { id: "r1", role: "assistant", sessionID: "s1" },
+        parts: [{ id: "p1", type: "reasoning", text: "deliberate ".repeat(500) }],
+    }
+    assert.ok(messageTokens(thinking) > 1000)
+})
+
+test("thinking-only messages sink on the think lane", () => {
+    const thinking = {
+        info: { id: "r1", role: "assistant", sessionID: "s1" },
+        parts: [{ id: "p1", type: "reasoning", text: "deliberate ".repeat(500) }],
+    }
+    const spans = evictedSpans([thinking], [0])
+    assert.equal(spans[0].lane, "think")
+    assert.ok(spans[0].text.includes("deliberate"))
+})
+
+test("patch parts contribute their file list", () => {
+    const patched = {
+        info: { id: "p1", role: "assistant", sessionID: "s1" },
+        parts: [{ id: "p1", type: "patch", hash: "abc", files: ["src/a.js", "src/b.js"] }],
+    }
+    assert.ok(messageTokens(patched) > 0)
 })
 
 // --- Live control: watched config file ---
@@ -609,6 +855,63 @@ test("registry reload picks up a newly added preset without restart", () => {
         assert.equal(c.triggerTokens, 2000)
         assert.equal(c.targetTokens, 1000)
         assert.equal(c.maxKeepMessages, 10)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("evicted markers leave the kept window and survive in the sink file", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-keeper-"))
+    try {
+        const hooks = await server(
+            { directory: dir },
+            { triggerTokens: 100, targetTokens: 40 },
+        )
+        const { messageText } = server._test
+        const messages = [
+            {
+                info: { id: "u0", role: "user", sessionID: "s1" },
+                parts: [{ id: "p", type: "text", text: "READ-OLD question" }],
+            },
+            {
+                info: { id: "a0", role: "assistant", sessionID: "s1" },
+                parts: [{ id: "p", type: "reasoning", text: "THINK-ONLY " + "deliberate ".repeat(100) }],
+            },
+            {
+                info: { id: "a1", role: "assistant", sessionID: "s1" },
+                parts: [
+                    { id: "p1", type: "text", text: "WROTE-1 " + "word ".repeat(100) },
+                    { id: "p2", type: "reasoning", text: "THINK-1 " + "deliberate ".repeat(100) },
+                    { id: "p3", type: "tool", tool: "bash", state: { input: { q: "TOOLSTATE-1" }, output: "done" } },
+                ],
+            },
+            {
+                info: { id: "t1", role: "tool", sessionID: "s1" },
+                parts: [{ id: "p", type: "text", text: "TOOLROLE-1 " + "word ".repeat(100) }],
+            },
+            {
+                info: { id: "u3", role: "user", sessionID: "s1" },
+                parts: [{ id: "p", type: "text", text: "READ-NEW latest" }],
+            },
+        ]
+        const out = { messages }
+        await hooks["experimental.chat.messages.transform"]({}, out)
+        const keptTexts = out.messages.map(messageText)
+        const { readdirSync } = await import("node:fs")
+        const dtd = readdirSync(join(dir, ".opencode", "memory")).filter(
+            (f) => f.endsWith(".dtd") && !f.includes("summary"),
+        )
+        assert.ok(dtd.length >= 1)
+        const sunk = dtd
+            .map((f) => readFileSync(join(dir, ".opencode", "memory", f), "utf8"))
+            .join("\n")
+        for (const marker of ["READ-OLD", "THINK-ONLY", "WROTE-1", "THINK-1", "TOOLSTATE-1", "TOOLROLE-1"]) {
+            const inKept = keptTexts.some((t) => t.includes(marker))
+            const inSunk = sunk.includes(marker)
+            assert.equal(inKept, false, `${marker} still in kept window`)
+            assert.equal(inSunk, true, `${marker} missing from sink`)
+        }
+        assert.ok(keptTexts.some((t) => t.includes("READ-NEW")))
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }

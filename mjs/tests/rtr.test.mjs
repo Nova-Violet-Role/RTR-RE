@@ -76,6 +76,21 @@ test("context plan keeps verbatim below the trigger and evicts above it", () => 
     assert.match(over.decision, /evict/)
 })
 
+test("context plan boundary matches Python: exactly at trigger keeps verbatim", () => {
+    const at = core.planContext(400000, 90)
+    assert.match(at.decision, /keep verbatim/)
+})
+
+test("standalone fallback defaults mirror the shipped registry default (mugen)", () => {
+    assert.deepEqual(core.PLAN_DEFAULTS, {
+        triggerTokens: 400000,
+        targetTokens: 200000,
+        maxKeepMessages: 200,
+        maxSummaryChars: 20000,
+        maxRestoreChars: 4000,
+    })
+})
+
 test("context plan defaults come from the shared preset registry, not hardcoded values", () => {
     const reg = core.registryContextProfile()
     assert.ok(reg)
@@ -134,6 +149,26 @@ test("cli bridge builds measured rtr-cli arguments and refuses unknown commands 
         ["write", "p", "f", "c"],
     )
     assert.deepEqual(core.buildCliArgs("janitor", { dryRun: true }), ["janitor", "--dry-run"])
+    assert.deepEqual(
+        core.buildCliArgs("session-commit", { project: "demo" }),
+        ["session-commit", "demo"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("session-commit", { project: "demo", chat: "did x" }),
+        ["session-commit", "demo", "--chat", "did x"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("symbiose-submit", { project: "demo", messagesJson: "[{}]" }),
+        ["symbiose-submit", "demo", "[{}]"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("symbiose-drain", { project: "demo", limit: 2 }),
+        ["symbiose-drain", "demo", "--limit", "2"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("symbiose-compress", { project: "demo", target: 50, messagesFile: "m.json" }),
+        ["symbiose-compress", "demo", "50", "--messages-file", "m.json"],
+    )
     assert.throws(() => core.buildCliArgs("nope", {}), /nope/)
 })
 

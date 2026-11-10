@@ -111,6 +111,41 @@ class TestMemoryRAG(unittest.TestCase):
         stats3 = self.engine.index_all()
         self.assertEqual(stats3["updated"], 1)
 
+    def test_failed_file_keeps_old_hash_for_retry(self):
+        marker = "TRIGGER_EMBED_FAILURE_XQZ"
+
+        class FlakyFakeModel:
+            fail = True
+
+            def embed(self, texts):
+                if self.fail and any(marker in t for t in texts):
+                    raise RuntimeError("boom")
+                return [[0.0] * 4 for _ in texts]
+
+        flaky = self.p1_concepts / "flaky_note.md"
+        flaky.write_text("# Flaky\n\n" + marker + " content here.", encoding="utf-8")
+        with patch.dict(
+            os.environ, {"OPENCODE_MEMORY_EMBED_MODELS": "BAAI/bge-base-en-v1.5"}
+        ):
+            self.engine._models = {"baai_bge_base_en_v1_5": FlakyFakeModel()}
+            stats1 = self.engine.index_all()
+        self.assertGreaterEqual(stats1["failed"], 1)
+        self.assertNotIn(str(flaky), self.engine.load_registry())
+        FlakyFakeModel.fail = False
+        with patch.dict(
+            os.environ, {"OPENCODE_MEMORY_EMBED_MODELS": "BAAI/bge-base-en-v1.5"}
+        ):
+            stats2 = self.engine.index_all()
+        self.assertGreaterEqual(stats2["new"], 1)
+        self.assertIn(str(flaky), self.engine.load_registry())
+
+    def test_write_wiki_refuses_path_traversal(self):
+        with self.assertRaises(ValueError):
+            self.engine.write_wiki("youtube-shorts", "../../escape.md", "evil")
+        with self.assertRaises(ValueError):
+            self.engine.write_wiki("youtube-shorts", "/abs/escape.md", "evil")
+        self.assertFalse((self.test_projects / "youtube-shorts" / "escape.md").exists())
+
     def test_hybrid_search(self):
         self.engine.index_all()
 
@@ -229,6 +264,71 @@ class TestMemoryRAG(unittest.TestCase):
         finally:
             self.engine = reopened
 
+    def test_close_keeps_shared_client_for_colive_engine(self):
+        # Two engines on one DB path share the cached client; closing one
+        # must not evict/close it out from under the other.
+        other = MemoryEngine()
+        try:
+            shared = self.engine.chroma_client
+            self.assertIs(other.chroma_client, shared)
+            self.engine.close()
+            self.assertIs(other.chroma_client, shared)
+            total = sum(c.count() for c in other.collections.values())
+            self.assertEqual(total, 0)
+        finally:
+            other.close()
+
+    def test_second_engine_on_locked_db_is_read_only(self):
+        second = None
+        try:
+            second = MemoryEngine()
+            self.assertTrue(second.read_only)
+        finally:
+            if second is not None:
+                second.close()
+
+    def test_read_only_engine_reports_holder_pid(self):
+        # Windows LockFile blocks reads of the locked byte (EBUSY), so the
+        # holder PID must live in an unlocked sidecar, not the lock file.
+        # (RED on Windows pre-fix; POSIX flock never blocked the read.)
+        second = MemoryEngine()
+        try:
+            self.assertTrue(second.read_only)
+            self.assertEqual(second._writer_holder, os.getpid())
+        finally:
+            second.close()
+
+    def test_janitor_prunes_dead_roots(self):
+        # 150 dead temp dirs silt the live extra_roots (measured 2026-11-10).
+        dead = self.test_dir / "dead-tmp-proj"
+        dead.mkdir()
+        memory_engine.register_extra_root(dead)
+        shutil.rmtree(dead)
+        report = self.engine.janitor(dry_run=False)
+        roots = memory_engine._load_extra_roots()
+        self.assertNotIn(dead, roots)
+        self.assertIn(str(dead), report.get("pruned_roots", []))
+
+    def test_janitor_dry_run_prunes_nothing(self):
+        dead = self.test_dir / "dead-dry-proj"
+        dead.mkdir()
+        memory_engine.register_extra_root(dead)
+        shutil.rmtree(dead)
+        report = self.engine.janitor(dry_run=True)
+        roots = memory_engine._load_extra_roots()
+        self.assertIn(dead, roots)
+        self.assertIn(str(dead), report.get("pruned_roots", []))
+
+    @unittest.skipUnless(sys.platform == "win32", "drive anchors are Windows-only")
+    def test_janitor_keeps_unmounted_drive_roots(self):
+        memory_engine.EXTRA_ROOTS_FILE.write_text(
+            json.dumps(["X:/ghost-project"]), encoding="utf-8"
+        )
+        report = self.engine.janitor(dry_run=False)
+        roots = [str(r) for r in memory_engine._load_extra_roots()]
+        self.assertIn("X:\\ghost-project", roots)
+        self.assertIn("X:\\ghost-project", report.get("unmounted_roots", []))
+
     def test_search_expands_wikilinked_concepts(self):
         # A hit carrying [[wikilinks]] expands to chunks mentioning the
         # linked concept. The expansion query must use the document
@@ -247,6 +347,28 @@ class TestMemoryRAG(unittest.TestCase):
             any("voice_over" in r["metadata"].get("rel_path", "") for r in results),
             f"wikilink expansion did not surface voice_over: {results}",
         )
+
+    def test_search_survives_wikilink_expansion_failure(self):
+        # The wikilink expansion query (where_document $contains) once
+        # crashed live search on chromadb 1.5; a repeat must degrade to
+        # base results, never raise out of search().
+        linker = self.p1_concepts / "linker2.md"
+        with open(linker, "w", encoding="utf-8") as f:
+            f.write(
+                "# Zebra Quasar\n\nZebraquasar token links onward to [[Piper TTS]] for speech."
+            )
+        self.engine.index_all()
+        for col in self.engine.collections.values():
+            orig_get = col.get
+
+            def _flaky_get(*a, _orig=orig_get, **k):
+                if "where_document" in k:
+                    raise RuntimeError("chroma boom")
+                return _orig(*a, **k)
+
+            col.get = _flaky_get
+        results = self.engine.search("Zebraquasar")
+        self.assertGreater(len(results), 0)
 
     def test_search_skips_unused_gate_pass(self):
         calls = []
@@ -311,6 +433,12 @@ class TestMemoryRAG(unittest.TestCase):
         self.assertIn("Test Panel", panel)
         self.assertIn("🟢 SUCCESS", panel)
 
+    def test_error_status_tag_is_red(self):
+        self.assertEqual(TUIRenderer.status_tag("error"), "🔴 ERROR")
+        self.assertEqual(TUIRenderer.status_tag("ERROR"), "🔴 ERROR")
+        self.assertEqual(TUIRenderer.status_tag("fail"), "🔴 ERROR")
+        self.assertEqual(TUIRenderer.status_tag("failure"), "🔴 ERROR")
+
     def test_recency_decay(self):
         import time
 
@@ -357,6 +485,85 @@ class TestMemoryRAG(unittest.TestCase):
         self.assertIn("final", results[0])
         self.assertIn("dense", results[0])
         self.assertIn("bm25", results[0])
+
+    def test_explain_uses_same_gated_subqueries_as_search(self):
+        # explain_search must describe the ranking search() returns: same
+        # gated delta subs (not the raw build_subqueries shape).
+        self.engine.index_all()
+        probe = self.p1_concepts / "delta-probe-note.md"
+        probe.write_text("# Probe\n\ndelta probe token body here.", encoding="utf-8")
+        seen = []
+
+        def spy(subs, k=3, project=None, hybrid=True):
+            seen.append((list(subs), hybrid))
+            return []
+
+        with patch.object(MemoryEngine, "_fused_multi", side_effect=spy):
+            self.engine.search("Piper TTS", project="youtube-shorts")
+            search_subs = seen[-1][0]
+            seen.clear()
+            self.engine.explain_search("Piper TTS", project="youtube-shorts")
+            explain_subs = seen[-1][0]
+        self.assertEqual(explain_subs, search_subs)
+
+    def test_explain_resolves_hybrid_from_profile(self):
+        # explain_search honors the Optimizer's hybrid flag like search()
+        # instead of forcing hybrid=True.
+        seen = []
+
+        def spy(subs, k=3, project=None, hybrid=True):
+            seen.append(hybrid)
+            return []
+
+        with patch.object(MemoryEngine, "_fused_multi", side_effect=spy):
+            with patch.object(
+                memory_engine._cb,
+                "resolve_retrieval_profile",
+                return_value={"hybrid": False},
+            ):
+                self.engine.explain_search("Piper TTS")
+        self.assertTrue(seen)
+        self.assertEqual(seen, [False] * len(seen))
+
+    def test_fused_multi_reports_actual_lane_weights(self):
+        class FakeModel:
+            def embed(self, texts):
+                return [[0.1] * 4 for _ in texts]
+
+        with patch.dict(
+            os.environ, {"OPENCODE_MEMORY_EMBED_MODELS": "BAAI/bge-base-en-v1.5"}
+        ):
+            self.engine._models = {"baai_bge_base_en_v1_5": FakeModel()}
+            self.engine.index_all()
+            fused = self.engine._fused_multi(
+                ["Piper TTS"], k=3, project=None, hybrid=True
+            )
+        self.assertTrue(fused)
+        w = fused[0]["weights"]
+        self.assertAlmostEqual(w["bm25"], 0.60)
+        self.assertAlmostEqual(w["dense"], 0.15)
+        self.assertAlmostEqual(w["recency"], 0.15)
+        self.assertAlmostEqual(w["importance"], 0.10)
+
+    def test_fused_multi_dense_only_reports_unit_dense_weight(self):
+        class FakeModel:
+            def embed(self, texts):
+                return [[0.1] * 4 for _ in texts]
+
+        with patch.dict(
+            os.environ, {"OPENCODE_MEMORY_EMBED_MODELS": "BAAI/bge-base-en-v1.5"}
+        ):
+            self.engine._models = {"baai_bge_base_en_v1_5": FakeModel()}
+            self.engine.index_all()
+            fused = self.engine._fused_multi(
+                ["Piper TTS"], k=3, project=None, hybrid=False
+            )
+        self.assertTrue(fused)
+        w = fused[0]["weights"]
+        self.assertAlmostEqual(w["dense"], 1.0)
+        self.assertAlmostEqual(w["bm25"], 0.0)
+        self.assertAlmostEqual(w["recency"], 0.0)
+        self.assertAlmostEqual(w["importance"], 0.0)
 
     def test_restore_session_state(self):
         res = self.engine.init_project("test-restore", variant="wiki")
@@ -411,6 +618,19 @@ class TestMemoryRAG(unittest.TestCase):
         self.assertTrue(any(ev["type"] == "failure" for ev in events))
         self.assertTrue(any(ev["type"] == "decision" for ev in events))
         self.assertTrue(any(ev["type"] == "deprecation" for ev in events))
+
+    def test_reflect_session_loads_registry_once(self):
+        calls = []
+        orig = MemoryEngine._load_concept_registry
+
+        def counting(self, project):
+            calls.append(project)
+            return orig(self, project)
+
+        text = "We decided to use tabs. We tested the parser twice. It validated cleanly yesterday."
+        with patch.object(MemoryEngine, "_load_concept_registry", counting):
+            self.engine.reflect_session("reflect-once-proj", text)
+        self.assertEqual(len(calls), 1)
 
     def test_concept_registry_lifecycle(self):
         self.engine.init_project("materialize-project", variant="wiki")
@@ -520,6 +740,98 @@ knowledge_events:
         self.assertEqual(reg["concept_001"]["status"], "deprecated")
         self.assertFalse(hook_file.exists())
 
+    def test_build_lexikon_reads_mtime_newest_session(self):
+        import time as _t
+
+        old_roots, old_dir = memory_engine.PROJECT_ROOTS, memory_engine.PROJECTS_DIR
+        tmp = tempfile.TemporaryDirectory()
+        try:
+            proj = Path(tmp.name) / "lexproj"
+            sess = proj / "directives" / "sessions"
+            sess.mkdir(parents=True)
+            (sess / "b-newer.md").write_text(
+                "```yaml\nknowledge_events:\n- concept: NewConcept\n  evidence: fresh\n```\n",
+                encoding="utf-8",
+            )
+            (sess / "a-older.md").write_text(
+                "```yaml\nknowledge_events:\n- concept: OldConcept\n  evidence: stale\n```\n",
+                encoding="utf-8",
+            )
+            now = _t.time()
+            os.utime(sess / "b-newer.md", (now - 100, now - 100))
+            os.utime(sess / "a-older.md", (now, now))
+            memory_engine.PROJECT_ROOTS = [Path(tmp.name)]
+            memory_engine.PROJECTS_DIR = Path(tmp.name)
+            out = self.engine.build_lexikon(str(proj))
+            self.assertEqual(out["status"], "success")
+            terms = self.engine.get_lexikon(str(proj))
+            self.assertIn("oldconcept", terms)
+            self.assertNotIn("newconcept", terms)
+        finally:
+            memory_engine.PROJECT_ROOTS, memory_engine.PROJECTS_DIR = old_roots, old_dir
+            tmp.cleanup()
+
+    def test_materialize_reads_mtime_newest_session(self):
+        import time as _t
+
+        old_roots, old_dir = memory_engine.PROJECT_ROOTS, memory_engine.PROJECTS_DIR
+        tmp = tempfile.TemporaryDirectory()
+        try:
+            proj = Path(tmp.name) / "matproj"
+            sess = proj / "directives" / "sessions"
+            sess.mkdir(parents=True)
+            (sess / "b-stale.md").write_text(
+                "```yaml\nknowledge_events:\n- concept: StaleConcept\n  type: decision\n  evidence: old\n```\n",
+                encoding="utf-8",
+            )
+            (sess / "a-fresh.md").write_text(
+                "```yaml\nknowledge_events:\n- concept: FreshConcept\n  type: decision\n  evidence: new\n```\n",
+                encoding="utf-8",
+            )
+            now = _t.time()
+            os.utime(sess / "b-stale.md", (now - 100, now - 100))
+            os.utime(sess / "a-fresh.md", (now, now))
+            memory_engine.PROJECT_ROOTS = [Path(tmp.name)]
+            memory_engine.PROJECTS_DIR = Path(tmp.name)
+            out = self.engine.materialize_concepts(str(proj))
+            self.assertEqual(out["status"], "success")
+            reg = self.engine._load_concept_registry(str(proj))
+            names = [d.get("canonical_name", "") for d in reg.values()]
+            self.assertIn("freshconcept", names)
+            self.assertNotIn("staleconcept", names)
+        finally:
+            memory_engine.PROJECT_ROOTS, memory_engine.PROJECTS_DIR = old_roots, old_dir
+            tmp.cleanup()
+
+    def test_memory_reference_uses_float_timestamp_and_unique_ids(self):
+        # Reference chunks must decay like every other chunk (created_at
+        # float-parseable) and never collide within one second.
+
+        class FakeModel:
+            def embed(self, texts):
+                return [[0.0] * 4 for _ in texts]
+
+        with patch.dict(
+            os.environ, {"OPENCODE_MEMORY_EMBED_MODELS": "BAAI/bge-base-en-v1.5"}
+        ):
+            self.engine._models = {"baai_bge_base_en_v1_5": FakeModel()}
+            r1 = self.engine.add_memory_reference(
+                "ref-project", "first compaction text here"
+            )
+            r2 = self.engine.add_memory_reference(
+                "ref-project", "second compaction text here"
+            )
+        self.assertEqual(r1["status"], "success")
+        self.assertEqual(r2["status"], "success")
+        cols = self.engine.collections
+        self.assertEqual(len(cols), 1)
+        col = next(iter(cols.values()))
+        got = col.get()
+        by_id = {i: m for i, m in zip(got["ids"], got["metadatas"])}
+        self.assertEqual(len(by_id), 2)
+        for meta in by_id.values():
+            float(meta["created_at"])
+
     def test_bidirectional_linking_graph(self):
         self.engine.init_project("graph-project", variant="wiki")
         proj_dir = self.test_projects / "graph-project"
@@ -574,6 +886,26 @@ This is concept B which discusses general layouts.""")
         text_a = file_a.read_text()
         self.assertIn("[[concept_002|Concept B]]", text_a)
 
+    def test_index_files_scopes_to_given_paths(self):
+        # RRD-169 prerequisite: the auto-indexer needs a bounded call that
+        # indexes explicit files without discovering the world.
+        a = self.p1_directives / "scoped_a.md"
+        b = self.p1_directives / "scoped_b.md"
+        a.write_text("# A\n\nScoped A content here.", encoding="utf-8")
+        b.write_text("# B\n\nScoped B content here.", encoding="utf-8")
+        stats = self.engine.index_files([str(a)])
+        self.assertEqual(stats["new"], 1)
+        self.assertIn(str(a), self.engine.load_registry())
+        self.assertNotIn(str(b), self.engine.load_registry())
+
+    def test_index_files_skips_missing_and_unsuffixed_quietly(self):
+        ghost = self.p1_directives / "ghost.md"
+        binary = self.p1_directives / "blob.bin"
+        binary.write_text("not indexable", encoding="utf-8")
+        stats = self.engine.index_files([str(ghost), str(binary)])
+        self.assertEqual(stats["new"], 0)
+        self.assertEqual(stats["failed"], 0)
+
 
 class TestStructLaneRouting(unittest.TestCase):
     """STRUCT lane contract (formal/Symbiose/Lane.lean): total and
@@ -622,6 +954,14 @@ class TestStructLaneRouting(unittest.TestCase):
         self.assertIn(str(f), hits)
         self.assertEqual(hits[str(f)][0]["term"], "hybrid_lane_weights")
         self.assertEqual(hits[str(f)][0]["line"], 1)
+
+    def test_struct_path_norm_is_identity_on_posix(self):
+        with patch.object(memory_engine.os, "name", "posix"):
+            self.assertEqual(memory_engine._norm_struct_path("A/B/C.MD"), "A/B/C.MD")
+
+    def test_struct_path_norm_folds_case_on_windows(self):
+        with patch.object(memory_engine.os, "name", "nt"):
+            self.assertEqual(memory_engine._norm_struct_path("A/B/C.MD"), "a\\b\\c.md")
 
 
 class TestHybridLaneWeights(unittest.TestCase):
@@ -753,22 +1093,26 @@ class TestQueryPrompts(unittest.TestCase):
         captured = {}
 
         class FakeModel:
+            def __init__(self, slug):
+                self._slug = slug
+
             def embed(self, texts):
-                captured["texts"] = list(texts)
+                captured[self._slug] = list(texts)
                 return [[0.0] * 4 for _ in texts]
 
         engine = MemoryEngine()
         try:
             engine._models = {
-                "snowflake_snowflake_arctic_embed_m": FakeModel(),
-                "baai_bge_base_en_v1_5": FakeModel(),
+                "snowflake_snowflake_arctic_embed_m": FakeModel("arctic"),
+                "baai_bge_base_en_v1_5": FakeModel("bge"),
             }
             with patch.object(memory_engine, "_fetch_query_prompt", return_value=""):
                 engine.embed_all(["hello"], for_query=True)
             self.assertEqual(
-                captured["texts"],
+                captured["arctic"],
                 ["Represent this sentence for searching relevant passages: hello"],
             )
+            self.assertEqual(captured["bge"], ["hello"])
         finally:
             engine.close()
 
@@ -797,6 +1141,49 @@ class TestQueryPrompts(unittest.TestCase):
         out = memory_engine._compute_run_consensus(ranks)
         self.assertAlmostEqual(out[0], 1.0)
         self.assertAlmostEqual(out[1], 1.0)
+
+
+class TestConfigFallbacks(unittest.TestCase):
+    def test_unmatched_threads_mapping_falls_through_to_registry(self):
+        # A per-model mapping that names no substring of this model must
+        # fall through to the shared chain (legacy profile, then the
+        # registry's effective threads) — not short-circuit to 4/8.
+        with patch.dict(
+            os.environ,
+            {
+                "OPENCODE_MEMORY_EMBED_THREADS": "nomatch:7",
+                "OPENCODE_MEMORY_RTR_PROFILE": "",
+            },
+        ):
+            with patch.object(
+                memory_engine._cb,
+                "resolve_retrieval_profile",
+                return_value={"effective_threads_per_model": 12},
+            ):
+                self.assertEqual(
+                    memory_engine.resolve_threads_for("BAAI/bge-base-en-v1.5"), 12
+                )
+
+    @unittest.skipUnless(
+        sys.platform == "win32", "case-insensitive roots are Windows-only"
+    )
+    def test_register_extra_root_dedupes_case_variants(self):
+        with tempfile.TemporaryDirectory() as d:
+            tmpfile = Path(d) / "extra_roots.json"
+            with patch.object(memory_engine, "EXTRA_ROOTS_FILE", tmpfile):
+                proj = Path(d) / "CaseProj"
+                proj.mkdir()
+                memory_engine.register_extra_root(proj)
+                memory_engine.register_extra_root(Path(str(proj).lower()))
+                data = json.loads(tmpfile.read_text(encoding="utf-8"))
+        self.assertEqual(len(data), 1)
+
+    def test_atomic_write_json_writes_and_leaves_no_tmp(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "reg.json"
+            memory_engine._atomic_write_json(p, {"a": 1})
+            self.assertEqual(json.loads(p.read_text(encoding="utf-8")), {"a": 1})
+            self.assertEqual(list(Path(d).glob("*.tmp-*")), [])
 
 
 if __name__ == "__main__":

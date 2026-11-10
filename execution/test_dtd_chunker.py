@@ -14,6 +14,7 @@ import os
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 # Add execution directory to sys.path (house convention, see test_memory.py)
 sys.path.insert(0, str(Path(__file__).parent.absolute()))
@@ -256,6 +257,14 @@ class ChunkDtdWholeTests(unittest.TestCase):
     def test_empty_file_returns_empty(self):
         f = self._write("")
         self.assertEqual(self.engine.chunk_dtd_whole(f, "empty.dtd"), [])
+
+    def test_whole_file_survives_memory_error_during_assembly(self):
+        # Live incident 2026-11-10: MemoryError at the section_text f-string
+        # killed the whole index run. Per-file failures must degrade to
+        # failed+1, never propagate.
+        f = self._write(SAMPLE_DTD)
+        with patch("memory_engine._scan_dtd_declarations", side_effect=MemoryError()):
+            self.assertEqual(self.engine.chunk_dtd_whole(f, "oom.dtd"), [])
 
 
 class DtdDiscoveryTests(unittest.TestCase):
