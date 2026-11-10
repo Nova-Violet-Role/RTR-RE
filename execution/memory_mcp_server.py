@@ -10,13 +10,26 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.absolute()))
 
-import memory_engine as mem
-from memory_engine import MemoryEngine
+try:
+    import memory_engine as mem
+    from memory_engine import MemoryEngine
+except ImportError:  # flat dev layout (tests put execution/ on sys.path)
+    from . import memory_engine as mem
+    from .memory_engine import MemoryEngine
 from fastmcp import FastMCP
-from tui_renderer import TUIRenderer
-import context_budget
-import span_indexer
-import symbiose_worker as sw
+
+try:
+    from tui_renderer import TUIRenderer
+except ImportError:  # installed package layout (execution.*)
+    from .tui_renderer import TUIRenderer
+
+try:
+    import context_budget
+    import span_indexer
+    import symbiose_worker as sw
+except ImportError:  # installed package layout (execution.*)
+    from . import context_budget, span_indexer
+    from . import symbiose_worker as sw
 
 engine = MemoryEngine()
 if os.environ.get("OPENCODE_MEMORY_WARM_MODELS", "").strip().lower() in (

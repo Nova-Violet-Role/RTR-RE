@@ -32,7 +32,10 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import chromadb
 from fastembed import TextEmbedding
 
-import context_budget as _cb
+try:
+    from . import context_budget as _cb
+except ImportError:  # flat dev layout (tests put execution/ on sys.path)
+    import context_budget as _cb
 
 # Setup paths. Every state path can be isolated by environment so dummy,
 # bench and test processes never have to touch the live registry/lexikon.

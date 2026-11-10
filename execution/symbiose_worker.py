@@ -24,7 +24,10 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List
 from xml.sax.saxutils import quoteattr
 
-import context_budget
+try:
+    import context_budget
+except ImportError:  # installed package layout (execution.*)
+    from . import context_budget
 
 
 def format_duration_ms(milliseconds: float) -> str:

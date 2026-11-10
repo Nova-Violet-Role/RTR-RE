@@ -9,11 +9,23 @@ from pathlib import Path
 # Add execution directory to sys.path to load memory_engine correctly
 sys.path.insert(0, str(Path(__file__).parent.absolute()))
 
-from memory_engine import MemoryEngine
-import memory_engine as mem
-from tui_renderer import TUIRenderer
-import symbiose_worker as sw
-import context_budget
+try:
+    from memory_engine import MemoryEngine
+    import memory_engine as mem
+except ImportError:  # flat dev layout (tests put execution/ on sys.path)
+    from .memory_engine import MemoryEngine
+    from . import memory_engine as mem
+try:
+    from tui_renderer import TUIRenderer
+except ImportError:  # installed package layout (execution.*)
+    from .tui_renderer import TUIRenderer
+
+try:
+    import symbiose_worker as sw
+    import context_budget
+except ImportError:  # installed package layout (execution.*)
+    from . import symbiose_worker as sw
+    from . import context_budget
 
 
 def _error_text(exc: Exception) -> str:

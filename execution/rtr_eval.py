@@ -21,8 +21,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.absolute()))
 
-import memory_engine as mem
-from memory_engine import MemoryEngine
+try:
+    import memory_engine as mem
+    from memory_engine import MemoryEngine
+except ImportError:  # flat dev layout (tests put execution/ on sys.path)
+    from . import memory_engine as mem
+    from .memory_engine import MemoryEngine
 
 QUOKKA = """# Quokka Routing Notes
 
