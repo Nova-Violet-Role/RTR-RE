@@ -14,15 +14,15 @@ COLLAGES = {
                 "RTR vs RAG — binary Versus",
                 [
                     "544 queries · 214 real files",
-                    "frozen versus.json (1.1.0)",
+                    "frozen versus.json (1.2.0)",
                     "SUB: every number re-runnable",
                 ],
             ),
             (
                 "Scoreboard R@1",
                 [
-                    "rtr-full 0.686 · rag-hybrid 0.590",
-                    "rtr-arctic 0.671 · bge 0.636",
+                    "rtr-full 0.689 · rag-hybrid 0.588",
+                    "rtr-arctic 0.688 · bge 0.636",
                     "SUB: full leads, published",
                 ],
             ),
@@ -30,15 +30,15 @@ COLLAGES = {
                 "Scoreboard R@3",
                 [
                     "rtr-full 0.846 BEST",
-                    "rtr-arctic 0.802 · hybrid 0.713",
+                    "rtr-arctic 0.814 · hybrid 0.704",
                     "SUB: full leads depth",
                 ],
             ),
             (
                 "Scoreboard MRR",
                 [
-                    "rtr-full 0.754 · arctic 0.726",
-                    "rag-hybrid 0.645",
+                    "rtr-full 0.756 · arctic 0.741",
+                    "rag-hybrid 0.639",
                     "SUB: full leads, honest",
                 ],
             ),

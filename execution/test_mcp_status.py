@@ -39,7 +39,7 @@ class TestRtrStatusViewport(unittest.TestCase):
     def test_present_status_file_reports_bounds_and_decision(self):
         status = {
             "keeper": "rtr-re-keeper",
-            "version": "0.3.0",
+            "version": "1.2.0",
             "enabled": True,
             "triggerTokens": 40000,
             "targetTokens": 20000,
