@@ -89,13 +89,17 @@ def hot_frames(speedscope_path: Path, top: int = 15) -> list[dict]:
     if not profiles:
         return []
     prof = profiles[0]
-    frames = prof.get("frames", [])
+    frames = prof.get("frames") or data.get("shared", {}).get("frames", [])
+    samples = prof.get("samples", [])
+    weights_list = prof.get("weights", [])
     weights: Counter = Counter()
-    for sample in prof.get("samples", []):
-        stack, weight = sample[0], sample[1] if len(sample) > 1 else 1
+    for i, stack in enumerate(samples):
+        w = weights_list[i] if i < len(weights_list) else 1
+        if not isinstance(stack, list):
+            continue
         for idx in stack:
-            if 0 <= idx < len(frames):
-                weights[frames[idx].get("name", "?")] += weight
+            if isinstance(idx, int) and 0 <= idx < len(frames):
+                weights[frames[idx].get("name", "?")] += w
     total = sum(weights.values()) or 1
     ranked = weights.most_common(top)
     return [

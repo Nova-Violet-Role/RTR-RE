@@ -31,7 +31,8 @@ class TestHotFrames(unittest.TestCase):
                         "profiles": [
                             {
                                 "frames": [{"name": "a"}, {"name": "b"}],
-                                "samples": [[[0], 10], [[0, 1], 5], [[1], 1]],
+                                "samples": [[0], [0, 1], [1]],
+                                "weights": [10, 5, 1],
                             }
                         ]
                     }
