@@ -70,6 +70,14 @@ class TestInstallOpencode(unittest.TestCase):
                 dest.write_bytes(b"changed")
                 self.assertEqual(install_opencode.main(["--config-dir", str(cfg)]), 2)
 
+    def test_manual_flag_prints_palette_guide(self):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.assertEqual(install_opencode.main(["--manual"]), 0)
+        out = buf.getvalue()
+        self.assertIn("palette guide for professional manual", out)
+        self.assertIn("evict-messages", out)
+
 
 if __name__ == "__main__":
     unittest.main()

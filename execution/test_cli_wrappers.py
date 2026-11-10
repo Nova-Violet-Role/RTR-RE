@@ -121,6 +121,18 @@ class TestCliWrappers(unittest.TestCase):
         self.assertIn("RE:Symbiose Plan", out)
         self.assertIn("Decision: keep verbatim", out)
 
+    def test_keeper_evict_now_arms_flag_file(self):
+        import json
+
+        out = self._run(memory_cli.format_keeper_evict_now, "cliproj", messages=500)
+        self.assertIn("One-Shot Armed", out)
+        cfg = json.loads(
+            (
+                self.test_projects / "cliproj" / ".opencode" / "rtr-re-keeper.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(cfg["evictMessagesNow"], 500)
+
 
 if __name__ == "__main__":
     unittest.main()

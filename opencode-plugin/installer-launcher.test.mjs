@@ -99,6 +99,29 @@ test("node quick flow completes and writes config", () => {
     }
 })
 
+test("node manual flow shows guide and writes roomy bounds plus guide copy", () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-nodee2e-"))
+    try {
+        const project = join(dir, "proj")
+        const out = execFileSync(process.execPath, [LAUNCHER, "--project", project], {
+            input: "4\n\n\ny\nn\n\n",
+            encoding: "utf8",
+            stdio: ["pipe", "pipe", "pipe"],
+            env: { ...process.env, RTRRE_INSTALL_NO_AUDIO: "1" },
+            timeout: 120000,
+        })
+        assert.match(out, /palette guide for professional manual context care/)
+        const cfg = JSON.parse(readFileSync(join(project, ".opencode", "rtr-re-keeper.json"), "utf8"))
+        assert.equal(cfg.manual, true)
+        assert.equal(cfg.threadsPerModel, 8)
+        assert.equal(cfg.parkingPercent, 60)
+        const guide = readFileSync(join(project, ".opencode", "memory", "rtrre-palette-guide.txt"), "utf8")
+        assert.match(guide, /evict-tokens/)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
 test("node theme falls back through both env names", () => {
     assert.equal(parseArgs([], { RTRRE_THEME: "forge" }).theme, "forge")
     assert.equal(parseArgs([], { RTRRE_INSTALL_THEME: "instrument", RTRRE_THEME: "forge" }).theme, "instrument")
@@ -131,7 +154,7 @@ test("node hardcore flow retries then completes", () => {
     try {
         const project = join(dir, "proj")
         const out = execFileSync(process.execPath, [LAUNCHER, "--project", project], {
-            input: "3\nabc\n8\nxx\n40\n\n\ny\n\n\n",
+            input: "3\nabc\n8\nxx\n40\n\n\n700000\n350000\n250\ny\n\n\n",
             encoding: "utf8",
             stdio: ["pipe", "pipe", "pipe"],
             env: { ...process.env, RTRRE_INSTALL_NO_AUDIO: "1" },
@@ -150,7 +173,7 @@ test("node hardcore flow writes chosen values", () => {
     try {
         const project = join(dir, "proj")
         const out = execFileSync(process.execPath, [LAUNCHER, "--project", project], {
-            input: "3\n16\n60\nwide\nrtr-bge\ny\n\n\n",
+            input: "3\n16\n60\nwide\nrtr-bge\n700000\n350000\n250\ny\n\n\n",
             encoding: "utf8",
             stdio: ["pipe", "pipe", "pipe"],
             env: { ...process.env, RTRRE_INSTALL_NO_AUDIO: "1" },
@@ -162,6 +185,9 @@ test("node hardcore flow writes chosen values", () => {
         assert.equal(cfg.threadsPerModel, 16)
         assert.equal(cfg.parkingPercent, 60)
         assert.equal(cfg.modality, "rtr-bge")
+        assert.equal(cfg.triggerTokens, 700000)
+        assert.equal(cfg.targetTokens, 350000)
+        assert.equal(cfg.maxKeepMessages, 250)
     } finally {
         rmSync(dir, { recursive: true, force: true })
     }

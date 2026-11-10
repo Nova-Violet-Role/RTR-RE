@@ -305,6 +305,7 @@ function resolveKeeperConfig(options = {}, env = process.env) {
             presetValues.maxKeepMessages,
         ),
         enabled: options.enabled ?? enabledFlag(env.RTR_RE_KEEPER_ENABLED),
+        manual: options.manual === undefined ? false : enabledFlag(options.manual),
         cumulativeMessages: Number(
             options.cumulativeMessages ?? env.OPENCODE_MEMORY_RTRRE_CUMULATIVE ?? 0,
         ),
@@ -312,7 +313,11 @@ function resolveKeeperConfig(options = {}, env = process.env) {
             ...PROTECTED_TOOLS,
             ...(Array.isArray(options.protectedTools) ? options.protectedTools : []),
         ]),
+        evictTokensNow: 0,
+        evictMessagesNow: 0,
     }
+    if (options.evictTokensNow !== undefined) cfg.evictTokensNow = positiveInt(options.evictTokensNow, "evictTokensNow")
+    if (options.evictMessagesNow !== undefined) cfg.evictMessagesNow = positiveInt(options.evictMessagesNow, "evictMessagesNow")
     Object.assign(cfg, profileFields(cfg))
     if (cfg.targetTokens >= cfg.triggerTokens) {
         throw new Error(
@@ -371,10 +376,13 @@ async function loadKeeperFileConfig(path) {
         ["triggerTokens", "triggerTokens"],
         ["targetTokens", "targetTokens"],
         ["maxKeepMessages", "maxKeepMessages"],
+        ["evictTokensNow", "evictTokensNow"],
+        ["evictMessagesNow", "evictMessagesNow"],
     ]) {
         if (data[key] !== undefined) values[key] = positiveInt(data[key], `config file ${envName}`)
     }
     if (data.enabled !== undefined) values.enabled = enabledFlag(data.enabled)
+    if (data.manual !== undefined) values.manual = enabledFlag(data.manual)
     // Full target/trigger pair check happens at merge time.
     return { values, mtimeMs: st.mtimeMs }
 }
@@ -401,9 +409,12 @@ function mergeFileConfig(cfg, values, source) {
         "targetTokens",
         "maxKeepMessages",
         "enabled",
+        "manual",
         "modality",
         "threadsPerModel",
         "parkingPercent",
+        "evictTokensNow",
+        "evictMessagesNow",
     ]) {
         if (values[k] !== undefined) next[k] = values[k]
     }
@@ -493,7 +504,7 @@ function maskNdata(text) {
 }
 
 /** Mirror of context_budget.plan_compression over host messages. */
-function planKeepIndices(messages, cfg, sunkDigests = new Map(), targetOverride = null) {
+function planKeepIndices(messages, cfg, sunkDigests = new Map(), targetOverride = null, force = false) {
     const tokens = messages.map(messageTokens)
     const total = tokens.reduce((a, b) => a + b, 0)
     const keep = new Set()
@@ -516,7 +527,7 @@ function planKeepIndices(messages, cfg, sunkDigests = new Map(), targetOverride 
     // Debt-tightened budget (RRD-109/117): the hook passes an effective
     // target; default keeps today's behavior exactly.
     const effTarget = targetOverride ?? cfg.targetTokens
-    if (effectiveTotal <= cfg.triggerTokens) {
+    if (!force && effectiveTotal <= cfg.triggerTokens) {
         fresh.forEach((i) => keep.add(i))
         return {
             compress: reEvicted.length > 0, keep, evict: [...reEvicted], total,
@@ -739,8 +750,8 @@ function nowIso() {
  * the exception propagates and the caller leaves the window untouched
  * (fail-open in the hook).
  */
-async function applyKeeper(messages, cfg, sink, sunkDigests = new Map(), targetOverride = null) {
-    const plan = planKeepIndices(messages, cfg, sunkDigests, targetOverride)
+async function applyKeeper(messages, cfg, sink, sunkDigests = new Map(), targetOverride = null, force = false) {
+    const plan = planKeepIndices(messages, cfg, sunkDigests, targetOverride, force)
     if (!plan.compress) {
         return { changed: false, messages, plan, sinkPath: null }
     }
@@ -888,6 +899,7 @@ function formatStatus(cfg, last) {
         `profile: ${cfg.profileLabel} (${cfg.profileCode})`,
         `preset: ${cfg.preset} (${cfg.presetDisplay})`,
         `enabled: ${cfg.enabled}`,
+        `manual: ${cfg.manual ?? false}`,
         `trigger: ${cfg.triggerTokens} tokens`,
         `target: ${cfg.targetTokens} tokens (hold)`,
         `maxKeepMessages: ${cfg.maxKeepMessages}`,
@@ -909,7 +921,7 @@ function formatStatus(cfg, last) {
 }
 
 const RTR_USAGE =
-    "rtr usage: /rtr status | hold <tokens> | trigger <tokens> | target <tokens> | max <n> | preset <standard|calibrated|wide|fusion-ah|symbiose-ah|re-symbiose|re-symbiose-mugen> | cpu <public-default|local-system> | modality <rtr-full|rtr-arctic|rtr-bge|rag-hybrid-base|rag-dense-base|rag-hybrid|rag-dense|custom> | threads <2|4|6|8|12|16> | parking <20|30|40|50|60|70|80> | enable | disable"
+    "rtr usage: /rtr status | hold <tokens> | trigger <tokens> | target <tokens> | max <n> | preset <standard|calibrated|wide|fusion-ah|symbiose-ah|re-symbiose|re-symbiose-mugen> | cpu <public-default|local-system> | modality <rtr-full|rtr-arctic|rtr-bge|rag-hybrid-base|rag-dense-base|rag-hybrid|rag-dense|custom> | threads <2|4|6|8|12|16> | parking <20|30|40|50|60|70|80> | evict-tokens <n> | evict-messages <n> | enable | disable"
 
 /**
  * Shared `/rtr` verb executor (P1, TODO-65): used by both the command
@@ -935,7 +947,7 @@ async function runRtrVerb(verb, rest, ctx, say) {
         if (verb === "preset") {
             const name = resolvePresetName(rest[0] ?? "", "preset")
             const preset = KEEPER_PRESETS[name]
-            await ctx.writeFileConfig({ preset: name, ...preset })
+            await ctx.writeFileConfig({ preset: name, manual: false, ...preset })
             say(
                 `keeper preset ${name} applied (trigger ${preset.triggerTokens}, target ${preset.targetTokens}, max ${preset.maxKeepMessages}); next exchange uses it`,
             )
@@ -946,6 +958,7 @@ async function runRtrVerb(verb, rest, ctx, say) {
             const profile = CPU_PROFILES[name]
             await ctx.writeFileConfig({
                 cpuProfile: name,
+                manual: false,
                 modality: profile.modality,
                 threadsPerModel: profile.threadsPerModel,
                 parkingPercent: profile.parkingPercent,
@@ -973,6 +986,13 @@ async function runRtrVerb(verb, rest, ctx, say) {
             say(`keeper parking P${value} set; applies on the next exchange (no restart)`)
             return
         }
+        if (verb === "evict-tokens" || verb === "evict-messages") {
+            const value = positiveInt(rest[0], verb)
+            const key = verb === "evict-tokens" ? "evictTokensNow" : "evictMessagesNow"
+            await ctx.writeFileConfig({ [key]: value })
+            say(`keeper ${verb} ${value} armed; fires on the next exchange (no restart)`)
+            return
+        }
         const numeric = { hold: "targetTokens", target: "targetTokens", trigger: "triggerTokens", max: "maxKeepMessages" }[
             verb
         ]
@@ -981,7 +1001,7 @@ async function runRtrVerb(verb, rest, ctx, say) {
             return
         }
         const value = positiveInt(rest[0], verb)
-        await ctx.writeFileConfig({ [numeric]: value })
+        await ctx.writeFileConfig({ [numeric]: value, manual: false })
         say(`keeper ${verb} set to ${value}; applies on the next exchange (no restart)`)
     } catch (error) {
         say(`keeper command refused: ${error?.message ?? error} (live window untouched)`)
@@ -1115,6 +1135,27 @@ const server = async (ctx, options = {}) => {
         }
     }
 
+    async function clearOneShotFlags() {
+        let current = {}
+        try {
+            current = JSON.parse(await readFile(configPath, "utf8"))
+            if (!current || typeof current !== "object") current = {}
+        } catch {
+            current = {}
+        }
+        delete current.evictTokensNow
+        delete current.evictMessagesNow
+        await mkdir(join(ctx.directory, ".opencode"), { recursive: true })
+        await writeFile(configPath, JSON.stringify(current, null, 2) + "\n", "utf8")
+        const { evictTokensNow: _t, evictMessagesNow: _m, ...rest } = cfg
+        cfg = { ...rest, evictTokensNow: 0, evictMessagesNow: 0 }
+        try {
+            fileMtime = (await stat(configPath)).mtimeMs
+        } catch {
+            fileMtime = 0
+        }
+    }
+
     async function commandCtx() {
         return {
             getConfig: () => cfg,
@@ -1184,8 +1225,15 @@ const server = async (ctx, options = {}) => {
                     return
                 }
             }
-            if (!cfg.enabled) {
+            const oneShotTokens = Math.floor(Number(cfg.evictTokensNow) || 0)
+            const oneShotMessages = Math.floor(Number(cfg.evictMessagesNow) || 0)
+            const oneShot = oneShotTokens > 0 || oneShotMessages > 0
+            if (!cfg.enabled && !oneShot) {
                 await recordStatus({ decision: "disabled-identity", total: 0, keepTokens: 0, evicted: 0, sinkPath: null })
+                return
+            }
+            if (cfg.manual && !oneShot) {
+                await recordStatus({ decision: "manual-identity", total: 0, keepTokens: 0, evicted: 0, sinkPath: null })
                 return
             }
             // P2 (TODO-65): status injection split — full status on the first
@@ -1209,7 +1257,29 @@ const server = async (ctx, options = {}) => {
             // tighten this firing's keep budget; cfg itself never mutates.
             const quota = Math.floor(sunkState.debt / DEBT_DIVISOR)
             const effectiveTarget = Math.max(0, cfg.targetTokens - quota)
-            const result = await applyKeeper(messages, cfg, sink, sunkStore, effectiveTarget)
+            // One-shot eviction (buttons): an explicit evict-amount
+            // overrides the trigger gate; protections still hold via the
+            // shared planner, and the flag clears after firing.
+            let ovTarget = effectiveTarget
+            let ovCfg = cfg
+            if (oneShot) {
+                const probe = planKeepIndices(messages, cfg, sunkStore)
+                if (oneShotTokens > 0) {
+                    ovTarget = Math.max(0, probe.effectiveTotal - oneShotTokens)
+                } else if (oneShotMessages > 0) {
+                    // Messages-only: neutralize the token target so the
+                    // count binds instead of the (possibly tiny) target.
+                    ovTarget = probe.effectiveTotal
+                }
+                if (oneShotMessages > 0) {
+                    const freshCount = messages.length - probe.reEvicted.length
+                    ovCfg = { ...cfg, maxKeepMessages: Math.max(0, freshCount - oneShotMessages) }
+                }
+            }
+            const result = await applyKeeper(messages, ovCfg, sink, sunkStore, ovTarget, oneShot)
+            if (oneShot) {
+                await clearOneShotFlags()
+            }
             let debt = sunkState.debt
             if (result.changed) {
                 const miss = result.plan.keepTokens - cfg.targetTokens
@@ -1223,7 +1293,7 @@ const server = async (ctx, options = {}) => {
                 messages.length = 0
                 messages.push(...result.messages)
                 await recordStatus({
-                    decision: result.plan.newlySunk > 0 ? "evicted" : "re-evicted",
+                    decision: oneShot ? "evicted-oneshot" : result.plan.newlySunk > 0 ? "evicted" : "re-evicted",
                     total: result.plan.total,
                     keepTokens: result.plan.keepTokens,
                     evicted: result.plan.evict.length,

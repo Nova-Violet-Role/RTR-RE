@@ -290,6 +290,16 @@ def play_audio(preset):
 
 def plan_for(payload):
     preset = payload.get("preset", "quick")
+    if preset == "manual":
+        return [
+            ("preset", "manual (palette guide + your knobs, no automation)"),
+            ("threads", f"T{payload.get('threadsPerModel', 8)} (2/4/6/8/12/16)"),
+            ("parking", f"P{payload.get('parkingPercent', 60)} (20-80)"),
+            ("mode", "manual: auto trigger/target/max OFF, one-shots only"),
+            ("engine", "rtr-full · dual-ONNX"),
+            ("plugin", "keeper + ctrl+p palette"),
+            ("memory", ".opencode/memory/ (DTD-shaped)"),
+        ]
     if preset == "quick":
         return [
             ("preset", "re-symbiose-mugen (400k/200k/200)"),
@@ -312,6 +322,9 @@ def plan_for(payload):
         ("threads", str(payload.get("threads", 8))),
         ("parking", str(payload.get("parking", 40)) + "%"),
         ("modality", payload.get("modality", "rtr-full")),
+        ("trigger", str(payload.get("triggerTokens", 400000))),
+        ("target", str(payload.get("targetTokens", 200000))),
+        ("max", str(payload.get("maxKeepMessages", 200))),
         ("engine", "rtr-full · dual-ONNX"),
         ("plugin", "keeper + ctrl+p palette"),
         ("memory", ".opencode/memory/ (DTD-shaped)"),
@@ -333,6 +346,23 @@ def execute_plan(payload, project, wheel):
         cfg["threadsPerModel"] = payload.get("threads", 8)
         cfg["parkingPercent"] = payload.get("parking", 40)
         cfg["modality"] = payload.get("modality", "rtr-full")
+        cfg["triggerTokens"] = payload.get("triggerTokens", 400000)
+        cfg["targetTokens"] = payload.get("targetTokens", 200000)
+        cfg["maxKeepMessages"] = payload.get("maxKeepMessages", 200)
+    if preset == "manual":
+        del cfg["preset"]
+        cfg["manual"] = True
+        cfg["threadsPerModel"] = payload.get("threadsPerModel", 8)
+        cfg["parkingPercent"] = payload.get("parkingPercent", 60)
+        try:
+            guide = (SHELL_DIR / "assets" / "palette-guide.txt").read_text(
+                encoding="utf-8"
+            )
+            mem_dir = Path(project) / ".opencode" / "memory"
+            mem_dir.mkdir(parents=True, exist_ok=True)
+            (mem_dir / "rtrre-palette-guide.txt").write_text(guide, encoding="utf-8")
+        except Exception:
+            pass
     (cfg_dir / "rtr-re-keeper.json").write_text(
         json.dumps(cfg, indent=2), encoding="utf-8"
     )
@@ -380,6 +410,13 @@ class InstallerUI:
             "parking": 40,
             "presetName": "re-symbiose-mugen",
             "modality": "rtr-full",
+            "triggerTokens": 400000,
+            "targetTokens": 200000,
+            "maxKeepMessages": 200,
+        }
+        self.manual = {
+            "threadsPerModel": 8,
+            "parkingPercent": 60,
         }
 
     # ---- primitives ----
@@ -482,17 +519,64 @@ class InstallerUI:
                 self.accent,
             )
         )
+        print(
+            self.paint(
+                "  [4] Manual — palette guide · roomy 600k/300k/200 · you drive",
+                self.accent2,
+            )
+        )
         print()
-        choice = input("  Select [1/2/3]: ").strip()
+        choice = input("  Select [1/2/3/4]: ").strip()
         if choice == "2":
             self.preset = "custom"
             self.screen_custom()
         elif choice == "3":
             self.preset = "hardcore"
             self.screen_hardcore()
+        elif choice == "4":
+            self.preset = "manual"
+            self.screen_manual()
         else:
             self.preset = "quick"
             self.screen_review()
+
+    def screen_manual(self):
+        sys.stdout.write(Term.CLEAR + self.header())
+        print(
+            self.paint(
+                "  Manual preset — professional manual context care.\n",
+                self.accent,
+                bold=True,
+            )
+        )
+        try:
+            print(
+                (SHELL_DIR / "assets" / "palette-guide.txt").read_text(encoding="utf-8")
+            )
+        except Exception:
+            print("  (palette guide unavailable in this package)")
+        m = self.manual
+        m["threadsPerModel"] = self._prompt_int(
+            f"  Threads per model T-modes 2/4/6/8/12/16 [{m['threadsPerModel']}]: ",
+            m["threadsPerModel"],
+            2,
+            16,
+        )
+        m["parkingPercent"] = self._prompt_int(
+            f"  Parking percent 20-80 [{m['parkingPercent']}]: ",
+            m["parkingPercent"],
+            20,
+            80,
+        )
+        print(
+            "  "
+            + self.paint(
+                "Manual has no automatic trigger, target, or max:"
+                " you evict via palette one-shots.",
+                dim=True,
+            )
+        )
+        self.screen_review()
 
     def screen_custom(self):
         sys.stdout.write(Term.CLEAR + self.header())
@@ -552,6 +636,24 @@ class InstallerUI:
         print("  " + self.paint(TIPS["mugen"], dim=True))
         h["modality"] = input("  Modality [rtr-full]: ") or "rtr-full"
         print("  " + self.paint(TIPS["modality"], dim=True))
+        h["triggerTokens"] = self._prompt_int(
+            f"  Trigger tokens [{h['triggerTokens']}]: ",
+            h["triggerTokens"],
+            1000,
+            100000000,
+        )
+        h["targetTokens"] = self._prompt_int(
+            f"  Target tokens [{h['targetTokens']}]: ",
+            h["targetTokens"],
+            1000,
+            100000000,
+        )
+        h["maxKeepMessages"] = self._prompt_int(
+            f"  Max messages [{h['maxKeepMessages']}]: ",
+            h["maxKeepMessages"],
+            1,
+            10000,
+        )
         self.screen_review()
 
     def screen_review(self):
@@ -563,6 +665,8 @@ class InstallerUI:
             payload = {"preset": self.preset, "components": sorted(self.components)}
         elif self.preset == "hardcore":
             payload = {"preset": self.preset, **self.hardcore}
+        elif self.preset == "manual":
+            payload = {"preset": self.preset, **self.manual}
         plan = plan_for(payload)
         sys.stdout.write(Term.CLEAR + self.header())
         print(self.paint("  Install plan:\n", self.accent, bold=True))

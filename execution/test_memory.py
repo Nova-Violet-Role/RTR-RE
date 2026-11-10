@@ -339,6 +339,23 @@ class TestMemoryRAG(unittest.TestCase):
         self.assertIn("index_stats", res)
         self.assertIn("materialized_log", res)
 
+    def test_index_all_with_projects_scopes_discovery(self):
+        # --project must scope the walk, not broadcast it: with a broad
+        # root (e.g. Temp) a broadcast hashes the world and pollutes the
+        # DB. Purge stays scoped too, so unscoped files are never deleted.
+        a = self.test_projects / "scopeA" / "directives" / "a.md"
+        a.parent.mkdir(parents=True, exist_ok=True)
+        a.write_text("# A\n\nscope alpha file here", encoding="utf-8")
+        b = self.test_projects / "scopeB" / "directives" / "b.md"
+        b.parent.mkdir(parents=True, exist_ok=True)
+        b.write_text("# B\n\nscope beta file here", encoding="utf-8")
+        stats = self.engine.index_all(projects=[str(self.test_projects / "scopeA")])
+        self.assertEqual(stats["scanned"], 1)
+        self.assertEqual(stats["new"], 1)
+        registry = self.engine.load_registry()
+        self.assertIn(str(a), registry)
+        self.assertNotIn(str(b), registry)
+
     def test_search_expands_wikilinked_concepts(self):
         # A hit carrying [[wikilinks]] expands to chunks mentioning the
         # linked concept. The expansion query must use the document

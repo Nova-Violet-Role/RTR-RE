@@ -302,5 +302,29 @@ class TestContextBudget(unittest.TestCase):
         self.assertGreater(estimate_tokens("x" * 400), estimate_tokens("x" * 40))
 
 
+class TestEvictionOrder(unittest.TestCase):
+    def test_compressor_evicts_oldest_first(self):
+        import context_budget
+
+        messages = [{"role": "assistant", "text": "y" * 400} for _ in range(10)] + [
+            {"role": "user", "text": "go"}
+        ]
+        plan = context_budget.plan_compression(
+            messages,
+            config={
+                "trigger_tokens": 500,
+                "target_tokens": 200,
+                "max_keep_messages": 40,
+                "cumulative_messages": 0,
+            },
+        )
+        self.assertTrue(plan["compress"])
+        evict = plan["evict"]
+        self.assertEqual(sorted(evict), evict)
+        self.assertEqual(evict[0], 0)
+        for i in range(1, len(evict)):
+            self.assertEqual(evict[i], evict[i - 1] + 1)
+
+
 if __name__ == "__main__":
     unittest.main()

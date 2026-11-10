@@ -693,6 +693,71 @@ def format_context_plan(total_tokens: int, message_count: int):
     print(TUIRenderer.render_panel("RE:Symbiose Plan", lines, status="stats"))
 
 
+def format_keeper_evict_now(project: str, tokens=None, messages=None):
+    if (tokens is None) == (messages is None):
+        print(
+            TUIRenderer.render_panel(
+                "Evict Refused",
+                ["Error: give exactly one of --tokens, --messages."],
+                status="error",
+            )
+        )
+        sys.exit(1)
+    amount = tokens if tokens is not None else messages
+    try:
+        amount = int(amount)
+        if amount <= 0:
+            raise ValueError("amount must be positive")
+    except (ValueError, TypeError):
+        print(
+            TUIRenderer.render_panel(
+                "Evict Refused",
+                [f"Error: amount must be a positive integer, got {amount!r}."],
+                status="error",
+            )
+        )
+        sys.exit(1)
+    try:
+        project_dir = mem.resolve_project_dir(project)
+    except Exception as e:
+        print(
+            TUIRenderer.render_panel(
+                "Evict Failure", [f"Error: {_error_text(e)}"], status="error"
+            )
+        )
+        sys.exit(1)
+    import json
+
+    cfg_path = project_dir / ".opencode" / "rtr-re-keeper.json"
+    try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        current = {}
+        if cfg_path.exists():
+            current = json.loads(cfg_path.read_text(encoding="utf-8"))
+            if not isinstance(current, dict):
+                current = {}
+        key = "evictTokensNow" if tokens is not None else "evictMessagesNow"
+        current[key] = amount
+        cfg_path.write_text(json.dumps(current, indent=2) + "\n", encoding="utf-8")
+    except Exception as e:
+        print(
+            TUIRenderer.render_panel(
+                "Evict Failure", [f"Error: {_error_text(e)}"], status="error"
+            )
+        )
+        sys.exit(1)
+    print(
+        TUIRenderer.render_panel(
+            "One-Shot Armed",
+            [
+                f"Keeper will evict {amount} {'tokens' if tokens is not None else 'messages'} on the next exchange.",
+                f"Config: {cfg_path.name}",
+            ],
+            status="ok",
+        )
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description="Local Memory RAG CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -880,6 +945,14 @@ def main():
     plan_parser.add_argument("total_tokens", type=int, help="Session tokens")
     plan_parser.add_argument("message_count", type=int, help="Session messages")
 
+    # Keeper one-shot eviction (arms a flag the keeper fires next exchange)
+    evict_parser = subparsers.add_parser(
+        "keeper-evict-now", help="Arm a one-shot keeper eviction"
+    )
+    evict_parser.add_argument("project", type=str, help="Target project name")
+    evict_parser.add_argument("--tokens", type=int, default=None)
+    evict_parser.add_argument("--messages", type=int, default=None)
+
     args = parser.parse_args()
 
     if args.command == "search":
@@ -935,6 +1008,10 @@ def main():
         )
     elif args.command == "context-plan":
         format_context_plan(args.total_tokens, args.message_count)
+    elif args.command == "keeper-evict-now":
+        format_keeper_evict_now(
+            args.project, tokens=args.tokens, messages=args.messages
+        )
 
 
 if __name__ == "__main__":

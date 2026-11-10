@@ -218,6 +218,17 @@ function playAudio(preset) {
 
 export function planFor(payload) {
   const preset = payload.preset || "quick"
+  if (preset === "manual") {
+    return [
+      ["preset", "manual (palette guide + your knobs, no automation)"],
+      ["threads", `T${payload.threadsPerModel ?? 8} (2/4/6/8/12/16)`],
+      ["parking", `P${payload.parkingPercent ?? 60} (20-80)`],
+      ["mode", "manual: auto trigger/target/max OFF, one-shots only"],
+      ["engine", "rtr-full · dual-ONNX"],
+      ["plugin", "keeper + ctrl+p palette"],
+      ["memory", ".opencode/memory/ (DTD-shaped)"],
+    ]
+  }
   if (preset === "quick") {
     return [
       ["preset", "re-symbiose-mugen (400k/200k/200)"],
@@ -237,15 +248,20 @@ export function planFor(payload) {
       ["memory", ".opencode/memory/ (DTD-shaped)"],
     ]
   }
-  return [
-    ["preset", payload.presetName || "re-symbiose-mugen"],
-    ["threads", String(payload.threads ?? 8)],
-    ["parking", String(payload.parking ?? 40) + "%"],
-    ["modality", payload.modality || "rtr-full"],
-    ["engine", "rtr-full · dual-ONNX"],
-    ["plugin", "keeper + ctrl+p palette"],
-    ["memory", ".opencode/memory/ (DTD-shaped)"],
-  ]
+  if (preset === "hardcore") {
+    return [
+      ["preset", payload.presetName || "re-symbiose-mugen"],
+      ["threads", String(payload.threads ?? 8)],
+      ["parking", String(payload.parking ?? 40) + "%"],
+      ["modality", payload.modality || "rtr-full"],
+      ["trigger", String(payload.triggerTokens ?? 400000)],
+      ["target", String(payload.targetTokens ?? 200000)],
+      ["max", String(payload.maxKeepMessages ?? 200)],
+      ["engine", "rtr-full · dual-ONNX"],
+      ["plugin", "keeper + ctrl+p palette"],
+      ["memory", ".opencode/memory/ (DTD-shaped)"],
+    ]
+  }
 }
 
 export async function executePlan(payload, project, tarball) {
@@ -261,6 +277,23 @@ export async function executePlan(payload, project, tarball) {
     cfg.threadsPerModel = payload.threads ?? 8
     cfg.parkingPercent = payload.parking ?? 40
     cfg.modality = payload.modality || "rtr-full"
+    cfg.triggerTokens = payload.triggerTokens ?? 400000
+    cfg.targetTokens = payload.targetTokens ?? 200000
+    cfg.maxKeepMessages = payload.maxKeepMessages ?? 200
+  }
+  if (preset === "manual") {
+    delete cfg.preset
+    cfg.manual = true
+    cfg.threadsPerModel = payload.threadsPerModel ?? 8
+    cfg.parkingPercent = payload.parkingPercent ?? 60
+    try {
+      const guide = await fsp.readFile(path.join(SHELL_DIR, "assets", "palette-guide.txt"), "utf8")
+      const memDir = path.join(project, ".opencode", "memory")
+      await fsp.mkdir(memDir, { recursive: true })
+      await fsp.writeFile(path.join(memDir, "rtrre-palette-guide.txt"), guide, "utf8")
+    } catch {
+      // Guide copy is a courtesy; never block installation.
+    }
   }
   await fsp.writeFile(path.join(cfgDir, "rtr-re-keeper.json"), JSON.stringify(cfg, null, 2), "utf8")
   if (tarball && (await fsp.stat(tarball).catch(() => null))) {
@@ -288,7 +321,8 @@ class InstallerUI {
     this.preset = "quick"
     this.audioPlayed = new Set()
     this.components = new Set(COMPONENTS.filter((c) => c[3]).map((c) => c[0]))
-    this.hardcore = { threads: 8, parking: 40, presetName: "re-symbiose-mugen", modality: "rtr-full" }
+    this.hardcore = { threads: 8, parking: 40, presetName: "re-symbiose-mugen", modality: "rtr-full", triggerTokens: 400000, targetTokens: 200000, maxKeepMessages: 200 }
+    this.manual = { threadsPerModel: 8, parkingPercent: 60 }
     // async iterator: works both interactively (TTY) and with piped stdin
     this.rl = readline.createInterface({ input: process.stdin, output: process.stdout })
     this.lines = this.rl[Symbol.asyncIterator]()
@@ -344,11 +378,29 @@ class InstallerUI {
     console.log(this.paint("  [1] Quick Install — MUGEN · 400k/200k/200 · one click", this.accent, true))
     console.log(this.paint("  [2] Custom Selection — choose components · balanced", this.accent2))
     console.log(this.paint("  [3] Hardcore — full control · every option · 8 threads/P40", this.accent))
+    console.log(this.paint("  [4] Manual — palette guide · roomy 600k/300k/200 · you drive", this.accent2))
     console.log()
-    const choice = (await this.q("  Select [1/2/3]: ")).trim()
+    const choice = (await this.q("  Select [1/2/3/4]: ")).trim()
     if (choice === "2") { this.preset = "custom"; await this.screenCustom() }
     else if (choice === "3") { this.preset = "hardcore"; await this.screenHardcore() }
+    else if (choice === "4") { this.preset = "manual"; await this.screenManual() }
     else { this.preset = "quick"; await this.screenReview() }
+  }
+
+  async screenManual() {
+    process.stdout.write(Term.CLEAR + this.header())
+    console.log(this.paint("  Manual preset — professional manual context care.\n", this.accent, true))
+    try {
+      const guide = await fsp.readFile(path.join(SHELL_DIR, "assets", "palette-guide.txt"), "utf8")
+      console.log(guide)
+    } catch {
+      console.log("  (palette guide unavailable in this package)")
+    }
+    const m = this.manual
+    m.threadsPerModel = await this.promptInt(`  Threads per model T-modes 2/4/6/8/12/16 [${m.threadsPerModel}]: `, m.threadsPerModel, 2, 16)
+    m.parkingPercent = await this.promptInt(`  Parking percent 20-80 [${m.parkingPercent}]: `, m.parkingPercent, 20, 80)
+    console.log("  " + this.paint("Manual has no automatic trigger, target, or max: you evict via palette one-shots.", null, false, true))
+    await this.screenReview()
   }
 
   async screenCustom() {
@@ -400,6 +452,9 @@ class InstallerUI {
     console.log("  " + this.paint(TIPS.mugen, null, false, true))
     h.modality = (await this.q("  Modality [rtr-full]: ")) || "rtr-full"
     console.log("  " + this.paint(TIPS.modality, null, false, true))
+    h.triggerTokens = await this.promptInt(`  Trigger tokens [${h.triggerTokens}]: `, h.triggerTokens, 1000, 100000000)
+    h.targetTokens = await this.promptInt(`  Target tokens [${h.targetTokens}]: `, h.targetTokens, 1000, 100000000)
+    h.maxKeepMessages = await this.promptInt(`  Max messages [${h.maxKeepMessages}]: `, h.maxKeepMessages, 1, 10000)
     await this.screenReview()
   }
 
@@ -439,6 +494,7 @@ class InstallerUI {
     const payload = { preset: this.preset }
     if (this.preset === "custom") payload.components = [...this.components].sort()
     else if (this.preset === "hardcore") Object.assign(payload, this.hardcore)
+    else if (this.preset === "manual") Object.assign(payload, this.manual)
     const plan = planFor(payload)
     process.stdout.write(Term.CLEAR + this.header())
     console.log(this.paint("  Install plan:\n", this.accent, true))

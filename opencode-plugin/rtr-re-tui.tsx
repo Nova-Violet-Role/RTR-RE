@@ -230,7 +230,7 @@ const plugin = {
             const cfg = await readKeeperConfig(directory())
             selectOption("RTR Keeper preset", optionList(PRESETS), cfg.preset, (value) => {
               const preset = PRESETS[value]
-              apply({ preset: value, ...preset }, `preset ${value}`)
+              apply({ preset: value, manual: false, ...preset }, `preset ${value}`)
             })
           },
         },
@@ -245,7 +245,7 @@ const plugin = {
             selectOption("RTR Keeper CPU profile", optionList(CPU_PROFILES), cfg.cpuProfile, (value) => {
               const profile = CPU_PROFILES[value]
               apply(
-                { cpuProfile: value, modality: profile.modality, threadsPerModel: profile.threadsPerModel, parkingPercent: profile.parkingPercent },
+                { cpuProfile: value, manual: false, modality: profile.modality, threadsPerModel: profile.threadsPerModel, parkingPercent: profile.parkingPercent },
                 `CPU profile ${value}`,
               )
             })
@@ -308,7 +308,7 @@ const plugin = {
           namespace: "palette",
           run: async () => {
             const cfg = await readKeeperConfig(directory())
-            confirmNumber("RTR Keeper trigger tokens", "e.g. 250000", cfg.triggerTokens, (n) => apply({ triggerTokens: n }, `trigger ${n}`))
+            confirmNumber("RTR Keeper trigger tokens", "e.g. 250000", cfg.triggerTokens, (n) => apply({ triggerTokens: n, manual: false }, `trigger ${n}`))
           },
         },
         {
@@ -319,7 +319,7 @@ const plugin = {
           namespace: "palette",
           run: async () => {
             const cfg = await readKeeperConfig(directory())
-            confirmNumber("RTR Keeper target tokens", "e.g. 100000", cfg.targetTokens, (n) => apply({ targetTokens: n }, `target ${n}`))
+            confirmNumber("RTR Keeper target tokens", "e.g. 100000", cfg.targetTokens, (n) => apply({ targetTokens: n, manual: false }, `target ${n}`))
           },
         },
         {
@@ -330,7 +330,27 @@ const plugin = {
           namespace: "palette",
           run: async () => {
             const cfg = await readKeeperConfig(directory())
-            confirmNumber("RTR Keeper max messages", "e.g. 200", cfg.maxKeepMessages, (n) => apply({ maxKeepMessages: n }, `max ${n}`))
+            confirmNumber("RTR Keeper max messages", "e.g. 200", cfg.maxKeepMessages, (n) => apply({ maxKeepMessages: n, manual: false }, `max ${n}`))
+          },
+        },
+        {
+          name: "rtr.evict-tokens",
+          title: "RTR Keeper: evict tokens now…",
+          category: CATEGORY,
+          desc: "One-shot: evict N tokens oldest-first on the next exchange",
+          namespace: "palette",
+          run: async () => {
+            confirmNumber("RTR Keeper evict tokens now", "e.g. 200000", undefined, (n) => apply({ evictTokensNow: n }, `evict ${n} tokens armed`))
+          },
+        },
+        {
+          name: "rtr.evict-messages",
+          title: "RTR Keeper: evict messages now…",
+          category: CATEGORY,
+          desc: "One-shot: evict N oldest messages on the next exchange",
+          namespace: "palette",
+          run: async () => {
+            confirmNumber("RTR Keeper evict messages now", "e.g. 500", undefined, (n) => apply({ evictMessagesNow: n }, `evict ${n} messages armed`))
           },
         },
       ],

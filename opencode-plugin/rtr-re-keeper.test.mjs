@@ -113,6 +113,22 @@ test("eviction keeps bounded tail, protected and last user", async () => {
     assert.ok(note, "eviction note is injected")
 })
 
+test("eviction order is oldest-first (keeper)", async () => {
+    const messages = []
+    for (let i = 0; i < 10; i++) messages.push(msg("assistant", "y".repeat(400)))
+    messages.push(msg("user", "go"))
+    const result = await applyKeeper(
+        messages,
+        cfg({ triggerTokens: 500, targetTokens: 200 }),
+        async () => "sink",
+    )
+    assert.equal(result.changed, true)
+    const evict = result.plan.evict
+    assert.deepEqual([...evict].sort((a, b) => a - b), evict)
+    assert.equal(evict[0], 0)
+    for (let i = 1; i < evict.length; i++) assert.equal(evict[i], evict[i - 1] + 1)
+})
+
 test("tool chain is repaired to its call (fixpoint parity)", () => {
     const messages = [
         { info: { id: "c", role: "assistant" }, parts: [{ id: "p", type: "text", text: "x".repeat(400) }] },
@@ -551,6 +567,20 @@ test("rtr hold writes target and confirms", async () => {
     await handleRtrCommand({ command: "rtr", sessionID: "s", arguments: "hold 64000" }, output, ctx)
     assert.equal(ctx.fileCfg().targetTokens, 64000)
     assert.match(output.parts[0].text, /64000/)
+})
+
+test("rtr evict-tokens and evict-messages arm one-shots", async () => {
+    const ctx = commandCtx()
+    let output = { parts: [] }
+    await handleRtrCommand({ command: "rtr", sessionID: "s", arguments: "evict-tokens 200000" }, output, ctx)
+    assert.equal(ctx.fileCfg().evictTokensNow, 200000)
+    assert.match(output.parts[0].text, /armed/)
+    output = { parts: [] }
+    await handleRtrCommand({ command: "rtr", sessionID: "s", arguments: "evict-messages 500" }, output, ctx)
+    assert.equal(ctx.fileCfg().evictMessagesNow, 500)
+    output = { parts: [] }
+    await handleRtrCommand({ command: "rtr", sessionID: "s", arguments: "evict-tokens abc" }, output, ctx)
+    assert.match(output.parts[0].text, /refused/)
 })
 
 test("rtr rejects bad values without touching config", async () => {

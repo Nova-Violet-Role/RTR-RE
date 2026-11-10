@@ -46,6 +46,9 @@ theorem m31_native : Nat.Prime (2 ^ 31 - 1) := by native_decide
 #print axioms every_mutation_names_its_field
 #print axioms absent_is_not_a_verdict
 #print axioms present_needs_evidence
+#print axioms manual_blocks_auto
+#print axioms oneshot_overrides_manual
+#print axioms auto_fires_over_trigger
 #print axioms never_two_holders
 #print axioms acquire_succeeds_only_from_free
 #print axioms scoped_subset_of_discovered

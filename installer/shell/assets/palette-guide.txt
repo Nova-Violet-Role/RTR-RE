@@ -1,0 +1,64 @@
+RTR-RE:Symbiose — palette guide for professional manual context care
+====================================================================
+
+Open the palette (ctrl+p) and type "RTR Keeper". Every command below
+writes <project>/.opencode/rtr-re-keeper.json, which the keeper reloads
+on the next exchange. No restart, ever.
+
+MANUAL MODE (this install): no automatic trigger, target, or max.
+The keeper never evicts on its own; you evict with the two one-shot
+commands below. Any preset/cpu/trigger/target/max write returns the
+keeper to automatic mode. Threads, parking, and modality work in
+both modes.
+
+COMMANDS (mirrored as /rtr verbs in plain chat)
+-----------------------------------------------
+status .......... live bounds, preset, last decision, debt
+enable .......... turn pruning on (identity off)
+disable ......... turn pruning off (identity transform; window untouched)
+preset .......... bounds bundle: standard, calibrated, wide, fusion-ah,
+                  symbiose-ah, re-symbiose, re-symbiose-mugen (default:
+                  400k trigger / 200k target / 200 messages)
+cpu ............. CPU profile: public-default (T4/P60) or local-system
+                  (T8/P80); sets modality, threads and parking together
+modality ........ retrieval shape: rtr-full (dual ONNX + hybrid +
+                  expansion), rtr-arctic, rtr-bge, rag-hybrid-base,
+                  rag-dense-base, rag-hybrid, rag-dense, custom
+threads ......... threads per model: 2/4/6/8/12/16 (T8 is the measured
+                  speed sweet spot on many-core hosts)
+parking ......... CPU parking percent: 20..80 (caps planner threads;
+                  quality-neutral, P20/P40 mitigate small RAM)
+trigger ......... eviction starts above this many tokens
+target (hold) ... preserved verbatim tail after eviction (always below
+                  trigger; hold is the session working set)
+max ............. max verbatim messages kept regardless of tokens
+evict-tokens .... ONE-SHOT: evict N tokens oldest-first on the next
+                  exchange (900k live minus 200k sinks to 700k live),
+                  then the flag clears itself
+evict-messages .. ONE-SHOT: evict N oldest messages (thinking, reasoning,
+                  tool calls, reads, writes) on the next exchange, then
+                  the flag clears itself
+
+TIPS AND TRICKS
+---------------
+1. Evicted is never deleted. Every eviction sinks verbatim spans to
+   <project>/.opencode/memory/rtrre-<digest>.dtd plus a machine summary
+   and a drain sidecar; memory_search retrieves them.
+2. Prefer evict-messages for shape ("drop the 500 oldest turns") and
+   evict-tokens for size ("free 200k now"). Both honor protections:
+   todowrite plans, the last user message, and tool-call chains are
+   never evicted; the status line reports what actually left.
+3. Watch debt in status: repeated over-target misses tighten the next
+   firing automatically. If debt climbs, lower the target (hold) or
+   evict manually once.
+4. Threads buy speed, not quality: scores are flat T4-T16. On small
+   machines use P20 and let the SSD mitigate RAM.
+5. MUGEN (400k/200k/200) is the infinite-memory preset: fewer, deeper
+   cycles. Calibrated (40k/20k/40) is the fast-feedback preset.
+6. After a big manual eviction, run memory_index (or wait for the
+   auto-index tick) so the new spans become searchable immediately.
+7. If the keeper ever surprises you, status shows the decision, the
+   loop bound (target vs maxKeep), and the overrun contributors
+   (fixpoint, protection, lastUser) — the full audit trail.
+8. Keep this file: it lives in your memory folder next to your spans,
+   so the manual lives where the memory lives.

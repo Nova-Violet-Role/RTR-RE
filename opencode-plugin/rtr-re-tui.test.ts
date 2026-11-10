@@ -8,7 +8,7 @@ describe("rtr-re-tui", () => {
     expect(typeof plugin.tui).toBe("function")
   })
 
-  test("palette registers all eleven keeper commands", async () => {
+  test("palette registers all thirteen keeper commands", async () => {
     let layer: any = null
     const api: any = {
       state: { path: { directory: "/tmp/rtrre-tui-reg" } },
@@ -22,6 +22,8 @@ describe("rtr-re-tui", () => {
         "rtr.cpu",
         "rtr.disable",
         "rtr.enable",
+        "rtr.evict-messages",
+        "rtr.evict-tokens",
         "rtr.max",
         "rtr.modality",
         "rtr.parking",

@@ -16,6 +16,7 @@ from typing import Any, Dict, Sequence
 
 KEEPER_NAME = "rtr-re-keeper.js"
 REGISTRY_NAME = "rtr_presets.json"
+GUIDE_NAME = "palette-guide.txt"
 
 
 def keeper_asset_path() -> Path:
@@ -49,6 +50,15 @@ def config_snippet(mcp_command: str = "rtr-re-mcp") -> str:
         "  }\n"
         "}\n"
     )
+
+
+def guide_asset_path() -> Path:
+    """Palette guide: beside the installer shell (wheel and repo alike)."""
+    here = Path(__file__).resolve().parent
+    cand = here.parent / "installer" / "shell" / "assets" / GUIDE_NAME
+    if cand.exists():
+        return cand
+    raise FileNotFoundError(f"palette guide not found; looked in {cand}")
 
 
 def registry_asset_path() -> Path:
@@ -108,7 +118,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     ap.add_argument("--force", action="store_true", help="overwrite a differing keeper")
     ap.add_argument("--mcp-command", default="rtr-re-mcp")
+    ap.add_argument(
+        "--manual",
+        action="store_true",
+        help="print the manual palette guide instead of installing",
+    )
     args = ap.parse_args(list(argv) if argv is not None else None)
+    if args.manual:
+        try:
+            print(guide_asset_path().read_text(encoding="utf-8"))
+        except FileNotFoundError as e:
+            print(f"REFUSED: {e}")
+            return 2
+        return 0
     try:
         result = install(args.config_dir, force=args.force)
     except FileExistsError as e:

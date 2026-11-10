@@ -173,6 +173,10 @@ test("cli bridge builds measured rtr-cli arguments and refuses unknown commands 
         core.buildCliArgs("context-plan", { totalTokens: 10, messageCount: 2 }),
         ["context-plan", "10", "2"],
     )
+    assert.deepEqual(
+        core.buildCliArgs("keeper-evict-now", { project: "demo", tokens: 200000 }),
+        ["keeper-evict-now", "demo", "--tokens", "200000"],
+    )
     assert.throws(() => core.buildCliArgs("nope", {}), /nope/)
 })
 

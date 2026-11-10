@@ -83,6 +83,7 @@ theorem invalid_file_keeps_last_good (old : KeeperCfg) (m m' : Nat) :
 inductive RtrVerb where
   | status | help | enable | disable | preset
   | hold | trigger | target | max | cpu | modality | threads | parking
+  | evictTokens | evictMessages
   | unknown
   deriving DecidableEq, Repr
 
@@ -104,6 +105,8 @@ def verbClass : RtrVerb → VerbClass
   | .modality => .mutate
   | .threads => .mutate
   | .parking => .mutate
+  | .evictTokens => .mutate
+  | .evictMessages => .mutate
   | .unknown => .refuse
 
 theorem verb_total (v : RtrVerb) :
@@ -118,7 +121,8 @@ theorem status_never_mutates : verbClass .status ≠ .mutate := by
 theorem every_mutation_names_its_field (v : RtrVerb) (h : verbClass v = .mutate) :
     v = .enable ∨ v = .disable ∨ v = .preset ∨ v = .hold ∨
       v = .trigger ∨ v = .target ∨ v = .max ∨ v = .cpu ∨
-      v = .modality ∨ v = .threads ∨ v = .parking := by
+      v = .modality ∨ v = .threads ∨ v = .parking ∨
+      v = .evictTokens ∨ v = .evictMessages := by
   cases v <;> simp_all [verbClass]
 
 -- Pass 4: presence honesty. Absence is absence, never a verdict. -/
@@ -145,5 +149,31 @@ theorem present_needs_evidence (o : Option Nat) (h : presenceOf o = .present) :
     simp [presenceOf] at h
   | some v =>
     exact ⟨v, rfl⟩
+
+-- Manual gate: manual mode blocks automatic eviction; a one-shot
+-- overrides manual, enabled, and the trigger alike.
+inductive AutoDecision where
+  | identity
+  | evict
+  | oneshot
+  deriving DecidableEq, Repr
+
+def keeperDecision (manual enabled oneshot overTrigger : Bool) : AutoDecision :=
+  if oneshot then .oneshot
+  else if !enabled then .identity
+  else if manual then .identity
+  else if overTrigger then .evict
+  else .identity
+
+theorem manual_blocks_auto (enabled overTrigger : Bool) :
+    keeperDecision true enabled false overTrigger = .identity := by
+  cases enabled <;> cases overTrigger <;> rfl
+
+theorem oneshot_overrides_manual (manual enabled overTrigger : Bool) :
+    keeperDecision manual enabled true overTrigger = .oneshot := by
+  cases manual <;> cases enabled <;> cases overTrigger <;> rfl
+
+theorem auto_fires_over_trigger :
+    keeperDecision false true false true = .evict := rfl
 
 end Symbiose

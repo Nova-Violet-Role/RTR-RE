@@ -337,6 +337,12 @@ function buildCliArgs(command, opts = {}) {
     case 'context-plan': {
       return ['context-plan', need('totalTokens'), need('messageCount')];
     }
+    case 'keeper-evict-now': {
+      const args = ['keeper-evict-now', need('project')];
+      if (o.tokens !== undefined && o.tokens !== null && o.tokens !== '') args.push('--tokens', String(o.tokens));
+      if (o.messages !== undefined && o.messages !== null && o.messages !== '') args.push('--messages', String(o.messages));
+      return args;
+    }
     default:
       throw new Error(`rtr-cli bridge: unknown command ${command}`);
   }

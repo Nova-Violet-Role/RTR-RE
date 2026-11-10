@@ -1203,6 +1203,12 @@ def _atomic_write_json(path: Path, data: Any) -> None:
     os.replace(tmp, path)
 
 
+def _in_scope(path_str: str, scope) -> bool:
+    """True when path_str is a scope root or lives beneath one."""
+    norm = os.path.normcase(path_str)
+    return any(norm == root or norm.startswith(root + os.sep) for root in scope)
+
+
 class MemoryEngine:
     # Process-wide ChromaDB clients, one per DB path. Multiple live
     # PersistentClient instances on the same path go stale against each
@@ -1903,8 +1909,11 @@ class MemoryEngine:
     ) -> Dict[str, Any]:
         """Scan projects, compute hashes, update vector DB only for new/changed wikis.
 
-        `projects`: extra project refs resolved + registered before discovery,
-        so out-of-roots codebases index on first touch.
+        `projects`: scope the walk to these project refs (resolved +
+        registered first, so out-of-roots codebases index on first
+        touch). Scoped runs hash, upsert AND purge only inside the
+        scope; unscoped files are invisible and never deleted. Omit
+        for the full broadcast walk.
         """
         refused = self._require_writer("index_all")
         if refused is not None:
@@ -1916,12 +1925,17 @@ class MemoryEngine:
             no_charge = _full_reindex_refusal()
             if no_charge is not None:
                 return _empty_index_stats(no_charge)
-        for pref in projects or []:
-            try:
-                resolve_project_dir(pref)
-            except Exception:
-                pass
+        scope = None
+        if projects:
+            scope = set()
+            for pref in projects or []:
+                try:
+                    scope.add(os.path.normcase(str(resolve_project_dir(pref))))
+                except Exception:
+                    pass
         discovered = self.discover_wikis()
+        if scope is not None:
+            discovered = [i for i in discovered if _in_scope(i["path"], scope)]
         registry = self.load_registry()
 
         stats = {
@@ -1934,7 +1948,7 @@ class MemoryEngine:
 
         # Track active paths to purge deleted files later
         active_paths = {i["path"] for i in discovered}
-        new_registry = {}
+        new_registry = {} if scope is None else dict(registry)
 
         to_index = self._hash_infos(
             discovered, registry, new_registry, stats, force=force
@@ -1947,8 +1961,15 @@ class MemoryEngine:
 
             self._upsert_jobs(jobs, to_index, new_registry, stats)
 
-        # 3. Detect deleted files and remove them from every RTR collection
-        self._purge_deleted_paths(set(registry.keys()) - active_paths)
+        # 3. Detect deleted files and remove them from every RTR collection.
+        # Scoped runs purge (and forget) only scoped deletions: unscoped
+        # files are invisible to this run and must never be deleted by it.
+        missing = set(registry.keys()) - active_paths
+        if scope is not None:
+            missing = {p for p in missing if _in_scope(p, scope)}
+            for p in missing:
+                new_registry.pop(p, None)
+        self._purge_deleted_paths(missing)
 
         self.save_registry(new_registry)
 

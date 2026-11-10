@@ -95,6 +95,97 @@ test("live control roundtrips through the watched config file", async () => {
     }
 })
 
+test("one-shot evict-tokens fires under trigger and clears itself", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-oneshot-"))
+    try {
+        const { mkdir, writeFile } = await import("node:fs/promises")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({ triggerTokens: 1000000, evictTokensNow: 300 }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, {})
+        const messages = []
+        for (let i = 0; i < 6; i++) messages.push(msg("assistant", "w".repeat(400)))
+        messages.push(msg("user", "go"))
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        // ~700-token window, 300 evicted oldest-first despite the 1M trigger.
+        assert.ok(messages.length < 7, `expected eviction, kept ${messages.length}`)
+        const mem = join(dir, ".opencode", "memory")
+        assert.ok(readdirSync(mem).some((f) => f.endsWith(".dtd")))
+        const cfg = JSON.parse(
+            readFileSync(join(dir, ".opencode", "rtr-re-keeper.json"), "utf8"),
+        )
+        assert.ok(!cfg.evictTokensNow, "one-shot flag clears after firing")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("one-shot evict-messages removes N oldest and clears itself", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-oneshot-"))
+    try {
+        const { mkdir, writeFile } = await import("node:fs/promises")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({ triggerTokens: 1000000, evictMessagesNow: 3 }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, {})
+        const messages = []
+        for (let i = 0; i < 6; i++) messages.push(msg("assistant", "w".repeat(400)))
+        messages.push(msg("user", "go"))
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        assert.equal(messages.length, 4)
+        const cfg = JSON.parse(
+            readFileSync(join(dir, ".opencode", "rtr-re-keeper.json"), "utf8"),
+        )
+        assert.ok(!cfg.evictMessagesNow, "one-shot flag clears after firing")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
+test("manual mode never auto-evicts but honors one-shots", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-manual-"))
+    try {
+        const { mkdir, writeFile } = await import("node:fs/promises")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({ triggerTokens: 100, targetTokens: 40, manual: true }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, {})
+        const big = []
+        for (let i = 0; i < 10; i++) big.push(msg("assistant", "w".repeat(4000)))
+        big.push(msg("user", "go"))
+        await hooks["experimental.chat.messages.transform"]({}, { messages: big })
+        assert.equal(big.length, 11, "manual never auto-evicts")
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({
+                triggerTokens: 100,
+                targetTokens: 40,
+                manual: true,
+                evictMessagesNow: 4,
+            }),
+            "utf8",
+        )
+        const messages = []
+        for (let i = 0; i < 6; i++) messages.push(msg("assistant", "w".repeat(400)))
+        messages.push(msg("user", "go"))
+        // Fresh server to pick up the edited flag deterministically.
+        const hooks2 = await server({ directory: dir }, {})
+        await hooks2["experimental.chat.messages.transform"]({}, { messages })
+        assert.equal(messages.length, 3, "one-shot fires in manual mode")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
 test("mjs bridge builds the live-loop CLI shapes", () => {
     assert.deepEqual(
         core.buildCliArgs("symbiose-drain", { project: "demo", limit: 5 }),

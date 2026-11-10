@@ -61,6 +61,9 @@ class PlanForTest(unittest.TestCase):
                 ("threads", "8"),
                 ("parking", "40%"),
                 ("modality", "rtr-full"),
+                ("trigger", "400000"),
+                ("target", "200000"),
+                ("max", "200"),
                 ("engine", "rtr-full · dual-ONNX"),
                 ("plugin", "keeper + ctrl+p palette"),
                 ("memory", ".opencode/memory/ (DTD-shaped)"),
@@ -219,6 +222,38 @@ class InstallerE2ETest(unittest.TestCase):
             )
             self.assertEqual(cfg["preset"], "re-symbiose-mugen")
 
+    def test_manual_flow_shows_guide_and_writes_roomy_bounds(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp) / "proj"
+            env = {**os.environ, "RTRRE_INSTALL_NO_AUDIO": "1"}
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "installer" / "launchers" / "python_launcher.py"),
+                    "--project",
+                    str(project),
+                ],
+                input="4\n\n\ny\nn\n\n",
+                capture_output=True,
+                text=True,
+                timeout=120,
+                env=env,
+            )
+            self.assertEqual(proc.returncode, 0, msg=proc.stderr[-2000:])
+            self.assertIn("palette guide for professional manual", proc.stdout)
+            cfg = json.loads(
+                (project / ".opencode" / "rtr-re-keeper.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(cfg["manual"], True)
+            self.assertEqual(cfg["threadsPerModel"], 8)
+            self.assertEqual(cfg["parkingPercent"], 60)
+            guide = (
+                project / ".opencode" / "memory" / "rtrre-palette-guide.txt"
+            ).read_text(encoding="utf-8")
+            self.assertIn("evict-tokens", guide)
+
     def test_hardcore_flow_retries_then_completes(self):
         with tempfile.TemporaryDirectory() as tmp:
             project = Path(tmp) / "proj"
@@ -230,7 +265,7 @@ class InstallerE2ETest(unittest.TestCase):
                     "--project",
                     str(project),
                 ],
-                input="3\nabc\n8\nxx\n40\n\n\ny\n\n\n",
+                input="3\nabc\n8\nxx\n40\n\n\n700000\n350000\n250\ny\n\n\n",
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -251,7 +286,7 @@ class InstallerE2ETest(unittest.TestCase):
                     "--project",
                     str(project),
                 ],
-                input="3\n16\n60\nwide\nrtr-bge\ny\n\n\n",
+                input="3\n16\n60\nwide\nrtr-bge\n700000\n350000\n250\ny\n\n\n",
                 capture_output=True,
                 text=True,
                 timeout=120,
@@ -267,6 +302,9 @@ class InstallerE2ETest(unittest.TestCase):
             self.assertEqual(cfg["threadsPerModel"], 16)
             self.assertEqual(cfg["parkingPercent"], 60)
             self.assertEqual(cfg["modality"], "rtr-bge")
+            self.assertEqual(cfg["triggerTokens"], 700000)
+            self.assertEqual(cfg["targetTokens"], 350000)
+            self.assertEqual(cfg["maxKeepMessages"], 250)
 
 
 if __name__ == "__main__":

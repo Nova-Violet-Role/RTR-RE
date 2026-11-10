@@ -152,6 +152,18 @@ class TestMcpWrappers(unittest.TestCase):
         panel = mcp_server.memory_inbox_read("no-such-proj-zzz")
         self.assertIn("Inbox Read Failure", panel)
 
+    def test_keeper_evict_now_arms_flag_file(self):
+        panel = mcp_server.memory_keeper_evict_now("wrapproj", "tokens", 200000)
+        self.assertIn("One-Shot Armed", panel)
+        cfg = json.loads(
+            (
+                self.test_projects / "wrapproj" / ".opencode" / "rtr-re-keeper.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(cfg["evictTokensNow"], 200000)
+        refused = mcp_server.memory_keeper_evict_now("wrapproj", "bogus", 5)
+        self.assertIn("Evict Refused", refused)
+
 
 if __name__ == "__main__":
     unittest.main()

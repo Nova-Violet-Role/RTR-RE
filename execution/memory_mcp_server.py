@@ -1016,6 +1016,61 @@ def memory_symbiose_compress(
 
 
 @mcp.tool()
+def memory_keeper_evict_now(project: str, mode: str, amount: int) -> str:
+    """Arm a keeper one-shot eviction (fires on the next exchange).
+
+    mode tokens: evict ~amount tokens oldest-first. mode messages:
+    evict amount oldest messages. Protections still hold; the flag
+    self-clears after firing. Writes the watched keeper config file.
+    """
+    if mode not in ("tokens", "messages"):
+        return TUIRenderer.render_panel(
+            "Evict Refused",
+            [f"Error: mode must be tokens or messages, got {mode!r}."],
+            status="error",
+        )
+    try:
+        amount = int(amount)
+        if amount <= 0:
+            raise ValueError("amount must be positive")
+    except (ValueError, TypeError):
+        return TUIRenderer.render_panel(
+            "Evict Refused",
+            [f"Error: amount must be a positive integer, got {amount!r}."],
+            status="error",
+        )
+    try:
+        project_dir = mem.resolve_project_dir(project)
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Evict Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+    cfg_path = project_dir / ".opencode" / "rtr-re-keeper.json"
+    try:
+        cfg_path.parent.mkdir(parents=True, exist_ok=True)
+        current = {}
+        if cfg_path.exists():
+            current = json.loads(cfg_path.read_text(encoding="utf-8"))
+            if not isinstance(current, dict):
+                current = {}
+        key = "evictTokensNow" if mode == "tokens" else "evictMessagesNow"
+        current[key] = amount
+        cfg_path.write_text(json.dumps(current, indent=2) + "\n", encoding="utf-8")
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Evict Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+    return TUIRenderer.render_panel(
+        "One-Shot Armed",
+        [
+            f"Keeper will evict {amount} {mode} on the next exchange.",
+            f"Config: {cfg_path.name}",
+        ],
+        status="ok",
+    )
+
+
+@mcp.tool()
 def memory_context_plan(total_tokens: int, message_count: int) -> str:
     """Report the RE:Symbiose budget decision for a session size.
 
