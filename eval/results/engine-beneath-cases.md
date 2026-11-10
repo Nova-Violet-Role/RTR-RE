@@ -1,6 +1,6 @@
 # Engine Beneath — case scoreboard (RE edition)
 
-- Run: 2026-11-07T19:23:18
+- Run: 2026-11-10T19:51:03
 - Cases: 27 — passed 27, failed 0
 - Verdict: **PASS**
 
@@ -21,7 +21,7 @@
 | live-engine-sink-roundtrip | pass | verdict_pass, sink_exists, sink_has_marker |
 | optimizer-cpu-profile-applies-threads | pass | local_system_applies_8, public_default_applies_4, legacy_performance_still_works |
 | optimizer-expansion-gated | pass | expansion_on_uses_lexikon, expansion_off_gates_lexikon |
-| optimizer-mjs-plan-context-aligned | pass | registry_preset_symbiose_ah, plan_trigger_250k, plan_target_100k, plan_maxkeep_40 |
+| optimizer-mjs-plan-context-aligned | pass | registry_preset_mugen, plan_trigger_400k, plan_target_200k, plan_maxkeep_200 |
 | optimizer-modality-controls-hybrid | pass | rag_dense_hybrid_false, rag_dense_expansion_false, rtr_full_hybrid_true, rtr_full_expansion_true |
 | optimizer-parking-applies | pass | parking20_caps_to_3, parking80_keeps_4 |
 | optimizer-profile-consumed-by-engine | pass | models_match_profile, threads_match_profile, profile_hybrid_flag, profile_expansion_flag |

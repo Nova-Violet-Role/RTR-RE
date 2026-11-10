@@ -1242,20 +1242,20 @@ def case_optimizer_mjs_plan_context_aligned() -> Dict[str, Any]:
     ctx = parsed.get("ctx") or {}
     plan = parsed.get("plan") or {}
     checks = {
-        "registry_preset_symbiose_ah": 1.0
-        if ctx.get("preset") == "symbiose-ah"
+        "registry_preset_mugen": 1.0
+        if ctx.get("preset") == "re-symbiose-mugen"
         else 0.0,
-        "plan_trigger_250k": 1.0 if plan.get("triggerTokens") == 250000 else 0.0,
-        "plan_target_100k": 1.0 if plan.get("targetTokens") == 100000 else 0.0,
-        "plan_maxkeep_40": 1.0 if plan.get("maxKeepMessages") == 40 else 0.0,
+        "plan_trigger_400k": 1.0 if plan.get("triggerTokens") == 400000 else 0.0,
+        "plan_target_200k": 1.0 if plan.get("targetTokens") == 200000 else 0.0,
+        "plan_maxkeep_200": 1.0 if plan.get("maxKeepMessages") == 200 else 0.0,
     }
     return _verdict(
         checks,
         [
-            "registry_preset_symbiose_ah",
-            "plan_trigger_250k",
-            "plan_target_100k",
-            "plan_maxkeep_40",
+            "registry_preset_mugen",
+            "plan_trigger_400k",
+            "plan_target_200k",
+            "plan_maxkeep_200",
         ],
         {
             "node_exit": result.returncode,
