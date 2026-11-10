@@ -334,6 +334,9 @@ function buildCliArgs(command, opts = {}) {
       if (o.timeout !== undefined && o.timeout !== null && o.timeout !== '') args.push('--timeout', String(o.timeout));
       return args;
     }
+    case 'context-plan': {
+      return ['context-plan', need('totalTokens'), need('messageCount')];
+    }
     default:
       throw new Error(`rtr-cli bridge: unknown command ${command}`);
   }

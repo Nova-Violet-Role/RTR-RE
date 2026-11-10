@@ -329,6 +329,16 @@ class TestMemoryRAG(unittest.TestCase):
         self.assertIn("X:\\ghost-project", roots)
         self.assertIn("X:\\ghost-project", report.get("unmounted_roots", []))
 
+    def test_session_commit_orchestrates_all_stages(self):
+        self.engine.init_project("commitproj")
+        res = self.engine.session_commit(
+            "commitproj", "We validated the parser. It improved recall a lot."
+        )
+        self.assertEqual(res["status"], "success")
+        self.assertTrue(Path(res["report_path"]).exists())
+        self.assertIn("index_stats", res)
+        self.assertIn("materialized_log", res)
+
     def test_search_expands_wikilinked_concepts(self):
         # A hit carrying [[wikilinks]] expands to chunks mentioning the
         # linked concept. The expansion query must use the document

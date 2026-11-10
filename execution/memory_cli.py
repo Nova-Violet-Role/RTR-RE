@@ -13,6 +13,7 @@ from memory_engine import MemoryEngine
 import memory_engine as mem
 from tui_renderer import TUIRenderer
 import symbiose_worker as sw
+import context_budget
 
 
 def _error_text(exc: Exception) -> str:
@@ -666,6 +667,32 @@ def format_symbiose_compress(
     )
 
 
+def format_context_plan(total_tokens: int, message_count: int):
+    try:
+        cfg = context_budget.symbiose_config()
+    except ValueError as e:
+        print(
+            TUIRenderer.render_panel(
+                "Context Config Refused", [f"Error: {_error_text(e)}"], status="error"
+            )
+        )
+        sys.exit(1)
+    over = total_tokens > cfg["trigger_tokens"]
+    src = cfg["sources"]
+    lines = [
+        f"Trigger (Compact Target): {cfg['trigger_tokens']} tokens ({src['trigger_tokens']})",
+        f"Target (verbatim tail):   {cfg['target_tokens']} tokens ({src['target_tokens']})",
+        f"Max verbatim messages:    {cfg['max_keep_messages']} ({src['max_keep_messages']})",
+        f"Max summary chars:        {cfg['max_summary_chars']} ({src['max_summary_chars']})",
+        f"Max restore chars:        {cfg['max_restore_chars']} ({src['max_restore_chars']})",
+        f"Session tokens:           {total_tokens} across {message_count} messages",
+        "Decision: compress in background (Keeper selects, Compressor evicts, Manager retrieves)"
+        if over
+        else "Decision: keep verbatim (below trigger)",
+    ]
+    print(TUIRenderer.render_panel("RE:Symbiose Plan", lines, status="stats"))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Local Memory RAG CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -846,6 +873,13 @@ def main():
         "--timeout", type=float, default=30.0, help="Seconds to wait for completion"
     )
 
+    # Context plan subparser (optimizer budget decision, no models)
+    plan_parser = subparsers.add_parser(
+        "context-plan", help="Report the budget decision for a session size"
+    )
+    plan_parser.add_argument("total_tokens", type=int, help="Session tokens")
+    plan_parser.add_argument("message_count", type=int, help="Session messages")
+
     args = parser.parse_args()
 
     if args.command == "search":
@@ -899,6 +933,8 @@ def main():
             messages_file=args.messages_file,
             timeout=args.timeout,
         )
+    elif args.command == "context-plan":
+        format_context_plan(args.total_tokens, args.message_count)
 
 
 if __name__ == "__main__":

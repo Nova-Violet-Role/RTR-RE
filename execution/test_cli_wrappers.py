@@ -116,6 +116,11 @@ class TestCliWrappers(unittest.TestCase):
         self.assertIn("Janitor", out)
         self.assertIn("Total chunks freed:", out)
 
+    def test_context_plan_decides(self):
+        out = self._run(memory_cli.format_context_plan, 10, 2)
+        self.assertIn("RE:Symbiose Plan", out)
+        self.assertIn("Decision: keep verbatim", out)
+
 
 if __name__ == "__main__":
     unittest.main()

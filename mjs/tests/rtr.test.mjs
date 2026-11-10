@@ -169,6 +169,10 @@ test("cli bridge builds measured rtr-cli arguments and refuses unknown commands 
         core.buildCliArgs("symbiose-compress", { project: "demo", target: 50, messagesFile: "m.json" }),
         ["symbiose-compress", "demo", "50", "--messages-file", "m.json"],
     )
+    assert.deepEqual(
+        core.buildCliArgs("context-plan", { totalTokens: 10, messageCount: 2 }),
+        ["context-plan", "10", "2"],
+    )
     assert.throws(() => core.buildCliArgs("nope", {}), /nope/)
 })
 
