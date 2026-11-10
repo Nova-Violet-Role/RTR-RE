@@ -2,8 +2,8 @@
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # RTR-RE .mjs edition — persistent memory without an MCP server
 
-The full RTR-RE discipline for people who do not want to run an MCP
-server: session memory, context budget rules, and **AUTO-OPTIMIZE** —
+Version 1.2.0. The full RTR-RE discipline for people who do not want to
+run an MCP server: session memory, context budget rules, and **AUTO-OPTIMIZE** —
 an optimize pass instigated between every file read and the next code
 write, unasked, so code written by a model that never looks back still
 gets a second look before it lands.
