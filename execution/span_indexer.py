@@ -19,7 +19,9 @@ from typing import Any, Dict, List
 
 AUTOINDEX_ENV = "OPENCODE_MEMORY_AUTOINDEX"
 AUTOINDEX_INTERVAL_ENV = "OPENCODE_MEMORY_AUTOINDEX_INTERVAL"
+AUTOINDEX_MAX_FILES_ENV = "OPENCODE_MEMORY_AUTOINDEX_MAX_FILES"
 DEFAULT_INTERVAL_SECONDS = 30.0
+DEFAULT_MAX_FILES_PER_TICK = 200
 
 
 def autoindex_enabled(env=None) -> bool:
@@ -46,10 +48,23 @@ def autoindex_interval(env=None) -> float:
     return value if value > 0 else DEFAULT_INTERVAL_SECONDS
 
 
+def autoindex_max_files(env=None) -> int:
+    """Max span files per tick (positive int, default 200)."""
+    src = os.environ if env is None else env
+    raw = str(src.get(AUTOINDEX_MAX_FILES_ENV, "") or "").strip()
+    if not raw:
+        return DEFAULT_MAX_FILES_PER_TICK
+    try:
+        value = int(raw)
+    except ValueError:
+        return DEFAULT_MAX_FILES_PER_TICK
+    return value if value > 0 else DEFAULT_MAX_FILES_PER_TICK
+
+
 class SpanIndexer(threading.Thread):
     """Daemon thread: tick() indexes new/changed spans, then sleeps."""
 
-    def __init__(self, engine, roots, interval_seconds=None):
+    def __init__(self, engine, roots, interval_seconds=None, max_files=None):
         super().__init__(daemon=True, name="rtrre-span-indexer")
         self._engine = engine
         # Roots may be a list or a zero-arg callable (the server passes a
@@ -60,14 +75,22 @@ class SpanIndexer(threading.Thread):
             if interval_seconds is not None
             else autoindex_interval()
         )
+        self._max_files = (
+            int(max_files) if max_files is not None else autoindex_max_files()
+        )
+        if self._max_files <= 0:
+            self._max_files = DEFAULT_MAX_FILES_PER_TICK
         self._stop = threading.Event()
         # mtime watermark: spans are keeper-written with fresh mtimes, so
         # anything older than the newest file already seen cannot be new.
         # This prefilter keeps a broken registry from re-embedding the
         # whole memory dir every 30s; the registry stays authoritative
         # for what actually gets hashed. Every 20th tick scans fully so
-        # a preserved-mtime copy can never hide forever.
+        # a preserved-mtime copy can never hide forever. The taken map
+        # (path -> mtime taken) keeps capped ticks converging on
+        # same-mtime bursts the watermark alone would starve.
         self._watermark = 0.0
+        self._taken: Dict[str, float] = {}
         self._ticks = 0
 
     def _candidates(self) -> List[str]:
@@ -87,7 +110,11 @@ class SpanIndexer(threading.Thread):
             except OSError:
                 continue
         full = self._ticks % 20 == 0
-        tick_max = self._watermark
+        # Collect (mtime, key) first, then take oldest-first up to the cap.
+        # Strictly-older-than-watermark skips; same-mtime files re-list and
+        # the taken map dedups the already-taken, so capped bursts converge.
+        # The watermark advances only over TAKEN files.
+        staged: List[tuple] = []
         for memdir in dirs:
             try:
                 if not memdir.is_dir():
@@ -99,13 +126,20 @@ class SpanIndexer(threading.Thread):
                             mtime = path.stat().st_mtime
                         except OSError:
                             mtime = 0.0
-                        tick_max = max(tick_max, mtime)
-                        if not full and mtime > 0 and mtime <= self._watermark:
+                        if not full and mtime > 0 and mtime < self._watermark:
+                            continue
+                        if key in self._taken and self._taken[key] >= mtime > 0:
                             continue
                         seen.add(key)
-                        found.append(key)
+                        staged.append((mtime, key))
             except OSError:
                 continue
+        staged.sort(key=lambda t: (t[0], t[1]))
+        tick_max = self._watermark
+        for mtime, key in staged[: self._max_files]:
+            tick_max = max(tick_max, mtime)
+            self._taken[key] = mtime
+            found.append(key)
         self._watermark = tick_max
         self._ticks += 1
         return found

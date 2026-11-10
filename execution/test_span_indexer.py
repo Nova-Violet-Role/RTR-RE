@@ -61,6 +61,25 @@ class TestSpanIndexer(unittest.TestCase):
         second = self.indexer.tick()
         self.assertEqual(second["scanned"], 0)
 
+    def test_tick_cap_converges_oldest_first_without_starving(self):
+        from span_indexer import SpanIndexer
+
+        capped = SpanIndexer(
+            self.engine,
+            [self.test_dir / "projects"],
+            interval_seconds=3600,
+            max_files=2,
+        )
+        for i in range(5):
+            (self.memdir / f"rtrre-cap{i}.dtd").write_text(
+                f'<span id="span-0">\ncap marker {i}\n</span>\n', encoding="utf-8"
+            )
+        try:
+            takes = [len(capped._candidates()) for _ in range(4)]
+        finally:
+            capped.stop()
+        self.assertEqual(takes, [2, 2, 1, 0])
+
     def _span(self, name, text):
         p = self.memdir / name
         p.write_text(
