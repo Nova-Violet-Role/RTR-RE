@@ -23,7 +23,8 @@ extractor) is the instrument behind the DTD corpus queries and is covered by
 | `nt-studies` | 36 NestedText research notes | keyword-dense, overlapping vocab | 191 |
 | `dita-spec` | 30 DITA 2.0 spec topics (XML) | long structured prose, element names | 169 |
 | `dtd-commands` | 48 real *-dtd command files | huge generated DTD prose, identifiers | 213 |
-| `dtd-family` | 60 DTD/module/entity files across 15 families | real DTD grammars (JATS, DocBook, DITA, TEI, MathML, XHTML, SVG, Office, daisy, …) | 92 |
+| `dtd-family` | 60 DTD/module/entity files across 15 families | real DTD grammars (JATS, DocBook, DITA, TEI, MathML, XHTML, SVG, Office, daisy, …) | 243 |
+| `keeper-memory` | 40 generated DTD-shaped evicted spans | infinite-memory retrievability (T13) | 40 |
 
 Same index per run for every system — the ablation is purely on the retrieval
 path. Each bench run uses an **isolated temp vector DB**
@@ -57,28 +58,36 @@ path. Each bench run uses an **isolated temp vector DB**
 | T10 cross-family | term occurring in exactly two files from different families → one of them | cross-family vocabulary discrimination (DTD) |
 | T11 lineage | family keyword/owner from a file's PUBLIC lineage → that file | lineage discrimination (DTD, TODO-64) |
 | T12 customization-layer | module-switch name from a driver's customization layer → that driver | customization-layer recognition (DTD, TODO-64) |
+| T13 keeper-memory | distinctive evicted-span marker → its span file | infinite-memory retrievability (TODO-70) |
 
 Metrics per taxon: recall@1, recall@3, MRR. Queries auto-derived (seed 20260928),
 T5 pairs runtime-validated (source present, synonym absent, single owner).
 
 ## Scoreboard (`results/versus.json`, `results/versus.md`, `versus.mmd`)
 
-Official tool v2, `--intense`, fully isolated (DB/registry/roots/lexikon),
-sha256 corpus manifest in the JSON. 573 queries, 3 real corpora,
-**0 query errors** on every system. Final freeze 2026-10-27 (lane-off
-claim basis in `results/versus.json`; STRUCT-lane-on run archived in
-`results/versus-lane-on.json`, within noise). Cross-run absolutes move
-±~0.02 (register R-15) — read within-run comparisons only.
+Official tool v2, fully isolated (DB/registry/roots/lexikon),
+sha256 corpus manifest in the JSON. 544 queries, 5 real corpora,
+**0 query errors** on every system. Freeze 2026-11-10 at 1.2.0
+(`results/versus.json`; 1.1.0 preserved in `results/versus-1.1.0.json`;
+STRUCT-lane-on run archived in `results/versus-lane-on.json`, within
+noise). Cross-run absolutes move ±~0.02 (register R-15) — read
+within-run comparisons only.
 
 | System | R@1 | R@3 | MRR |
-|---|---|---|
-| rag-hybrid | 0.656 | 0.752 | 0.696 |
-| **rtr-full** | 0.642 | **0.756** | 0.689 |
-| rtr-bge | 0.647 | 0.730 | 0.682 |
-| rag-hybrid-base | 0.646 | 0.728 | 0.681 |
-| rag-dense-base | 0.469 | 0.614 | 0.534 |
-| rtr-arctic | 0.497 | 0.564 | 0.524 |
-| rag-dense | 0.452 | 0.607 | 0.522 |
+|---|---|---|---|
+| **rtr-full** | **0.689** | **0.846** | **0.756** |
+| rtr-arctic | 0.688 | 0.814 | 0.741 |
+| rtr-bge | 0.636 | 0.759 | 0.691 |
+| rag-hybrid | 0.588 | 0.704 | 0.639 |
+| rag-hybrid-base | 0.583 | 0.688 | 0.629 |
+| rag-dense-base | 0.357 | 0.513 | 0.426 |
+| rag-dense | 0.335 | 0.522 | 0.417 |
+
+rtr-full leads every column. keeper-memory (T13): rtr-full R@1/R@3/MRR
+0.975 — evicted spans are retrievable at high score through the real
+engine. Historical 2026-10-27 freeze (3 corpora): rtr-full
+0.642/0.756/0.689; precedent leak-aided 164-query run (superseded):
+0.738/0.854/0.785.
 
 ### DTD-corpus run (2026-11-06, 4 corpora, 353 queries, T7–T10 taxons)
 
