@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 import time
 import urllib.request
+import weakref
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
@@ -72,6 +73,10 @@ EXTRA_ROOTS_FILE = _path_from_env(
 # default = first configured discovery root, never a hardcoded home path
 # (dummy3 measured a sink leaking into ~/projects from an isolated run).
 WRITER_LOCK_NAME = ".writer.lock"
+# Holder PID lives here, NOT in the lock file: Windows LockFile blocks
+# reads of the locked byte (EBUSY), so losers could never report who
+# holds the lock. This sidecar is never locked.
+WRITER_PID_NAME = ".writer.pid"
 
 
 def _acquire_writer_lock(db_dir: Path) -> Tuple[Any, Any]:
@@ -89,7 +94,11 @@ def _acquire_writer_lock(db_dir: Path) -> Tuple[Any, Any]:
         fh = open(lock_path, "a+b")
     except Exception:
         return None, None
+    # Fixed region: append-mode opens at EOF, so seek byte 0 first —
+    # otherwise two holders with different file sizes lock different
+    # bytes and the exclusion silently stops working.
     try:
+        fh.seek(0)
         if msvcrt is not None:
             msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
         elif fcntl is not None:
@@ -102,18 +111,25 @@ def _acquire_writer_lock(db_dir: Path) -> Tuple[Any, Any]:
         except Exception:
             pass
         holder = None
-        try:
-            holder = (
-                int((lock_path.read_text().strip().split() or ["0"])[0] or 0) or None
-            )
-        except Exception:
-            holder = None
+        for probe in (db_dir / WRITER_PID_NAME, lock_path):
+            try:
+                holder = (
+                    int((probe.read_text().strip().split() or ["0"])[0] or 0) or None
+                )
+                if holder is not None:
+                    break
+            except Exception:
+                continue
         return None, holder
     try:
         fh.seek(0)
         fh.truncate()
         fh.write(str(os.getpid()).encode("utf-8"))
         fh.flush()
+    except Exception:
+        pass
+    try:
+        (db_dir / WRITER_PID_NAME).write_text(str(os.getpid()), encoding="utf-8")
     except Exception:
         pass
     return fh, os.getpid()
@@ -461,7 +477,6 @@ def resolve_threads_for(model_name: str) -> int:
                             return n
                     except Exception:
                         pass
-            return 4 if configured_rtr_profile() == "balanced" else 8
         try:
             n = int(raw)
             if n > 0:
@@ -515,13 +530,10 @@ def register_extra_root(project_dir: Path) -> None:
         if not d.exists():
             return
         known = _load_extra_roots()
-        if any(str(d) == str(k) for k in known):
+        if any(os.path.normcase(str(d)) == os.path.normcase(str(k)) for k in known):
             return
         known.append(d)
-        EXTRA_ROOTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-        EXTRA_ROOTS_FILE.write_text(
-            json.dumps([str(k) for k in known], indent=2), encoding="utf-8"
-        )
+        _atomic_write_json(EXTRA_ROOTS_FILE, [str(k) for k in known])
     except Exception as e:
         print(f"Could not persist extra root {project_dir}: {e}", file=sys.stderr)
 
@@ -746,6 +758,16 @@ _ATTR_ITEM_RE = re.compile(
     r'\s+([^\s>]+)\s+(?:CDATA|ID|IDREF|IDREFS|NMTOKEN|NMTOKENS|ENTITY|ENTITIES|NOTATION|\([^)]*\))\s+(?:#REQUIRED|#IMPLIED|#FIXED|"[^"]*"|\'[^\']*\'|[^\s>]+)'
 )
 _DTD_SUFFIXES = (".dtd", ".mod", ".ent")
+_NOISE_DIRS = (
+    ".git",
+    "node_modules",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".local_vector_db",
+    "dist",
+    "build",
+)
 
 
 def _dtd_attr_owners(content: str) -> Dict[str, str]:
@@ -1023,6 +1045,13 @@ def _rg_structural_hits(
     return out
 
 
+def _norm_struct_path(s: str) -> str:
+    """Case/separator-insensitive path key on Windows; identity on POSIX."""
+    if os.name == "nt":
+        return s.replace("/", "\\").lower()
+    return s
+
+
 def _ccc_structural_hits(
     pattern: str, paths: List[str], timeout: float
 ) -> Dict[str, List[Dict[str, Any]]]:
@@ -1042,10 +1071,7 @@ def _ccc_structural_hits(
     if proc.returncode != 0:
         return {}
 
-    def norm(s: str) -> str:
-        return s.replace("/", "\\").lower()
-
-    wanted = {norm(str(p)): str(p) for p in paths}
+    wanted = {_norm_struct_path(str(p)): str(p) for p in paths}
     out: Dict[str, List[Dict[str, Any]]] = {}
     current: str | None = None
     for line in (proc.stdout or "").splitlines():
@@ -1056,7 +1082,7 @@ def _ccc_structural_hits(
                     {"term": "pattern", "line": int(m.group(1))}
                 )
             continue
-        cand = norm(line.strip())
+        cand = _norm_struct_path(line.strip())
         if not cand or cand == "---":
             continue
         current = None
@@ -1100,7 +1126,7 @@ def structural_hits(
 
 
 def configured_suffixes() -> Tuple[str, ...]:
-    """Indexed file suffixes (DtD polyglot: markdown + NestedText + YAML)."""
+    """Indexed file suffixes (DtD polyglot: markdown + NestedText + YAML + DTD family)."""
     raw = os.environ.get("OPENCODE_MEMORY_FILE_SUFFIXES", "")
     if raw.strip():
         out = tuple(
@@ -1121,6 +1147,25 @@ def _matches_suffix(name: str) -> bool:
     return name.lower().endswith(configured_suffixes())
 
 
+def safe_concept_filename(filename: str) -> str:
+    """Leaf .md filename guard: refuse traversal, absolute paths and empties.
+
+    Concept writes name a file, never a path: anything that is not a
+    bare leaf name is refused instead of sanitized, so a caller can
+    never be surprised by where its bytes landed.
+    """
+    raw = str(filename or "").strip()
+    if not raw:
+        raise ValueError(
+            "Refusing to write outside the concepts folder: empty filename"
+        )
+    if not raw.endswith(".md"):
+        raw += ".md"
+    if Path(raw).name != raw:
+        raise ValueError(f"Refusing to write outside the concepts folder: {filename!r}")
+    return raw
+
+
 LEXIKON_GLOBAL_FILE = _path_from_env(
     "OPENCODE_MEMORY_LEXIKON_GLOBAL_FILE", MEMORY_DIR / "lexikon_global.json"
 )
@@ -1130,12 +1175,41 @@ LEXIKON_GLOBAL_FILE = _path_from_env(
 MEMORY_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def _latest_session_report(sessions_dir: Path) -> Any:
+    """Newest session report by modification time (names lie).
+
+    Dated reports sort chronologically by name, but digest-named spans
+    (rtrre-*) sort arbitrarily — modification time is the only true
+    recency signal. Returns None when no report exists.
+    """
+    try:
+        reports = [p for p in sessions_dir.glob("*.md") if p.is_file()]
+    except Exception:
+        return None
+    if not reports:
+        return None
+    try:
+        return max(reports, key=lambda p: p.stat().st_mtime)
+    except Exception:
+        return None
+
+
+def _atomic_write_json(path: Path, data: Any) -> None:
+    """Write JSON atomically (tmp + rename) so a crash never leaves a half file."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + f".tmp-{os.getpid()}")
+    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    os.replace(tmp, path)
+
+
 class MemoryEngine:
     # Process-wide ChromaDB clients, one per DB path. Multiple live
     # PersistentClient instances on the same path go stale against each
     # other (deleted HNSW ids resurfacing as "Error finding id" on filtered
     # queries). A single shared client per path is the documented shape.
     _CLIENTS: Dict[str, Any] = {}
+    _CLIENT_HOLDERS: Dict[str, weakref.WeakSet] = {}
 
     def __init__(self):
         self._models: Dict[str, Any] = {}
@@ -1156,17 +1230,28 @@ class MemoryEngine:
         this process ('RustBindingsAPI' object has no attribute
         'bindings'). Close is terminal for this engine's DB path —
         collections are dropped with the client, and the next engine
-        on the path builds a fresh client.
+        on the path builds a fresh client. Co-live engines keep the
+        shared client: eviction waits for the last holder to close.
         """
         key = str(_db_dir())
-        client = MemoryEngine._CLIENTS.pop(key, None)
-        if client is None:
-            client = getattr(self, "_chroma_client", None)
-        if client is not None:
+        holders = MemoryEngine._CLIENT_HOLDERS.get(key)
+        last_holder = True
+        if holders is not None:
             try:
-                client.close()
+                holders.discard(self)
             except Exception:
                 pass
+            last_holder = len(holders) == 0
+        if last_holder:
+            MemoryEngine._CLIENT_HOLDERS.pop(key, None)
+            client = MemoryEngine._CLIENTS.pop(key, None)
+            if client is None:
+                client = getattr(self, "_chroma_client", None)
+            if client is not None:
+                try:
+                    client.close()
+                except Exception:
+                    pass
         self._chroma_client = None
         self._collections = {}
         fh = getattr(self, "_writer_lock", None)
@@ -1222,11 +1307,12 @@ class MemoryEngine:
     ) -> Dict[str, List[List[float]]]:
         out: Dict[str, List[List[float]]] = {}
         for slug, m in self.models.items():
+            model_texts = list(texts)
             if for_query:
                 prompt = query_prompt_for(slug)
                 if prompt:
-                    texts = [prompt + t for t in texts]
-            out[slug] = [[float(v) for v in e] for e in m.embed(texts)]
+                    model_texts = [prompt + t for t in model_texts]
+            out[slug] = [[float(v) for v in e] for e in m.embed(model_texts)]
         return out
 
     @property
@@ -1236,6 +1322,8 @@ class MemoryEngine:
         if client is None:
             client = chromadb.PersistentClient(path=key)
             MemoryEngine._CLIENTS[key] = client
+        holders = MemoryEngine._CLIENT_HOLDERS.setdefault(key, weakref.WeakSet())
+        holders.add(self)
         self._chroma_client = client
         return client
 
@@ -1326,19 +1414,7 @@ class MemoryEngine:
                 root_path = Path(root)
 
                 # Skip common noise dirs to keep index fast
-                if any(
-                    part in root_path.parts
-                    for part in (
-                        ".git",
-                        "node_modules",
-                        ".venv",
-                        "venv",
-                        "__pycache__",
-                        ".local_vector_db",
-                        "dist",
-                        "build",
-                    )
-                ):
+                if any(part in root_path.parts for part in _NOISE_DIRS):
                     continue
 
                 for file in files:
@@ -1472,7 +1548,11 @@ class MemoryEngine:
             return []
         if not content.strip():
             return []
-        decls = list(_scan_dtd_declarations(content))
+        try:
+            decls = list(_scan_dtd_declarations(content))
+        except Exception as e:
+            print(f"Error scanning {filepath}: {e}", file=sys.stderr)
+            return []
         elements = sorted({n for k, n, _d in decls if k == "ELEMENT" and n})
         attrs = sorted({n for k, n, _d in decls if k == "ATTLIST" and n})
         entities = sorted({n for k, n, _d in decls if k == "ENTITY" and n})
@@ -1518,7 +1598,11 @@ class MemoryEngine:
             )
         header = "\n".join(header_lines)
         body = f"{header}\n\n{content}" if header else content
-        section_text = f"Document: {rel_path}\nSection: Full Document\n\n{body}"
+        try:
+            section_text = f"Document: {rel_path}\nSection: Full Document\n\n{body}"
+        except Exception as e:
+            print(f"Error assembling chunk for {filepath}: {e}", file=sys.stderr)
+            return []
         return [
             {
                 "chunk_id": f"{rel_path}#chunk_0",
@@ -1631,9 +1715,7 @@ class MemoryEngine:
 
     def save_registry(self, registry: Dict[str, str]):
         try:
-            REGISTRY_FILE.parent.mkdir(parents=True, exist_ok=True)
-            with open(REGISTRY_FILE, "w") as f:
-                json.dump(registry, f, indent=2)
+            _atomic_write_json(REGISTRY_FILE, registry)
         except Exception as e:
             print(f"Error saving registry: {e}", file=sys.stderr)
 
@@ -1654,6 +1736,167 @@ class MemoryEngine:
         ):
             return "high"
         return "medium"
+
+    def _hash_infos(self, discovered, registry, new_registry, stats, force=False):
+        """Hash discovered infos into a to_index list (shared index core)."""
+        to_index = []
+        for info in discovered:
+            path_str = info["path"]
+            filepath = Path(path_str)
+            if not filepath.exists():
+                continue
+            try:
+                current_hash = self.calculate_sha256(filepath)
+                old_hash = registry.get(path_str)
+                new_registry[path_str] = current_hash
+                if force or old_hash != current_hash:
+                    if old_hash is None:
+                        stats["new"] += 1
+                    else:
+                        stats["updated"] += 1
+                    to_index.append((info, filepath, old_hash, current_hash))
+                else:
+                    stats["unchanged"] += 1
+            except Exception as e:
+                print(f"Failed to hash {path_str}: {e}", file=sys.stderr)
+                stats["failed"] += 1
+                if path_str in registry:
+                    new_registry[path_str] = registry[path_str]
+        return to_index
+
+    def _chunk_jobs(self, to_index, new_registry, stats):
+        """Pre-chunk every file once; embeddings fan out per model below."""
+        jobs = []
+        for info, filepath, old_hash, new_hash in to_index:
+            if filepath.suffix.lower() in (".dtd", ".mod", ".ent"):
+                mode = (
+                    os.environ.get("OPENCODE_MEMORY_DTD_CHUNK_MODE", "inventory")
+                    .strip()
+                    .lower()
+                )
+                if mode == "markdown":
+                    chunks = self.chunk_markdown(filepath, info["rel_path"])
+                elif mode == "hybrid":
+                    chunks = self.chunk_dtd(filepath, info["rel_path"])
+                else:
+                    chunks = self.chunk_dtd_whole(filepath, info["rel_path"])
+            else:
+                chunks = self.chunk_markdown(filepath, info["rel_path"])
+            if not chunks:
+                stats["failed"] += 1
+                if old_hash is None:
+                    new_registry.pop(info["path"], None)
+                else:
+                    new_registry[info["path"]] = old_hash
+                continue
+            mtime_val = os.path.getmtime(filepath) if filepath.exists() else time.time()
+            imp = self.derive_importance_rating(info["rel_path"], "")
+            masked = [mask_ndata(c["text"]) for c in chunks]
+            hists = [dtype_histogram(c["text"]) for c in chunks]
+            nots = [",".join(notations_of(c["text"])) for c in chunks]
+            jobs.append(
+                (
+                    info,
+                    filepath,
+                    old_hash,
+                    new_hash,
+                    chunks,
+                    mtime_val,
+                    imp,
+                    masked,
+                    hists,
+                    nots,
+                )
+            )
+        return jobs
+
+    def _upsert_jobs(self, jobs, to_index, new_registry, stats):
+        """Embed and upsert jobs per model; failed paths keep old hashes."""
+        models = self.models
+        cols = self.collections
+        failed_paths = set()
+        for slug, col in cols.items():
+            model_name = next(
+                (n for n in self.embed_model_names if model_slug(n) == slug),
+                slug,
+            )
+            for (
+                info,
+                filepath,
+                old_hash,
+                new_hash,
+                chunks,
+                mtime_val,
+                imp,
+                masked,
+                hists,
+                nots,
+            ) in jobs:
+                if old_hash is not None:
+                    try:
+                        existing = col.get(where={"source": info["path"]})
+                        if existing and existing["ids"]:
+                            col.delete(ids=existing["ids"])
+                    except Exception as e:
+                        print(
+                            f"Error purging old chunks for {info['rel_path']}: {e}",
+                            file=sys.stderr,
+                        )
+                ids = [c["chunk_id"] for c in chunks]
+                texts = masked
+                metadatas = [
+                    {
+                        "source": info["path"],
+                        "rel_path": info["rel_path"],
+                        "project": info["project"],
+                        "category": info["category"],
+                        "subcategory": info["subcategory"],
+                        "title": c["title"],
+                        "content_hash": new_hash,
+                        "linked_concepts": ",".join(c["linked_concepts"]),
+                        "created_at": str(mtime_val),
+                        "updated_at": str(mtime_val),
+                        "last_accessed": str(time.time()),
+                        "access_count": "0",
+                        "importance": imp,
+                        "embed_model": model_name,
+                        "dtype_hist": h,
+                        "notations": n,
+                    }
+                    for c, h, n in zip(chunks, hists, nots)
+                ]
+                try:
+                    embeddings = [
+                        [float(val) for val in e] for e in models[slug].embed(texts)
+                    ]
+                    col.add(
+                        ids=ids,
+                        embeddings=embeddings,
+                        documents=texts,
+                        metadatas=metadatas,
+                    )
+                except Exception as e:
+                    print(
+                        f"Failed indexing chunks for {info['rel_path']}: {e}",
+                        file=sys.stderr,
+                    )
+                    stats["failed"] += 1
+                    failed_paths.add(info["path"])
+        if failed_paths:
+            old_by_path = {i["path"]: o for i, _f, o, _n in to_index}
+            for col in cols.values():
+                for path in failed_paths:
+                    try:
+                        existing = col.get(where={"source": path})
+                        if existing and existing["ids"]:
+                            col.delete(ids=existing["ids"])
+                    except Exception:
+                        pass
+            for path in failed_paths:
+                if path in old_by_path and old_by_path[path] is not None:
+                    new_registry[path] = old_by_path[path]
+                else:
+                    new_registry.pop(path, None)
 
     def index_all(
         self, force: bool = False, projects: List[str] | None = None
@@ -1690,160 +1933,19 @@ class MemoryEngine:
         }
 
         # Track active paths to purge deleted files later
-        active_paths = set()
+        active_paths = {i["path"] for i in discovered}
         new_registry = {}
 
-        to_index = []  # List of tuples: (file_info, filepath, old_hash, new_hash)
-
-        for info in discovered:
-            path_str = info["path"]
-            filepath = Path(path_str)
-            active_paths.add(path_str)
-
-            if not filepath.exists():
-                continue
-
-            try:
-                current_hash = self.calculate_sha256(filepath)
-                old_hash = registry.get(path_str)
-                new_registry[path_str] = current_hash
-
-                if force or old_hash != current_hash:
-                    if old_hash is None:
-                        stats["new"] += 1
-                    else:
-                        stats["updated"] += 1
-                    to_index.append((info, filepath, old_hash, current_hash))
-                else:
-                    stats["unchanged"] += 1
-            except Exception as e:
-                print(f"Failed to hash {path_str}: {e}", file=sys.stderr)
-                stats["failed"] += 1
-                if path_str in registry:
-                    new_registry[path_str] = registry[path_str]
+        to_index = self._hash_infos(
+            discovered, registry, new_registry, stats, force=force
+        )
 
         # Execute indexing for new/changed files, once per embedding model.
         # Each model owns its collection since fixed vector spaces never mix.
         if to_index:
-            # Pre-chunk every file once; embeddings fan out per model below.
-            # NDATA spans are masked before embedding (pillar 2); chunk
-            # boundaries and ids stay stable.
-            jobs = []
-            for info, filepath, old_hash, new_hash in to_index:
-                if filepath.suffix.lower() in (".dtd", ".mod", ".ent"):
-                    mode = (
-                        os.environ.get("OPENCODE_MEMORY_DTD_CHUNK_MODE", "inventory")
-                        .strip()
-                        .lower()
-                    )
-                    if mode == "markdown":
-                        chunks = self.chunk_markdown(filepath, info["rel_path"])
-                    elif mode == "hybrid":
-                        chunks = self.chunk_dtd(filepath, info["rel_path"])
-                    else:
-                        chunks = self.chunk_dtd_whole(filepath, info["rel_path"])
-                else:
-                    chunks = self.chunk_markdown(filepath, info["rel_path"])
-                if not chunks:
-                    continue
-                mtime_val = (
-                    os.path.getmtime(filepath) if filepath.exists() else time.time()
-                )
-                imp = self.derive_importance_rating(info["rel_path"], "")
-                masked = [mask_ndata(c["text"]) for c in chunks]
-                hists = [dtype_histogram(c["text"]) for c in chunks]
-                nots = [",".join(notations_of(c["text"])) for c in chunks]
-                jobs.append(
-                    (
-                        info,
-                        filepath,
-                        old_hash,
-                        new_hash,
-                        chunks,
-                        mtime_val,
-                        imp,
-                        masked,
-                        hists,
-                        nots,
-                    )
-                )
+            jobs = self._chunk_jobs(to_index, new_registry, stats)
 
-            # We load models only when there's actual indexing to do
-            models = self.models
-            cols = self.collections
-            for slug, col in cols.items():
-                model_name = next(
-                    (n for n in self.embed_model_names if model_slug(n) == slug),
-                    slug,
-                )
-                for (
-                    info,
-                    filepath,
-                    old_hash,
-                    new_hash,
-                    chunks,
-                    mtime_val,
-                    imp,
-                    masked,
-                    hists,
-                    nots,
-                ) in jobs:
-                    # 1. Clean up old chunks for this file in this collection
-                    if old_hash is not None:
-                        # ChromaDB metadata allows filtering or we delete by ID prefix matching
-                        # Since chunk IDs start with rel_path, we can query or just delete
-                        # ChromaDB doesn't support wildcards for IDs easily, so we query the IDs first
-                        try:
-                            existing = col.get(where={"source": info["path"]})
-                            if existing and existing["ids"]:
-                                col.delete(ids=existing["ids"])
-                        except Exception as e:
-                            print(
-                                f"Error purging old chunks for {info['rel_path']}: {e}",
-                                file=sys.stderr,
-                            )
-
-                    ids = [c["chunk_id"] for c in chunks]
-                    texts = masked
-                    metadatas = [
-                        {
-                            "source": info["path"],
-                            "rel_path": info["rel_path"],
-                            "project": info["project"],
-                            "category": info["category"],
-                            "subcategory": info["subcategory"],
-                            "title": c["title"],
-                            "content_hash": new_hash,
-                            "linked_concepts": ",".join(c["linked_concepts"]),
-                            "created_at": str(mtime_val),
-                            "updated_at": str(mtime_val),
-                            "last_accessed": str(time.time()),
-                            "access_count": "0",
-                            "importance": imp,
-                            "embed_model": model_name,
-                            "dtype_hist": h,
-                            "notations": n,
-                        }
-                        for c, h, n in zip(chunks, hists, nots)
-                    ]
-
-                    # Generate embeddings with this collection's own model
-                    try:
-                        embeddings = [
-                            [float(val) for val in e] for e in models[slug].embed(texts)
-                        ]
-                        col.add(
-                            ids=ids,
-                            embeddings=embeddings,
-                            documents=texts,
-                            metadatas=metadatas,
-                        )
-                    except Exception as e:
-                        print(
-                            f"Failed indexing chunks for {info['rel_path']}: {e}",
-                            file=sys.stderr,
-                        )
-                        stats["failed"] += 1
+            self._upsert_jobs(jobs, to_index, new_registry, stats)
 
         # 3. Detect deleted files and remove them from every RTR collection
         self._purge_deleted_paths(set(registry.keys()) - active_paths)
@@ -1867,6 +1969,55 @@ class MemoryEngine:
         stats["lexikon_seeded"] = seeded
         return stats
 
+    def index_files(self, paths: List[str] | None) -> Dict[str, Any]:
+        """Index explicit files without discovering the world (RRD-169).
+
+        The auto-indexer's bounded call: only the named paths are hashed,
+        chunked, embedded and upserted. Missing, unsuffixed and duplicate
+        paths are skipped quietly (a raced delete must never fail the
+        run). Never purges (the active set is scoped, not global).
+        """
+        refused = self._require_writer("index_files")
+        if refused is not None:
+            return refused
+        wedged = _worker_refusal("index_files")
+        if wedged is not None:
+            return _empty_index_stats(wedged)
+        registry = self.load_registry()
+        stats = {"scanned": 0, "new": 0, "updated": 0, "unchanged": 0, "failed": 0}
+        new_registry = dict(registry)
+        infos = []
+        seen = set()
+        for raw in paths or []:
+            path_str = str(raw)
+            if path_str in seen:
+                continue
+            seen.add(path_str)
+            filepath = Path(path_str)
+            if not filepath.is_file() or not _matches_suffix(filepath.name):
+                continue
+            key, rel, _root = describe_indexed_path(path_str)
+            parts = Path(rel).parts if rel else ()
+            is_directive = "directives" in parts
+            has_wiki = any("wiki" in part.lower() for part in parts)
+            infos.append(
+                {
+                    "path": path_str,
+                    "project": key,
+                    "category": "wiki" if has_wiki else "directive",
+                    "subcategory": "general",
+                    "filename": filepath.name,
+                    "rel_path": rel,
+                }
+            )
+        stats["scanned"] = len(infos)
+        to_index = self._hash_infos(infos, registry, new_registry, stats)
+        if to_index:
+            jobs = self._chunk_jobs(to_index, new_registry, stats)
+            self._upsert_jobs(jobs, to_index, new_registry, stats)
+        self.save_registry(new_registry)
+        return stats
+
     def _purge_deleted_paths(self, deleted_paths: set) -> None:
         """Remove deleted files from every RTR collection (configured +
         legacy), verifying so segment desync cannot linger."""
@@ -1878,7 +2029,9 @@ class MemoryEngine:
                     existing = col.get(where={"source": path})
                     if existing and existing["ids"]:
                         col.delete(ids=existing["ids"])
-                    print(f"Purged deleted file from index: {path}", file=sys.stderr)
+                        print(
+                            f"Purged deleted file from index: {path}", file=sys.stderr
+                        )
                     again = col.get(where={"source": path})
                     if again and again["ids"]:
                         print(
@@ -2013,7 +2166,9 @@ class MemoryEngine:
         """RTR Pillar 1: original + lexikon-expanded + workspace-delta-expanded.
 
         Lookup-only expansion (registry aliases, glossary definitions, recent
-        file-delta stems). Deterministic, no generator model.
+        file-delta stems). Deterministic, no generator model. Note: search()
+        and explain_search() use the gated _search_subqueries() instead; this
+        raw shape stays for callers that want ungated expansion.
         """
         lex_subs, delta_subs = self.build_expansions(query, project)
         out = [query]
@@ -2146,6 +2301,15 @@ class MemoryEngine:
         # dense; a generic field keeps default weights. See
         # hybrid_lane_weights for the statistic and its measured history.
         w_dense, w_bm25 = hybrid_lane_weights(bm25_scores) if hybrid else (0.45, 0.30)
+        if hybrid:
+            weights = {
+                "dense": w_dense,
+                "bm25": w_bm25,
+                "recency": 0.15,
+                "importance": 0.10,
+            }
+        else:
+            weights = {"dense": 1.0, "bm25": 0.0, "recency": 0.0, "importance": 0.0}
         q_cdata = cdata_terms_of(base_query)
         # STRUCT lane (TODO-15): code-shaped terms may earn bounded
         # structural evidence over candidate sources. Default off; an
@@ -2222,32 +2386,31 @@ class MemoryEngine:
                     "importance": importance,
                     "struct_hits": len(struct_hits_here),
                     "score": final,
+                    "weights": weights,
                 }
             )
         fused.sort(key=lambda x: x["score"], reverse=True)
         return fused
 
-    def search(
-        self,
-        query: str,
-        k: int = 3,
-        project: str | None = None,
-        hybrid: bool | None = None,
-    ) -> List[Dict[str, Any]]:
-        """Semantic/Hybrid search across indexed wikis with Recency & Importance weighting (v2).
+    @staticmethod
+    def _resolve_hybrid(hybrid: bool | None) -> bool:
+        """Explicit bool wins; None resolves the Optimizer profile's flag."""
+        if hybrid is not None:
+            return hybrid
+        try:
+            return bool(_cb.resolve_retrieval_profile()["hybrid"])
+        except Exception:  # noqa: BLE001
+            return True
 
-        RTR: multi-query expansion (pillar 1) fused over models with RRF,
-        plus an optional PRF second pass (OPENCODE_MEMORY_PRF=1).
-
-        hybrid=None means the Optimizer's resolved modality decides (its
-        `hybrid` flag); an explicit bool always wins. The bench and CLI
-        pass explicit values; only the default is profile-driven.
+    def _search_subqueries(
+        self, query: str, project: str | None, k: int, hybrid: bool
+    ) -> List[str]:
+        """Sub-queries exactly as search() builds them: original +
+        lexikon-expanded (curated, ungated) + workspace-delta-expanded
+        (gated by top-2 evidence) + optional PRF expansion. Shared by
+        search() and explain_search() so the explanation always
+        describes the ranking search returns.
         """
-        if hybrid is None:
-            try:
-                hybrid = bool(_cb.resolve_retrieval_profile()["hybrid"])
-            except Exception:  # noqa: BLE001
-                hybrid = True
         lex_subs, delta_subs = self.build_expansions(query, project)
         subs = [query] + [s for s in lex_subs if s != query]
         # Relevance gate (delta lane only): a delta-guess subquery votes only
@@ -2288,6 +2451,26 @@ class MemoryEngine:
                         subs = subs + [cand]
             except Exception:
                 pass
+        return subs
+
+    def search(
+        self,
+        query: str,
+        k: int = 3,
+        project: str | None = None,
+        hybrid: bool | None = None,
+    ) -> List[Dict[str, Any]]:
+        """Semantic/Hybrid search across indexed wikis with Recency & Importance weighting (v2).
+
+        RTR: multi-query expansion (pillar 1) fused over models with RRF,
+        plus an optional PRF second pass (OPENCODE_MEMORY_PRF=1).
+
+        hybrid=None means the Optimizer's resolved modality decides (its
+        `hybrid` flag); an explicit bool always wins. The bench and CLI
+        pass explicit values; only the default is profile-driven.
+        """
+        hybrid = self._resolve_hybrid(hybrid)
+        subs = self._search_subqueries(query, project, k, hybrid)
         try:
             fused = self._fused_multi(subs, k=k, project=project, hybrid=hybrid)
         except Exception as e:
@@ -2318,7 +2501,10 @@ class MemoryEngine:
                 if not concept:
                     continue
                 for col in self.collections.values():
-                    linked = col.get(where_document={"$contains": concept})
+                    try:
+                        linked = col.get(where_document={"$contains": concept})
+                    except Exception:
+                        continue
                     if linked and linked["ids"]:
                         for j, linked_id in enumerate(linked["ids"]):
                             if linked_id in seen_ids:
@@ -2341,14 +2527,24 @@ class MemoryEngine:
         return formatted
 
     def explain_search(
-        self, query: str, k: int = 3, project: str | None = None
+        self,
+        query: str,
+        k: int = 3,
+        project: str | None = None,
+        hybrid: bool | None = None,
     ) -> List[Dict[str, Any]]:
         """Explain search query ranking parameters with detailed mathematical score breakdowns.
 
         The `dense` column is the min-max normalized RRF across configured models.
+        Sub-queries and hybrid resolution mirror search() exactly, so the
+        breakdown always describes the ranking search returns.
         """
+        hybrid = self._resolve_hybrid(hybrid)
         fused = self._fused_multi(
-            self.build_subqueries(query, project), k=k, project=project, hybrid=True
+            self._search_subqueries(query, project, k, hybrid),
+            k=k,
+            project=project,
+            hybrid=hybrid,
         )
         if not fused:
             return []
@@ -2365,6 +2561,7 @@ class MemoryEngine:
                     "recency": f["recency"],
                     "importance": f["importance"],
                     "final": f["score"],
+                    "weights": f["weights"],
                 }
             )
 
@@ -2389,9 +2586,7 @@ class MemoryEngine:
             target_dir = directives_dir
             target_dir.mkdir(parents=True, exist_ok=True)
 
-        # Ensure filename ends with .md
-        if not filename.endswith(".md"):
-            filename += ".md"
+        filename = safe_concept_filename(filename)
 
         filepath = target_dir / filename
 
@@ -2414,7 +2609,7 @@ class MemoryEngine:
             search_query = filename.replace(".md", "").replace("_", " ")
             search_results = self.search(query=search_query, k=4, project=None)
 
-            # Filter results to find highly relevant docs (score > 0.65) and exclude the file itself
+            # Filter results to find highly relevant docs (score > 0.50) and exclude the file itself
             seen_paths = set()
             for res in search_results:
                 src_path = Path(res["metadata"]["source"])
@@ -2490,6 +2685,29 @@ class MemoryEngine:
                     freed += len(ids)
             report["collections"][name] = {"chunks": total, "freed": freed}
             report["freed"] += freed
+        pruned_roots: List[str] = []
+        unmounted_roots: List[str] = []
+        known = _load_extra_roots()
+        kept = []
+        for root in known:
+            if root.exists():
+                kept.append(root)
+                continue
+            # A missing root on a missing drive is unmounted, not dead:
+            # pruning it would drop a live project between remounts.
+            anchor = root.drive if os.name == "nt" else "/"
+            if os.name == "nt" and anchor and not Path(anchor + os.sep).exists():
+                unmounted_roots.append(str(root))
+                kept.append(root)
+                continue
+            pruned_roots.append(str(root))
+        if pruned_roots and not dry_run:
+            try:
+                _atomic_write_json(EXTRA_ROOTS_FILE, [str(k) for k in kept])
+            except Exception as e:
+                print(f"Error pruning extra roots: {e}", file=sys.stderr)
+        report["pruned_roots"] = pruned_roots
+        report["unmounted_roots"] = unmounted_roots
         return report
 
     def stats(self) -> Dict[str, Any]:
@@ -2678,7 +2896,7 @@ class MemoryEngine:
         progress_file = project_dir / "directives" / "progress.md"
         if not progress_file.exists():
             progress_file.write_text(
-                f"# Project Progress Log — {project_name}\n\n- **2026-06-01:** System bootstrapped using Local-Memory-RAG MCP bootstrapper.\n",
+                f"# Project Progress Log — {project_name}\n\n- **{time.strftime('%Y-%m-%d')}:** System bootstrapped using Local-Memory-RAG MCP bootstrapper.\n",
                 encoding="utf-8",
             )
             files_written.append("directives/progress.md")
@@ -2906,17 +3124,7 @@ class MemoryEngine:
             for root, _, files in os.walk(directives_dir):
                 root_path = Path(root)
                 # Skip common noise dirs
-                if any(
-                    part in root_path.parts
-                    for part in (
-                        ".git",
-                        "node_modules",
-                        ".venv",
-                        "venv",
-                        "__pycache__",
-                        ".local_vector_db",
-                    )
-                ):
+                if any(part in root_path.parts for part in _NOISE_DIRS):
                     continue
                 for file in files:
                     if not _matches_suffix(file):
@@ -3017,6 +3225,7 @@ class MemoryEngine:
         # Heuristic extraction if raw unformatted text
         if not parsed_structured and conversation_text:
             sentences = re.split(r"[.!?\n]+", conversation_text)
+            registry = None  # lazy: loaded once, only if an unquoted sentence needs it
             for s in sentences:
                 s_clean = s.strip()
                 if not s_clean or len(s_clean) < 10:
@@ -3081,7 +3290,8 @@ class MemoryEngine:
                     if quoted:
                         matched_concept = quoted[0].title()
                     else:
-                        registry = self._load_concept_registry(project)
+                        if registry is None:
+                            registry = self._load_concept_registry(project)
                         for cid, data in registry.items():
                             cname = data["canonical_name"].lower()
                             if cname.replace("-", " ") in lower_s:
@@ -3162,12 +3372,9 @@ project: {project}
     def _save_concept_registry(self, project: str, registry: Dict[str, Any]):
         """Save project's state/concept_registry.json."""
         project_dir = resolve_project_dir(project)
-        reg_dir = project_dir / "state"
-        reg_dir.mkdir(parents=True, exist_ok=True)
-        reg_file = reg_dir / "concept_registry.json"
+        reg_file = project_dir / "state" / "concept_registry.json"
         try:
-            with open(reg_file, "w", encoding="utf-8") as f:
-                json.dump(registry, f, indent=2)
+            _atomic_write_json(reg_file, registry)
         except Exception as e:
             print(f"Error saving concept registry: {e}", file=sys.stderr)
 
@@ -3221,7 +3428,6 @@ project: {project}
             d = resolve_project_dir(project)
             fp = d / "state" / "lexikon.json"
         try:
-            fp.parent.mkdir(parents=True, exist_ok=True)
             data = {}
             if fp.exists():
                 data = json.loads(fp.read_text(encoding="utf-8"))
@@ -3234,7 +3440,7 @@ project: {project}
                 "updated": time.strftime("%Y-%m-%d %H:%M"),
             }
             data["terms"] = terms
-            fp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            _atomic_write_json(fp, data)
             return {"status": "success", "message": f"Lexikon entry '{term}' saved."}
         except Exception as e:
             return {"status": "error", "message": f"Failed to save lexikon: {e}"}
@@ -3259,7 +3465,11 @@ project: {project}
         if not d.exists():
             return 0
         files = sorted(
-            p for p in d.rglob("*") if p.is_file() and p.suffix.lower() in _DTD_SUFFIXES
+            p
+            for p in d.rglob("*")
+            if p.is_file()
+            and p.suffix.lower() in _DTD_SUFFIXES
+            and not any(part in p.parts for part in _NOISE_DIRS)
         )
         if not files:
             return 0
@@ -3371,11 +3581,11 @@ project: {project}
         except Exception:
             pass
         try:
-            sessions = sorted((d / "directives" / "sessions").glob("*.md"))
-            if sessions:
+            latest = _latest_session_report(d / "directives" / "sessions")
+            if latest is not None:
                 import yaml
 
-                content = sessions[-1].read_text(encoding="utf-8")
+                content = latest.read_text(encoding="utf-8")
                 m = re.search(r"```yaml(.*?)```", content, re.DOTALL)
                 if m:
                     events = (yaml.safe_load(m.group(1)) or {}).get(
@@ -3397,8 +3607,7 @@ project: {project}
             if key not in existing or existing[key].get("source") != "hand":
                 existing[key] = entry
         try:
-            fp.parent.mkdir(parents=True, exist_ok=True)
-            fp.write_text(json.dumps({"terms": existing}, indent=2), encoding="utf-8")
+            _atomic_write_json(fp, {"terms": existing})
         except Exception as e:
             return {"status": "error", "message": f"Failed to write lexikon: {e}"}
         glossary_path = self._write_glossary_dtd(d, existing)
@@ -3420,7 +3629,11 @@ project: {project}
         carrying term/alias/definition/source/ts attributes, so the DTD
         chunker's inventory header makes glossary terms retrievable
         structure-first — the operator's glossary-sync-in-DTD vision.
+        Attribute values are XML-escaped: a term carrying quotes or
+        markup must never break the document that carries it.
         """
+        from xml.sax.saxutils import quoteattr
+
         try:
             memory_root = project_dir / ".opencode" / "memory"
             memory_root.mkdir(parents=True, exist_ok=True)
@@ -3448,8 +3661,8 @@ project: {project}
                 source = str(entry.get("source") or "hand")
                 ts = str(entry.get("updated") or "")
                 lines.append(
-                    f'<glossaryentry term="{term}" alias="{alias}" '
-                    f'definition="{definition}" source="{source}" ts="{ts}"/>'
+                    f"<glossaryentry term={quoteattr(term)} alias={quoteattr(alias)} "
+                    f"definition={quoteattr(definition)} source={quoteattr(source)} ts={quoteattr(ts)}/>"
                 )
             path.write_bytes(("\n".join(lines)).encode("utf-8"))
             return path
@@ -3573,15 +3786,13 @@ project: {project}
         concepts_dir = paths["concepts"]
         concepts_dir.mkdir(parents=True, exist_ok=True)
 
-        session_files = sorted(sessions_dir.glob("*.md"))
-        if not session_files:
+        latest_report = _latest_session_report(sessions_dir)
+        if latest_report is None:
             return {
                 "status": "success",
                 "message": "No session reports found.",
                 "materialized": [],
             }
-
-        latest_report = session_files[-1]
 
         try:
             content = latest_report.read_text(encoding="utf-8")
@@ -3897,7 +4108,10 @@ aliases: {fm_aliases}
         if not text:
             return {"status": "success", "chunks_added": 0, "message": "empty text"}
 
-        stamp = time.strftime("%Y-%m-%dT%H:%M:%S")
+        now = time.time()
+        stamp = (
+            time.strftime("%Y-%m-%dT%H:%M:%S") + f".{int(now * 1000000) % 1000000:06d}"
+        )
         rel_path = f"memoryref://{project}/compaction/{stamp}"
         chunk_text = f"Compaction Memory Reference\nProject: {project}\n\n{text}"
         chunks = [
@@ -3942,8 +4156,8 @@ aliases: {fm_aliases}
                                 text.encode("utf-8")
                             ).hexdigest(),
                             "linked_concepts": "",
-                            "created_at": stamp,
-                            "updated_at": stamp,
+                            "created_at": str(now),
+                            "updated_at": str(now),
                             "last_accessed": str(time.time()),
                             "access_count": "0",
                             "importance": "high",

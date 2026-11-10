@@ -4,13 +4,13 @@
 
 Builds temp fixture projects (outside every root, exercising absolute-path
 flow), indexes, and asserts the golden expectations recorded from the
-previous release: top-1 stability (no regressal), recall, score bounds,
+previous release: top-1 stability (no regression), recall, score bounds,
 DTD metadata, lexikon behavior. Purges everything afterwards.
 
 Exit 0 = ship. Exit 1 = no ship.
 
 Run with the deployment env, e.g.:
-  uvx --from <wheel> python -m execution.rtr_eval
+   uvx --from rtr-role-type-retrieval python -m execution.rtr_eval
 """
 
 import json
@@ -70,6 +70,12 @@ def main():
 
     had_extra = mem.EXTRA_ROOTS_FILE.exists()
     had_global_lex = mem.LEXIKON_GLOBAL_FILE.exists()
+    global_lex_snapshot = None
+    if had_global_lex:
+        try:
+            global_lex_snapshot = mem.LEXIKON_GLOBAL_FILE.read_bytes()
+        except Exception:
+            global_lex_snapshot = None
     engine = MemoryEngine()
 
     try:
@@ -121,15 +127,23 @@ def main():
         top = Path(res[0]["metadata"]["source"]).name if res else None
         check("exact-lane[router6834]", top == "wiki_quokka.md", f"got={top}")
 
-        # Lexikon: hand term in _global expands a query (lookup, chilly)
+        # Lexikon: hand term in _global expands a query (lookup, chilly).
+        # Whole-token discipline: single-word terms fire on presence;
+        # multi-word terms never fire on partial overlap (T1/T10).
         r = engine.add_lexikon_term(
-            "_global", "nocturnal packets", "night-time quokka dispatch", ["night ops"]
+            "_global", "nocturnal", "night-time quokka dispatch", ["nightly"]
         )
         check("lexikon-add", r.get("status") == "success")
         exp = engine.lexikon_expansion("_global", "quokka nocturnal schedule")
         check("lexikon-expansion", len(exp) > 0, f"{exp[:4]}")
+        r2 = engine.add_lexikon_term(
+            "_global", "midnight oil", "zebracorn fuel", ["lamp"]
+        )
+        check("lexikon-add-multi", r2.get("status") == "success")
+        exp2 = engine.lexikon_expansion("_global", "quokka midnight schedule")
+        check("lexikon-no-partial", "zebracorn" not in exp2, f"{exp2[:4]}")
         shown = engine.get_lexikon("_global")
-        check("lexikon-show", "nocturnal packets" in shown)
+        check("lexikon-show", "nocturnal" in shown)
 
         # Bare-name + global search still bleed correctly
         res = engine.search("quokka router nocturnal", k=1)
@@ -141,6 +155,10 @@ def main():
         shutil.rmtree(base, ignore_errors=True)
         try:
             engine.index_all()
+        except Exception:
+            pass
+        try:
+            engine.close()
         except Exception:
             pass
         if not had_extra and mem.EXTRA_ROOTS_FILE.exists():
@@ -155,7 +173,12 @@ def main():
                     mem.EXTRA_ROOTS_FILE.unlink()
             except Exception:
                 pass
-        if not had_global_lex and mem.LEXIKON_GLOBAL_FILE.exists():
+        if had_global_lex and global_lex_snapshot is not None:
+            try:
+                mem.LEXIKON_GLOBAL_FILE.write_bytes(global_lex_snapshot)
+            except Exception:
+                pass
+        elif not had_global_lex and mem.LEXIKON_GLOBAL_FILE.exists():
             try:
                 mem.LEXIKON_GLOBAL_FILE.unlink()
             except Exception:

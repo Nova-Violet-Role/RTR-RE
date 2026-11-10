@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: Nova-Violet Role ORG
 # SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
-import sys
 
 
 class TUIRenderer:
@@ -11,6 +10,8 @@ class TUIRenderer:
         status = status.upper()
         if status in ("OK", "SUCCESS", "GREEN"):
             return "🟢 SUCCESS"
+        elif status in ("ERROR", "FAIL", "FAILURE"):
+            return "🔴 ERROR"
         elif status in ("SEARCH", "SEARCHING", "FIND"):
             return "🔍 SEARCHING"
         elif status in ("WRITE", "WRITING", "SAVE"):

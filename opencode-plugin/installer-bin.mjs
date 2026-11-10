@@ -7,7 +7,7 @@
 import { spawn } from "node:child_process"
 import fs from "node:fs"
 import path from "node:path"
-import { fileURLToPath } from "node:url"
+import { fileURLToPath, pathToFileURL } from "node:url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -28,7 +28,19 @@ if (!launcher) {
   process.exit(1)
 }
 
-const child = spawn(process.execPath, [launcher, ...process.argv.slice(2)], {
-  stdio: "inherit",
-})
-child.on("exit", (code) => process.exit(code ?? 0))
+// POSIX signal death reports code=null; Windows always sets a code.
+// A dead launcher must never read as success on either platform.
+export function installerExitCode(code) {
+    return code ?? 1
+}
+
+export function main(argv = process.argv.slice(2)) {
+    const child = spawn(process.execPath, [launcher, ...argv], {
+        stdio: "inherit",
+    })
+    child.on("exit", (code) => process.exit(installerExitCode(code)))
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+    main()
+}

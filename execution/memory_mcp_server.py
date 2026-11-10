@@ -4,6 +4,7 @@ import sys
 import os
 import json
 import re
+import threading
 import time
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from memory_engine import MemoryEngine
 from fastmcp import FastMCP
 from tui_renderer import TUIRenderer
 import context_budget
+import span_indexer
 import symbiose_worker as sw
 
 engine = MemoryEngine()
@@ -25,6 +27,14 @@ if os.environ.get("OPENCODE_MEMORY_WARM_MODELS", "").strip().lower() in (
     _ = engine.models  # eager dual warm only on explicit opt-in; default is lazy (loads on first index/search)
 
 mcp = FastMCP("memory")
+
+_INBOX_LOCK = threading.Lock()
+
+
+def _error_text(exc: Exception) -> str:
+    """Readable error text: bare exceptions (MemoryError, KeyError())
+    stringify empty, which rendered panels as a blank 'Error: '."""
+    return str(exc) or repr(exc)
 
 
 def _wiki_paths(project: str) -> dict | str:
@@ -65,7 +75,7 @@ def memory_discover(project: str) -> str:
 
     lines = []
     if inbox.exists():
-        size = len(inbox.read_text())
+        size = len(inbox.read_text(encoding="utf-8"))
         lines.append(f"Inbox: {inbox.name} ({size} chars)")
     else:
         lines.append(f"Inbox: {inbox.name} (not yet created)")
@@ -93,7 +103,7 @@ def memory_search(query: str, k: int = 3, project: str = "") -> str:
         results = engine.search(query, k=k, project=project or None)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Search Failure", [f"Error: {e}"], status="error"
+            "Search Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     if not results:
@@ -123,7 +133,9 @@ def memory_list(project: str = "") -> str:
     try:
         registry = engine.load_registry()
     except Exception as e:
-        return TUIRenderer.render_panel("List Failure", [f"Error: {e}"], status="error")
+        return TUIRenderer.render_panel(
+            "List Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
 
     if not registry:
         return TUIRenderer.render_panel(
@@ -157,11 +169,22 @@ def memory_list(project: str = "") -> str:
 @mcp.tool()
 def memory_delete(path: str) -> str:
     """Delete a memory file from storage and index."""
+    refused = engine._require_writer("memory_delete")
+    if refused is not None:
+        return TUIRenderer.render_panel(
+            "Delete Refused", [refused["message"]], status="error"
+        )
     p = Path(path)
     full_path = p if p.is_absolute() else mem.PROJECTS_DIR / path
     if not full_path.exists():
         return TUIRenderer.render_panel(
             "Delete Failure", [f"Error: {path} does not exist."], status="error"
+        )
+    if str(full_path) not in engine.load_registry():
+        return TUIRenderer.render_panel(
+            "Delete Refused",
+            [f"Error: {path} is not indexed; refusing to delete outside the index."],
+            status="error",
         )
     try:
         for col in engine.rtr_collections().values():
@@ -195,15 +218,17 @@ def memory_inbox_write(project: str, content: str) -> str:
     inbox.parent.mkdir(parents=True, exist_ok=True)
 
     timestamp = time.strftime("%Y-%m-%d %H:%M")
-    if inbox.exists():
-        inbox.write_text(
-            inbox.read_text() + f"\n## Ingest {timestamp}\n\n{content.strip()}\n"
-        )
-    else:
+    block = f"\n## Ingest {timestamp}\n\n{content.strip()}\n"
+    if not inbox.exists():
         label = "Design Wiki" if paths["variant"] == "design_wiki" else "Wiki"
-        inbox.write_text(
-            f"# {label} Inbox\n## Ingest {timestamp}\n\n{content.strip()}\n"
-        )
+        try:
+            with open(inbox, "x", encoding="utf-8") as f:
+                f.write(f"# {label} Inbox\n")
+        except FileExistsError:
+            pass
+    with _INBOX_LOCK:
+        with open(inbox, "a", encoding="utf-8") as f:
+            f.write(block)
 
     return TUIRenderer.render_panel(
         "Inbox Appended",
@@ -224,7 +249,7 @@ def memory_inbox_read(project: str) -> str:
             "Inbox Empty", ["Inbox file does not exist yet."], status="info"
         )
 
-    lines = paths["inbox"].read_text().split("\n")
+    lines = paths["inbox"].read_text(encoding="utf-8").split("\n")
     return TUIRenderer.render_panel(
         f"Inbox: {project}",
         lines[:15] + (["... (truncated)"] if len(lines) > 15 else []),
@@ -239,13 +264,23 @@ def memory_write(project: str, filename: str, content: str) -> str:
     if isinstance(paths, str):
         return TUIRenderer.render_panel("Write Failure", [paths], status="error")
 
+    refused = engine._require_writer("memory_write")
+    if refused is not None:
+        return TUIRenderer.render_panel(
+            "Write Refused", [refused["message"]], status="error"
+        )
+
     concepts_dir = paths["concepts"]
     concepts_dir.mkdir(parents=True, exist_ok=True)
 
-    if not filename.endswith(".md"):
-        filename += ".md"
+    try:
+        filename = mem.safe_concept_filename(filename)
+    except ValueError as e:
+        return TUIRenderer.render_panel(
+            "Write Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
     filepath = concepts_dir / filename
-    filepath.write_text(content.strip())
+    filepath.write_text(content.strip(), encoding="utf-8")
 
     related_links = []
     try:
@@ -267,10 +302,11 @@ def memory_write(project: str, filename: str, content: str) -> str:
 
     if related_links:
         filepath.write_text(
-            filepath.read_text()
+            filepath.read_text(encoding="utf-8")
             + "\n\n## Related Knowledge\n"
             + "\n".join(related_links)
-            + "\n"
+            + "\n",
+            encoding="utf-8",
         )
 
     s = engine.index_all()
@@ -293,6 +329,12 @@ def memory_organize(project: str) -> str:
     if isinstance(paths, str):
         return TUIRenderer.render_panel("Organize Failure", [paths], status="error")
 
+    refused = engine._require_writer("memory_organize")
+    if refused is not None:
+        return TUIRenderer.render_panel(
+            "Organize Refused", [refused["message"]], status="error"
+        )
+
     inbox = paths["inbox"]
     concepts_dir = paths["concepts"]
     concepts_dir.mkdir(parents=True, exist_ok=True)
@@ -302,7 +344,7 @@ def memory_organize(project: str) -> str:
             "Organize", ["No inbox found to organize."], status="info"
         )
 
-    source = inbox.read_text().strip()
+    source = inbox.read_text(encoding="utf-8").strip()
     if not source or len(source) < 20:
         return TUIRenderer.render_panel("Organize", ["Inbox is empty."], status="info")
 
@@ -314,12 +356,14 @@ def memory_organize(project: str) -> str:
 
     sections.pop(0)
     processed = []
+    skipped = []
 
     for section in sections:
         lines = section.strip().split("\n")
         title = lines[0].strip() if lines else "untitled"
         body = "\n".join(lines[1:]).strip()
         if not title or not body:
+            skipped.append(section.strip())
             continue
 
         safe_name = (
@@ -383,22 +427,32 @@ def memory_organize(project: str) -> str:
         )
 
         concept_file = cat_dir / f"{safe_name}.md"
-        concept_file.write_text(content)
+        concept_file.write_text(content, encoding="utf-8")
 
         link_ref = f"[[{safe_name}]]"
         for ef in existing_files:
-            if link_ref not in ef.read_text():
-                ef.write_text(ef.read_text().rstrip() + f"\n- {link_ref} — {title}\n")
+            if link_ref not in ef.read_text(encoding="utf-8"):
+                ef.write_text(
+                    ef.read_text(encoding="utf-8").rstrip()
+                    + f"\n- {link_ref} — {title}\n",
+                    encoding="utf-8",
+                )
 
         processed.append(f"  {concept_file.name} -> {cat_dir.name}/")
 
     label = "Design Wiki" if paths["variant"] == "design_wiki" else "Wiki"
-    inbox.write_text(f"# {label} Inbox\n")
+    if skipped:
+        leftovers = "".join(f"\n## {s}\n" for s in skipped)
+        inbox.write_text(f"# {label} Inbox\n{leftovers}", encoding="utf-8")
+        cleared_line = f"Inbox filed; {len(skipped)} section(s) kept (unprocessable)."
+    else:
+        inbox.write_text(f"# {label} Inbox\n", encoding="utf-8")
+        cleared_line = "Inbox cleared and filed."
     s = engine.index_all()
 
     lines = (
         [
-            "Inbox cleared and filed.",
+            cleared_line,
             f"Filed concepts ({len(processed)}):",
         ]
         + processed
@@ -416,7 +470,7 @@ def memory_stats() -> str:
         stats = engine.stats()
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Stats Failure", [f"Error: {e}"], status="error"
+            "Stats Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     lines = [
@@ -440,7 +494,7 @@ def memory_index(force: bool = False, project: str = "") -> str:
         s = engine.index_all(force=force, projects=[project] if project else [])
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Indexing Failure", [f"Error: {e}"], status="error"
+            "Indexing Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     duration = time.time() - start
@@ -468,7 +522,7 @@ def memory_init_project(project: str, variant: str = "wiki") -> str:
         res = engine.init_project(project, variant)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Bootstrap Failure", [f"Error: {e}"], status="error"
+            "Bootstrap Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     lines = [res["message"], "", "Created Directories:"]
@@ -490,7 +544,7 @@ def memory_consolidate(project: str) -> str:
         res = engine.consolidate_wiki(project)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Consolidation Failure", [f"Error: {e}"], status="error"
+            "Consolidation Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     if res.get("status") == "error":
@@ -515,7 +569,7 @@ def memory_session_start(project: str) -> str:
         res = engine.restore_session_state(project)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Restoration Failure", [f"Error: {e}"], status="error"
+            "Restoration Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     if res.get("status") == "error":
@@ -572,7 +626,7 @@ def memory_explain_search(query: str, k: int = 3, project: str = "") -> str:
         results = engine.explain_search(query, k=k, project=project or None)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Explain Failure", [f"Error: {e}"], status="error"
+            "Explain Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     if not results:
@@ -587,14 +641,19 @@ def memory_explain_search(query: str, k: int = 3, project: str = "") -> str:
     for idx, res in enumerate(results):
         lines.append(f"{idx + 1}. File: {res['rel_path']}")
         lines.append(f"   Final Score: {res['final']:.4f}")
-        # Table of details
+        w = res["weights"]
+        # Table of details (actual mix weights, not defaults)
         lines.append("   ┌────────────┬────────┬──────────┐")
         lines.append("   │ Metric     │ Value  │ Weight   │")
         lines.append("   ├────────────┼────────┼──────────┤")
-        lines.append(f"   │ Dense      │ {res['dense']:.4f} │ x0.45    │")
-        lines.append(f"   │ BM25       │ {res['bm25']:.4f} │ x0.30    │")
-        lines.append(f"   │ Recency    │ {res['recency']:.4f} │ x0.15    │")
-        lines.append(f"   │ Importance │ {res['importance']:.4f} │ x0.10    │")
+        lines.append(f"   │ Dense      │ {res['dense']:.4f} │ x{w['dense']:.2f}    │")
+        lines.append(f"   │ BM25       │ {res['bm25']:.4f} │ x{w['bm25']:.2f}    │")
+        lines.append(
+            f"   │ Recency    │ {res['recency']:.4f} │ x{w['recency']:.2f}    │"
+        )
+        lines.append(
+            f"   │ Importance │ {res['importance']:.4f} │ x{w['importance']:.2f}    │"
+        )
         lines.append("   └────────────┴────────┴──────────┘")
         lines.append("")
 
@@ -610,7 +669,7 @@ def memory_reflect_session(project: str, conversation_text: str = "") -> str:
         res = engine.reflect_session(project, conversation_text)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Reflection Failure", [f"Error: {e}"], status="error"
+            "Reflection Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     events = res.get("knowledge_events", [])
@@ -631,12 +690,12 @@ def memory_reflect_session(project: str, conversation_text: str = "") -> str:
 
 @mcp.tool()
 def memory_materialize_concepts(project: str) -> str:
-    """Materialize parsed session learnings into kebab-case markdown concept nodes."""
+    """Materialize parsed session learnings into ID-based (concept_NNN) markdown concept nodes."""
     try:
         res = engine.materialize_concepts(project)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Materialization Failure", [f"Error: {e}"], status="error"
+            "Materialization Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     if res.get("status") == "error":
@@ -665,7 +724,7 @@ def memory_update_graph(project: str) -> str:
         res = engine.update_concept_graph(project)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Graph Update Failure", [f"Error: {e}"], status="error"
+            "Graph Update Failure", [f"Error: {_error_text(e)}"], status="error"
         )
 
     if res.get("status") == "error":
@@ -694,7 +753,7 @@ def memory_reference_add(project: str, conversation_text: str = "") -> str:
         res = engine.add_memory_reference(project, conversation_text)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Memory Reference Add Failure", [f"Error: {e}"], status="error"
+            "Memory Reference Add Failure", [f"Error: {_error_text(e)}"], status="error"
         )
     if res.get("status") == "error":
         return TUIRenderer.render_panel(
@@ -722,7 +781,12 @@ def memory_session_commit(
         res = engine.session_commit(project, conversation_text, full_reindex)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Session Commit Failure", [f"Error: {e}"], status="error"
+            "Session Commit Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+
+    if res.get("status") == "error":
+        return TUIRenderer.render_panel(
+            "Session Commit Refused", [res.get("message", "Refused.")], status="error"
         )
 
     events = res.get("knowledge_events", [])
@@ -770,7 +834,7 @@ def memory_lexikon_add(
         res = engine.add_lexikon_term(project, term, definition, alias_list)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Lexikon Failure", [f"Error: {e}"], status="error"
+            "Lexikon Failure", [f"Error: {_error_text(e)}"], status="error"
         )
     if res.get("status") == "error":
         return TUIRenderer.render_panel(
@@ -786,7 +850,7 @@ def memory_lexikon_show(project: str) -> str:
         lex = engine.get_lexikon(project)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Lexikon Failure", [f"Error: {e}"], status="error"
+            "Lexikon Failure", [f"Error: {_error_text(e)}"], status="error"
         )
     if not lex:
         return TUIRenderer.render_panel(
@@ -810,7 +874,7 @@ def memory_lexikon_build(project: str) -> str:
         res = engine.build_lexikon(project)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Lexikon Failure", [f"Error: {e}"], status="error"
+            "Lexikon Failure", [f"Error: {_error_text(e)}"], status="error"
         )
     if res.get("status") == "error":
         return TUIRenderer.render_panel(
@@ -826,7 +890,7 @@ def memory_janitor(dry_run: bool = False) -> str:
         res = engine.janitor(dry_run=dry_run)
     except Exception as e:
         return TUIRenderer.render_panel(
-            "Janitor Failure", [f"Error: {e}"], status="error"
+            "Janitor Failure", [f"Error: {_error_text(e)}"], status="error"
         )
     lines = [f"Total chunks freed: {res['freed']}", ""]
     for name, info in sorted(res["collections"].items()):
@@ -845,21 +909,7 @@ def _symbiose_for(project: str) -> sw.SymbioseWorker:
     key = str(mem.resolve_project_dir(project)) if project else "_default"
     w = _symbiose_workers.get(key)
     if w is None:
-        sessions = Path(key) / ".opencode" / "memory"
-        # Deployment calibration must govern the actual compressor, not
-        # only the plan report. Measured in dummy survey turn 9: a 55k
-        # calibrated workload evicted nothing while the worker silently
-        # retained the 200k library default.
-        # The cumulative counter file is the shared recency signal: the
-        # worker owns it (atomic temp+rename) and the JS keeper reads it,
-        # so both sides of the recency-aware protection (TODO-45) see the
-        # same count. Without it the protection would stay all-protect.
-        cumulative_path = Path(key) / ".opencode" / "rtr-re-cumulative.json"
-        w = sw.SymbioseWorker(
-            sw.SessionSpanSink(sessions),
-            config=context_budget.symbiose_config(),
-            cumulative_path=cumulative_path,
-        )
+        w = sw.open_project_worker(key)
         _symbiose_workers[key] = w
     return w
 
@@ -875,7 +925,7 @@ def memory_symbiose_submit(project: str, messages_json: str) -> str:
         ticket = sw.submit_json(_symbiose_for(project), messages_json)
     except ValueError as e:
         return TUIRenderer.render_panel(
-            "Symbiose Submit Refused", [f"Error: {e}"], status="error"
+            "Symbiose Submit Refused", [f"Error: {_error_text(e)}"], status="error"
         )
     lines = [
         f"Ticket: {ticket['id']}",
@@ -889,9 +939,80 @@ def memory_symbiose_submit(project: str, messages_json: str) -> str:
 @mcp.tool()
 def memory_symbiose_poll(project: str, ticket_id: int) -> str:
     """Poll a symbiose ticket: pending/ready/failed/cooldown/cached/unknown."""
-    t = _symbiose_for(project).poll(ticket_id)
-    lines = [f"{k}: {v}" for k, v in sorted(t.items())]
+    try:
+        worker = _symbiose_for(project)
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Symbiose Poll Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+    try:
+        # Same project key as _symbiose_for: the drain sweeps the worker's own root.
+        key = str(mem.resolve_project_dir(project)) if project else "_default"
+        memory_dir = Path(key) / ".opencode" / "memory"
+        drain_report = sw.drain_submit_sidecars(
+            worker, memory_dir, limit=25, wait_timeout=5
+        )
+        drain_lines = sw.drain_panel_lines(drain_report)
+    except Exception as e:
+        drain_lines = [f"Drain error: {e}"]
+    try:
+        t = worker.poll(ticket_id)
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Symbiose Poll Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+    lines = drain_lines + [f"{k}: {v}" for k, v in sorted(t.items())]
     return TUIRenderer.render_panel("RE:Symbiose Ticket", lines, status="stats")
+
+
+@mcp.tool()
+def memory_symbiose_drain(project: str, limit: int = 5) -> str:
+    """Drain keeper submit sidecars through the Compressor (TODO-38 auto path).
+
+    Submits pending rtrre-*.submit.json sidecars oldest-first, waits each
+    ticket ready, and deletes consumed sidecars. Bounded per sweep; the
+    report names consumed, left, and quarantined files.
+    """
+    try:
+        # Same project key as _symbiose_for: the drain sweeps the worker's own root.
+        key = str(mem.resolve_project_dir(project)) if project else "_default"
+        memory_dir = Path(key) / ".opencode" / "memory"
+        report = sw.drain_submit_sidecars(
+            _symbiose_for(project), memory_dir, limit=limit
+        )
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Symbiose Drain Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+    return TUIRenderer.render_panel(
+        "RE:Symbiose Drain", sw.drain_panel_lines(report), status="ok"
+    )
+
+
+@mcp.tool()
+def memory_symbiose_compress(
+    project: str, messages_json: str, target_tokens: int
+) -> str:
+    """Fire the Compressor directly with a per-ticket target (RRD-75/79).
+
+    The target is the verbatim tail; the trigger stays preset/env.
+    Returns a ticket immediately; compression never pauses the live turn.
+    Thinking and tool parts ride the messages untouched into the budget.
+    """
+    try:
+        ticket = sw.compress_json(_symbiose_for(project), messages_json, target_tokens)
+    except ValueError as e:
+        return TUIRenderer.render_panel(
+            "Symbiose Compress Refused", [f"Error: {_error_text(e)}"], status="error"
+        )
+    lines = [
+        f"Ticket: {ticket['id']}",
+        f"Hash:   {ticket['hash']}",
+        f"Status: {ticket['status']}",
+        f"Target: {target_tokens} (per-ticket override; trigger stays preset/env)",
+        "Poll with memory_symbiose_poll; live messages are never mutated.",
+    ]
+    return TUIRenderer.render_panel("RE:Symbiose Fired", lines, status="ok")
 
 
 @mcp.tool()
@@ -905,7 +1026,7 @@ def memory_context_plan(total_tokens: int, message_count: int) -> str:
         cfg = context_budget.symbiose_config()
     except ValueError as e:
         return TUIRenderer.render_panel(
-            "Context Config Refused", [f"Error: {e}"], status="error"
+            "Context Config Refused", [f"Error: {_error_text(e)}"], status="error"
         )
     over = total_tokens > cfg["trigger_tokens"]
     src = cfg["sources"]
@@ -964,6 +1085,7 @@ def rtr_status_payload(project: str = "") -> dict:
                     "enabled": data.get("enabled"),
                     "trigger_tokens": data.get("triggerTokens"),
                     "target_tokens": data.get("targetTokens"),
+                    "max_keep_messages": data.get("maxKeepMessages"),
                     "last_decision": data.get("decision"),
                     "last_time": data.get("time"),
                     "last_evicted": data.get("evicted"),
@@ -1045,8 +1167,27 @@ def memory_rtr_status(project: str = "") -> str:
     return TUIRenderer.render_panel("RE:Symbiose Status", lines, status="stats")
 
 
+_span_indexer = None
+
+
+def _ensure_span_indexer():
+    """Start the background span indexer once (main entrypoint only).
+
+    Imports never start it, so unit tests stay side-effect free; the
+    running server gets automatic span indexing on the holder engine.
+    """
+    global _span_indexer
+    if _span_indexer is None and span_indexer.autoindex_enabled():
+        _span_indexer = span_indexer.SpanIndexer(
+            engine, lambda: list(mem.PROJECT_ROOTS) + mem._load_extra_roots()
+        )
+        _span_indexer.start()
+    return _span_indexer
+
+
 def main():
     """Console-script entrypoint for uvx: run the MCP server over stdio."""
+    _ensure_span_indexer()
     mcp.run(transport="stdio")
 
 

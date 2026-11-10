@@ -8,17 +8,18 @@ ONNX import: planning must stay cheap enough to run on every turn.
 - TARGET_TOKENS (Target Context): verbatim tail preserved after compression.
 - TRIGGER_TOKENS (Compact Target): total at which compression starts.
 
-Current shipped RTR-RE default (2026-11-04): Symbiose-AH! keeps verbatim
-until a 250k Compressor trigger, reduces to a 100k Compressor target,
-and the Keeper retains at most 40 messages. Fusion-AH! uses
-200k/100k/30 and Re-Symbiose uses 320k/128k/50. Those trigger, target,
+Current shipped RTR-RE default: Re-Symbiose-Mugen keeps verbatim until
+a 400k Compressor trigger, reduces to a 200k Compressor target, and
+the Keeper retains at most 200 messages. Symbiose-AH! uses 250k/100k/40,
+Fusion-AH! uses 200k/100k/30 and Re-Symbiose uses 320k/128k/50. Those
+trigger, target,
 and retained-message values belong to RTR-RE, not to the shared RTR
 retrieval profile. Registry values live beside this module in
 ``rtr_presets.json`` so Python and JavaScript read the same data;
 its retrieval section (modality, ONNX threads, parking) is the shared
 RTR section, while its context section is RTR-RE-only.
 Evicted spans are NOT lost — evict_payload carries them verbatim
-them verbatim (PCDATA/CDATA exact, NDATA masked) for the RTR dual-ONNX
+(PCDATA/CDATA exact, NDATA masked) for the RTR dual-ONNX
 DTD index, so substance survives compression by retrieval (measured
 exact recall after eviction, dummy turns 11-12). Deployments whose model
 input cap sits below the trigger (e.g. 200k input) must scale both
@@ -49,6 +50,7 @@ PROTECTED_TOOLS = frozenset({"todowrite"})
 # keep window stay hard-protected, so really old protected content yields to
 # newer context (operator design, TODO-45).
 PROTECTION_CUMULATIVE_THRESHOLD = 1000
+PROTECTION_BUDGET_FRACTION = 0.25
 NDATA_PLACEHOLDER = "[NDATA]"
 SHED_MARKER = "\n[shed: oldest summary lines moved to RTR index]\n"
 
@@ -227,7 +229,7 @@ def resolve_retrieval_profile(
 
     src = os.environ if env is None else env
     registry = _preset_registry()
-    cpu_profile_name, cpu_profile, _ = _selected_cpu_profile(src)
+    cpu_profile_name, cpu_profile, cpu_explicit = _selected_cpu_profile(src)
 
     modality_raw = str(src.get(MODALITY_ENV, "") or "").strip()
     models_raw = str(src.get(MODELS_ENV, "") or "").strip()
@@ -301,7 +303,7 @@ def resolve_retrieval_profile(
         "profile_code": profile_code,
         "profile_label": profile_label,
         "sources": {
-            "cpu_profile": f"cpu-profile:{cpu_profile_name}",
+            "cpu_profile": "env" if cpu_explicit else f"cpu-profile:{cpu_profile_name}",
             "modality": modality_source,
             "threads_per_model": threads_source,
             "parking_percent": parking_source,
@@ -436,9 +438,113 @@ def symbiose_config(env: Mapping[str, str] | None = None) -> Dict[str, Any]:
     return out
 
 
+def _iter_parts(m: Dict[str, Any]):
+    """Part dicts from OpenCode parts[] or an Anthropic content list."""
+    for key in ("parts", "content"):
+        val = m.get(key)
+        if isinstance(val, list):
+            for part in val:
+                if isinstance(part, dict):
+                    yield part
+
+
+def _role_of(m: Dict[str, Any]) -> str:
+    """Flat role first (API shapes), nested info.role second (hook V2)."""
+    role = m.get("role")
+    if isinstance(role, str) and role:
+        return role
+    info = m.get("info")
+    if isinstance(info, dict):
+        role = info.get("role")
+        if isinstance(role, str) and role:
+            return role
+    return "unknown"
+
+
+def _tool_of(m: Dict[str, Any]) -> str:
+    """Flat tool first, then the first tool part's name (hook V2 ToolPart.tool)."""
+    tool = m.get("tool")
+    if isinstance(tool, str) and tool:
+        return tool
+    for part in _iter_parts(m):
+        if part.get("type") == "tool":
+            name = part.get("tool")
+            if isinstance(name, str) and name:
+                return name
+    return ""
+
+
+def _has_tool_part(m: Dict[str, Any]) -> bool:
+    return any(part.get("type") == "tool" for part in _iter_parts(m))
+
+
+def _visible_text(m: Dict[str, Any]) -> str:
+    """Top-level text/content (flat shapes) plus text-part text (hook V2)."""
+    chunks: List[str] = []
+    for key in ("text", "content"):
+        val = m.get(key)
+        if isinstance(val, str) and val.strip():
+            chunks.append(val)
+    for part in _iter_parts(m):
+        if part.get("type") == "text":
+            val = part.get("text")
+            if isinstance(val, str) and val.strip():
+                chunks.append(val)
+    return "\n".join(chunks)
+
+
+def _part_texts(part: Dict[str, Any]) -> List[str]:
+    out: List[str] = []
+    for key in ("text", "reasoning", "content"):
+        val = part.get(key)
+        if isinstance(val, str) and val:
+            out.append(val)
+    if part.get("type") == "tool":
+        tool = part.get("tool")
+        if isinstance(tool, str) and tool:
+            out.append(tool)
+        state = part.get("state")
+        if isinstance(state, dict):
+            out.append(str(state.get("input", "")))
+            output = state.get("output")
+            if isinstance(output, str) and output:
+                out.append(output)
+    if part.get("type") == "file":
+        for key in ("filename", "url"):
+            val = part.get(key)
+            if isinstance(val, str) and val:
+                out.append(val)
+    if part.get("type") == "patch":
+        files = part.get("files")
+        if isinstance(files, list):
+            out.append(" ".join(str(f) for f in files))
+    return out
+
+
+def _has_thinking(m: Dict[str, Any]) -> bool:
+    for part in _iter_parts(m):
+        if isinstance(part.get("reasoning"), str) and part["reasoning"].strip():
+            return True
+        if str(part.get("type") or "") in ("reasoning", "thinking"):
+            if _part_texts(part):
+                return True
+    return False
+
+
 def span_lane(m: Dict[str, Any]) -> str:
-    """Read lane: what entered the agent. Written lane: what it produced."""
-    return "written" if m.get("role") == "assistant" and not m.get("tool") else "read"
+    """Read lane: what entered the agent. Written lane: what it produced.
+
+    Think lane: thinking-only messages (reasoning parts, no visible text).
+    Mirrors the keeper's spanLane; roles and tools read flat-first, V2-second.
+    """
+    # Flat "tool" counts like a tool part (RRD-120): protection already
+    # reads flat-first via _tool_of; the lane must agree, else flat
+    # tool-bearing assistant messages sink as "written" instead of "read".
+    if _role_of(m) == "assistant" and not _has_tool_part(m) and not _tool_of(m):
+        if not _visible_text(m).strip() and _has_thinking(m):
+            return "think"
+        return "written"
+    return "read"
 
 
 def span_dtype(text: str) -> str:
@@ -461,8 +567,23 @@ def mask_ndata(text: str) -> str:
 
 
 def _text_of(m: Dict[str, Any]) -> str:
-    t = m.get("text") or m.get("content") or ""
-    return t if isinstance(t, str) else str(t)
+    """Visible text of a message: top-level text/content plus part texts.
+
+    OpenCode/Anthropic-shaped messages carry thinking and tool text in
+    parts[] (or a content list). Thinking counts: parts the extractor
+    ignored would sink as empty spans and skip trigger accounting.
+    """
+    chunks: List[str] = []
+    for key in ("text", "content"):
+        val = m.get(key)
+        if isinstance(val, str) and val:
+            chunks.append(val)
+    for part in _iter_parts(m):
+        chunks.extend(_part_texts(part))
+    if chunks:
+        return "\n".join(chunks)
+    fallback = m.get("text") or m.get("content") or ""
+    return fallback if isinstance(fallback, str) else str(fallback)
 
 
 def _tokens_of(m: Dict[str, Any]) -> int:
@@ -473,7 +594,7 @@ def _tokens_of(m: Dict[str, Any]) -> int:
 
 
 def _is_protected(m: Dict[str, Any]) -> bool:
-    return str(m.get("tool") or "") in PROTECTED_TOOLS
+    return str(_tool_of(m) or "") in PROTECTED_TOOLS
 
 
 def plan_compression(
@@ -492,6 +613,11 @@ def plan_compression(
     TARGET is a soft target: keep_tokens can exceed it by exactly the
     protected/tool-pair additions, reported in the returned plan.
 
+    config["live_tokens"] (RRD-108) is the window already live outside
+    this ticket (keeper kept-count): the gate compares live + ticket
+    against TRIGGER and the walk keeps within max(0, TARGET - live),
+    so saturated windows get floor-only ticket keeps. Absent means 0.
+
     Protection is recency-aware past PROTECTION_CUMULATIVE_THRESHOLD
     cumulative messages: below the threshold every protected message is
     retained; at or above it, only protected messages inside the keep
@@ -506,9 +632,11 @@ def plan_compression(
         target_tokens = int(config.get("target_tokens", target_tokens))
         max_keep_messages = int(config.get("max_keep_messages", max_keep_messages))
     cumulative_messages = int(config.get("cumulative_messages", 0)) if config else 0
+    live_tokens = max(0, int(config.get("live_tokens", 0))) if config else 0
+    ticket_target = max(0, target_tokens - live_tokens)
     n = len(messages)
     total = sum(_tokens_of(m) for m in messages)
-    if total <= trigger_tokens or n == 0:
+    if total + live_tokens <= trigger_tokens or n == 0:
         return {
             "compress": False,
             "total_tokens": total,
@@ -516,20 +644,27 @@ def plan_compression(
             "keep": list(range(n)),
             "evict": [],
             "evict_payload": [],
+            "loop_bound": "none",
+            "overrun_tokens": 0,
+            "overrun_by": "none",
+            "live_tokens": live_tokens,
         }
 
     last_user = max(
-        (i for i, m in enumerate(messages) if m.get("role") == "user"),
+        (i for i, m in enumerate(messages) if _role_of(m) == "user"),
         default=None,
     )
     keep: set = set()
     kept_tokens = 0
+    loop_bound = "exhausted"
     # Newest-first tail walk.
     for i in range(n - 1, -1, -1):
         if len(keep) >= max_keep_messages:
+            loop_bound = "maxKeep"
             break
         t = _tokens_of(messages[i])
-        if keep and kept_tokens + t > target_tokens:
+        if keep and kept_tokens + t > ticket_target:
+            loop_bound = "target"
             break
         keep.add(i)
         kept_tokens += t
@@ -537,14 +672,16 @@ def plan_compression(
     # Fixpoint, not one snapshot step: batched results can chain several
     # tool messages behind one call, and every link must survive together.
     changed = True
+    fix_toks = 0
     while changed:
         changed = False
         for i in sorted(keep):
             m = messages[i]
-            if m.get("tool_call") or m.get("role") == "tool":
+            if m.get("tool_call") or _role_of(m) == "tool":
                 if i > 0 and (i - 1) not in keep:
                     keep.add(i - 1)
                     kept_tokens += _tokens_of(messages[i - 1])
+                    fix_toks += _tokens_of(messages[i - 1])
                     changed = True
     # Hard protections ride outside the budget walk by design (survey D3:
     # todowrite plans are the sole record and must never evict). Past
@@ -554,29 +691,53 @@ def plan_compression(
     # protected content becomes evictable to make space for newer context.
     protect_all = cumulative_messages < PROTECTION_CUMULATIVE_THRESHOLD
     recency_start = max(0, n - max_keep_messages)
+    prot_toks = 0
+    # Protection budget backstop (RRD-105/115): in recency-gated mode the
+    # gap-span pulls are newest-first within 25% of target (oldest shed
+    # first); the newest protected is always kept as the working-set
+    # floor. protectAll (young session, nothing archived) stays unbounded.
+    prot_candidates = []
     for i, m in enumerate(messages):
         if not _is_protected(m):
             continue
         if i in keep:
             continue
         if protect_all or i >= recency_start:
-            keep.add(i)
-            kept_tokens += _tokens_of(m)
+            prot_candidates.append(i)
+    prot_candidates.sort(reverse=True)
+    prot_budget = (
+        float("inf") if protect_all else int(target_tokens * PROTECTION_BUDGET_FRACTION)
+    )
+    for i in prot_candidates:
+        if prot_toks > 0 and prot_toks + _tokens_of(messages[i]) > prot_budget:
+            break
+        keep.add(i)
+        kept_tokens += _tokens_of(messages[i])
+        prot_toks += _tokens_of(messages[i])
+    last_toks = 0
     if last_user is not None and last_user not in keep:
         keep.add(last_user)
         kept_tokens += _tokens_of(messages[last_user])
+        last_toks += _tokens_of(messages[last_user])
 
     evict = [i for i in range(n) if i not in keep]
     payload = [
         {
             "index": i,
-            "role": str(messages[i].get("role") or "unknown"),
+            "role": _role_of(messages[i]),
             "lane": span_lane(messages[i]),
             "dtype": span_dtype(_text_of(messages[i])),
             "text": mask_ndata(_text_of(messages[i])),
         }
         for i in evict
     ]
+    overrun_tokens = fix_toks + prot_toks + last_toks
+    contributors = [
+        "fixpoint" if fix_toks > 0 else None,
+        "protection" if prot_toks > 0 else None,
+        "lastUser" if last_toks > 0 else None,
+    ]
+    contributors = [c for c in contributors if c]
     return {
         "compress": bool(evict),
         "total_tokens": total,
@@ -584,6 +745,10 @@ def plan_compression(
         "keep": sorted(keep),
         "evict": evict,
         "evict_payload": payload,
+        "loop_bound": loop_bound,
+        "overrun_tokens": overrun_tokens,
+        "overrun_by": "+".join(contributors) if contributors else "none",
+        "live_tokens": live_tokens,
     }
 
 

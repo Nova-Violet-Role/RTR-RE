@@ -77,6 +77,9 @@ let DEFAULT_TRIGGER_TOKENS = DEFAULT_PRESET_VALUES.triggerTokens
 let DEFAULT_TARGET_TOKENS = DEFAULT_PRESET_VALUES.targetTokens
 let DEFAULT_MAX_KEEP_MESSAGES = DEFAULT_PRESET_VALUES.maxKeepMessages
 const PROTECTED_TOOLS = new Set(["todowrite"])
+const PROTECTION_BUDGET_FRACTION = 0.25
+const DEBT_DIVISOR = 10
+const DEBT_DECAY = 0.8
 const NDATA_RE = /[A-Za-z0-9+/]{64,}={0,2}/
 const NDATA_RE_G = /[A-Za-z0-9+/]{64,}={0,2}/g
 const CDATA_RE =
@@ -372,9 +375,7 @@ async function loadKeeperFileConfig(path) {
         if (data[key] !== undefined) values[key] = positiveInt(data[key], `config file ${envName}`)
     }
     if (data.enabled !== undefined) values.enabled = enabledFlag(data.enabled)
-    if (values.targetTokens !== undefined || values.triggerTokens !== undefined) {
-        // Full-pair check happens at merge time; record intent only.
-    }
+    // Full target/trigger pair check happens at merge time.
     return { values, mtimeMs: st.mtimeMs }
 }
 
@@ -425,7 +426,7 @@ function estimateTokens(text) {
 
 function partText(part) {
     if (!part || typeof part !== "object") return ""
-    if (part.type === "text" || part.type === "reasoning") return part.text ?? ""
+    if (part.type === "text" || part.type === "reasoning") return part.text ?? part.reasoning ?? ""
     if (part.type === "tool") {
         const state = part.state ?? {}
         let input = ""
@@ -437,6 +438,7 @@ function partText(part) {
         return `${part.tool ?? ""} ${input} ${state.output ?? ""}`
     }
     if (part.type === "file") return `${part.filename ?? ""} ${part.url ?? ""}`
+    if (part.type === "patch") return (part.files ?? []).join(" ")
     return part.text ?? ""
 }
 
@@ -464,9 +466,20 @@ function isProtected(message, protectedTools) {
 }
 
 function spanLane(message) {
-    return roleOf(message) === "assistant" && !hasToolPart(message)
-        ? "written"
-        : "read"
+    if (roleOf(message) === "assistant" && !hasToolPart(message)) {
+        const parts = Array.isArray(message?.parts) ? message.parts : []
+        const hasVisibleText = parts.some(
+            (p) => p?.type === "text" && String(p.text ?? "").trim() !== "",
+        )
+        const hasThinking = parts.some(
+            (p) =>
+                p?.type === "reasoning" &&
+                String(p.text ?? p.reasoning ?? "").trim() !== "",
+        )
+        if (!hasVisibleText && hasThinking) return "think"
+        return "written"
+    }
+    return "read"
 }
 
 function spanDtype(text) {
@@ -480,30 +493,57 @@ function maskNdata(text) {
 }
 
 /** Mirror of context_budget.plan_compression over host messages. */
-function planKeepIndices(messages, cfg) {
+function planKeepIndices(messages, cfg, sunkDigests = new Map(), targetOverride = null) {
     const tokens = messages.map(messageTokens)
     const total = tokens.reduce((a, b) => a + b, 0)
     const keep = new Set()
-    if (!cfg.enabled || total <= cfg.triggerTokens || messages.length === 0) {
+    if (!cfg.enabled || messages.length === 0) {
         messages.forEach((_, i) => keep.add(i))
-        return { compress: false, keep, evict: [], total, keepTokens: total }
+        return { compress: false, keep, evict: [], total, keepTokens: total, loopBound: "none", overrunTokens: 0, overrunBy: "none", reEvicted: [], newlySunk: 0, effectiveTotal: total }
+    }
+    // Incremental eviction (RRD-110): pre-partition sunk spans out. They
+    // leave the served window without re-sink; only fresh plans and sinks.
+    const sunkFilter = sunkDigests instanceof Map || sunkDigests instanceof Set ? sunkDigests : new Map()
+    const sunkSet = new Set()
+    const fresh = []
+    const freshTokens = []
+    messages.forEach((m, i) => {
+        if (sunkFilter.has(spanDigest(messageText(m)))) sunkSet.add(i)
+        else { fresh.push(i); freshTokens.push(tokens[i]) }
+    })
+    const effectiveTotal = freshTokens.reduce((a, b) => a + b, 0)
+    const reEvicted = [...sunkSet].sort((a, b) => a - b)
+    // Debt-tightened budget (RRD-109/117): the hook passes an effective
+    // target; default keeps today's behavior exactly.
+    const effTarget = targetOverride ?? cfg.targetTokens
+    if (effectiveTotal <= cfg.triggerTokens) {
+        fresh.forEach((i) => keep.add(i))
+        return {
+            compress: reEvicted.length > 0, keep, evict: [...reEvicted], total,
+            keepTokens: effectiveTotal, loopBound: "none", overrunTokens: 0, overrunBy: "none",
+            reEvicted, newlySunk: 0, effectiveTotal,
+        }
     }
     let keptTokens = 0
+    let loopBound = "exhausted"
     for (let i = messages.length - 1; i >= 0; i--) {
-        if (keep.size >= cfg.maxKeepMessages) break
-        if (keep.size > 0 && keptTokens + tokens[i] > cfg.targetTokens) break
+        if (sunkSet.has(i)) continue
+        if (keep.size >= cfg.maxKeepMessages) { loopBound = "maxKeep"; break }
+        if (keep.size > 0 && keptTokens + tokens[i] > effTarget) { loopBound = "target"; break }
         keep.add(i)
         keptTokens += tokens[i]
     }
     // Tool-pair safety, fixpoint: a kept tool-result message pulls its
     // preceding call in, however long the batched chain is.
     let changed = true
+    let fixToks = 0
     while (changed) {
         changed = false
         for (const i of [...keep].sort((a, b) => a - b)) {
-            if (roleOf(messages[i]) === "tool" && i > 0 && !keep.has(i - 1)) {
+            if (roleOf(messages[i]) === "tool" && i > 0 && !keep.has(i - 1) && !sunkSet.has(i - 1)) {
                 keep.add(i - 1)
                 keptTokens += tokens[i - 1]
+                fixToks += tokens[i - 1]
                 changed = true
             }
         }
@@ -512,20 +552,47 @@ function planKeepIndices(messages, cfg) {
     const cumulative = Number(cfg.cumulativeMessages) || 0
     const protectAll = cumulative < 1000
     const recencyStart = Math.max(0, messages.length - cfg.maxKeepMessages)
+    let protToks = 0
+    // Protection budget backstop (RRD-105/115): in recency-gated mode the
+    // gap-span pulls are newest-first within 25% of target (oldest shed
+    // first); the newest protected is always kept as the working-set
+    // floor. protectAll (young session, nothing archived) stays unbounded.
+    const protCandidates = []
     messages.forEach((m, i) => {
-        if (isProtected(m, cfg.protectedTools) && !keep.has(i) &&
+        if (isProtected(m, cfg.protectedTools) && !keep.has(i) && !sunkSet.has(i) &&
             (protectAll || i >= recencyStart)) {
-            keep.add(i)
-            keptTokens += tokens[i]
+            protCandidates.push(i)
         }
-        if (roleOf(m) === "user") lastUser = i
+        if (roleOf(m) === "user" && !sunkSet.has(i)) lastUser = i
     })
+    protCandidates.sort((a, b) => b - a)
+    const protBudget = protectAll ? Infinity : Math.floor(effTarget * PROTECTION_BUDGET_FRACTION)
+    for (const i of protCandidates) {
+        if (protToks > 0 && protToks + tokens[i] > protBudget) break
+        keep.add(i)
+        keptTokens += tokens[i]
+        protToks += tokens[i]
+    }
+    let lastToks = 0
     if (lastUser >= 0 && !keep.has(lastUser)) {
         keep.add(lastUser)
         keptTokens += tokens[lastUser]
+        lastToks += tokens[lastUser]
     }
     const evict = messages.map((_, i) => i).filter((i) => !keep.has(i))
-    return { compress: evict.length > 0, keep, evict, total, keepTokens: keptTokens }
+    const overrunTokens = fixToks + protToks + lastToks
+    const contributors = [
+        fixToks > 0 ? "fixpoint" : null,
+        protToks > 0 ? "protection" : null,
+        lastToks > 0 ? "lastUser" : null,
+    ].filter(Boolean)
+    const newlySunk = evict.length - reEvicted.length
+    return {
+        compress: evict.length > 0, keep, evict, total, keepTokens: keptTokens,
+        loopBound, overrunTokens,
+        overrunBy: contributors.length ? contributors.join("+") : "none",
+        reEvicted, newlySunk, effectiveTotal,
+    }
 }
 
 function evictedSpans(messages, evict) {
@@ -542,15 +609,15 @@ function evictedSpans(messages, evict) {
 }
 
 const SPAN_SCHEMA = [
-    "<!-- RTR-RE:Symbiose keeper memory span v2 (DTD-shaped) -->",
+    "<!-- RTR-RE:Symbiose keeper memory span v2.1 (DTD-shaped) -->",
     '<!ENTITY % rtrre.span.module "INCLUDE">',
     "<![%rtrre.span.module;[",
     "<!ELEMENT span EMPTY>",
     "<!ATTLIST span",
     "    id ID #REQUIRED",
-    "    role (user|assistant|tool) #REQUIRED",
-    "    lane (read|write|think|plan|unknown) #IMPLIED",
-    "    dtype (CDATA|NDATA) #IMPLIED",
+    "    role (user|assistant|tool|system|unknown) #REQUIRED",
+    "    lane (read|written|think|plan|unknown) #IMPLIED",
+    "    dtype (PCDATA|CDATA|NDATA) #IMPLIED",
     "    ts CDATA #IMPLIED",
     "    source CDATA #IMPLIED",
     "    session CDATA #IMPLIED>",
@@ -585,17 +652,25 @@ function anchorLine(text) {
     return ""
 }
 
+function escapeAttr(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+}
+
 function serializeSpans(spans, digest) {
     const lines = [SPAN_SCHEMA]
     const summaries = [SUMMARY_SCHEMA]
     for (const s of spans) {
-        const role = s.role ?? "unknown"
-        const lane = s.lane ?? "read"
-        const dtype = s.dtype ?? "PCDATA"
-        const ts = String(s.ts ?? "")
-        const source = String(s.source ?? "")
-        const session = String(s.session ?? "")
-        const idx = s.index ?? "?"
+        const role = escapeAttr(s.role ?? "unknown")
+        const lane = escapeAttr(s.lane ?? "read")
+        const dtype = escapeAttr(s.dtype ?? "PCDATA")
+        const ts = escapeAttr(s.ts ?? "")
+        const source = escapeAttr(s.source ?? "")
+        const session = escapeAttr(s.session ?? "")
+        const idx = escapeAttr(s.index ?? "?")
         lines.push(
             `<span id="span-${idx}" role="${role}" lane="${lane}" ` +
                 `dtype="${dtype}" ts="${ts}" source="${source}" session="${session}">`,
@@ -607,7 +682,7 @@ function serializeSpans(spans, digest) {
         lines.push(text, "</span>", "")
         const anchor = anchorLine(text)
         if (anchor) {
-            summaries.push(`<paraphrase spanref="span-${idx}" text="${anchor}" ts="${ts}"/>`)
+            summaries.push(`<paraphrase spanref="span-${escapeAttr(idx)}" text="${escapeAttr(anchor)}" ts="${ts}"/>`)
         }
     }
     return { spans: lines.join("\n"), summaries: summaries.join("\n") }
@@ -620,21 +695,13 @@ function spansDigest(spans) {
         .slice(0, 16)
 }
 
-// P5 (TODO-65): Object.groupBy — group evicted spans by lane for the sink
-// payload summary, so the sink file carries a lane census without a second
-// pass. (ES2024; verified present in the supported Node runtime.)
-function laneCensus(spans) {
-    const byLane = Object.groupBy(spans, (s) => s.lane ?? "unknown")
-    return Object.entries(byLane).map(([lane, group]) => ({
-        lane,
-        count: group.length,
-        tokens: group.reduce((acc, s) => acc + (s.tokens ?? 0), 0),
-    }))
-}
-
 // P5 (TODO-65): Promise.withResolvers — a bounded sink wait. A hung sink
 // must fail open (window untouched) instead of blocking the exchange
 // forever; the timer is cleared on settle. (ES2024; verified present.)
+function spanDigest(text) {
+    return createHash("sha256").update(String(text ?? ""), "utf8").digest("hex").slice(0, 16)
+}
+
 const SINK_TIMEOUT_MS = 30000
 
 function withTimeout(promise, ms, label) {
@@ -666,27 +733,36 @@ function nowIso() {
 }
 
 /**
- * Apply the keeper plan. `sink(spans, digest)` must persist the evicted
- * spans and return a path (or a Promise of one); if it throws/rejects,
+ * Apply the keeper plan. `sink(spans, digest, evictMessages)` must persist
+ * the evicted spans plus a .submit.json sidecar for the worker drain,
+ * and return a path (or a Promise of one); if it throws/rejects,
  * the exception propagates and the caller leaves the window untouched
  * (fail-open in the hook).
  */
-async function applyKeeper(messages, cfg, sink) {
-    const plan = planKeepIndices(messages, cfg)
+async function applyKeeper(messages, cfg, sink, sunkDigests = new Map(), targetOverride = null) {
+    const plan = planKeepIndices(messages, cfg, sunkDigests, targetOverride)
     if (!plan.compress) {
         return { changed: false, messages, plan, sinkPath: null }
     }
-    const spans = evictedSpans(messages, plan.evict)
-    const digest = spansDigest(spans)
-    const sinkPath = await withTimeout(sink(spans, digest), SINK_TIMEOUT_MS, "sink")
     const kept = messages.filter((_, i) => plan.keep.has(i))
-    const evictedTokens = plan.total - plan.keepTokens
+    if (plan.newlySunk === 0) {
+        // Pure re-eviction (RRD-110): served window trimmed, nothing new
+        // sunk — no sink I/O, no sidecar, no repeat note.
+        return { changed: true, messages: kept, plan, sinkPath: null, sunkAdded: [] }
+    }
+    const reEvicted = new Set(plan.reEvicted)
+    const freshEvict = plan.evict.filter((i) => !reEvicted.has(i))
+    const spans = evictedSpans(messages, freshEvict)
+    const digest = spansDigest(spans)
+    const sinkPath = await withTimeout(sink(spans, digest, freshEvict.map((i) => messages[i])), SINK_TIMEOUT_MS, "sink")
+    const freshEvictTokens = freshEvict.reduce((a, i) => a + messageTokens(messages[i]), 0)
     const note =
-        `[RTR-RE:Symbiose] ${plan.evict.length} earlier spans ` +
-        `(~${evictedTokens} est. tokens) were evicted verbatim to ` +
+        `[RTR-RE:Symbiose] ${freshEvict.length} earlier spans ` +
+        `(~${freshEvictTokens} est. tokens) were evicted verbatim to ` +
         `.opencode/memory/rtrre-${digest}.dtd and are retrievable via ` +
         `memory_search. Kept tail: ~${plan.keepTokens} tokens ` +
-        `(target ${cfg.targetTokens}).`
+        `(target ${cfg.targetTokens}).` +
+        (plan.reEvicted.length ? ` ${plan.reEvicted.length} older spans already sunk.` : "")
     const host = kept.find((m) => roleOf(m) === "user") ?? kept[0]
     if (host) {
         const parts = Array.isArray(host.parts) ? host.parts : []
@@ -702,11 +778,12 @@ async function applyKeeper(messages, cfg, sink) {
             ]
         }
     }
-    return { changed: true, messages: kept, plan, sinkPath }
+    const sunkAdded = freshEvict.map((i) => spanDigest(messageText(messages[i])))
+    return { changed: true, messages: kept, plan, sinkPath, sunkAdded }
 }
 
 function writeSink(directory) {
-    return async (spans, digest) => {
+    return async (spans, digest, evictMessages = []) => {
         const dir = join(directory, ".opencode", "memory")
         await mkdir(dir, { recursive: true })
         const path = join(dir, `rtrre-${digest || "spans"}.dtd`)
@@ -717,11 +794,56 @@ function writeSink(directory) {
             const summaryPath = join(dir, `rtrre-summary-${digest || "spans"}.dtd`)
             await writeFile(summaryPath, serialized.summaries, "utf8")
         }
+        const sidecarPath = join(dir, `rtrre-${digest || "spans"}.submit.json`)
+        await writeFile(
+            sidecarPath,
+            JSON.stringify({ digest: digest || "spans", ts: nowIso(), messages: evictMessages ?? [] }),
+            "utf8",
+        )
         return path
     }
 }
 
 /** Read the Python worker's cumulative counter file; 0 when absent. */
+const KEEPER_SUNK_NAME = "rtr-re-sunk.json"
+
+async function loadSunkDigests(directory) {
+    // Absent -> empty. Corrupt -> heal-empty with loud error (RRD-113):
+    // relief must never depend on aux-file integrity.
+    const sunk = new Map()
+    let debt = 0
+    const path = join(directory, ".opencode", KEEPER_SUNK_NAME)
+    let raw = null
+    try {
+        raw = await readFile(path, "utf8")
+    } catch {
+        return { sunk, debt }
+    }
+    try {
+        const parsed = JSON.parse(raw)
+        const list = Array.isArray(parsed?.digests) ? parsed.digests : []
+        for (const d of list) if (typeof d === "string" && d) sunk.set(d, 1)
+        if (typeof parsed?.debt === "number" && parsed.debt >= 0) debt = Math.floor(parsed.debt)
+    } catch (error) {
+        console.error(`[rtr-re-keeper] sunk store corrupt, healing empty: ${error?.message ?? error}`)
+        try {
+            await saveSunkDigests(directory, new Map(), 0)
+        } catch (rewriteError) {
+            console.error(`[rtr-re-keeper] sunk store rewrite failed: ${rewriteError?.message ?? rewriteError}`)
+        }
+        return { sunk: new Map(), debt: 0 }
+    }
+    return { sunk, debt }
+}
+
+async function saveSunkDigests(directory, sunk, debt = 0) {
+    const path = join(directory, ".opencode", KEEPER_SUNK_NAME)
+    const tmp = `${path}.tmp`
+    await mkdir(join(directory, ".opencode"), { recursive: true })
+    await writeFile(tmp, JSON.stringify({ v: 1, digests: [...sunk.keys()], debt }), "utf8")
+    await rename(tmp, path)
+}
+
 async function readCumulativeFile(path) {
     let raw
     try {
@@ -1081,16 +1203,39 @@ const server = async (ctx, options = {}) => {
                     parts.push({ type: "text", text: note, synthetic: true })
                 }
             }
-            const result = await applyKeeper(messages, cfg, sink)
+            const sunkState = await loadSunkDigests(ctx.directory)
+            const sunkStore = sunkState.sunk
+            // Debt-divided quota (RRD-109/117): past over-target misses
+            // tighten this firing's keep budget; cfg itself never mutates.
+            const quota = Math.floor(sunkState.debt / DEBT_DIVISOR)
+            const effectiveTarget = Math.max(0, cfg.targetTokens - quota)
+            const result = await applyKeeper(messages, cfg, sink, sunkStore, effectiveTarget)
+            let debt = sunkState.debt
+            if (result.changed) {
+                const miss = result.plan.keepTokens - cfg.targetTokens
+                debt = Math.max(0, Math.round(sunkState.debt * DEBT_DECAY + miss))
+                if (result.sunkAdded && result.sunkAdded.length) {
+                    for (const d of result.sunkAdded) sunkStore.set(d, 1)
+                }
+                await saveSunkDigests(ctx.directory, sunkStore, debt)
+            }
             if (result.changed) {
                 messages.length = 0
                 messages.push(...result.messages)
                 await recordStatus({
-                    decision: "evicted",
+                    decision: result.plan.newlySunk > 0 ? "evicted" : "re-evicted",
                     total: result.plan.total,
                     keepTokens: result.plan.keepTokens,
                     evicted: result.plan.evict.length,
                     sinkPath: result.sinkPath,
+                    loopBound: result.plan.loopBound,
+                    overrunTokens: result.plan.overrunTokens,
+                    overrunBy: result.plan.overrunBy,
+                    reEvicted: result.plan.reEvicted.length,
+                    newlySunk: result.plan.newlySunk,
+                    effectiveTotal: result.plan.effectiveTotal,
+                    debt,
+                    effectiveTarget,
                 })
             } else {
                 await recordStatus({
@@ -1099,6 +1244,11 @@ const server = async (ctx, options = {}) => {
                     keepTokens: result.plan.keepTokens,
                     evicted: 0,
                     sinkPath: null,
+                    loopBound: result.plan.loopBound,
+                    overrunTokens: result.plan.overrunTokens,
+                    overrunBy: result.plan.overrunBy,
+                    debt: sunkState.debt,
+                    effectiveTarget: cfg.targetTokens,
                 })
             }
         } catch (error) {
@@ -1185,6 +1335,7 @@ server._test = {
     keeperStatusPath,
     loadKeeperFileConfig,
     readCumulativeFile,
+    messageText,
     messageTokens,
     normalizePresetName,
     planKeepIndices,
@@ -1195,5 +1346,6 @@ server._test = {
     resolveModalityName,
     resolvePresetName,
     serializeSpans,
+    spanDigest,
     spansDigest,
 }
