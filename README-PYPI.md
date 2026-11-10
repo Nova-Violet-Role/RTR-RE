@@ -31,7 +31,7 @@ By [Nova-Violet Role](https://github.com/Nova-Violet-Role) — non-profit.
 ## 1. Run it — the installer (terminal-native, no browser, no network)
 
 ```bash
-uvx rtr-re-install
+uvx --from rtr-role-type-retrieval rtr-re-install
 ```
 
 Session details (presets, themes, flags, easter egg): [§8a](#8a-the-installer-session-terminal-native).
@@ -106,7 +106,7 @@ rtr-cli index                               # delta index (hash-guarded, per-mod
 rtr-cli index --project /any/where/myproj   # force-register then index
 ```
 
-Indexed suffixes: `.md`, `.nt`, `.yaml`, `.yml` (`OPENCODE_MEMORY_FILE_SUFFIXES`
+Indexed suffixes: `.md`, `.nt`, `.yaml`, `.yml`, `.dtd`, `.mod`, `.ent` (`OPENCODE_MEMORY_FILE_SUFFIXES`
 overrides). Sources of truth stay in each project's `directives/`; the vector
 store (`~/.config/opencode/memory/.local_vector_db`) is a derived global cache,
 partitioned per project. Reopen the same project name → memory restored.
@@ -119,7 +119,7 @@ partitioned per project. Reopen the same project name → memory restored.
 | `OPENCODE_MEMORY_RTR_PROFILE` | `balanced` | `balanced` = 4+4 threads, `performance` = 8+8 |
 | `OPENCODE_MEMORY_EMBED_THREADS` | profile default | int for all models, or per-model `arctic:4,bge:8` |
 | `OPENCODE_MEMORY_PROJECTS_DIR` | `~/projects` | `os.pathsep`-separated discovery roots |
-| `OPENCODE_MEMORY_FILE_SUFFIXES` | `.md,.nt,.yaml,.yml` | indexed file types (DtD polyglot) |
+| `OPENCODE_MEMORY_FILE_SUFFIXES` | `.md,.nt,.yaml,.yml,.dtd,.mod,.ent` | indexed file types (DtD polyglot) |
 | `OPENCODE_MEMORY_RRF_K` | `60` | RRF dampening; fuses rankings, never raw scores |
 | `OPENCODE_MEMORY_RRF_VOTE_TOP` | `10` | per-run rank vote truncation (0 disables) |
 | `OPENCODE_MEMORY_STRUCT_LANE` | off | `rg`/`ccc`/`auto` = structural grep lane for code-shaped terms |
@@ -132,28 +132,51 @@ partitioned per project. Reopen the same project name → memory restored.
 | `OPENCODE_MEMORY_RTRRE_MAX_KEEP` | `200` | max verbatim messages kept |
 | `RTR_RE_KEEPER_CONFIG` | `<project>/.opencode/rtr-re-keeper.json` | live Keeper bounds file (watched, no restart) |
 | `RTR_RE_KEEPER_STATUS` | `<project>/.opencode/rtr-re-keeper-status.json` | Keeper status file read by `memory_rtr_status` |
-| `RTR_RE_KEEPER_ENABLED` | `1` | `0` disables pruning (identity transform) |
+| `RTR_RE_KEEPER_ENABLED` | unset (enabled) | `0`/`false`/`no`/`off` disables pruning (identity transform); other values refuse |
 | `OPENCODE_MEMORY_PRF` | `0` | `1` = pseudo-relevance-feedback second pass |
 | `OPENCODE_MEMORY_DB_DIR` | `<memory>/.local_vector_db` | override vector DB home (bench isolation) |
 | `FASTEMBED_CACHE_PATH` | system temp | **override this** — model home, persistent |
 | `PYTHONIOENCODING` | — | set `utf-8` on Windows for the TUI panels |
 
+**Advanced knobs** (defaults read from code; most operators never touch these):
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `OPENCODE_MEMORY_DIR` | `~/.config/opencode/memory` | memory root; registry, extra roots, lexikon live here |
+| `OPENCODE_MEMORY_REGISTRY_FILE` | `<memory>/wiki_registry.json` | concept registry path |
+| `OPENCODE_MEMORY_EXTRA_ROOTS_FILE` | `<memory>/extra_roots.json` | extra discovery roots file |
+| `OPENCODE_MEMORY_LEXIKON_GLOBAL_FILE` | `<memory>/lexikon_global.json` | hand-curated `_global` lexikon path |
+| `OPENCODE_MEMORY_DTD_CHUNK_MODE` | `inventory` | DTD chunking strategy |
+| `OPENCODE_MEMORY_DTD_CHUNK_TOKENS` | `512` | DTD chunk token bound |
+| `OPENCODE_MEMORY_DTD_MAX_CHUNKS` | `2000` | DTD chunk hard ceiling |
+| `OPENCODE_MEMORY_DTD_PER_DECLARATION_MAX` | `300` | per-declaration cap |
+| `OPENCODE_MEMORY_DTD_LEXIKON_SEED` | `1` | `0` disables DTD vocabulary lexikon seeding |
+| `OPENCODE_MEMORY_HNSW_NUM_THREADS` | unset (Chroma default) | HNSW index build threads |
+| `OPENCODE_MEMORY_HNSW_SEARCH_EF` | unset (Chroma default) | HNSW search ef |
+| `OPENCODE_MEMORY_QUERY_PROMPT_OVERRIDE` | empty (off) | override the query prompt template |
+| `OPENCODE_MEMORY_RRF_CONSENSUS` | `0` | `1` down-weights confidently-wrong runs in fusion |
+| `OPENCODE_MEMORY_WARM_MODELS` | unset (lazy) | `1`/`true`/`yes` = eager dual-model warm at server start |
+| `OPENCODE_MEMORY_RTRRE_MAX_SUMMARY` | `20000` | max summary chars |
+| `OPENCODE_MEMORY_RTRRE_MAX_RESTORE` | `4000` | max restore chars |
+| `OPENCODE_MEMORY_RTRRE_CUMULATIVE` | `0` | cumulative message seed for cross-restart accounting |
+| `OPENCODE_MEMORY_RTRRE_REGISTRY_FILE` | first existing (repo, bundled asset) | preset registry override |
+
 ## 5. Tools exposed (MCP) and CLI map
 
-`memory_session_start` · `memory_session_commit` · `memory_reflect_session` ·
+`memory_session_start` · `memory_session_commit` · `memory_reference_add` · `memory_reflect_session` ·
 `memory_materialize_concepts` · `memory_update_graph` · `memory_search` ·
 `memory_explain_search` · `memory_discover` · `memory_list` · `memory_delete` ·
 `memory_inbox_write` · `memory_inbox_read` · `memory_write` · `memory_organize` ·
 `memory_init_project` · `memory_consolidate` · `memory_stats` · `memory_index` ·
 `memory_lexikon_add` · `memory_lexikon_show` · `memory_lexikon_build` ·
 `memory_janitor` · `memory_context_plan` · `memory_symbiose_submit` ·
-`memory_symbiose_poll` · `memory_rtr_status` (26 tools; the last four are the
+`memory_symbiose_poll` · `memory_rtr_status` (27 tools; the last four are the
 live loop surface — background tickets that never pause the turn, plus the
 truthful status/health viewport reporting Keeper, Compressor and Manager).
 Supervision beyond v2: gold v3 (785 judgments, additive only, labels frozen)
 reruns the same verdict; the Lean battery builds against full Mathlib
 (pinned v4.33.0, 8713 jobs green).
-CLI mirrors all of them (`rtr-cli <verb> --help` each).
+CLI mirrors the core verbs (`rtr-cli <verb> --help` each): consolidate, explain, index, init, janitor, lexikon-add, lexikon-build, lexikon-show, materialize, reflect, search, session-commit, session-start, stats, update-graph, write.
 
 Lexikon: per-project glossary auto-derived from registry + sessions, plus a
 hand-curated `_global` user lexikon (`rtr-cli lexikon-add _global "term"
@@ -260,24 +283,22 @@ network. Same experience on every platform, three personalities:
 
 ```bash
 # pip / uvx — The Instrument (cool cyan, oscilloscope progress)
-uvx rtr-re-install --theme instrument
+uvx --from rtr-role-type-retrieval rtr-re-install --theme instrument
 
 # npm — The Network (magenta/violet, node-graph progress)
-npx rtr-re-installer --theme network
+npx --package rtr-re-opencode-plugin rtr-re-installer --theme network
 
 # GitHub — The Forge (charcoal/emerald, raw build-log stream)
 python installer/launchers/python_launcher.py --theme forge
 ```
 
-Flags: `--project DIR` (install target, default cwd), `--wheel PATH`
-(pip/uvx; installs the wheel), `--tarball PATH` (npm; installs the
-tarball). The session offers three presets — Quick (MUGEN one-click),
+Flags (Python `installer/launchers/python_launcher.py`): `--theme instrument|network|forge` (default instrument), `--project DIR` (default cwd, or `RTRRE_INSTALL_PROJECT`), `--wheel PATH` (installs the wheel, or `RTRRE_INSTALL_WHEEL`). Flags (Node `installer/launchers/node_launcher.mjs`): `--theme` (default network, or `RTRRE_INSTALL_THEME`), `--project DIR` (or `RTRRE_INSTALL_PROJECT`), `--tarball PATH` (or `RTRRE_INSTALL_TARBALL`). `--wheel` needs pip on the running interpreter (uv-managed Pythons ship without it — install the wheel with `uv pip` separately in that case). `RTRRE_INSTALL_NO_AUDIO=1` silences the remixes on both launchers (headless installs). The session offers three presets — Quick (MUGEN one-click),
 Custom (component selection), Hardcore (full cockpit with
 Recommended-from-Saimonokuma badges) — plus adaptive arcade remixes of
 *Obsession* and the MiDi-MoE-Symbiogen-000 easter egg. The scene is a
 DTD family member (`installer/shell/dtd/rtrre-scene.mod`); the shell
 markup is validated against the declared vocabulary by
-`installer/shell/tools/conformance.py`.
+`installer/shell/tools/conformance.py`. The same shell doubles as a browser demo: open `installer/shell/index.html` over `file://` (instrument theme; plan and execute fall back to demo responses — no launcher serves the bridge API, so installation itself always runs in the terminal launchers).
 
 ## 9. Licence
 

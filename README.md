@@ -6,8 +6,24 @@ CPU-first. Local-first. Zero API cost.**
 
 [![Ko-fi](https://img.shields.io/badge/Support-Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/saimonokuma) [![Open Source](https://img.shields.io/badge/Open-Source-9cf?style=for-the-badge)](https://github.com/Nova-Violet-Role) [![Copyleft](https://img.shields.io/badge/Licence-AGPL--3.0--or--later_OR_EUPL--1.2-634bA2?style=for-the-badge)](#-licence--philosophy)
 
+```text
+         ★ ★ ★  RTR-RE : Symbiose  ★ ★ ★
+██████  ███████ ██████          ██████  ███████
+█     █    █    █     █         █     █ █
+ █     █    █    █     █         █     █ █
+ ██████     █    ██████    ███   ██████  █████
+  █ █        █    █ █             █ █     █
+  █   █      █    █   █           █   █   ███████
+     ╷              ╷              ╷        ╷
+════════════════════════════════════════════════►
+```
+
+*NOVA VIOLET Role is a non-profit effort releasing one framework at a time — RTR-RE is one of its frameworks: [NOVA VIOLET Role](https://github.com/Nova-Violet-Role).*
+
 > *Retrieval is not search. It is routing by role, parsing by type — and where the
 > models disagree is where the ranking lives.*
+
+The engine carries longer names with it: **MiDi-MoE-Symbiogen-000** alongside **Symbiogen-003 Automata** and **Symbiogen-004 Errata** — the **IRC bridge**, **weight-transfer units**, **MIDI frequency transfer**, **personality transposition**. The names are public; their meanings open only inside the installer's Easter egg. ([Term registry](GLOSSARY.md).)
 
 ---
 
@@ -42,8 +58,8 @@ cinematic terminal installer — no browser, no network, just your platform:
 
 | Platform | Launch | Personality |
 |---|---|---|
-| pip / uvx | `uvx rtr-re-install` | **The Instrument** — cool cyan, oscilloscope progress |
-| npm | `npx rtr-re-installer` | **The Network** — magenta/violet, node-graph progress |
+| pip / uvx | `uvx --from rtr-role-type-retrieval rtr-re-install` | **The Instrument** — cool cyan, oscilloscope progress |
+| npm | `npx --package rtr-re-opencode-plugin rtr-re-installer` | **The Network** — magenta/violet, node-graph progress |
 | GitHub | `git clone https://github.com/Nova-Violet-Role/RTR-RE.git && python installer/launchers/python_launcher.py --theme forge` | **The Forge** — charcoal/emerald, raw build-log stream |
 
 Three presets (Quick MUGEN one-click, Custom component selection, Hardcore
@@ -51,13 +67,13 @@ full cockpit with **Recommended from Saimonokuma** badges), arcade remixes
 of *Obsession* (See-Saw / Yuki Kajiura) that adapt tempo to your preset, and
 the **MiDi-MoE-Symbiogen-000** easter egg at the end. The scene itself is a
 DTD family member — declared in `installer/shell/dtd/rtrre-scene.mod`,
-rendered by our own engine.
+rendered by our own engine. A browser preview of the same shell runs as a demo: open `installer/shell/index.html` over `file://` (installation itself stays in the terminal).
 
 Then ask your agent: *"what did we decide about the installer last week?"* —
 RTR-RE answers from its own memory, not from a fresh search. That's the
 whole point: the engine keeps what left the window, typed and retrievable.
 
-Manual setup, knobs, and the CLI path: [Quick start](#-quick-start-opencode)
+Manual setup, knobs, and the CLI path: [Quick start](#-quick-start-opencode-manual)
 and the [technical manual](README-PYPI.md).
 
 ---
@@ -88,13 +104,14 @@ contribution we accept.
 ## 🏆 Origin — the hackathon that looked away (Creator note)
 
 This project was originally intended to be released at the
-**CerebralValley.ai hackathon**, for the **$1M prize**. Unfortunately, they
-did not recognize the value of the project. So now **RTR-RE:Symbiose gets
-released in the wild** instead — as part of the **Nova-Violet Role** GitHub
-organization and on **PyPI**, with the complete evaluations included, even
-more enhanced than the precedent RTR-Role-Type-Retrieval release. No jury,
-no gatekeeper: the bench is the announcement, and every AI developer can
-run it, break it, and tell us where.
+**CerebralValley.ai hackathon**, for the **$1M prize**. The team withdrew
+over a multi-reasoning bug instead — fixed this release. And frankly the
+organizers never recognized what this was worth: they looked away. So now
+**RTR-RE:Symbiose gets released in the wild** instead — as part of the
+**Nova-Violet Role** GitHub organization, on **PyPI** and **npm**, with
+the complete evaluations included, even more enhanced than the precedent
+RTR-Role-Type-Retrieval release. No jury, no gatekeeper: the bench is the
+announcement, and every AI developer can run it, break it, and tell us where.
 
 ## 🌍 Any CLI. Any Agent. Ask in Issues.
 
@@ -195,7 +212,7 @@ is measured, not asserted. Every number re-runs on your machine.
 ![RTR vs RAG — recall@3 by taxon](eval/versus.svg)
 
 ```
-uvx --from <wheel> python -m execution.rtr_eval   # release gate (no regressal)
+uvx --from rtr-role-type-retrieval python -m execution.rtr_eval   # release gate (no regression)
 uv run python eval/bench_versus.py                 # full versus bench -> eval/results/
 uv run python eval/bench_graded.py --queries eval/graded/queries-v2.json --qrels eval/graded/qrels-v2.json
 ```
@@ -360,7 +377,7 @@ Morganna, Helba, the Epitaph tablets — each mapped to a file, a test, a bench:
 | # | RE:Hack motif | what it turned on (all original pastiche, no line lifted) |
 |---|---|---|
 | 7 | *"the **Signs** before the wave"* | the doctor invariants in `eval/plates_graded.py`: forged combined refused by name before any plate renders — early warnings, not post-mortems |
-| 8 | *"**Lumina**Fragment: memory as playable episodes"* | the Tessersect collages above: 104 captioned frames, four POVs, every number playable back to its artifact — media as evidence, not trailer |
+| 8 | *"**Lumina**Fragment: memory as playable episodes"* | the Tessersect collages (reproduce via media/TECHSPEC.md): 104 captioned frames, four POVs, every number playable back to its artifact — media as evidence, not trailer |
 | 9 | *"**Morganna's** infinite loop vs **Aura's** awakening"* | unbounded-context dream vs bounded-cycle engine: trigger/target/caps make infinity a circulation, not a crash — the infinite Context/Memory/Loop unison |
 | 10 | *"the **Epitaph tablets** as append-only record"* | the standalone git history + geometry artifacts: the release tree is a tablet set — drift is a diff, never a rumor |
 | 11 | *"**Helba's** backdoor that obeys the rules"* | the native Keeper: a first-party plugin that prunes only after sinking, fails open, and proves itself with 9/9 node tests — the honest backdoor |
