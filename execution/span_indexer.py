@@ -61,6 +61,14 @@ class SpanIndexer(threading.Thread):
             else autoindex_interval()
         )
         self._stop = threading.Event()
+        # mtime watermark: spans are keeper-written with fresh mtimes, so
+        # anything older than the newest file already seen cannot be new.
+        # This prefilter keeps a broken registry from re-embedding the
+        # whole memory dir every 30s; the registry stays authoritative
+        # for what actually gets hashed. Every 20th tick scans fully so
+        # a preserved-mtime copy can never hide forever.
+        self._watermark = 0.0
+        self._ticks = 0
 
     def _candidates(self) -> List[str]:
         found: List[str] = []
@@ -78,6 +86,8 @@ class SpanIndexer(threading.Thread):
                             dirs.append(child / ".opencode" / "memory")
             except OSError:
                 continue
+        full = self._ticks % 20 == 0
+        tick_max = self._watermark
         for memdir in dirs:
             try:
                 if not memdir.is_dir():
@@ -85,10 +95,19 @@ class SpanIndexer(threading.Thread):
                 for path in sorted(memdir.glob("rtrre-*.dtd")):
                     key = str(path)
                     if key not in seen and path.is_file():
+                        try:
+                            mtime = path.stat().st_mtime
+                        except OSError:
+                            mtime = 0.0
+                        tick_max = max(tick_max, mtime)
+                        if not full and mtime > 0 and mtime <= self._watermark:
+                            continue
                         seen.add(key)
                         found.append(key)
             except OSError:
                 continue
+        self._watermark = tick_max
+        self._ticks += 1
         return found
 
     def tick(self) -> Dict[str, Any]:

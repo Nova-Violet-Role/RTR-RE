@@ -164,6 +164,15 @@ class TestMcpWrappers(unittest.TestCase):
         refused = mcp_server.memory_keeper_evict_now("wrapproj", "bogus", 5)
         self.assertIn("Evict Refused", refused)
 
+    def test_index_repair_relinks_without_reembed(self):
+        f = self.test_projects / "wrapproj" / "directives" / "rep.md"
+        f.write_text("# Rep\n\nrelink me please", encoding="utf-8")
+        self.engine.index_all()
+        self.engine.save_registry({})
+        panel = mcp_server.memory_index(repair=True)
+        self.assertIn("Registry Repaired", panel)
+        self.assertIn(str(f), self.engine.load_registry())
+
 
 if __name__ == "__main__":
     unittest.main()

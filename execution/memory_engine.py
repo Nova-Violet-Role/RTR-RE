@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import threading
 import time
 import urllib.request
 import weakref
@@ -1209,6 +1210,17 @@ def _in_scope(path_str: str, scope) -> bool:
     return any(norm == root or norm.startswith(root + os.sep) for root in scope)
 
 
+# One index run at a time per process: concurrent index_all/index_files
+# runs duplicate embedding work and race Chroma segments. Ticks and
+# manual runs serialize here; searches never block on it.
+_INDEX_LOCK = threading.Lock()
+
+# Wave size for chunk+upsert streaming: jobs materialize per wave, never
+# for the whole run, so a 5k-file scope cannot balloon RAM before the
+# first upsert lands.
+INDEX_WAVE_SIZE = 200
+
+
 class MemoryEngine:
     # Process-wide ChromaDB clients, one per DB path. Multiple live
     # PersistentClient instances on the same path go stale against each
@@ -1956,10 +1968,13 @@ class MemoryEngine:
 
         # Execute indexing for new/changed files, once per embedding model.
         # Each model owns its collection since fixed vector spaces never mix.
+        # Waved: chunk+upsert per wave so RAM stays bounded on big scopes.
         if to_index:
-            jobs = self._chunk_jobs(to_index, new_registry, stats)
-
-            self._upsert_jobs(jobs, to_index, new_registry, stats)
+            with _INDEX_LOCK:
+                for start in range(0, len(to_index), INDEX_WAVE_SIZE):
+                    wave = to_index[start : start + INDEX_WAVE_SIZE]
+                    jobs = self._chunk_jobs(wave, new_registry, stats)
+                    self._upsert_jobs(jobs, wave, new_registry, stats)
 
         # 3. Detect deleted files and remove them from every RTR collection.
         # Scoped runs purge (and forget) only scoped deletions: unscoped
@@ -2034,10 +2049,56 @@ class MemoryEngine:
         stats["scanned"] = len(infos)
         to_index = self._hash_infos(infos, registry, new_registry, stats)
         if to_index:
-            jobs = self._chunk_jobs(to_index, new_registry, stats)
-            self._upsert_jobs(jobs, to_index, new_registry, stats)
+            with _INDEX_LOCK:
+                for start in range(0, len(to_index), INDEX_WAVE_SIZE):
+                    wave = to_index[start : start + INDEX_WAVE_SIZE]
+                    jobs = self._chunk_jobs(wave, new_registry, stats)
+                    self._upsert_jobs(jobs, wave, new_registry, stats)
         self.save_registry(new_registry)
         return stats
+
+    def repair_registry(self) -> Dict[str, Any]:
+        """Rebuild the hash registry from Chroma contents plus disk truth.
+
+        For every chunk source known to any collection: if the file still
+        exists, rehash and register it; dead sources are left for janitor
+        (which deletes their chunks). Repairs crash-skewed registries
+        (2 files over 61k chunks) without re-embedding a single byte.
+        """
+        refused = self._require_writer("repair_registry")
+        if refused is not None:
+            return refused
+        registry = self.load_registry()
+        sources = set()
+        for col in self.rtr_collections().values():
+            try:
+                total = col.count()
+            except Exception:
+                continue
+            if total == 0:
+                continue
+            try:
+                got = col.get(limit=total + 1000, include=["metadatas"])
+            except Exception:
+                continue
+            for meta in got["metadatas"] or []:
+                src = (meta or {}).get("source", "")
+                if src:
+                    sources.add(src)
+        fixed = 0
+        for src in sorted(sources):
+            if src in registry:
+                continue
+            p = Path(src)
+            if not p.exists():
+                continue
+            try:
+                registry[src] = self.calculate_sha256(p)
+                fixed += 1
+            except Exception:
+                continue
+        self.save_registry(registry)
+        return {"status": "success", "repaired": fixed, "total": len(registry)}
 
     def _purge_deleted_paths(self, deleted_paths: set) -> None:
         """Remove deleted files from every RTR collection (configured +

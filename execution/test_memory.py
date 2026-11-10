@@ -356,6 +356,18 @@ class TestMemoryRAG(unittest.TestCase):
         self.assertIn(str(a), registry)
         self.assertNotIn(str(b), registry)
 
+    def test_repair_registry_relinks_orphan_chunks(self):
+        f = self.test_projects / "raceproj" / "directives" / "orphan.md"
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("# Orphan\n\nrelink me please", encoding="utf-8")
+        self.engine.index_all()
+        self.assertIn(str(f), self.engine.load_registry())
+        self.engine.save_registry({})
+        res = self.engine.repair_registry()
+        self.assertEqual(res["status"], "success")
+        self.assertGreaterEqual(res["repaired"], 1)
+        self.assertIn(str(f), self.engine.load_registry())
+
     def test_search_expands_wikilinked_concepts(self):
         # A hit carrying [[wikilinks]] expands to chunks mentioning the
         # linked concept. The expansion query must use the document

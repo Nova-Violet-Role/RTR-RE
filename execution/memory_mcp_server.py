@@ -487,8 +487,23 @@ def memory_stats() -> str:
 
 
 @mcp.tool()
-def memory_index(force: bool = False, project: str = "") -> str:
-    """Force incremental re-indexing (project ref also registers out-of-roots dirs)."""
+def memory_index(force: bool = False, project: str = "", repair: bool = False) -> str:
+    """Force incremental re-indexing (project ref also registers out-of-roots dirs). repair=True rebuilds the hash registry from Chroma contents without re-embedding."""
+    if repair:
+        try:
+            res = engine.repair_registry()
+        except Exception as e:
+            return TUIRenderer.render_panel(
+                "Repair Failure", [f"Error: {_error_text(e)}"], status="error"
+            )
+        return TUIRenderer.render_panel(
+            "Registry Repaired",
+            [
+                f"Relinked: {res.get('repaired', 0)} files",
+                f"Total:    {res.get('total', 0)} files",
+            ],
+            status="index",
+        )
     start = time.time()
     try:
         s = engine.index_all(force=force, projects=[project] if project else [])

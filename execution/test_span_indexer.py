@@ -49,6 +49,18 @@ class TestSpanIndexer(unittest.TestCase):
         self.engine.close()
         shutil.rmtree(self.test_dir, ignore_errors=True)
 
+    def test_second_tick_skips_unchanged_spans(self):
+        (self.memdir / "rtrre-wm.dtd").write_text(
+            '<span id="span-0">\nhello\n</span>\n', encoding="utf-8"
+        )
+        first = self.indexer.tick()
+        self.assertGreaterEqual(first["new"], 1)
+        # Wipe the registry to simulate crash skew: without the watermark
+        # the second tick would re-embed everything.
+        self.engine.save_registry({})
+        second = self.indexer.tick()
+        self.assertEqual(second["scanned"], 0)
+
     def _span(self, name, text):
         p = self.memdir / name
         p.write_text(
@@ -71,7 +83,9 @@ class TestSpanIndexer(unittest.TestCase):
         self.assertEqual(first["new"], 1)
         second = self.indexer.tick()
         self.assertEqual(second["new"], 0)
-        self.assertEqual(second["unchanged"], 1)
+        # Watermark: unchanged spans are not even re-hashed (scanned 0),
+        # so a broken registry cannot re-embed the world every 30s.
+        self.assertEqual(second["scanned"], 0)
 
     def test_tick_skips_under_commit_pressure(self):
         self._span("rtrre-aaa.dtd", "UNIQUE-SPAN-MARKER-THREE keeper memory infinite")

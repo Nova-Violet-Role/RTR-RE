@@ -133,6 +133,15 @@ class TestCliWrappers(unittest.TestCase):
         )
         self.assertEqual(cfg["evictMessagesNow"], 500)
 
+    def test_index_repair_relinks_without_reembed(self):
+        f = self.test_projects / "cliproj" / "directives" / "rep.md"
+        f.write_text("# Rep\n\nrelink me please", encoding="utf-8")
+        self.engine.index_all()
+        self.engine.save_registry({})
+        out = self._run(memory_cli.format_index, repair=True)
+        self.assertIn("Registry Repaired", out)
+        self.assertIn(str(f), self.engine.load_registry())
+
 
 if __name__ == "__main__":
     unittest.main()

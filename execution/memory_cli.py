@@ -82,9 +82,32 @@ def format_write(project: str, filename: str, content: str):
     print(TUIRenderer.render_panel("Direct Wiki Write", lines, status="write"))
 
 
-def format_index(force: bool = False, projects=None):
+def format_index(force: bool = False, projects=None, repair: bool = False):
     start_time = time.time()
     engine = MemoryEngine()
+    if repair:
+        try:
+            res = engine.repair_registry()
+        except Exception as e:
+            print(
+                TUIRenderer.render_panel(
+                    "Repair Failure",
+                    [f"Error during repair: {_error_text(e)}"],
+                    status="error",
+                )
+            )
+            sys.exit(1)
+        print(
+            TUIRenderer.render_panel(
+                "Registry Repaired",
+                [
+                    f"Relinked: {res.get('repaired', 0)} files",
+                    f"Total:    {res.get('total', 0)} files",
+                ],
+                status="index",
+            )
+        )
+        return
     try:
         stats = engine.index_all(force=force, projects=projects or [])
     except Exception as e:
@@ -798,6 +821,11 @@ def main():
         default=[],
         help="Extra project ref to resolve+register first (repeatable)",
     )
+    index_parser.add_argument(
+        "--repair",
+        action="store_true",
+        help="Rebuild the hash registry from Chroma contents (no re-embed)",
+    )
 
     # Stats subparser
     subparsers.add_parser("stats", help="Show index and database statistics")
@@ -962,7 +990,7 @@ def main():
     elif args.command == "write":
         format_write(args.project, args.filename, args.content)
     elif args.command == "index":
-        format_index(force=args.force, projects=args.project)
+        format_index(force=args.force, projects=args.project, repair=args.repair)
     elif args.command == "stats":
         format_stats()
     elif args.command == "init":
