@@ -8,6 +8,7 @@ import Symbiose.Lane
 import Symbiose.Control
 import Symbiose.Live
 import Symbiose.Install
+import Symbiose.Cost
 
 namespace Symbiose
 
@@ -19,6 +20,7 @@ example : lookupGrade [("judged", 0)] "missing" = none := rfl
 example : laneOf .code = .structural := rfl
 example : countLane .exact [.plain, .opaque, .code, .opaque] = 2 := rfl
 example : resolveBound (some 1) (some 2) (some 3) 4 = 1 := rfl
+example : costWith 390000 1000 < costWithout 3430000 := by decide
 example : verbClass .unknown = .refuse := rfl
 example : presenceOf none = .absent := rfl
 
@@ -59,6 +61,9 @@ theorem m31_native : Nat.Prime (2 ^ 31 - 1) := by native_decide
 #print axioms acquire_succeeds_only_from_free
 #print axioms scoped_subset_of_discovered
 #print axioms strict_le_loose
+#print axioms rtr_costs_less
+#print axioms savings_positive
+#print axioms live_instance_fits
 #print axioms m31_native
 
 end Symbiose
