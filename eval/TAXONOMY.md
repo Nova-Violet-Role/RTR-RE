@@ -107,7 +107,10 @@ RAG arm); dense-only RAG is not close anywhere. The graded companion
 (`bench_graded.py`, frozen gold-v2, 773 judgments) is the stricter
 instrument and same-size dense leads it combined — published in full in
 `results/graded.md` and scoped in
-`artifacts/geometry/2026-10-27-graded-fortification.md`. On
+`artifacts/geometry/2026-10-27-graded-fortification.md`. Gold v1 (155
+judgments, 370 unjudged returned) vs v2 (773 judgments, 4 unjudged):
+rtr-full nDCG@10 0.7960 → 0.7944, drift 0.0016 (noise) — the residual
+is pool coverage, and v2 strictly dominates as the claim basis. On
 dtd-commands Arctic collapses (binary R@1 0.160 in the TODO-6 run);
 vote truncation + standout lane weights mitigate fusion drag but do not
 make Arctic a solo model there. T5 stays small-n; cross-encoder rerank
