@@ -20,10 +20,10 @@ explicit order; this document is preparation, not publication.
 
 | File | Bytes | sha256 |
 |---|---|---|
-| rtr_role_type_retrieval-1.2.0-py3-none-any.whl | 16968127 | 1e110e4de9c4443de68c987efd92167afa5de54b794869ce791c3936b6fe37ac |
-| rtr_role_type_retrieval-1.2.0.tar.gz | 19284856 | fc2d28293504c9063a646e1138136435af21e57484b544257def71bb5b29333d |
+| rtr_role_type_retrieval-1.2.0-py3-none-any.whl | 16968617 | 9b2421e9f6b912b401a8ccdbed45f154f3d60ea1937278b97faa3648dc19e659 |
+| rtr_role_type_retrieval-1.2.0.tar.gz | 19348651 | d19ca2f6fcf46045e0c80f1c0445369e361acb6a4018a2523a53e7475bbadef5 |
 | rtr-re-opencode-plugin-1.2.0.tgz | 16841934 | 2a110cf8dbd4412f57f2ae449a2b6adb826d00abe9dfe0cf6018241928e93a66 |
-| saimonokuma-rtr-re-mjs-1.2.0.tgz | 12663 | c952263dc8099ab20ca5148956a53d869f0087b4cf9d557db28c5afd1fae14f1 |
+| saimonokuma-rtr-re-mjs-1.2.0.tgz | 12775 | 89ecc5797fa2ed5e0d634f8dee83c1120d3b72a5e77948ade547dee4de4a84aa |
 
 Stale 1.1.0 local blobs were recorded (plugin tgz cf067874…,
 wheel 442572f7…, sdist 76a36042…, mjs e0b07174…) and removed; the
@@ -41,13 +41,16 @@ wheel installers actually download is unchanged in size class
 
 | Battery | Result |
 |---|---|
-| pytest | 508 passed, 1 skipped, 33 subtests, exit 0 |
-| node keeper / bulletproof / launcher / bin | 55 + 9 + 16 + 3, exit 0 |
+| pytest | 519 passed, 1 skipped, 33 subtests, exit 0 |
+| node keeper / bulletproof / launcher / bin | 59 / 9 / 16 / 3, exit 0 |
 | mjs suite | 38, exit 0 |
 | bun TUI | 4, exit 0 |
 | keeper behavior gate | PASS 8/8 |
 | Lean battery | exit 0, 0 sorry, axioms standard-or-recorded |
 | Engine Beneath | 27/27 VERDICT True (rmtree race fixed, retry-cleanup) |
+| versus --intense | 898 queries, 0 errors, rtr-full 0.7227/0.8497/0.7769 |
+| graded v2 | identical re-run (0.8094/0.7944); v3 verdict holds |
+| transfer / calibrate / probes / preset-perf | re-ran fresh |
 | regression gate | PASS (5 corpora, 35 systems, 11 taxons) |
 | parity gate | PASS incl. license:clean |
 | verify_release | PASS 40 checks, 0 failures |
