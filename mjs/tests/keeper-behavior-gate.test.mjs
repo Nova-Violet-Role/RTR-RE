@@ -34,6 +34,15 @@ test("gate passes on the frozen manifest", () => {
     assert.match(out, /PASS/)
 })
 
+test("frozen fail-open scenario carries a real outcome, not an empty object", () => {
+    // The async sink scenario used to freeze as {} (a Promise surfaced
+    // through a sync runAll) and the gate compared {} === {} forever.
+    const data = JSON.parse(readFileSync(FROZEN, "utf8"))
+    const s = data.scenarios["sink-first-fail-open"]
+    assert.equal(s.propagated, true)
+    assert.match(s.message ?? "", /sink boom/)
+})
+
 test("gate goes red on a drifted scenario value", () => {
     const dir = mkdtempSync(join(tmpdir(), "keeper-gate-"))
     try {

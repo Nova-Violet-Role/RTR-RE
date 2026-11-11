@@ -307,7 +307,10 @@
       "total": 300,
       "keepTokens": 300
     },
-    "sink-first-fail-open": {},
+    "sink-first-fail-open": {
+      "propagated": true,
+      "message": "sink boom"
+    },
     "ndata-masked-spans": {
       "dtype": "NDATA",
       "text": "UNIQUE [NDATA] [NDATA]"

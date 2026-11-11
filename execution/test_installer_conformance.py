@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Nova-Violet Role ORG
 # SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
+import hashlib
 import json
 import re
 import sys
@@ -117,6 +118,30 @@ class ThreadModesTest(unittest.TestCase):
         selected = re.search(r'<option[^>]*value="(\d+)"[^>]*selected', match.group(1))
         self.assertIsNotNone(selected)
         self.assertEqual(selected.group(1), "8")
+
+
+class PluginCopySyncTest(unittest.TestCase):
+    def test_plugin_installer_copy_matches_root(self):
+        # The npm prepack copies installer/ -> opencode-plugin/installer/.
+        # A stale copy ships stale bytes; the copy must equal the root
+        # (measured live: palette-guide.txt drifted 3798 vs 3663 bytes).
+        root = ROOT / "installer"
+        copy = ROOT / "opencode-plugin" / "installer"
+        self.assertTrue(copy.is_dir(), "prepack copy missing; run npm prepack")
+
+        def files(base):
+            out = {}
+            for p in base.rglob("*"):
+                if p.is_file() and "__pycache__" not in p.parts:
+                    out[p.relative_to(base).as_posix()] = hashlib.sha256(
+                        p.read_bytes()
+                    ).hexdigest()
+            return out
+
+        a, b = files(root), files(copy)
+        self.assertEqual(set(a), set(b))
+        drifted = sorted(k for k in a if a[k] != b[k])
+        self.assertEqual(drifted, [])
 
 
 if __name__ == "__main__":

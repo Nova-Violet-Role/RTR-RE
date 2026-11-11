@@ -11,7 +11,6 @@ sys.path.insert(0, str(Path(__file__).parent.absolute()))
 
 from context_budget import (
     bounded_restore,
-    enforce_summary_budget,
     estimate_tokens,
     mask_ndata,
     plan_compression,
@@ -143,24 +142,6 @@ class TestLanesAndTypes(unittest.TestCase):
 
 
 class TestSummaryAndRestore(unittest.TestCase):
-    def test_summary_exact_cap_unchanged(self):
-        s = "y" * 20000
-        out, shed = enforce_summary_budget(s)
-        self.assertEqual(out, s)
-        self.assertEqual(shed, 0)
-
-    def test_summary_one_over_sheds(self):
-        s = "head\n" + "y" * 20000
-        out, shed = enforce_summary_budget(s)
-        self.assertLessEqual(len(out), 20000)
-        self.assertGreater(shed, 0)
-
-    def test_summary_keeps_newest(self):
-        s = "\n".join(f"line-{i}" for i in range(10000))
-        out, _ = enforce_summary_budget(s)
-        self.assertIn("line-9999", out)
-        self.assertNotIn("line-0\n", out)
-
     def test_restore_edges(self):
         self.assertEqual(bounded_restore("x" * 4000), "x" * 4000)
         self.assertEqual(len(bounded_restore("x" * 4001)), 4000)

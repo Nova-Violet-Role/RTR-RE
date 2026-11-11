@@ -13,7 +13,6 @@ from context_budget import (
     MAX_SUMMARY_CHARS,
     CPU_PROFILE_ENV,
     bounded_restore,
-    enforce_summary_budget,
     estimate_tokens,
     plan_compression,
     resolve_retrieval_profile,
@@ -280,16 +279,6 @@ class TestContextBudget(unittest.TestCase):
         ]
         plan = plan_compression(msgs, config=cfg)
         self.assertEqual(plan["keep"], [0, 1, 2])
-
-    def test_summary_budget_enforced(self):
-        big = "line\n" * 10000
-        out, shed = enforce_summary_budget(big)
-        self.assertLessEqual(len(out), MAX_SUMMARY_CHARS)
-        self.assertGreater(shed, 0)
-        small = "short summary"
-        out2, shed2 = enforce_summary_budget(small)
-        self.assertEqual(out2, small)
-        self.assertEqual(shed2, 0)
 
     def test_bounded_restore(self):
         text = "r" * 9000

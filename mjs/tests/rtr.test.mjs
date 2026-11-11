@@ -181,6 +181,39 @@ test("cli bridge builds measured rtr-cli arguments and refuses unknown commands 
         core.buildCliArgs("keeper-evict-now", { project: "demo", tokens: 200000 }),
         ["keeper-evict-now", "demo", "--tokens", "200000"],
     )
+    assert.deepEqual(
+        core.buildCliArgs("consolidate", { project: "demo" }),
+        ["consolidate", "demo"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("reflect", { project: "demo", chat: "did x" }),
+        ["reflect", "demo", "--chat", "did x"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("materialize", { project: "demo" }),
+        ["materialize", "demo"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("update-graph", { project: "demo" }),
+        ["update-graph", "demo"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("lexikon-add", { project: "demo", term: "t" }),
+        ["lexikon-add", "demo", "t"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("lexikon-add", {
+            project: "demo",
+            term: "t",
+            definition: "d",
+            alias: ["a1", "a2"],
+        }),
+        ["lexikon-add", "demo", "t", "--definition", "d", "--alias", "a1", "--alias", "a2"],
+    )
+    assert.deepEqual(
+        core.buildCliArgs("lexikon-build", { project: "demo" }),
+        ["lexikon-build", "demo"],
+    )
     assert.throws(() => core.buildCliArgs("nope", {}), /nope/)
 })
 

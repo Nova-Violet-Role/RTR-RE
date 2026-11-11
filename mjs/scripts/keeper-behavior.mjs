@@ -148,24 +148,26 @@ function scenarios() {
     }
 }
 
-function runAll() {
+async function runAll() {
     const out = {}
     for (const [name, s] of Object.entries(scenarios())) {
-        out[name] = s.scenario()
+        out[name] = await s.scenario()
     }
     return out
 }
 
 function freeze() {
-    const data = {
-        schema: "rtr.keeper-behavior-manifest/v1",
-        keeperVersion: keeper._test.KEEPER_VERSION,
-        scenarios: runAll(),
-    }
-    mkdir(dirname(MANIFEST), { recursive: true })
-        .then(() => {
-            writeFileSync(MANIFEST, JSON.stringify(data, null, 2) + "\n", "utf8")
-            console.log(`keeper behavior manifest frozen: ${MANIFEST}`)
+    runAll()
+        .then((scenarios) => {
+            const data = {
+                schema: "rtr.keeper-behavior-manifest/v1",
+                keeperVersion: keeper._test.KEEPER_VERSION,
+                scenarios,
+            }
+            return mkdir(dirname(MANIFEST), { recursive: true }).then(() => {
+                writeFileSync(MANIFEST, JSON.stringify(data, null, 2) + "\n", "utf8")
+                console.log(`keeper behavior manifest frozen: ${MANIFEST}`)
+            })
         })
         .catch((error) => {
             console.error(`keeper-behavior: freeze failed: ${error?.message ?? error}`)
@@ -189,33 +191,34 @@ function check() {
         )
         process.exit(1)
     }
-    const current = runAll()
-    if (Object.keys(current).length !== Object.keys(frozen.scenarios).length) {
-        console.error(
-            `keeper-behavior: scenario count drift ${Object.keys(frozen.scenarios).length} -> ${Object.keys(current).length}`,
-        )
-        process.exit(1)
-    }
-    for (const [name, expected] of Object.entries(frozen.scenarios)) {
-        if (!(name in current)) {
-            console.error(`keeper-behavior: scenario ${name} missing from current run`)
+    runAll().then((current) => {
+        if (Object.keys(current).length !== Object.keys(frozen.scenarios).length) {
+            console.error(
+                `keeper-behavior: scenario count drift ${Object.keys(frozen.scenarios).length} -> ${Object.keys(current).length}`,
+            )
             process.exit(1)
         }
-        if (!(name in frozen.scenarios)) {
-            console.error(`keeper-behavior: scenario ${name} missing from frozen manifest`)
-            process.exit(1)
+        for (const [name, expected] of Object.entries(frozen.scenarios)) {
+            if (!(name in current)) {
+                console.error(`keeper-behavior: scenario ${name} missing from current run`)
+                process.exit(1)
+            }
+            if (!(name in frozen.scenarios)) {
+                console.error(`keeper-behavior: scenario ${name} missing from frozen manifest`)
+                process.exit(1)
+            }
+            const a = JSON.stringify(current[name])
+            const b = JSON.stringify(expected)
+            if (a !== b) {
+                console.error(`keeper-behavior: scenario ${name} drifted`)
+                console.error(`  expected: ${b}`)
+                console.error(`  actual:   ${a}`)
+                process.exit(1)
+            }
         }
-        const a = JSON.stringify(current[name])
-        const b = JSON.stringify(expected)
-        if (a !== b) {
-            console.error(`keeper-behavior: scenario ${name} drifted`)
-            console.error(`  expected: ${b}`)
-            console.error(`  actual:   ${a}`)
-            process.exit(1)
-        }
-    }
-    console.log(`keeper behavior gate: PASS (${Object.keys(frozen.scenarios).length} scenarios)`)
-    process.exit(0)
+        console.log(`keeper behavior gate: PASS (${Object.keys(frozen.scenarios).length} scenarios)`)
+        process.exit(0)
+    })
 }
 
 const mode = process.argv[2] ?? "check"

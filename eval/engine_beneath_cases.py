@@ -25,10 +25,12 @@ aggregate never hides a zero.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import os
 import re
+import shutil
 import tempfile
 import time
 from pathlib import Path
@@ -67,6 +69,33 @@ def register_case(name: str) -> Callable[[Case], Case]:
 
 def all_cases() -> List[str]:
     return sorted(_CASES)
+
+
+def _rmtree_retry(path, tries: int = 5, delay: float = 0.2) -> None:
+    """rmtree that beats the Windows handle linger instead of dying on it.
+
+    Chroma's Rust bindings release the sqlite OS handle <0.5s after
+    client.close() (measured); an immediate rmtree races it and dies
+    with WinError 32. Persistent failure still raises loudly.
+    """
+    for attempt in range(max(1, tries)):
+        try:
+            shutil.rmtree(path)
+            return
+        except OSError:
+            if attempt + 1 >= max(1, tries):
+                raise
+            time.sleep(delay)
+
+
+@contextlib.contextmanager
+def _engine_tempdir(prefix):
+    """TemporaryDirectory with retry cleanup for engine-hosting cases."""
+    td = tempfile.mkdtemp(prefix=prefix)
+    try:
+        yield td
+    finally:
+        _rmtree_retry(td)
 
 
 def _msg(
@@ -123,7 +152,7 @@ def case_corrupted_sink() -> Dict[str, Any]:
         _msg("assistant", _blob(12000)),
         _msg("user", "latest question"),
     ]
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-corrupt-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-corrupt-") as temporary:
         worker = SymbioseWorker(
             ExplodingSink(),
             cooldown_seconds=0,
@@ -188,7 +217,7 @@ def case_worker_cache_deduplicates() -> Dict[str, Any]:
         _msg("user", "question"),
     ]
     cfg = {"trigger_tokens": 100, "target_tokens": 30, "max_keep_messages": 2}
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-cache-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-cache-") as temporary:
         worker = SymbioseWorker(
             SessionSpanSink(Path(temporary)),
             cooldown_seconds=0,
@@ -250,7 +279,7 @@ def case_corrupted_sink_mid_batch() -> Dict[str, Any]:
         _msg("assistant", _blob(12000)),
         _msg("user", "latest question"),
     ]
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-midbatch-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-midbatch-") as temporary:
         sink = MidBatchExplodingSink(Path(temporary))
         worker = SymbioseWorker(
             sink,
@@ -765,7 +794,7 @@ def case_live_engine_sink() -> Dict[str, Any]:
         _msg("assistant", _cdata_long(12000)),
         _msg("user", "latest question"),
     ]
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-live-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-live-") as temporary:
         result = evaluate_conversation(
             messages,
             config={"trigger_tokens": 100, "target_tokens": 30, "max_keep_messages": 2},
@@ -797,7 +826,7 @@ def case_content_model_feature() -> Dict[str, Any]:
 
     checks: Dict[str, float] = {}
     evidence: Dict[str, Any] = {}
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-cm-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-cm-") as temporary:
         root = Path(temporary)
         proj = root / "projects"
         (proj / "directives").mkdir(parents=True)
@@ -888,7 +917,7 @@ def case_parameter_entity_injection() -> Dict[str, Any]:
 
     checks: Dict[str, float] = {}
     evidence: Dict[str, Any] = {}
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-pe-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-pe-") as temporary:
         root = Path(temporary)
         proj = root / "projects"
         (proj / "directives").mkdir(parents=True)
@@ -1155,7 +1184,7 @@ def case_optimizer_expansion_gated() -> Dict[str, Any]:
 
     checks: Dict[str, float] = {}
     evidence: Dict[str, Any] = {}
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-optx-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-optx-") as temporary:
         root = Path(temporary)
         proj = root / "proj"
         (proj / "state").mkdir(parents=True)
@@ -1215,15 +1244,15 @@ def case_optimizer_mjs_plan_context_aligned() -> Dict[str, Any]:
     import subprocess
 
     core_js = Path(__file__).parent.parent / "mjs" / "hooks" / "rtr-core.js"
-    probe = Path(tempfile.mkdtemp(prefix="rtrre-eb-mjs-")) / "probe.cjs"
-    probe.write_text(
-        "const c = require(" + json.dumps(str(core_js)) + ");\n"
-        "const ctx = c.registryContextProfile();\n"
-        "const plan = c.planContext(300000, 60);\n"
-        "process.stdout.write(JSON.stringify({ctx, plan}));\n",
-        encoding="utf-8",
-    )
-    try:
+    with _engine_tempdir(prefix="rtrre-eb-mjs-") as td:
+        probe = Path(td) / "probe.cjs"
+        probe.write_text(
+            "const c = require(" + json.dumps(str(core_js)) + ");\n"
+            "const ctx = c.registryContextProfile();\n"
+            "const plan = c.planContext(300000, 60);\n"
+            "process.stdout.write(JSON.stringify({ctx, plan}));\n",
+            encoding="utf-8",
+        )
         result = subprocess.run(
             ["node", str(probe)],
             capture_output=True,
@@ -1231,8 +1260,6 @@ def case_optimizer_mjs_plan_context_aligned() -> Dict[str, Any]:
             timeout=30,
             check=False,
         )
-    finally:
-        probe.unlink(missing_ok=True)
     parsed = {}
     if result.returncode == 0:
         try:
@@ -1367,7 +1394,7 @@ def case_compressor_session_resume_cumulative() -> Dict[str, Any]:
     persists atomically across worker instances (never reset), and
     compression fires in every resumed session."""
     cfg = {"trigger_tokens": 100, "target_tokens": 30, "max_keep_messages": 2}
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-resume-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-resume-") as temporary:
         root = Path(temporary)
         cumulative_path = root / "cumulative.json"
         sink = SessionSpanSink(root / "sessions")
@@ -1555,7 +1582,7 @@ def case_compressor_evicted_retrievable() -> Dict[str, Any]:
     }
     marker = "quasar-nebula-x7"
     messages = [_msg("assistant", f"{marker} {_cdata_long(12000)}") for _ in range(90)]
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-retr-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-retr-") as temporary:
         root = Path(temporary)
         facts = _index_evicted_sessions(root, messages, cfg, "retr-test")
         engine = facts["engine"]
@@ -1599,7 +1626,7 @@ def case_compressor_lexikon_interplay() -> Dict[str, Any]:
     messages = [
         _msg("assistant", f"{compound} {_cdata_long(12000)}") for _ in range(90)
     ]
-    with tempfile.TemporaryDirectory(prefix="rtrre-eb-lex-") as temporary:
+    with _engine_tempdir(prefix="rtrre-eb-lex-") as temporary:
         root = Path(temporary)
         facts = _index_evicted_sessions(root, messages, cfg, "lex-test")
         engine = facts["engine"]

@@ -55,6 +55,11 @@ jobs:
       - name: Keeper suite
         run: |
           node --test opencode-plugin/rtr-re-keeper.test.mjs
+      - name: Keeper bulletproof + installer suites
+        run: |
+          node --test opencode-plugin/bulletproof.test.mjs
+          node --test opencode-plugin/installer-launcher.test.mjs
+          node --test opencode-plugin/installer-bin.test.mjs
       - name: mjs suite
         run: |
           npm --prefix mjs test

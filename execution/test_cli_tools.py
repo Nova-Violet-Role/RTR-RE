@@ -311,5 +311,25 @@ class TestErrorText(unittest.TestCase):
         self.assertEqual(memory_cli._error_text(ValueError("bad")), "bad")
 
 
+class DrainFailureTests(unittest.TestCase):
+    def test_drain_failure_renders_panel_and_exits_1(self):
+        # E-T15-2b: every CLI sibling renders a Failure panel with
+        # exit 1; drain had try/finally with no except (traceback).
+        with tempfile.TemporaryDirectory() as td:
+            proj = Path(td) / "proj"
+            (proj / ".opencode" / "memory").mkdir(parents=True)
+            with patch.object(
+                memory_cli.sw,
+                "drain_submit_sidecars",
+                side_effect=OSError("drain boom"),
+            ):
+                buf = io.StringIO()
+                with redirect_stdout(buf):
+                    with self.assertRaises(SystemExit) as cm:
+                        memory_cli.format_symbiose_drain(str(proj))
+                self.assertEqual(cm.exception.code, 1)
+                self.assertIn("Symbiose Drain Failure", buf.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

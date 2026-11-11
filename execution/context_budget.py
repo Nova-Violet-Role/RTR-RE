@@ -52,7 +52,6 @@ PROTECTED_TOOLS = frozenset({"todowrite"})
 PROTECTION_CUMULATIVE_THRESHOLD = 1000
 PROTECTION_BUDGET_FRACTION = 0.25
 NDATA_PLACEHOLDER = "[NDATA]"
-SHED_MARKER = "\n[shed: oldest summary lines moved to RTR index]\n"
 
 _NDATA_RE = re.compile(r"[A-Za-z0-9+/]{64,}={0,2}")
 _CDATA_RE = re.compile(
@@ -750,41 +749,6 @@ def plan_compression(
         "overrun_by": "+".join(contributors) if contributors else "none",
         "live_tokens": live_tokens,
     }
-
-
-def enforce_summary_budget(
-    summary: str, max_chars: int = MAX_SUMMARY_CHARS
-) -> Tuple[str, int]:
-    """Cap a rolling summary, shedding oldest lines first.
-
-    Returns (summary, shed_chars). At/under cap: unchanged, shed 0.
-    Over cap: newest lines kept up to cap (marker included in the cap),
-    so the result never exceeds max_chars.
-    """
-    s = summary or ""
-    if len(s) <= max_chars:
-        return s, 0
-    budget = max_chars - len(SHED_MARKER)
-    if budget <= 0:
-        return s[-max_chars:], len(s) - max_chars
-    kept: List[str] = []
-    used = 0
-    for line in reversed(s.split("\n")):
-        cost = len(line) + 1
-        if kept and used + cost > budget:
-            break
-        if not kept and cost > budget:
-            kept.append(line[-budget:])
-            used = budget
-            break
-        kept.append(line)
-        used += cost
-    body = "\n".join(reversed(kept))
-    out = SHED_MARKER.lstrip("\n") + body
-    if len(out) > max_chars:
-        out = out[-max_chars:]
-        body = out
-    return out, max(0, len(s) - len(body))
 
 
 def bounded_restore(text: str, max_chars: int = MAX_RESTORE_CHARS) -> str:

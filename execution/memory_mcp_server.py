@@ -1123,7 +1123,9 @@ def memory_keeper_evict_now(project: str, mode: str, amount: int) -> str:
                 current = {}
         key = "evictTokensNow" if mode == "tokens" else "evictMessagesNow"
         current[key] = amount
-        cfg_path.write_text(json.dumps(current, indent=2) + "\n", encoding="utf-8")
+        cfg_path.write_text(
+            json.dumps(current, indent=2) + "\n", encoding="utf-8", newline="\n"
+        )
     except Exception as e:
         return TUIRenderer.render_panel(
             "Evict Failure", [f"Error: {_error_text(e)}"], status="error"
@@ -1411,6 +1413,7 @@ def maybe_migrate_db(db_dir=None, package_version=None) -> dict:
                     )
                     + "\n",
                     encoding="utf-8",
+                    newline="\n",
                 )
                 outcome.update({"action": "stamp", "reason": "fresh"})
                 return outcome
@@ -1430,10 +1433,12 @@ def maybe_migrate_db(db_dir=None, package_version=None) -> dict:
             "pruned_roots": jan.get("pruned_roots", []),
         }
         (home / MIGRATION_REPORT_NAME).write_text(
-            json.dumps(report, indent=2) + "\n", encoding="utf-8"
+            json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n"
         )
         marker.write_text(
-            json.dumps({"version": pkg, "ts": report["ts"]}) + "\n", encoding="utf-8"
+            json.dumps({"version": pkg, "ts": report["ts"]}) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
         outcome.update(
             {"action": "amend", "reason": f"{stored}->{pkg}", "report": report}

@@ -60,28 +60,3 @@ class TUIRenderer:
 
         panel_lines.append(border_bottom)
         return "\n".join(panel_lines)
-
-    @staticmethod
-    def render_table(headers: list, rows: list, widths: list = None) -> list:
-        """Render a structured Markdown/ASCII table inside a panel."""
-        if not rows:
-            return ["No data available"]
-
-        if not widths:
-            widths = [
-                max(len(str(row[i])) for row in rows + [headers])
-                for i in range(len(headers))
-            ]
-
-        # Draw table header
-        header_line = " | ".join(
-            str(headers[i]).ljust(widths[i]) for i in range(len(headers))
-        )
-        separator = "-+-".join("-" * widths[i] for i in range(len(widths)))
-
-        output = [header_line, separator]
-        for row in rows:
-            row_line = " | ".join(str(row[i]).ljust(widths[i]) for i in range(len(row)))
-            output.append(row_line)
-
-        return output

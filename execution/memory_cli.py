@@ -641,6 +641,13 @@ def format_symbiose_drain(project: str, limit: int = 5):
     try:
         memory_dir = Path(project_dir) / ".opencode" / "memory"
         report = sw.drain_submit_sidecars(worker, memory_dir, limit=limit)
+    except Exception as e:
+        print(
+            TUIRenderer.render_panel(
+                "Symbiose Drain Failure", [f"Error: {_error_text(e)}"], status="error"
+            )
+        )
+        sys.exit(1)
     finally:
         worker.close()
     print(
@@ -773,7 +780,9 @@ def format_keeper_evict_now(project: str, tokens=None, messages=None):
                 current = {}
         key = "evictTokensNow" if tokens is not None else "evictMessagesNow"
         current[key] = amount
-        cfg_path.write_text(json.dumps(current, indent=2) + "\n", encoding="utf-8")
+        cfg_path.write_text(
+            json.dumps(current, indent=2) + "\n", encoding="utf-8", newline="\n"
+        )
     except Exception as e:
         print(
             TUIRenderer.render_panel(

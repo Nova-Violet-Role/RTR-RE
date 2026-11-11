@@ -1,7 +1,7 @@
 {
   "schema": "rtr-re.engine-beneath.cases/v1",
   "scope": "RE edition: full architecture case registry",
-  "run_at": "2026-11-10T19:51:03",
+  "run_at": "2026-11-11T17:25:21",
   "summary": {
     "cases": 27,
     "passed": 27,
@@ -525,19 +525,19 @@
           "status": "ready",
           "input_messages": 6,
           "input_chars": 72000,
-          "hash_ms": 0.222,
+          "hash_ms": 0.235,
           "plan_overrides": {},
-          "submit_ms": 0.585,
+          "submit_ms": 0.614,
           "keep": [
             5
           ],
           "evicted": 5,
-          "sink": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-resume-nmi7xkdv\\sessions\\rtrre-3617f2b10759b6a8.dtd",
-          "queue_ms": 0.608,
-          "plan_ms": 0.161,
-          "sink_ms": 0.477,
-          "elapsed_ms": 1.246,
-          "duration": "1.2 ms",
+          "sink": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-resume-7sm752n1\\sessions\\rtrre-3617f2b10759b6a8.dtd",
+          "queue_ms": 0.64,
+          "plan_ms": 0.162,
+          "sink_ms": 0.456,
+          "elapsed_ms": 1.259,
+          "duration": "1.3 ms",
           "total_tokens": 18000,
           "keep_tokens": 3000,
           "evicted_tokens": 15000,
@@ -545,7 +545,7 @@
           "kept_chars": 12000,
           "evict_chars": 35,
           "sink_bytes": 995,
-          "tokens_per_second": 14442750.517
+          "tokens_per_second": 14298196.83
         },
         "session2_ticket": {
           "id": 1,
@@ -553,18 +553,18 @@
           "status": "ready",
           "input_messages": 6,
           "input_chars": 72000,
-          "hash_ms": 0.183,
+          "hash_ms": 0.167,
           "plan_overrides": {},
-          "submit_ms": 0.615,
+          "submit_ms": 0.588,
           "keep": [
             5
           ],
           "evicted": 5,
-          "sink": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-resume-nmi7xkdv\\sessions\\rtrre-3617f2b10759b6a8.dtd",
-          "queue_ms": 0.646,
-          "plan_ms": 0.157,
-          "sink_ms": 0.383,
-          "elapsed_ms": 1.186,
+          "sink": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-resume-7sm752n1\\sessions\\rtrre-3617f2b10759b6a8.dtd",
+          "queue_ms": 0.608,
+          "plan_ms": 0.156,
+          "sink_ms": 0.419,
+          "elapsed_ms": 1.184,
           "duration": "1.2 ms",
           "total_tokens": 18000,
           "keep_tokens": 3000,
@@ -573,7 +573,7 @@
           "kept_chars": 12000,
           "evict_chars": 35,
           "sink_bytes": 995,
-          "tokens_per_second": 15171948.604
+          "tokens_per_second": 15209125.469
         },
         "tmp_leftovers": []
       }
@@ -687,7 +687,7 @@
       "failed_required": [],
       "evidence": {
         "sink": {
-          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-jd98ckz3\\rtrre-51b9c512953d9eb3.dtd",
+          "path": "C:\\Users\\Saimono\\AppData\\Local\\Temp\\rtrre-eb-live-sw3bvx8g\\rtrre-51b9c512953d9eb3.dtd",
           "exists": true,
           "bytes": 24655,
           "sha256": "d7162fecd6f1b75b2831ea4ec74a837264bdfef037d10157576239a8c183c343",
@@ -1710,7 +1710,7 @@
         "evict": 161,
         "total_tokens": 200004,
         "keep_tokens": 39004,
-        "plan_ms": 1.141
+        "plan_ms": 1.214
       }
     },
     {
@@ -1734,7 +1734,7 @@
         "evict": 963,
         "total_tokens": 1004004,
         "keep_tokens": 39004,
-        "plan_ms": 6.614,
+        "plan_ms": 6.566,
         "cumulative_messages": 1001,
         "old_todo_index": 5,
         "old_todo_retained": false,

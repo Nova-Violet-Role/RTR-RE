@@ -196,7 +196,9 @@ class SpanIndexer(threading.Thread):
                 report.update({"status": "error", "error": f"{type(e).__name__}: {e}"})
             try:
                 (opencode / "rtr-re-repair.report.json").write_text(
-                    json.dumps(report, indent=2) + "\n", encoding="utf-8"
+                    json.dumps(report, indent=2) + "\n",
+                    encoding="utf-8",
+                    newline="\n",
                 )
             except OSError:
                 continue

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Tests for DTD lexikon seeding (TODO-37).
 
 Covers: the extractor's attribute->owner mapping, the seed_dtd_lexikon
@@ -190,6 +192,43 @@ class TestSeedDtdLexikon(unittest.TestCase):
                 eng.close()
             self.assertIn("ownattr", lex)
             self.assertNotIn("noiseattr", lex)
+        finally:
+            tmp.cleanup()
+
+    def test_seeded_terms_are_stamped_seed_not_hand(self):
+        # E-T14-3: machine guesses persisted as hand-curated is a stored
+        # lie; seeds must say seed.
+        tmp, proj = self._stage_tiny()
+        try:
+            eng = mem.MemoryEngine()
+            try:
+                eng.seed_dtd_lexikon(str(proj))
+                lex = eng.get_lexikon(str(proj))
+            finally:
+                eng.close()
+            self.assertEqual(lex["rareattr"]["source"], "seed")
+            self.assertEqual(lex["uniquebody"]["source"], "seed")
+        finally:
+            tmp.cleanup()
+
+    def test_seed_never_clobbers_hand_entries(self):
+        tmp, proj = self._stage_tiny()
+        try:
+            eng = mem.MemoryEngine()
+            try:
+                eng.add_lexikon_term(
+                    str(proj),
+                    "rareattr",
+                    definition="curated by a human",
+                    aliases=["human-alias"],
+                )
+                eng.seed_dtd_lexikon(str(proj))
+                lex = eng.get_lexikon(str(proj))
+            finally:
+                eng.close()
+            self.assertEqual(lex["rareattr"]["definition"], "curated by a human")
+            self.assertEqual(lex["rareattr"]["aliases"], ["human-alias"])
+            self.assertEqual(lex["rareattr"]["source"], "hand")
         finally:
             tmp.cleanup()
 

@@ -68,9 +68,9 @@ def main():
     proj = base / "gateproj"
     d = proj / "directives"
     d.mkdir(parents=True)
-    (d / "wiki_quokka.md").write_text(QUOKKA, encoding="utf-8")
-    (d / "wiki_badger.md").write_text(BADGER, encoding="utf-8")
-    (d / "wiki_packets.md").write_text(PACKETS, encoding="utf-8")
+    (d / "wiki_quokka.md").write_text(QUOKKA, encoding="utf-8", newline="\n")
+    (d / "wiki_badger.md").write_text(BADGER, encoding="utf-8", newline="\n")
+    (d / "wiki_packets.md").write_text(PACKETS, encoding="utf-8", newline="\n")
 
     had_extra = mem.EXTRA_ROOTS_FILE.exists()
     had_global_lex = mem.LEXIKON_GLOBAL_FILE.exists()
@@ -171,7 +171,7 @@ def main():
                 data = [p for p in data if base.name not in str(p)]
                 if data:
                     mem.EXTRA_ROOTS_FILE.write_text(
-                        json.dumps(data, indent=2), encoding="utf-8"
+                        json.dumps(data, indent=2), encoding="utf-8", newline="\n"
                     )
                 else:
                     mem.EXTRA_ROOTS_FILE.unlink()

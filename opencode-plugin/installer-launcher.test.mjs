@@ -135,6 +135,9 @@ test("node readScene falls back on missing or broken scenes", () => {
         writeFileSync(join(dir, "bad.xml"), '<scene version="1.0" theme="bad"><camera drift="xx"/><core/></scene>', "utf8")
         const scene = readScene("bad", dir)
         assert.equal(scene.camera.drift, 0.0012)
+        assert.equal(scene.camera.pitch, -0.16)
+        writeFileSync(join(dir, "pitched.xml"), '<scene version="1.0" theme="pitched"><camera pitch="0.5"/><core/></scene>', "utf8")
+        assert.equal(readScene("pitched", dir).camera.pitch, 0.5)
         assert.deepEqual(scene.core.glow, [128, 128, 255])
         assert.equal(scene.particles.speed, 0.6)
     } finally {

@@ -349,27 +349,6 @@ class SymbioseWorker:
                 }
             tid = self._next_id
             self._next_id += 1
-            self._cumulative_messages += len(messages)
-            if self._cumulative_path:
-                try:
-                    self._cumulative_path.parent.mkdir(parents=True, exist_ok=True)
-                    # Atomic write: write a temp sibling then rename, so a
-                    # crash mid-write never leaves a truncated state file that
-                    # the fail-closed loader would refuse.
-                    tmp = self._cumulative_path.with_suffix(
-                        self._cumulative_path.suffix + ".tmp"
-                    )
-                    tmp.write_text(
-                        json.dumps({"cumulative_messages": self._cumulative_messages})
-                        + "\n",
-                        encoding="utf-8",
-                        newline="\n",
-                    )
-                    os.replace(tmp, self._cumulative_path)
-                except OSError:
-                    # A persistence failure must never block the submission; the
-                    # in-memory counter still advances for this session.
-                    pass
             ticket: Dict[str, Any] = {
                 "id": tid,
                 "hash": digest,
@@ -391,6 +370,30 @@ class SymbioseWorker:
                 self._tickets[tid] = ticket
                 self._evict_locked()
                 return dict(ticket)
+            # The protection counter advances only for accepted work:
+            # queue-rejected submits must not inflate the recency
+            # threshold (R2 — rejected work engaged gating early).
+            self._cumulative_messages += len(messages)
+            if self._cumulative_path:
+                try:
+                    self._cumulative_path.parent.mkdir(parents=True, exist_ok=True)
+                    # Atomic write: write a temp sibling then rename, so a
+                    # crash mid-write never leaves a truncated state file that
+                    # the fail-closed loader would refuse.
+                    tmp = self._cumulative_path.with_suffix(
+                        self._cumulative_path.suffix + ".tmp"
+                    )
+                    tmp.write_text(
+                        json.dumps({"cumulative_messages": self._cumulative_messages})
+                        + "\n",
+                        encoding="utf-8",
+                        newline="\n",
+                    )
+                    os.replace(tmp, self._cumulative_path)
+                except OSError:
+                    # A persistence failure must never block the submission; the
+                    # in-memory counter still advances for this session.
+                    pass
             ticket["submit_ms"] = round(
                 max(0.0, (self._clock() - submitted_at) * 1000.0), 3
             )
@@ -413,8 +416,8 @@ class SymbioseWorker:
             return out
 
     def wait(self, ticket_id: int, timeout: float = 10) -> Dict[str, Any]:
-        deadline = time.monotonic() + timeout
-        while time.monotonic() < deadline:
+        deadline = self._clock() + timeout
+        while self._clock() < deadline:
             t = self.poll(ticket_id)
             if t["status"] in ("ready", "failed"):
                 return t

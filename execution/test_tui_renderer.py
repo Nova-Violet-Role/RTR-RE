@@ -33,13 +33,6 @@ class TestTuiRenderer(unittest.TestCase):
         for line in out.split("\n")[1:-1]:
             self.assertLessEqual(len(line), 70)
 
-    def test_table_shapes_and_empty(self):
-        self.assertEqual(TUIRenderer.render_table(["H"], []), ["No data available"])
-        rows = TUIRenderer.render_table(["A", "B"], [["1", "2"]])
-        self.assertEqual(len(rows), 3)
-        self.assertIn("A", rows[0])
-        self.assertIn("1", rows[2])
-
 
 if __name__ == "__main__":
     unittest.main()

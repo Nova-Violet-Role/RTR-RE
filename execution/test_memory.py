@@ -1225,5 +1225,151 @@ class TestConfigFallbacks(unittest.TestCase):
             self.assertEqual(list(Path(d).glob("*.tmp-*")), [])
 
 
+class ResolveConceptIdTests(unittest.TestCase):
+    def test_gap_safe_allocation(self):
+        # E-T14-5: len()+1 collides with live ids when gaps exist
+        # (delete 002 from {001,002,003} leaves {001,003}: len 2 ->
+        # concept_003 clobbers gamma). max+1 is gap-safe.
+        import json
+        import tempfile
+        from pathlib import Path
+
+        from memory_engine import MemoryEngine
+
+        with tempfile.TemporaryDirectory() as td:
+            proj = Path(td) / "proj"
+            (proj / "state").mkdir(parents=True)
+            (proj / "state" / "concept_registry.json").write_text(
+                json.dumps(
+                    {
+                        "concept_001": {
+                            "canonical_name": "alpha",
+                            "aliases": ["alpha"],
+                            "status": "validated",
+                        },
+                        "concept_003": {
+                            "canonical_name": "gamma",
+                            "aliases": ["gamma"],
+                            "status": "validated",
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            eng = MemoryEngine()
+            try:
+                cid, _ = eng._resolve_concept(str(proj), "brand new thing")
+            finally:
+                eng.close()
+            self.assertEqual(cid, "concept_004")
+            reg = json.loads(
+                (proj / "state" / "concept_registry.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(reg["concept_003"]["canonical_name"], "gamma")
+
+
+class AtomicWriteEncodingTests(unittest.TestCase):
+    def test_atomic_json_is_lf_with_trailing_newline(self):
+        # Runtime JSON must be LF (house encoding rule); text-mode
+        # writes emit CRLF on Windows.
+        import tempfile
+        from pathlib import Path
+
+        from memory_engine import _atomic_write_json
+
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "reg.json"
+            _atomic_write_json(p, {"terms": {"a": 1}})
+            raw = p.read_bytes()
+            self.assertNotIn(b"\r", raw)
+            self.assertTrue(raw.endswith(b"\n"))
+
+
+class InitCmdTests(unittest.TestCase):
+    def test_init_writes_windows_bootstrap(self):
+        # E-T14-7: POSIX-only init.sh leaves Windows-first boxes
+        # without a bootstrap script; init.cmd is its minimal mirror.
+        import tempfile
+        from pathlib import Path
+
+        import memory_engine as mem
+        from memory_engine import MemoryEngine
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            saved = (
+                mem.PROJECT_ROOTS,
+                mem.PROJECTS_DIR,
+                mem.DB_DIR,
+                mem.REGISTRY_FILE,
+                mem.EXTRA_ROOTS_FILE,
+                mem.LEXIKON_GLOBAL_FILE,
+            )
+            mem.PROJECT_ROOTS = [root / "projects"]
+            mem.PROJECTS_DIR = root / "projects"
+            mem.DB_DIR = root / "db"
+            mem.REGISTRY_FILE = root / "registry.json"
+            mem.EXTRA_ROOTS_FILE = root / "extra.json"
+            mem.LEXIKON_GLOBAL_FILE = root / "lex.json"
+            try:
+                eng = MemoryEngine()
+                try:
+                    res = eng.init_project("cmdproj")
+                finally:
+                    eng.close()
+            finally:
+                (
+                    mem.PROJECT_ROOTS,
+                    mem.PROJECTS_DIR,
+                    mem.DB_DIR,
+                    mem.REGISTRY_FILE,
+                    mem.EXTRA_ROOTS_FILE,
+                    mem.LEXIKON_GLOBAL_FILE,
+                ) = saved
+            self.assertEqual(res["status"], "success")
+            self.assertIn("init.cmd", res["created_files"])
+            body = (root / "projects" / "cmdproj" / "init.cmd").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn("python -m venv .venv", body)
+            self.assertIn("requirements.txt", body)
+            self.assertNotIn("\r", body)
+
+
+class ConsolidateDryRunTests(unittest.TestCase):
+    def test_dry_run_previews_without_writes(self):
+        # E-T14-9: merge execution is destructive (winner
+        # overwritten, loser unlinked); dry_run previews instead.
+        import tempfile
+        from pathlib import Path
+
+        from memory_engine import MemoryEngine
+
+        with tempfile.TemporaryDirectory() as td:
+            concepts = Path(td) / "proj" / "directives" / "wiki_concepts"
+            concepts.mkdir(parents=True)
+            (concepts / "concept_one.md").write_text(
+                "# One\n\nbody one", encoding="utf-8"
+            )
+            (concepts / "concept_one_v2.md").write_text(
+                "# One V2\n\nbody two", encoding="utf-8"
+            )
+            eng = MemoryEngine()
+            try:
+                res = eng.consolidate_wiki(str(Path(td) / "proj"), dry_run=True)
+            finally:
+                eng.close()
+            self.assertEqual(res["status"], "success")
+            self.assertEqual(len(res["would_merge"]), 1)
+            self.assertEqual(res["would_merge"][0]["loser"], "concept_one_v2.md")
+            self.assertIn("common words", res["would_merge"][0]["reason"])
+            self.assertTrue((concepts / "concept_one.md").exists())
+            self.assertTrue((concepts / "concept_one_v2.md").exists())
+            self.assertEqual(
+                (concepts / "concept_one.md").read_text(encoding="utf-8"),
+                "# One\n\nbody one",
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -344,6 +344,23 @@ function buildCliArgs(command, opts = {}) {
       if (o.messages !== undefined && o.messages !== null && o.messages !== '') args.push('--messages', String(o.messages));
       return args;
     }
+    case 'consolidate':
+    case 'materialize':
+    case 'update-graph':
+    case 'lexikon-build':
+      return [command, need('project')];
+    case 'reflect': {
+      const args = ['reflect', need('project')];
+      if (o.chat !== undefined && o.chat !== null && o.chat !== '') args.push('--chat', String(o.chat));
+      return args;
+    }
+    case 'lexikon-add': {
+      const args = ['lexikon-add', need('project'), need('term')];
+      if (o.definition !== undefined && o.definition !== null && o.definition !== '') args.push('--definition', String(o.definition));
+      const aliases = Array.isArray(o.alias) ? o.alias : (o.alias ? [o.alias] : []);
+      for (const a of aliases) args.push('--alias', String(a));
+      return args;
+    }
     default:
       throw new Error(`rtr-cli bridge: unknown command ${command}`);
   }

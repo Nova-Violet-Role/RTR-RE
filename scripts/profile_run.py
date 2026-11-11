@@ -132,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
         }
     text = json.dumps(report, indent=2)
     if args.out is not None:
-        args.out.write_text(text + "\n", encoding="utf-8")
+        args.out.write_text(text + "\n", encoding="utf-8", newline="\n")
         print(f"wrote {args.out}")
     else:
         print(text)

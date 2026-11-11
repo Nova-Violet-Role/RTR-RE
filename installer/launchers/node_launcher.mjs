@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// SPDX-FileCopyrightText: Nova-Violet Role ORG
+// SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 // RTR-RE installer — native terminal launcher (Node core only).
 //
 // The installer runs entirely in the terminal — no browser, no HTTP, no
@@ -77,7 +79,7 @@ export function readScene(theme, scenesDir = SCENES_DIR) {
     },
     core: { glow: col("core", "glow", [128, 128, 255]) },
     floor: { reflect: num("floor", "reflect", 0.35) },
-    camera: { drift: num("camera", "drift", 0.0012) },
+    camera: { drift: num("camera", "drift", 0.0012), pitch: num("camera", "pitch", -0.16) },
   }
 }
 

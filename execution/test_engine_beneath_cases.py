@@ -3,6 +3,7 @@
 """Acceptance: Engine Beneath case registry is open, deterministic, and red-capable."""
 
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -10,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "eval"))
 
 from engine_beneath_cases import (  # noqa: E402
     _CASES,
+    _rmtree_retry,
     all_cases,
     register_case,
     run_all,
@@ -81,6 +83,41 @@ class TestEngineBeneathCases(unittest.TestCase):
             if c["case"] == "duplicate-submission-deterministic"
         )
         self.assertEqual(case["verdict"], "pass")
+
+
+class TestRetryCleanup(unittest.TestCase):
+    def test_rmtree_retry_beats_transient_locks(self):
+        import shutil
+        from unittest.mock import patch
+
+        calls = []
+        real_rmtree = shutil.rmtree
+
+        def flaky(path, *a, **k):
+            calls.append(path)
+            if len(calls) < 3:
+                raise PermissionError("[WinError 32] locked")
+            return real_rmtree(path, *a, **k)
+
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "victim"
+            target.mkdir()
+            (target / "f.txt").write_text("x", encoding="utf-8")
+            with patch.object(shutil, "rmtree", side_effect=flaky):
+                _rmtree_retry(str(target))
+            self.assertEqual(len(calls), 3)
+            self.assertFalse(target.exists())
+
+    def test_rmtree_retry_gives_up_loudly(self):
+        import shutil
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as td:
+            target = Path(td) / "victim"
+            target.mkdir()
+            with patch.object(shutil, "rmtree", side_effect=PermissionError("stuck")):
+                with self.assertRaises(PermissionError):
+                    _rmtree_retry(str(target), tries=2, delay=0.01)
 
 
 if __name__ == "__main__":

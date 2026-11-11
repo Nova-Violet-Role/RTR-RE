@@ -344,6 +344,7 @@ def query_prompt_for(model_name: str) -> str:
             cache_file.write_text(
                 json.dumps({"model": slug, "prompt": prompt}, indent=2) + "\n",
                 encoding="utf-8",
+                newline="\n",
             )
         except Exception:
             pass
@@ -1205,7 +1206,7 @@ def _atomic_write_json(path: Path, data: Any) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + f".tmp-{os.getpid()}")
-    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    tmp.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8", newline="\n")
     os.replace(tmp, path)
 
 
@@ -1499,6 +1500,11 @@ class MemoryEngine:
                 # differed on 118/163 queries). Sorting fixes it.
                 dirs.sort()
                 files.sort()
+                # Prune noise dirs in place: identical file set, no
+                # descent into trees we would skip file-by-file anyway.
+                # The root-level check below stays as the guard for a
+                # walk root that itself sits under noise.
+                dirs[:] = [d for d in dirs if d not in _NOISE_DIRS]
                 root_path = Path(root)
 
                 # Skip common noise dirs to keep index fast
@@ -2225,7 +2231,7 @@ class MemoryEngine:
         if fixed:
             try:
                 Path(str(REGISTRY_FILE) + ".bak").write_text(
-                    json.dumps(pre_image, indent=2), encoding="utf-8"
+                    json.dumps(pre_image, indent=2), encoding="utf-8", newline="\n"
                 )
             except Exception:
                 pass
@@ -2971,8 +2977,12 @@ class MemoryEngine:
             "db_size_mb": db_size_bytes / (1024 * 1024),
         }
 
-    def consolidate_wiki(self, project: str) -> Dict[str, Any]:
-        """Deduplicate and consolidate redundant wiki markdown files under a project's directives/wiki_concepts or design_wiki_concepts."""
+    def consolidate_wiki(self, project: str, dry_run: bool = False) -> Dict[str, Any]:
+        """Deduplicate and consolidate redundant wiki markdown files under a project's directives/wiki_concepts or design_wiki_concepts.
+
+        With dry_run=True, no file is written, unlinked, or reindexed:
+        the would_merge list previews each pair with its reason.
+        """
 
         project_dir = resolve_project_dir(project)
         if not project_dir.exists():
@@ -3002,6 +3012,7 @@ class MemoryEngine:
 
         merged_count = 0
         merged_details = []
+        would_merge = []
 
         file_contents = {}
         for f in md_files:
@@ -3041,6 +3052,20 @@ class MemoryEngine:
                     if len(f1.name) > len(f2.name):
                         f1, f2 = f2, f1
 
+                    if dry_run:
+                        would_merge.append(
+                            {
+                                "winner": f1.name,
+                                "loser": f2.name,
+                                "reason": (
+                                    "word-subset: common words "
+                                    f"{sorted(common_words)} cover the shorter stem"
+                                ),
+                            }
+                        )
+                        already_merged.add(f2)
+                        continue
+
                     content1 = file_contents[f1].strip()
                     content2 = file_contents[f2].strip()
 
@@ -3061,9 +3086,18 @@ class MemoryEngine:
                     except Exception as e:
                         print(f"Error merging {f2} into {f1}: {e}", file=sys.stderr)
 
-        if merged_count > 0:
+        if merged_count > 0 and not dry_run:
             self.index_all(force=True)
 
+        if dry_run:
+            return {
+                "status": "success",
+                "message": (
+                    f"Dry run: {len(would_merge)} duplicate pairs found (no writes)."
+                ),
+                "merged": [],
+                "would_merge": would_merge,
+            }
         return {
             "status": "success",
             "message": f"Consolidated {merged_count} duplicate wiki documents.",
@@ -3105,6 +3139,7 @@ class MemoryEngine:
             agents_md.write_text(
                 f"# Harness Engineering Framework — {project_name}\n\nMUST read at EVERY session start AND end.\n\n## Project Overview\nThis repository contains the {project_name} workspace structured under a deterministic 3-layer architecture.\n\n## Lifecycle Status\n| Phase | Status | Description |\n|---|---|---|\n| PHASE_ONE | `[ ]` Pending | Initialization and Setup |\n\n## Lifecycle Protocol\n- **Start:** Read `directives/progress.md` and `directives/session-handoff.md`\n- **End:** Save learnings to inbox, run wiki maintainer, and update `directives/progress.md`\n",
                 encoding="utf-8",
+                newline="\n",
             )
             files_written.append("AGENTS.md")
 
@@ -3113,6 +3148,7 @@ class MemoryEngine:
             claude_md.write_text(
                 "# CLAUDE.md\nRefer to [AGENTS.md](AGENTS.md) for workspace lifecycle details.\n",
                 encoding="utf-8",
+                newline="\n",
             )
             files_written.append("CLAUDE.md")
 
@@ -3124,6 +3160,7 @@ class MemoryEngine:
             inbox_file.write_text(
                 f"# {label}\n\nAppend raw lessons, API observations, and style guidelines here.\n",
                 encoding="utf-8",
+                newline="\n",
             )
             files_written.append(f"directives/{inbox_name}")
 
@@ -3131,8 +3168,9 @@ class MemoryEngine:
         progress_file = project_dir / "directives" / "progress.md"
         if not progress_file.exists():
             progress_file.write_text(
-                f"# Project Progress Log — {project_name}\n\n- **{time.strftime('%Y-%m-%d')}:** System bootstrapped using Local-Memory-RAG MCP bootstrapper.\n",
+                f"# Project Progress Log — {project_name}\n\n- **{time.strftime('%Y-%m-%d')}:** System bootstrapped using RTR-RE memory bootstrapper.\n",
                 encoding="utf-8",
+                newline="\n",
             )
             files_written.append("directives/progress.md")
 
@@ -3142,6 +3180,7 @@ class MemoryEngine:
             handoff_file.write_text(
                 "# Session Handoff\n\n## Next Action\nComplete phase one requirements.\n\n## CLI Startup Commands\n`make check`\n",
                 encoding="utf-8",
+                newline="\n",
             )
             files_written.append("directives/session-handoff.md")
 
@@ -3155,7 +3194,7 @@ class MemoryEngine:
                 "completed_steps": [],
                 "history": [],
             }
-            with open(state_file, "w", encoding="utf-8") as f:
+            with open(state_file, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(state_data, f, indent=2)
             files_written.append("state/workflow_state.json")
 
@@ -3168,7 +3207,7 @@ class MemoryEngine:
                     {"id": "PHASE_ONE", "name": "System Setup", "completed": False}
                 ]
             }
-            with open(feature_file, "w", encoding="utf-8") as f:
+            with open(feature_file, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(feature_data, f, indent=2)
             files_written.append("state/feature_list.json")
 
@@ -3178,6 +3217,7 @@ class MemoryEngine:
             init_sh.write_text(
                 '#!/bin/bash\n# Bootstrap virtual environment and workspace\necho "Bootstrapping Harness environment..."\npython3 -m venv .venv\nsource .venv/bin/activate\nif [ -f requirements.txt ]; then\n  pip install -r requirements.txt\nfi\necho "Workspace bootstrap complete."\n',
                 encoding="utf-8",
+                newline="\n",
             )
             try:
                 os.chmod(init_sh, 0o755)
@@ -3185,10 +3225,21 @@ class MemoryEngine:
                 pass
             files_written.append("init.sh")
 
+        init_cmd = project_dir / "init.cmd"
+        if not init_cmd.exists():
+            init_cmd.write_text(
+                "@echo off\nREM Bootstrap virtual environment and workspace\necho Bootstrapping Harness environment...\npython -m venv .venv\ncall .venv\\Scripts\\activate\nif exist requirements.txt pip install -r requirements.txt\necho Workspace bootstrap complete.\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            files_written.append("init.cmd")
+
         gitignore = project_dir / ".gitignore"
         if not gitignore.exists():
             gitignore.write_text(
-                ".venv/\n.tmp/\n.env\n__pycache__/\n", encoding="utf-8"
+                ".venv/\n.tmp/\n.env\n__pycache__/\n",
+                encoding="utf-8",
+                newline="\n",
             )
             files_written.append(".gitignore")
 
@@ -3356,7 +3407,8 @@ class MemoryEngine:
         modified = []
 
         if directives_dir.exists():
-            for root, _, files in os.walk(directives_dir):
+            for root, dirs, files in os.walk(directives_dir):
+                dirs[:] = [d for d in dirs if d not in _NOISE_DIRS]
                 root_path = Path(root)
                 # Skip common noise dirs
                 if any(part in root_path.parts for part in _NOISE_DIRS):
@@ -3652,6 +3704,7 @@ project: {project}
         term: str,
         definition: str = "",
         aliases: List[str] | None = None,
+        source: str = "hand",
     ) -> Dict[str, Any]:
         """Hand-add a lexikon entry (source=hand wins over derived ones)."""
         term = str(term or "").strip()
@@ -3671,7 +3724,7 @@ project: {project}
                 "term": term,
                 "definition": definition or "",
                 "aliases": sorted({a.strip() for a in (aliases or []) if a.strip()}),
-                "source": "hand",
+                "source": str(source or "hand"),
                 "updated": time.strftime("%Y-%m-%d %H:%M"),
             }
             data["terms"] = terms
@@ -3773,13 +3826,23 @@ project: {project}
                 ):
                     seeds.append((e, root))
         count = 0
+        try:
+            existing = set(self.get_lexikon(project))
+        except Exception:
+            existing = set()
         for term, ctx in seeds:
+            if term.lower() in existing:
+                # Never clobber a curated or derived entry with a guess.
+                continue
             # The element context goes in the DEFINITION, not the aliases:
             # lexikon_expansion matches on term+aliases, so alias-based
             # seeds would pollute T1/T10 queries that contain element
             # names. Definition words are added only when the query
             # contains the term itself (the rare attribute/entity name).
-            self.add_lexikon_term(project, term, definition=ctx, aliases=[])
+            self.add_lexikon_term(
+                project, term, definition=ctx, aliases=[], source="seed"
+            )
+            existing.add(term.lower())
             count += 1
         return count
 
@@ -3893,7 +3956,7 @@ project: {project}
                 aliases = entry.get("aliases") or []
                 alias = ", ".join(str(a) for a in aliases)
                 definition = str(entry.get("definition") or "")
-                source = str(entry.get("source") or "hand")
+                source = str(entry.get("source") or "derived")
                 ts = str(entry.get("updated") or "")
                 lines.append(
                     f"<glossaryentry term={quoteattr(term)} alias={quoteattr(alias)} "
@@ -3977,7 +4040,12 @@ project: {project}
                 return cid, data
 
         # 3. Create a new concept stub if not found
-        next_num = len(registry) + 1
+        used = set()
+        for key in registry:
+            m = re.match(r"concept_(\d+)$", str(key))
+            if m:
+                used.add(int(m.group(1)))
+        next_num = max(used) + 1 if used else 1
         new_id = f"concept_{next_num:03d}"
 
         canonical_name = (

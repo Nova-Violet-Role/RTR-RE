@@ -331,6 +331,42 @@ class TestSymbioseWorker(unittest.TestCase):
         finally:
             w.close()
 
+    def test_overflow_submit_does_not_inflate_cumulative(self):
+        # R2: rejected work must not advance the protection counter that
+        # drives recency gating (weaker protection if inflated).
+        import threading
+
+        release = threading.Event()
+
+        def blocking_sink(spans):
+            release.wait(timeout=10)
+            return "ok"
+
+        w = SymbioseWorker(
+            blocking_sink,
+            max_queue=1,
+            config={
+                "trigger_tokens": 100,
+                "target_tokens": 50,
+                "max_keep_messages": 200,
+            },
+        )
+        try:
+            msgs = lambda tag: [
+                {"role": "user", "text": f"{tag} " + "x" * 400} for _ in range(3)
+            ]
+            w.submit(msgs("a"))
+            time.sleep(0.5)  # worker grabs A, blocks in the sink
+            b = w.submit(msgs("b"))
+            self.assertEqual(b["status"], "pending")
+            before = w._cumulative_messages
+            c = w.submit(msgs("c"))
+            self.assertEqual(c["status"], "overflow")
+            self.assertEqual(w._cumulative_messages, before)
+        finally:
+            release.set()
+            w.close()
+
 
 class TestSessionSpanSink(unittest.TestCase):
     def test_both_lanes_written_verbatim_typed(self):
@@ -1363,6 +1399,30 @@ class TestDetachmentProof(unittest.TestCase):
                 self.assertNotIn(marker, kept)
             self.assertIn(marker, payload_text)
         self.assertIn("READ-NEW", "\n".join(kept_texts))
+
+
+class WaitClockTests(unittest.TestCase):
+    def test_wait_uses_injected_clock(self):
+        # E-T16-5: wait() hardcoded time.monotonic() while the worker
+        # honors an injected clock everywhere else — timeouts untestable.
+        state = {"now": 0.0, "calls": 0}
+
+        def fake_clock():
+            state["calls"] += 1
+            state["now"] += 1.0
+            return state["now"]
+
+        w = SymbioseWorker(lambda spans: "ok", clock=fake_clock)
+        try:
+            calls_before = state["calls"]
+            start = time.monotonic()
+            out = w.wait(424242, timeout=8)
+            wall = time.monotonic() - start
+        finally:
+            w.close()
+        self.assertGreater(state["calls"], calls_before)
+        self.assertLess(wall, 5.0)
+        self.assertEqual(out["status"], "unknown")
 
 
 if __name__ == "__main__":
