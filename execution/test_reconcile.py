@@ -367,6 +367,52 @@ class TestAbortSafeUpsert(unittest.TestCase):
                 finally:
                     eng.close()
 
+    def test_heal_batches_bounded_with_progress(self):
+        # 60 holes heal across 3 batches of 25 (not one giant
+        # wave): bounded materialization per batch is what keeps
+        # RSS flat on thousand-file heals (19GB lesson).
+        import contextlib
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "rec" / "directives"
+                d.mkdir(parents=True)
+                for i in range(60):
+                    (d / f"h{i:02d}.md").write_text(
+                        f"# H{i}\n\nBATCH-MARKER-{i}", encoding="utf-8"
+                    )
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    slug = next(
+                        s for s in eng.rtr_collections() if s == "baai_bge_base_en_v1_5"
+                    )
+                    col = eng.rtr_collections()[slug]
+                    for i in range(60):
+                        victim = str(d / f"h{i:02d}.md")
+                        dead = col.get(where={"source": victim}, limit=5000)["ids"]
+                        self.assertGreater(len(dead), 0)
+                        col.delete(ids=dead)
+                    calls = []
+                    orig_index = eng.index_all
+
+                    def counting(*a, **k):
+                        calls.append(1)
+                        return orig_index(*a, **k)
+
+                    with patch.object(eng, "index_all", side_effect=counting):
+                        out = eng.reconcile_vectors(heal=True)
+                    self.assertEqual(len(out["healed"]), 60)
+                    self.assertEqual(out["batches"], 3)
+                    self.assertEqual(len(calls), 3)
+                    self.assertEqual(out["unhealed"], [])
+                    report = eng.reconcile_vectors()
+                    total = sum(len(v) for v in report["missing"].values())
+                    self.assertEqual(total, 0)
+                finally:
+                    eng.close()
+
 
 if __name__ == "__main__":
     unittest.main()

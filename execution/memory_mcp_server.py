@@ -977,6 +977,8 @@ def memory_repair(dry_run: bool = False) -> str:
         lines.append("Dry run: measured only, nothing written.")
     else:
         lines.append(f"Vector holes healed: {len(rec.get('healed', []))}")
+        lines.append(f"Heal batches: {rec.get('batches', 0)}")
+        lines.append(f"Unhealed: {len(rec.get('unhealed', []))}")
     return TUIRenderer.render_panel("Repair", lines, status="organize")
 
 

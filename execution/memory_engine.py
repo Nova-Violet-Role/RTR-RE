@@ -1230,6 +1230,13 @@ INDEX_WAVE_SIZE = 200
 # SQLite's variable limit on big collections (measured live 2026-11-10).
 JANITOR_PAGE_SIZE = 500
 
+# Heal batch size for reconcile_vectors: one index cycle re-embeds at
+# most this many holed files before committing and reporting. One
+# giant wave materializes every embedding at once (measured: 19GB on
+# a 1876-file heal); batches keep RSS flat and make every prefix
+# durable, so a timeout between batches simply resumes.
+RECONCILE_BATCH_SIZE = 25
+
 
 def process_rss_mb() -> float:
     """Current process RSS in MB (Windows ctypes, POSIX resource)."""
@@ -2272,6 +2279,14 @@ class MemoryEngine:
         and incremental index is hash-blind to them. This is the third
         leg: report the holes, and with heal=True re-queue holed files
         through the normal incremental path (drop their keys, index).
+
+        Heal runs in bounded batches (RECONCILE_BATCH_SIZE files per
+        index cycle): each batch commits before the next starts, so a
+        timeout between batches resumes instead of restarting, and
+        RSS stays flat no matter how many holes exist. Files that
+        still fail to embed are reported under unhealed (never
+        silently dropped): their keys are restored so the next
+        report names them again instead of losing them.
         """
         refused = self._require_writer("reconcile_vectors")
         if refused is not None:
@@ -2312,22 +2327,55 @@ class MemoryEngine:
         for slug, seen in per_model.items():
             missing[slug] = sorted(p for p in live if p not in seen)
         healed: List[str] = []
+        unhealed: List[str] = []
+        batches = 0
+        rss_peak_mb = 0.0
         if heal:
             to_heal = sorted({p for v in missing.values() for p in v})
-            if to_heal:
-                for p in to_heal:
+            step = RECONCILE_BATCH_SIZE
+            for start in range(0, len(to_heal), step):
+                batch = to_heal[start : start + step]
+                for p in batch:
                     registry.pop(p, None)
                 self.save_registry(registry)
                 self.index_all()
-                healed = to_heal
+                batches += 1
+                try:
+                    rss_peak_mb = max(rss_peak_mb, process_rss_mb())
+                except Exception:
+                    pass
+                for p in batch:
+                    if self._file_has_all_models(p):
+                        healed.append(p)
+                    else:
+                        unhealed.append(p)
+                        try:
+                            registry[p] = self.calculate_sha256(Path(p))
+                        except Exception:
+                            pass
+                self.save_registry(registry)
         return {
             "status": "success",
             "files": len(registry),
             "models": {slug: len(seen) for slug, seen in per_model.items()},
             "missing": missing,
             "stale_skipped": stale_skipped,
+            "batches": batches,
             "healed": healed,
+            "unhealed": unhealed,
+            "rss_peak_mb": rss_peak_mb,
         }
+
+    def _file_has_all_models(self, path: str) -> bool:
+        """True when every configured model holds at least one chunk."""
+        try:
+            for col in self.collections.values():
+                got = col.get(where={"source": path}, limit=1)
+                if not got or not got["ids"]:
+                    return False
+            return True
+        except Exception:
+            return False
 
     def _purge_deleted_paths(self, deleted_paths: set) -> None:
         """Remove deleted files from every RTR collection (configured +

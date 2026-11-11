@@ -481,6 +481,8 @@ class RepairReconcileTests(unittest.TestCase):
                     )
                     wet = mcp_server.memory_repair()
                     self.assertIn("Vector holes healed: 1", wet)
+                    self.assertIn("Heal batches: 1", wet)
+                    self.assertIn("Unhealed: 0", wet)
                     back = col.get(where={"source": victim}, limit=5000)["ids"]
                     self.assertGreater(len(back), 0)
                 finally:
