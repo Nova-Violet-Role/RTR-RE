@@ -115,6 +115,20 @@ class TestSpanIndexer(unittest.TestCase):
             str(self.memdir / "rtrre-aaa.dtd"), self.engine.load_registry()
         )
 
+    def test_tick_serves_repair_request_and_reports(self):
+        import json
+
+        opencode = self.proj / ".opencode"
+        req = opencode / "rtr-re-repair.requested.json"
+        req.write_text('{"ts": "t", "source": "test"}', encoding="utf-8")
+        self.indexer.tick()
+        self.assertFalse(req.exists())
+        report = json.loads(
+            (opencode / "rtr-re-repair.report.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(report["status"], "done")
+        self.assertIn("Symbiotising", report["recall"])
+
     def test_thread_lifecycle(self):
         self.indexer.start()
         try:

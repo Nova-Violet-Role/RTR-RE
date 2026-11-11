@@ -946,3 +946,38 @@ test("evicted markers leave the kept window and survive in the sink file", async
         rmSync(dir, { recursive: true, force: true })
     }
 })
+
+test("rtr repair arms the repair flag", async () => {
+    const ctx = commandCtx()
+    const output = { parts: [] }
+    await handleRtrCommand({ command: "rtr", sessionID: "s", arguments: "repair" }, output, ctx)
+    assert.equal(ctx.fileCfg().repairNow, true)
+    assert.match(output.parts[0].text, /repair requested/)
+})
+
+test("repair flag becomes a request file and clears itself", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-repair-"))
+    try {
+        const { mkdir } = await import("node:fs/promises")
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-keeper.json"),
+            JSON.stringify({ triggerTokens: 1000000, manual: true, repairNow: true }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, {})
+        const messages = [msg("user", "hello")]
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        assert.equal(messages.length, 1, "repair touches no window")
+        const req = JSON.parse(
+            readFileSync(join(dir, ".opencode", "rtr-re-repair.requested.json"), "utf8"),
+        )
+        assert.equal(req.source, "keeper-flag")
+        const cfg = JSON.parse(
+            readFileSync(join(dir, ".opencode", "rtr-re-keeper.json"), "utf8"),
+        )
+        assert.ok(!cfg.repairNow, "repair flag clears after requesting")
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})

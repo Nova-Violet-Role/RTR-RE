@@ -353,6 +353,14 @@ const plugin = {
             confirmNumber("RTR Keeper evict messages now", "e.g. 500", undefined, (n) => apply({ evictMessagesNow: n }, `evict ${n} messages armed`))
           },
         },
+        {
+          name: "rtr.repair",
+          title: "RTR Keeper: repair now",
+          category: CATEGORY,
+          desc: "Repair the memory loop: conform registry, purge orphans (engine tick executes)",
+          namespace: "palette",
+          run: () => apply({ repairNow: true }, "repair requested"),
+        },
       ],
       bindings: [],
     })

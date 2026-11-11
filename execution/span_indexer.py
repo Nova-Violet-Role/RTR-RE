@@ -144,8 +144,70 @@ class SpanIndexer(threading.Thread):
         self._ticks += 1
         return found
 
+    def _opencode_dirs(self) -> List[Path]:
+        dirs: List[Path] = []
+        roots = self._roots() if callable(self._roots) else self._roots
+        for root in roots:
+            dirs.append(Path(root) / ".opencode")
+            try:
+                if Path(root).is_dir():
+                    for child in sorted(Path(root).iterdir()):
+                        if child.is_dir():
+                            dirs.append(child / ".opencode")
+            except OSError:
+                continue
+        return dirs
+
+    def _serve_repair_requests(self) -> None:
+        """Execute file-channel repair requests (TODO-13 bus).
+
+        The keeper (palette//rtr) writes .opencode/rtr-re-repair.requested.json;
+        the tick runs repair_registry + janitor, writes
+        .opencode/rtr-re-repair.report.json, then deletes the request.
+        Refusal-free: failures are reported, never raised into the tick.
+        """
+        import json
+        import time
+
+        for opencode in self._opencode_dirs():
+            req = opencode / "rtr-re-repair.requested.json"
+            try:
+                if not req.is_file():
+                    continue
+            except OSError:
+                continue
+            report: Dict[str, Any] = {
+                "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                "recall": "Symbiotising in process — accessing the digital world.",
+            }
+            try:
+                rep = self._engine.repair_registry()
+                jan = self._engine.janitor(dry_run=False)
+                report.update(
+                    {
+                        "status": "done",
+                        "repaired": rep.get("repaired", 0),
+                        "registry_total": rep.get("total", 0),
+                        "freed": jan.get("freed", 0),
+                        "pruned_roots": jan.get("pruned_roots", []),
+                    }
+                )
+            except Exception as e:  # noqa: BLE001
+                report.update({"status": "error", "error": f"{type(e).__name__}: {e}"})
+            try:
+                (opencode / "rtr-re-repair.report.json").write_text(
+                    json.dumps(report, indent=2) + "\n", encoding="utf-8"
+                )
+            except OSError:
+                continue
+            try:
+                req.unlink()
+            except OSError:
+                pass
+
     def tick(self) -> Dict[str, Any]:
         """One bounded indexing pass over current span files."""
+        self._serve_repair_requests()
         return self._engine.index_files(self._candidates())
 
     def run(self) -> None:

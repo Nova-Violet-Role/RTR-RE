@@ -383,6 +383,7 @@ async function loadKeeperFileConfig(path) {
     }
     if (data.enabled !== undefined) values.enabled = enabledFlag(data.enabled)
     if (data.manual !== undefined) values.manual = enabledFlag(data.manual)
+    if (data.repairNow !== undefined) values.repairNow = enabledFlag(data.repairNow)
     // Full target/trigger pair check happens at merge time.
     return { values, mtimeMs: st.mtimeMs }
 }
@@ -413,6 +414,7 @@ function mergeFileConfig(cfg, values, source) {
         "modality",
         "threadsPerModel",
         "parkingPercent",
+        "repairNow",
         "evictTokensNow",
         "evictMessagesNow",
     ]) {
@@ -921,7 +923,7 @@ function formatStatus(cfg, last) {
 }
 
 const RTR_USAGE =
-    "rtr usage: /rtr status | hold <tokens> | trigger <tokens> | target <tokens> | max <n> | preset <standard|calibrated|wide|fusion-ah|symbiose-ah|re-symbiose|re-symbiose-mugen> | cpu <public-default|local-system> | modality <rtr-full|rtr-arctic|rtr-bge|rag-hybrid-base|rag-dense-base|rag-hybrid|rag-dense|custom> | threads <2|4|6|8|12|16> | parking <20|30|40|50|60|70|80> | evict-tokens <n> | evict-messages <n> | enable | disable"
+    "rtr usage: /rtr status | hold <tokens> | trigger <tokens> | target <tokens> | max <n> | preset <standard|calibrated|wide|fusion-ah|symbiose-ah|re-symbiose|re-symbiose-mugen> | cpu <public-default|local-system> | modality <rtr-full|rtr-arctic|rtr-bge|rag-hybrid-base|rag-dense-base|rag-hybrid|rag-dense|custom> | threads <2|4|6|8|12|16> | parking <20|30|40|50|60|70|80> | evict-tokens <n> | evict-messages <n> | repair | enable | disable"
 
 /**
  * Shared `/rtr` verb executor (P1, TODO-65): used by both the command
@@ -991,6 +993,11 @@ async function runRtrVerb(verb, rest, ctx, say) {
             const key = verb === "evict-tokens" ? "evictTokensNow" : "evictMessagesNow"
             await ctx.writeFileConfig({ [key]: value })
             say(`keeper ${verb} ${value} armed; fires on the next exchange (no restart)`)
+            return
+        }
+        if (verb === "repair") {
+            await ctx.writeFileConfig({ repairNow: true })
+            say("repair requested; the engine tick executes it and reports back (no restart)")
             return
         }
         const numeric = { hold: "targetTokens", target: "targetTokens", trigger: "triggerTokens", max: "maxKeepMessages" }[
@@ -1156,10 +1163,31 @@ const server = async (ctx, options = {}) => {
         }
         delete current.evictTokensNow
         delete current.evictMessagesNow
+        delete current.repairNow
         await mkdir(join(ctx.directory, ".opencode"), { recursive: true })
         await writeFile(configPath, JSON.stringify(current, null, 2) + "\n", "utf8")
-        const { evictTokensNow: _t, evictMessagesNow: _m, ...rest } = cfg
-        cfg = { ...rest, evictTokensNow: 0, evictMessagesNow: 0 }
+        const { evictTokensNow: _t, evictMessagesNow: _m, repairNow: _r, ...rest } = cfg
+        cfg = { ...rest, evictTokensNow: 0, evictMessagesNow: 0, repairNow: false }
+        try {
+            fileMtime = (await stat(configPath)).mtimeMs
+        } catch {
+            fileMtime = 0
+        }
+    }
+
+    async function clearRepairFlag() {
+        let current = {}
+        try {
+            current = JSON.parse(await readFile(configPath, "utf8"))
+            if (!current || typeof current !== "object") current = {}
+        } catch {
+            current = {}
+        }
+        delete current.repairNow
+        await mkdir(join(ctx.directory, ".opencode"), { recursive: true })
+        await writeFile(configPath, JSON.stringify(current, null, 2) + "\n", "utf8")
+        const { repairNow: _r, ...rest } = cfg
+        cfg = { ...rest, repairNow: false }
         try {
             fileMtime = (await stat(configPath)).mtimeMs
         } catch {
@@ -1239,6 +1267,23 @@ const server = async (ctx, options = {}) => {
             const oneShotTokens = Math.floor(Number(cfg.evictTokensNow) || 0)
             const oneShotMessages = Math.floor(Number(cfg.evictMessagesNow) || 0)
             const oneShot = oneShotTokens > 0 || oneShotMessages > 0
+            // Repair bus (TODO-13): a repairNow flag becomes a request file
+            // the engine tick executes. Works in every mode (repair touches
+            // no window) and rides along with normal processing.
+            if (cfg.repairNow) {
+                try {
+                    await mkdir(join(ctx.directory, ".opencode"), { recursive: true })
+                    await writeFile(
+                        join(ctx.directory, ".opencode", "rtr-re-repair.requested.json"),
+                        JSON.stringify({ ts: nowIso(), source: "keeper-flag" }) + "\n",
+                        "utf8",
+                    )
+                } catch (error) {
+                    console.error(`[rtr-re-keeper] repair request failed: ${error?.message ?? error}`)
+                }
+                await clearRepairFlag()
+                await recordStatus({ decision: "repair-requested", total: 0, keepTokens: 0, evicted: 0, sinkPath: null })
+            }
             if (!cfg.enabled && !oneShot) {
                 await recordStatus({ decision: "disabled-identity", total: 0, keepTokens: 0, evicted: 0, sinkPath: null })
                 return
