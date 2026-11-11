@@ -24,6 +24,9 @@ class TestDedica(unittest.TestCase):
         self.assertIn("3,430,000", text)
         self.assertIn("391,000", text)
         self.assertIn("88.6", text)
+        self.assertIn("24,010,000", text)
+        self.assertIn("2,737,000", text)
+        self.assertIn("7th reread", text)
         self.assertIn("no prompt cache", text)
 
     def test_svg_has_both_bars(self):

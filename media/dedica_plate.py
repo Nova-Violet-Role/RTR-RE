@@ -24,6 +24,9 @@ def render_ascii(managed: int, live: int, retrieved: int, window: int) -> str:
     without = managed
     with_rtr = live + retrieved
     saved_pct = (1.0 - with_rtr / managed) * 100.0 if managed else 0.0
+    turns = 7
+    cum_without = turns * without
+    cum_with = turns * with_rtr
     lines = [
         "DEDICA — THE SMALL WINDOW THAT HOLDS THE LARGE WORLD",
         "",
@@ -35,6 +38,10 @@ def render_ascii(managed: int, live: int, retrieved: int, window: int) -> str:
         f"cost without RTR ......... {without:>12,} tok/turn",
         f"cost with RTR ............ {with_rtr:>12,} tok/turn",
         f"saved .................... {saved_pct:>11.1f} %",
+        "",
+        f"7 rereads without RTR .... {cum_without:>12,} tok",
+        f"7 rereads with RTR ....... {cum_with:>12,} tok",
+        "the 7th reread costs the same lesser price as the 1st.",
         "",
         "no prompt cache. no RAG. the window lives in retrieval form.",
         "RTR-RE:Symbiose · Reality is the judge.",
