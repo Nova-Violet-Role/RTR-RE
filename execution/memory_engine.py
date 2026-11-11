@@ -1223,6 +1223,10 @@ _INDEX_LOCK = threading.Lock()
 # first upsert lands.
 INDEX_WAVE_SIZE = 200
 
+# Page size for janitor/repair collection scans: one giant get() exceeds
+# SQLite's variable limit on big collections (measured live 2026-11-10).
+JANITOR_PAGE_SIZE = 500
+
 
 def process_rss_mb() -> float:
     """Current process RSS in MB (Windows ctypes, POSIX resource)."""
@@ -2134,21 +2138,36 @@ class MemoryEngine:
             return refused
         registry = self.load_registry()
         sources = set()
+        seen_cols = set()
         for col in self.rtr_collections().values():
+            cname = getattr(col, "name", None)
+            if cname in seen_cols:
+                continue
+            seen_cols.add(cname)
             try:
                 total = col.count()
             except Exception:
                 continue
             if total == 0:
                 continue
-            try:
-                got = col.get(limit=total + 1000, include=["metadatas"])
-            except Exception:
-                continue
-            for meta in got["metadatas"] or []:
-                src = (meta or {}).get("source", "")
-                if src:
-                    sources.add(src)
+            offset = 0
+            while offset < total:
+                try:
+                    got = col.get(
+                        limit=JANITOR_PAGE_SIZE,
+                        offset=offset,
+                        include=["metadatas"],
+                    )
+                except Exception:
+                    break
+                metas = got["metadatas"] if got else []
+                if not got or not got["ids"]:
+                    break
+                for meta in metas or []:
+                    src = (meta or {}).get("source", "")
+                    if src:
+                        sources.add(src)
+                offset += len(got["ids"])
         fixed = 0
         for src in sorted(sources):
             if src in registry:
@@ -2803,7 +2822,12 @@ class MemoryEngine:
         deleted temp projects). Reports per-collection freed counts.
         """
         report: Dict[str, Any] = {"collections": {}, "freed": 0, "dry_run": dry_run}
+        seen_cols = set()
         for name, col in self.rtr_collections().items():
+            cname = getattr(col, "name", name)
+            if cname in seen_cols:
+                continue
+            seen_cols.add(cname)
             try:
                 total = col.count()
             except Exception:
@@ -2811,15 +2835,31 @@ class MemoryEngine:
             if total == 0:
                 report["collections"][name] = {"chunks": 0, "freed": 0}
                 continue
-            try:
-                got = col.get(limit=total + 1000, include=["metadatas"])
-            except Exception as e:
-                report["collections"][name] = {"error": str(e)}
-                continue
+            # Paginated scan: one giant get() exceeds SQLite's variable
+            # limit on big collections (measured: arctic 57k errors).
             by_source: Dict[str, List[str]] = {}
-            for cid, meta in zip(got["ids"], got["metadatas"] or []):
-                src = (meta or {}).get("source", "")
-                by_source.setdefault(src, []).append(cid)
+            offset = 0
+            failed = None
+            while offset < total:
+                try:
+                    got = col.get(
+                        limit=JANITOR_PAGE_SIZE,
+                        offset=offset,
+                        include=["metadatas"],
+                    )
+                except Exception as e:
+                    failed = str(e)
+                    break
+                ids = got["ids"] if got else []
+                if not ids:
+                    break
+                for cid, meta in zip(ids, got["metadatas"] or []):
+                    src = (meta or {}).get("source", "")
+                    by_source.setdefault(src, []).append(cid)
+                offset += len(ids)
+            if failed is not None:
+                report["collections"][name] = {"error": failed}
+                continue
             freed = 0
             for src, ids in by_source.items():
                 if src and not Path(src).exists():
