@@ -2269,7 +2269,7 @@ class MemoryEngine:
         self.save_registry(registry)
         return {"status": "success", "repaired": fixed, "total": len(registry)}
 
-    def reconcile_vectors(self, heal: bool = False) -> Dict[str, Any]:
+    def reconcile_vectors(self, heal: bool = False, on_batch=None) -> Dict[str, Any]:
         """Diff registry-vs-Chroma per model; optionally heal holes.
 
         repair_registry rebuilds registry FROM Chroma; janitor deletes
@@ -2286,7 +2286,9 @@ class MemoryEngine:
         RSS stays flat no matter how many holes exist. Files that
         still fail to embed are reported under unhealed (never
         silently dropped): their keys are restored so the next
-        report names them again instead of losing them.
+        report names them again instead of losing them. on_batch,
+        when given, fires per batch as on_batch(done, total, rss_mb)
+        so long heals stay observable instead of silent.
         """
         refused = self._require_writer("reconcile_vectors")
         if refused is not None:
@@ -2354,6 +2356,11 @@ class MemoryEngine:
                         except Exception:
                             pass
                 self.save_registry(registry)
+                if on_batch is not None:
+                    try:
+                        on_batch(len(healed), len(to_heal), rss_peak_mb)
+                    except Exception:
+                        pass
         return {
             "status": "success",
             "files": len(registry),

@@ -413,6 +413,45 @@ class TestAbortSafeUpsert(unittest.TestCase):
                 finally:
                     eng.close()
 
+    def test_heal_reports_progress_per_batch(self):
+        # Long heals must be watchable: on_batch fires per batch
+        # with (done, total, rss_mb) so operators see progress live
+        # instead of staring at a silent call.
+        import contextlib
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "rec" / "directives"
+                d.mkdir(parents=True)
+                for i in range(30):
+                    (d / f"p{i:02d}.md").write_text(
+                        f"# P{i}\n\nPROGRESS-MARKER-{i}", encoding="utf-8"
+                    )
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    slug = next(
+                        s for s in eng.rtr_collections() if s == "baai_bge_base_en_v1_5"
+                    )
+                    col = eng.rtr_collections()[slug]
+                    for i in range(30):
+                        victim = str(d / f"p{i:02d}.md")
+                        dead = col.get(where={"source": victim}, limit=5000)["ids"]
+                        col.delete(ids=dead)
+                    seen = []
+                    out = eng.reconcile_vectors(
+                        heal=True,
+                        on_batch=lambda done, total, rss: seen.append(
+                            (done, total, rss)
+                        ),
+                    )
+                    self.assertEqual(len(out["healed"]), 30)
+                    self.assertEqual([s[0] for s in seen], [25, 30])
+                    self.assertTrue(all(s[1] == 30 for s in seen))
+                    self.assertTrue(all(s[2] > 0 for s in seen))
+                finally:
+                    eng.close()
+
 
 if __name__ == "__main__":
     unittest.main()
