@@ -455,10 +455,12 @@ class TestAbortSafeUpsert(unittest.TestCase):
     def test_index_trace_logs_per_file_timings(self):
         # Long heals must leave a trail even when killed: with
         # RTR_RE_INDEX_TRACE=1, every file embed+upsert logs one
-        # line (model, chunks, ms) so a stall names its file.
+        # timestamped line (model, chunks, ms) so a stall names its
+        # file AND its minute. Both chunker families (.md + .dtd).
         import contextlib
         import io
         import os
+        import re
 
         with tempfile.TemporaryDirectory() as td:
             with contextlib.contextmanager(self._isolated)(td) as root:
@@ -489,6 +491,10 @@ class TestAbortSafeUpsert(unittest.TestCase):
                     self.assertIn("t.md", out)
                     self.assertIn("s.dtd", out)
                     self.assertIn("ms", out)
+                    self.assertTrue(
+                        re.search(r"\d{2}:\d{2}:\d{2}", out),
+                        "trace lines carry HH:MM:SS timestamps",
+                    )
                 finally:
                     eng.close()
 

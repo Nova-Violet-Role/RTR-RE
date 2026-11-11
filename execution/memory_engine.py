@@ -2016,7 +2016,8 @@ class MemoryEngine:
                     if trace_on:
                         nbytes = sum(len(t) for t in texts)
                         print(
-                            f"trace index embed-start {slug} "
+                            f"trace index {time.strftime('%H:%M:%S')} "
+                            f"embed-start {slug} "
                             f"{info['rel_path']} chunks={len(texts)} "
                             f"bytes={nbytes}",
                             file=sys.stderr,
@@ -2028,7 +2029,8 @@ class MemoryEngine:
                     ]
                     if trace_on:
                         print(
-                            f"trace index embed-done {slug} "
+                            f"trace index {time.strftime('%H:%M:%S')} "
+                            f"embed-done {slug} "
                             f"{info['rel_path']} "
                             f"ms={(time.time() - t_embed) * 1000:.0f}",
                             file=sys.stderr,
@@ -2049,7 +2051,8 @@ class MemoryEngine:
             if trace_on:
                 n_chunks = sum(len(ids) for _i, ids, _t, _e, _m in staged)
                 print(
-                    f"trace index upsert-start {slug} "
+                    f"trace index {time.strftime('%H:%M:%S')} "
+                    f"upsert-start {slug} "
                     f"files={len(staged)} chunks={n_chunks}",
                     file=sys.stderr,
                     flush=True,
@@ -2084,7 +2087,8 @@ class MemoryEngine:
                     self._prune_stale_ids(col, info, ids, old_ids_by_path)
                 if trace_on:
                     print(
-                        f"trace index upsert-done {slug} "
+                        f"trace index {time.strftime('%H:%M:%S')} "
+                        f"upsert-done {slug} "
                         f"ms={(time.time() - t_upsert) * 1000:.0f}",
                         file=sys.stderr,
                         flush=True,
