@@ -83,7 +83,7 @@ theorem invalid_file_keeps_last_good (old : KeeperCfg) (m m' : Nat) :
 inductive RtrVerb where
   | status | help | enable | disable | preset
   | hold | trigger | target | max | cpu | modality | threads | parking
-  | evictTokens | evictMessages
+  | evictTokens | evictMessages | repair
   | unknown
   deriving DecidableEq, Repr
 
@@ -107,6 +107,7 @@ def verbClass : RtrVerb → VerbClass
   | .parking => .mutate
   | .evictTokens => .mutate
   | .evictMessages => .mutate
+  | .repair => .mutate
   | .unknown => .refuse
 
 theorem verb_total (v : RtrVerb) :
@@ -122,7 +123,7 @@ theorem every_mutation_names_its_field (v : RtrVerb) (h : verbClass v = .mutate)
     v = .enable ∨ v = .disable ∨ v = .preset ∨ v = .hold ∨
       v = .trigger ∨ v = .target ∨ v = .max ∨ v = .cpu ∨
       v = .modality ∨ v = .threads ∨ v = .parking ∨
-      v = .evictTokens ∨ v = .evictMessages := by
+      v = .evictTokens ∨ v = .evictMessages ∨ v = .repair := by
   cases v <;> simp_all [verbClass]
 
 -- Pass 4: presence honesty. Absence is absence, never a verdict. -/
