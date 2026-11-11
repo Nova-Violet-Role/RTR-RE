@@ -199,6 +199,23 @@ class TestMcpWrappers(unittest.TestCase):
             reader.close()
         self.assertIn("Refused", panel)
 
+    def test_migration_fresh_stamps_old_amends_same_skips(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "db"
+            db.mkdir()
+            fresh = mcp_server.maybe_migrate_db(db_dir=db, package_version="1.2.0")
+            self.assertEqual(fresh["action"], "stamp")
+            (db / "rtr-re-schema.json").write_text(
+                '{"version": "1.1.0"}', encoding="utf-8"
+            )
+            amend = mcp_server.maybe_migrate_db(db_dir=db, package_version="1.2.0")
+            self.assertEqual(amend["action"], "amend")
+            self.assertTrue((db / "rtr-re-migration.json").exists())
+            skip = mcp_server.maybe_migrate_db(db_dir=db, package_version="1.2.0")
+            self.assertEqual(skip["action"], "skip")
+
     def test_warm_models_defaults_on_explicit_off(self):
         self.assertTrue(mcp_server._should_warm_models({}))
         for off in ("0", "false", "no", "off"):

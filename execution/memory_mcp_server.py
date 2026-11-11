@@ -1348,10 +1348,102 @@ def _should_warm_models(env=None) -> bool:
     return raw not in ("0", "false", "no", "off")
 
 
+SCHEMA_MARKER_NAME = "rtr-re-schema.json"
+MIGRATION_REPORT_NAME = "rtr-re-migration.json"
+
+
+def _version_tuple(raw: str) -> tuple:
+    parts = []
+    for chunk in str(raw or "").strip().split("."):
+        try:
+            parts.append((0, int(chunk)))
+        except ValueError:
+            parts.append((1, chunk))
+    return tuple(parts) if parts else ((0, 0),)
+
+
+def _package_version() -> str:
+    try:
+        from importlib.metadata import version
+
+        return version("rtr-role-type-retrieval")
+    except Exception:
+        return "0.0.0-dev"
+
+
+def _should_auto_migrate(env=None) -> bool:
+    src = os.environ if env is None else env
+    raw = str(src.get("OPENCODE_MEMORY_AUTO_MIGRATE", "") or "").strip().lower()
+    return raw not in ("0", "false", "no", "off")
+
+
+def maybe_migrate_db(db_dir=None, package_version=None) -> dict:
+    """The one update-conformance path (TODO-13): version skew self-amends.
+
+    Compares the package version against the marker beside the DB:
+    fresh (no marker) writes the marker and skips; older marker runs
+    repair_registry + janitor, writes a refusal-free report, and stamps
+    the marker; same-or-newer skips. Never raises into startup.
+    """
+    import time
+
+    home = Path(db_dir) if db_dir is not None else mem.DB_DIR
+    marker = home / SCHEMA_MARKER_NAME
+    pkg = package_version or _package_version()
+    outcome: dict = {"package": pkg, "action": "skip", "reason": "healthy"}
+    try:
+        stored = None
+        if marker.exists():
+            try:
+                stored = json.loads(marker.read_text(encoding="utf-8")).get("version")
+            except Exception:
+                stored = None
+        if stored is None:
+            marker.write_text(
+                json.dumps({"version": pkg, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")})
+                + "\n",
+                encoding="utf-8",
+            )
+            outcome.update({"action": "stamp", "reason": "fresh"})
+            return outcome
+        if _version_tuple(stored) >= _version_tuple(pkg):
+            return outcome
+        rep = engine.repair_registry()
+        jan = engine.janitor(dry_run=False)
+        report = {
+            "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "from": stored,
+            "to": pkg,
+            "recall": "Symbiotising in process — accessing the digital world.",
+            "repaired": rep.get("repaired", 0),
+            "registry_total": rep.get("total", 0),
+            "freed": jan.get("freed", 0),
+            "pruned_roots": jan.get("pruned_roots", []),
+        }
+        (home / MIGRATION_REPORT_NAME).write_text(
+            json.dumps(report, indent=2) + "\n", encoding="utf-8"
+        )
+        marker.write_text(
+            json.dumps({"version": pkg, "ts": report["ts"]}) + "\n", encoding="utf-8"
+        )
+        outcome.update(
+            {"action": "amend", "reason": f"{stored}->{pkg}", "report": report}
+        )
+    except Exception as e:  # noqa: BLE001
+        outcome.update({"action": "error", "reason": f"{type(e).__name__}: {e}"})
+    return outcome
+
+
 def main():
     """Console-script entrypoint for uvx: run the MCP server over stdio."""
     if _should_warm_models():
         _ = engine.models
+    if _should_auto_migrate():
+        outcome = maybe_migrate_db()
+        print(
+            f"[rtr-re-mcp] migration: {outcome['action']} ({outcome['reason']})",
+            file=sys.stderr,
+        )
     _ensure_span_indexer()
     mcp.run(transport="stdio")
 
