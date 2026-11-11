@@ -42,7 +42,7 @@ jobs:
           uv run --no-project python installer/shell/tools/conformance.py
       - name: Full execution unit suite
         run: |
-          uv run python -m unittest discover -s execution -p "test_*.py"
+          uv run --with pillow python -m unittest discover -s execution -p "test_*.py"
 
   node:
     runs-on: ubuntu-latest

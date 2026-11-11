@@ -43,8 +43,9 @@ VOCAB_KEYS = {
 def family_of(path: str) -> str:
     """The family is the directory containing the file; files directly
     under the corpus root belong to '(root)' (matching the catalogue's
-    own grouping)."""
-    parts = Path(path).parts
+    own grouping). Catalogue paths are Windows-shaped regardless of
+    host, so separators normalize before splitting (Linux-safe)."""
+    parts = Path(str(path).replace("\\", "/")).parts
     for i, part in enumerate(parts):
         if part == ".dtd-file-examples":
             if i + 2 < len(parts):

@@ -91,7 +91,10 @@ class TestMcpServerTools(unittest.TestCase):
         stray = self.test_projects / "raceproj" / "directives" / "stray.md"
         stray.write_text("# Stray\n", encoding="utf-8")
         panel = mcp_server.memory_delete(str(stray))
-        self.assertIn("not indexed", panel)
+        # Panels wrap at terminal width (path length differs per
+        # machine), so match whitespace-blind: wrapping may split
+        # mid-word ("n" / "ot indexed" seen on CI).
+        self.assertIn("notindexed", "".join(panel.split()))
         self.assertTrue(stray.exists())
 
     def test_delete_removes_indexed_file(self):

@@ -125,9 +125,19 @@ class PluginCopySyncTest(unittest.TestCase):
         # The npm prepack copies installer/ -> opencode-plugin/installer/.
         # A stale copy ships stale bytes; the copy must equal the root
         # (measured live: palette-guide.txt drifted 3798 vs 3663 bytes).
+        # The copy is gitignored, so fresh checkouts (CI included) build
+        # it here with the same filter prepack uses, then compare.
+        import shutil
+
         root = ROOT / "installer"
         copy = ROOT / "opencode-plugin" / "installer"
-        self.assertTrue(copy.is_dir(), "prepack copy missing; run npm prepack")
+        if not copy.is_dir():
+            shutil.copytree(
+                root,
+                copy,
+                ignore=shutil.ignore_patterns("__pycache__"),
+            )
+        self.assertTrue(copy.is_dir())
 
         def files(base):
             out = {}

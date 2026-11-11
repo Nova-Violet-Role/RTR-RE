@@ -10,6 +10,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 
+try:
+    import PIL.Image  # noqa: F401
+
+    _PIL_OK = True
+except ImportError:
+    _PIL_OK = False
+
 
 def _frame_hash():
     return hashlib.sha256(
@@ -28,7 +35,16 @@ def _run_make_frames():
     spec.loader.exec_module(mod)
 
 
+@unittest.skipUnless(
+    _PIL_OK, "needs Pillow (media toolchain); CI installs it via --with pillow"
+)
 class TestMakeFrames(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # frames/ is gitignored: generate on demand so fresh
+        # checkouts (CI included) test generation, not leftovers.
+        _run_make_frames()
+
     def test_two_runs_are_byte_identical(self):
         _run_make_frames()
         first = _frame_hash()

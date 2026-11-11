@@ -2,7 +2,11 @@
 # SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Generate high-contrast captioned frames for three Tessersect collages."""
 
+from pathlib import Path
+
 from PIL import Image, ImageDraw
+
+MEDIA = Path(__file__).parent
 
 W, H = 854, 480
 
@@ -645,6 +649,8 @@ COLLAGES = {
 }
 
 for dirname, (header, slides) in COLLAGES.items():
+    outdir = MEDIA / dirname
+    outdir.mkdir(parents=True, exist_ok=True)
     for i, (title, bullets) in enumerate(slides):
         img = Image.new("RGB", (W, H), "white")
         d = ImageDraw.Draw(img)
@@ -662,5 +668,5 @@ for dirname, (header, slides) in COLLAGES.items():
             fill="black",
         )
         d.text((18, H - 30), f"frame {i + 1:02d} · torch 1-bit · 480p", fill="black")
-        img.save(f"C:/RTR-RE/media/{dirname}/frame-{i + 1:02d}.png")
+        img.save(outdir / f"frame-{i + 1:02d}.png")
 print("frames done")
