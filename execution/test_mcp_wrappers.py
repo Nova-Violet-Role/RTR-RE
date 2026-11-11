@@ -180,6 +180,25 @@ class TestMcpWrappers(unittest.TestCase):
         self.assertIn("Threads:", panel)
         self.assertIn("MainThread", panel)
 
+    def test_repair_runs_and_narrates(self):
+        panel = mcp_server.memory_repair(dry_run=True)
+        self.assertIn("Repair", panel)
+        self.assertIn("Symbiotising in process", panel)
+        self.assertIn("Registry relinked:", panel)
+        self.assertIn("Dry run", panel)
+
+    def test_repair_refuses_when_read_only(self):
+        old = mcp_server.engine
+        reader = MemoryEngine()
+        try:
+            self.assertTrue(reader.read_only)
+            mcp_server.engine = reader
+            panel = mcp_server.memory_repair()
+        finally:
+            mcp_server.engine = old
+            reader.close()
+        self.assertIn("Refused", panel)
+
     def test_warm_models_defaults_on_explicit_off(self):
         self.assertTrue(mcp_server._should_warm_models({}))
         for off in ("0", "false", "no", "off"):

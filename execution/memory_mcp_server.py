@@ -923,6 +923,52 @@ def memory_janitor(dry_run: bool = False) -> str:
     return TUIRenderer.render_panel("Janitor", lines, status="organize")
 
 
+@mcp.tool()
+def memory_repair(dry_run: bool = False) -> str:
+    """Repair the memory loop: conform the registry, purge orphans, report.
+
+    The one update-conformance path: registry relinks from Chroma truth,
+    janitor frees dead chunks and prunes dead roots, and the report names
+    every piece. Dry run measures without writing.
+    """
+    recall = [
+        "Symbiotising in process — accessing the digital world,",
+        "growing piece by piece until every span is home.",
+        "",
+    ]
+    if engine.read_only:
+        return TUIRenderer.render_panel(
+            "Repair Refused",
+            ["The database lock is held elsewhere; repair needs the writer."],
+            status="error",
+        )
+    try:
+        rep = engine.repair_registry()
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Repair Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+    if rep.get("status") == "error":
+        return TUIRenderer.render_panel(
+            "Repair Failure", [rep.get("message", "unknown")], status="error"
+        )
+    try:
+        jan = engine.janitor(dry_run=dry_run)
+    except Exception as e:
+        return TUIRenderer.render_panel(
+            "Repair Failure", [f"Error: {_error_text(e)}"], status="error"
+        )
+    lines = list(recall)
+    lines.append(f"Registry relinked: {rep.get('repaired', 0)} files")
+    lines.append(f"Registry total: {rep.get('total', 0)} files")
+    lines.append(f"Chunks freed: {jan.get('freed', 0)}")
+    if jan.get("pruned_roots"):
+        lines.append(f"Roots pruned: {len(jan['pruned_roots'])}")
+    if dry_run:
+        lines.append("Dry run: measured only, nothing written.")
+    return TUIRenderer.render_panel("Repair", lines, status="organize")
+
+
 _symbiose_workers: dict = {}
 
 

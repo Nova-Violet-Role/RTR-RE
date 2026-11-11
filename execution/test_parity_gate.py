@@ -54,7 +54,7 @@ class TestLiveTree(unittest.TestCase):
         self.assertEqual(counts["palette"], 13)
         self.assertEqual(counts["rtr_verbs"], 15)
         self.assertEqual(counts["cli_verbs"], 21)
-        self.assertEqual(counts["mcp_tools"], 31)
+        self.assertEqual(counts["mcp_tools"], 32)
 
 
 if __name__ == "__main__":

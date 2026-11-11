@@ -129,7 +129,7 @@ def run_checks(expected: str) -> None:
     check("commands:palette13", counts["palette"] == 13, f"got {counts['palette']}")
     check("commands:rtr15", counts["rtr_verbs"] == 15, f"got {counts['rtr_verbs']}")
     check("commands:cli21", counts["cli_verbs"] == 21, f"got {counts['cli_verbs']}")
-    check("commands:mcp31", counts["mcp_tools"] == 31, f"got {counts['mcp_tools']}")
+    check("commands:mcp32", counts["mcp_tools"] == 32, f"got {counts['mcp_tools']}")
     # README numbers resolve to the frozen JSONs.
     frozen = json.loads(
         (ROOT / "eval" / "results" / "versus.json").read_text(encoding="utf-8")
