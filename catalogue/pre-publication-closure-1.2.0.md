@@ -97,3 +97,22 @@ Open items: the two blockers above plus the operator trigger.
 Everything else on the ladder is closed with evidence. The gate
 therefore holds at READY-BLOCKED: ready on evidence, blocked on
 the operator's two answers and trigger.
+
+## Published 2026-11-11 (post-scriptum)
+
+One tag push (`v1.2.0`), one workflow run, all five jobs green.
+Read-backs, not trust:
+
+| Platform | Artifact | Proof |
+|---|---|---|
+| PyPI | wheel 16,968,617 B sha256 db19442f…9848a; sdist 19,338,291 B sha256 d3a7aa41…f0bda | version JSON 1.2.0 live, new manual on page |
+| npm `rtr-re-opencode-plugin` | 1.2.0, shasum cd3ef589…, 31 files | `npm view` 1.2.0 (shasum equals local pack: reproducible) |
+| npm `@saimonokuma/rtr-re-mjs` | 1.2.0, shasum 862c92a3…, 14 files | `npm view` 1.2.0 (shasum equals local pack: reproducible) |
+| GitHub | release v1.2.0 + 4 assets | release read-back lists all four |
+
+CI note: the first post-push run went 3/4 green with 11
+environmental python failures (lab-data tests, frames/prepack
+artifacts, one real cross-platform `family_of` bug); all fixed
+red-first, CI re-ran green before the tag. No duplicates: each
+stage published exactly once (a transient 404 scare was the local
+npm cache, disproven with `--prefer-online`).
