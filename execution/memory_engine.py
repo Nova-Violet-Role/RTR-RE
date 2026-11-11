@@ -27,7 +27,9 @@ except ImportError:  # pragma: no cover - Windows
 
 # Force CPU execution to minimize resource footprint
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+# Tokenizer parallelism defaults off (footprint); an explicit env wins
+# so deployments can measure and choose (TODO-17 A/B).
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 import chromadb
 from fastembed import TextEmbedding
