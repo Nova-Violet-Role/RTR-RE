@@ -23,7 +23,7 @@ extractor) is the instrument behind the DTD corpus queries and is covered by
 | `nt-studies` | 36 NestedText research notes | keyword-dense, overlapping vocab | 191 |
 | `dita-spec` | 30 DITA 2.0 spec topics (XML) | long structured prose, element names | 169 |
 | `dtd-commands` | 48 real *-dtd command files | huge generated DTD prose, identifiers | 213 |
-| `dtd-family` | 60 DTD/module/entity files across 15 families | real DTD grammars (JATS, DocBook, DITA, TEI, MathML, XHTML, SVG, Office, daisy, …) | 243 |
+| `dtd-family` | 60 DTD/module/entity files across 15 families | real DTD grammars (JATS, DocBook, DITA, TEI, MathML, XHTML, SVG, Office, daisy, …) | 285 |
 | `keeper-memory` | 40 generated DTD-shaped evicted spans | infinite-memory retrievability (T13) | 40 |
 
 Same index per run for every system — the ablation is purely on the retrieval
@@ -66,22 +66,26 @@ T5 pairs runtime-validated (source present, synonym absent, single owner).
 ## Scoreboard (`results/versus.json`, `results/versus.md`, `versus.mmd`)
 
 Official tool v2, fully isolated (DB/registry/roots/lexikon),
-sha256 corpus manifest in the JSON. 544 queries, 5 real corpora,
-**0 query errors** on every system. Freeze 2026-11-10 at 1.2.0
-(`results/versus.json`; 1.1.0 preserved in `results/versus-1.1.0.json`;
-STRUCT-lane-on run archived in `results/versus-lane-on.json`, within
-noise). Cross-run absolutes move ±~0.02 (register R-15) — read
+sha256 corpus manifest in the JSON. 898 queries, 5 real corpora,
+**0 query errors** on every system. Freeze 2026-11-11 at 1.2.0,
+intense caps (`results/versus.json`; 1.1.0 preserved in
+`results/versus-1.1.0.json`; STRUCT-lane-on run archived in
+`results/versus-lane-on.json`, within noise). The 1.2.0 non-intense
+544-query run reproduced the prior record exactly (R@1 bit-identical
+on 4 of 5 corpora), proving the engine changes bench-neutral; the
+freeze moved to intense because this taxonomy specifies intense
+counts and the record must match its spec. Cross-run absolutes move ±~0.02 (register R-15) — read
 within-run comparisons only.
 
 | System | R@1 | R@3 | MRR |
 |---|---|---|---|
-| **rtr-full** | **0.689** | **0.846** | **0.756** |
-| rtr-arctic | 0.688 | 0.814 | 0.741 |
-| rtr-bge | 0.636 | 0.759 | 0.691 |
-| rag-hybrid | 0.588 | 0.704 | 0.639 |
-| rag-hybrid-base | 0.583 | 0.688 | 0.629 |
-| rag-dense-base | 0.357 | 0.513 | 0.426 |
-| rag-dense | 0.335 | 0.522 | 0.417 |
+| **rtr-full** | **0.723** | **0.850** | **0.777** |
+| rtr-arctic | 0.713 | 0.824 | 0.760 |
+| rtr-bge | 0.659 | 0.755 | 0.702 |
+| rag-hybrid | 0.638 | 0.736 | 0.681 |
+| rag-hybrid-base | 0.626 | 0.712 | 0.664 |
+| rag-dense-base | 0.404 | 0.549 | 0.469 |
+| rag-dense | 0.394 | 0.571 | 0.473 |
 
 rtr-full leads every column. keeper-memory (T13): rtr-full R@1/R@3/MRR
 0.975 — evicted spans are retrievable at high score through the real

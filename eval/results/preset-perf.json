@@ -4,37 +4,37 @@
     {
       "threads": 2,
       "files": 12,
-      "index_s": 0.72,
-      "search_p50_ms": 8.8,
-      "search_max_ms": 408.5
+      "index_s": 0.64,
+      "search_p50_ms": 10.0,
+      "search_max_ms": 429.3
     },
     {
       "threads": 4,
       "files": 12,
-      "index_s": 0.53,
-      "search_p50_ms": 7.5,
-      "search_max_ms": 10.0
+      "index_s": 0.47,
+      "search_p50_ms": 7.7,
+      "search_max_ms": 9.2
     },
     {
       "threads": 8,
       "files": 12,
-      "index_s": 0.5,
-      "search_p50_ms": 6.3,
-      "search_max_ms": 8.2
+      "index_s": 0.45,
+      "search_p50_ms": 7.5,
+      "search_max_ms": 9.5
     },
     {
       "threads": 12,
       "files": 12,
-      "index_s": 0.5,
-      "search_p50_ms": 6.7,
-      "search_max_ms": 8.0
+      "index_s": 0.43,
+      "search_p50_ms": 6.5,
+      "search_max_ms": 8.9
     },
     {
       "threads": 16,
       "files": 12,
-      "index_s": 0.53,
-      "search_p50_ms": 7.4,
-      "search_max_ms": 9.6
+      "index_s": 0.48,
+      "search_p50_ms": 7.1,
+      "search_max_ms": 9.7
     }
   ]
 }

@@ -78,7 +78,7 @@ Tests: `node --test tests/*.test.mjs` (also `npm test`).
 ## 🧪 Evaluation
 
 The no-MCP edition shares the engine, the index, and the numbers: rtr-full
-leads combined (R@1 0.689, R@3 0.846, MRR 0.756, 544 queries, 0 errors).
+leads combined (R@1 0.723, R@3 0.850, MRR 0.777, 898 queries, 0 errors).
 Install via npm, measure via pypi (`rtr-cli`), source on git.
 
 | Taxon | What it isolates |

@@ -204,9 +204,9 @@ agent CLI and local-LLM setup.
 documentation with a published taxonomy (`eval/TAXONOMY.md`), rendered as
 SVG (white + dark). Every number re-runs on your machine.
 
-**The short version (1.2.0 freeze, 544 queries, 5 corpora, 0 errors):**
-rtr-full leads every column combined (R@1 **0.689**, R@3 **0.846**, MRR
-**0.756**), keeper-memory retrieves evicted spans at 0.975, and the
+**The short version (1.2.0 freeze, 898 queries, 5 corpora, 0 errors):**
+rtr-full leads every column combined (R@1 **0.723**, R@3 **0.850**, MRR
+**0.777**), keeper-memory retrieves evicted spans at 0.975, and the
 infinite-memory claim is measured, not asserted.
 
 | Taxon | What it isolates |
@@ -255,7 +255,7 @@ instrument; prose corpora favor dense, term-dense favors fusion.
 
 ```text
 uvx --from rtr-role-type-retrieval python -m execution.rtr_eval   # release gate (pypi)
-uv run python eval/bench_versus.py                 # full versus bench -> eval/results/ (git)
+uv run python eval/bench_versus.py --intense     # full versus bench -> eval/results/ (git)
 node --test opencode-plugin/ mjs/tests/           # JS suites (npm-adjacent)
 ```
 
@@ -323,12 +323,12 @@ substance lives in retrieval form instead of being re-sent:
    larger the fraction saved — proven monotone, measured 88.6% on the
    live 3.43M session (391k served per turn).
 5. **Retrieval beats the baseline it replaces.** rtr-full leads every
-   classic RAG arm combined (R@1 0.689 vs 0.588, R@3 0.846 vs 0.704)
+   classic RAG arm combined (R@1 0.723 vs 0.638, R@3 0.850 vs 0.736)
    on identical corpora and queries — no strawman, same model sizes.
 
 **The evidence.** `formal/Symbiose/` (Cost, Planner, Lane, Control —
 full battery green with axiom records), `execution/test_cost_model.py`
-(scale analogues + live-number instances), `eval/` (544-query versus,
+(scale analogues + live-number instances), `eval/` (898-query versus,
 gold-v2 graded, 27/27 Engine Beneath), `media/dedica.svg` (the
 monument), and a live 3.43M-token session that never lost a byte.
 

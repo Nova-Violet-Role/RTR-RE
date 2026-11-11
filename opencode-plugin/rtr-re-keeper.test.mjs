@@ -1003,3 +1003,39 @@ test("repair flag becomes a request file and clears itself", async () => {
         rmSync(dir, { recursive: true, force: true })
     }
 })
+
+test("adversarial: empty window is identity, never a crash", () => {
+    const plan = planKeepIndices([], cfg())
+    assert.equal(plan.compress, false)
+    assert.equal(plan.keep.size, 0)
+    assert.equal(plan.evict.length, 0)
+})
+
+test("adversarial: single huge message over trigger alone is kept, nothing evicted", () => {
+    const plan = planKeepIndices([msg("user", "x".repeat(4000000))], cfg())
+    assert.ok(plan.keep.has(0))
+    assert.equal(plan.evict.length, 0)
+    assert.equal(plan.compress, false)
+})
+
+test("adversarial: all-protected window over trigger keeps everything", () => {
+    const messages = []
+    for (let i = 0; i < 60; i++) {
+        messages.push(msg("assistant", "x".repeat(400), { tool: "todowrite" }))
+    }
+    const plan = planKeepIndices(messages, cfg())
+    assert.equal(plan.keep.size, 60)
+    assert.equal(plan.evict.length, 0)
+})
+
+test("adversarial: 1000 tiny messages partition cleanly under the cap", () => {
+    const messages = []
+    for (let i = 0; i < 1000; i++) {
+        messages.push(msg(i % 2 ? "user" : "assistant", "hi " + "x".repeat(40)))
+    }
+    const plan = planKeepIndices(messages, cfg())
+    assert.equal(plan.compress, true)
+    assert.ok(plan.keep.size <= 40)
+    assert.equal(plan.keep.size + plan.evict.length, 1000)
+    for (const i of plan.keep) assert.ok(!plan.evict.includes(i))
+})

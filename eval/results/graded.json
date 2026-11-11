@@ -47,7 +47,7 @@
               0.7991
             ],
             "unjudged_returned": 2,
-            "p50_ms": 5.6
+            "p50_ms": 4.4
           },
           "rows": [
             {
@@ -92,7 +92,7 @@
                 "nt-studies/form-tokens.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 707.7,
+              "ms": 572.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -148,7 +148,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 6.8,
+              "ms": 4.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -204,7 +204,7 @@
                 "nt-studies/form-tokens.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 5.7,
+              "ms": 5.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -260,7 +260,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 5.6,
+              "ms": 4.2,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -316,7 +316,7 @@
                 "nt-studies/ooxml.nt",
                 "nt-studies/lwdita.nt"
               ],
-              "ms": 5.0,
+              "ms": 4.3,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -372,7 +372,7 @@
                 "nt-studies/sigil-variables.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 5.2,
+              "ms": 4.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -428,7 +428,7 @@
                 "nt-studies/spec-deltas.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 4.5,
+              "ms": 4.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -484,7 +484,7 @@
                 "nt-studies/form-tokens.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 5.0,
+              "ms": 4.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -539,7 +539,7 @@
               0.7079
             ],
             "unjudged_returned": 0,
-            "p50_ms": 8.9
+            "p50_ms": 7.0
           },
           "rows": [
             {
@@ -584,7 +584,7 @@
                 "nt-studies/tocjs.nt",
                 "nt-studies/lwdita.nt"
               ],
-              "ms": 200.2,
+              "ms": 140.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -640,7 +640,7 @@
                 "nt-studies/arguments.duo.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 11.3,
+              "ms": 8.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -696,7 +696,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 8.9,
+              "ms": 7.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -752,7 +752,7 @@
                 "nt-studies/loose-app.nt",
                 "nt-studies/scaffolds.nt"
               ],
-              "ms": 7.7,
+              "ms": 6.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -808,7 +808,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/loose-app.nt"
               ],
-              "ms": 9.3,
+              "ms": 7.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -864,7 +864,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 8.2,
+              "ms": 6.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -920,7 +920,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/arguments-dtd-variants.nt"
               ],
-              "ms": 7.3,
+              "ms": 6.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -976,7 +976,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 8.3,
+              "ms": 7.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1031,7 +1031,7 @@
               0.8458
             ],
             "unjudged_returned": 1,
-            "p50_ms": 11.3
+            "p50_ms": 9.6
           },
           "rows": [
             {
@@ -1076,7 +1076,7 @@
                 "nt-studies/form-tokens.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 791.6,
+              "ms": 660.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1132,7 +1132,7 @@
                 "nt-studies/sigil-variables.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 12.7,
+              "ms": 10.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1188,7 +1188,7 @@
                 "nt-studies/answers-catalog.nt",
                 "nt-studies/build-survey.nt"
               ],
-              "ms": 12.5,
+              "ms": 11.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1244,7 +1244,7 @@
                 "nt-studies/rewrite-ledger.nt",
                 "nt-studies/form-tokens.nt"
               ],
-              "ms": 10.7,
+              "ms": 9.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1300,7 +1300,7 @@
                 "nt-studies/dtd-families.nt",
                 "nt-studies/office-dtds-daisy.duo.nt"
               ],
-              "ms": 10.5,
+              "ms": 8.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1356,7 +1356,7 @@
                 "nt-studies/spec-deltas.nt",
                 "nt-studies/build-survey.nt"
               ],
-              "ms": 11.3,
+              "ms": 9.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1412,7 +1412,7 @@
                 "nt-studies/form-tokens.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 10.7,
+              "ms": 8.3,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -1468,7 +1468,7 @@
                 "nt-studies/svg-modules.nt",
                 "nt-studies/form-tokens.nt"
               ],
-              "ms": 11.2,
+              "ms": 9.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1523,7 +1523,7 @@
               0.7417
             ],
             "unjudged_returned": 0,
-            "p50_ms": 15.4
+            "p50_ms": 12.9
           },
           "rows": [
             {
@@ -1568,7 +1568,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/polyglot-greek.nt"
               ],
-              "ms": 390.4,
+              "ms": 306.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1624,7 +1624,7 @@
                 "nt-studies/arguments.duo.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 16.8,
+              "ms": 13.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1680,7 +1680,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 16.8,
+              "ms": 13.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1736,7 +1736,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/scaffolds.nt"
               ],
-              "ms": 15.4,
+              "ms": 12.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1792,7 +1792,7 @@
                 "nt-studies/polyglot-greek.nt",
                 "nt-studies/loose-app.nt"
               ],
-              "ms": 14.7,
+              "ms": 12.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1848,7 +1848,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 15.1,
+              "ms": 12.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1904,7 +1904,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/arguments-dtd-variants.nt"
               ],
-              "ms": 14.5,
+              "ms": 12.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -1960,7 +1960,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 15.3,
+              "ms": 12.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2015,7 +2015,7 @@
               0.7394
             ],
             "unjudged_returned": 2,
-            "p50_ms": 20.2
+            "p50_ms": 16.3
           },
           "rows": [
             {
@@ -2060,7 +2060,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/polyglot-greek.nt"
               ],
-              "ms": 499.9,
+              "ms": 374.2,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -2116,7 +2116,7 @@
                 "nt-studies/arguments.duo.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 20.2,
+              "ms": 17.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2172,7 +2172,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 21.3,
+              "ms": 17.5,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -2228,7 +2228,7 @@
                 "nt-studies/loose-app.nt",
                 "nt-studies/scaffolds.nt"
               ],
-              "ms": 20.4,
+              "ms": 15.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2284,7 +2284,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/loose-app.nt"
               ],
-              "ms": 19.5,
+              "ms": 15.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2340,7 +2340,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 19.3,
+              "ms": 16.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2396,7 +2396,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/arguments-dtd-variants.nt"
               ],
-              "ms": 18.6,
+              "ms": 15.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2452,7 +2452,7 @@
                 "nt-studies/polyglot-greek.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 20.2,
+              "ms": 16.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2507,7 +2507,7 @@
               0.7417
             ],
             "unjudged_returned": 0,
-            "p50_ms": 18.8
+            "p50_ms": 15.6
           },
           "rows": [
             {
@@ -2552,7 +2552,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/polyglot-greek.nt"
               ],
-              "ms": 378.3,
+              "ms": 308.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2608,7 +2608,7 @@
                 "nt-studies/arguments.duo.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 19.5,
+              "ms": 15.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2664,7 +2664,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 19.5,
+              "ms": 15.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2720,7 +2720,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/scaffolds.nt"
               ],
-              "ms": 17.9,
+              "ms": 14.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2776,7 +2776,7 @@
                 "nt-studies/polyglot-greek.nt",
                 "nt-studies/loose-app.nt"
               ],
-              "ms": 18.3,
+              "ms": 15.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2832,7 +2832,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 17.9,
+              "ms": 14.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2888,7 +2888,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/arguments-dtd-variants.nt"
               ],
-              "ms": 18.0,
+              "ms": 14.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2944,7 +2944,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 18.8,
+              "ms": 16.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -2999,7 +2999,7 @@
               0.7502
             ],
             "unjudged_returned": 0,
-            "p50_ms": 33.9
+            "p50_ms": 27.8
           },
           "rows": [
             {
@@ -3044,7 +3044,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/polyglot-greek.nt"
               ],
-              "ms": 789.9,
+              "ms": 666.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3100,7 +3100,7 @@
                 "nt-studies/arguments.duo.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 34.1,
+              "ms": 28.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3156,7 +3156,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 33.9,
+              "ms": 30.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3212,7 +3212,7 @@
                 "nt-studies/arguments-dtd-variants.nt",
                 "nt-studies/scaffolds.nt"
               ],
-              "ms": 33.9,
+              "ms": 27.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3268,7 +3268,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/loose-app.nt"
               ],
-              "ms": 31.4,
+              "ms": 25.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3324,7 +3324,7 @@
                 "nt-studies/scaffolds.nt",
                 "nt-studies/arguments.duo.nt"
               ],
-              "ms": 32.1,
+              "ms": 25.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3380,7 +3380,7 @@
                 "nt-studies/greek.duo.nt",
                 "nt-studies/arguments-dtd-variants.nt"
               ],
-              "ms": 32.7,
+              "ms": 26.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3436,7 +3436,7 @@
                 "nt-studies/polyglot-greek.nt",
                 "nt-studies/greek.duo.nt"
               ],
-              "ms": 34.3,
+              "ms": 27.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3497,7 +3497,7 @@
               0.9215
             ],
             "unjudged_returned": 1,
-            "p50_ms": 5.0
+            "p50_ms": 4.0
           },
           "rows": [
             {
@@ -3536,7 +3536,7 @@
                 "dita-spec/classification-maps.dita",
                 "dita-spec/example-subjectScheme-extension.dita"
               ],
-              "ms": 168.6,
+              "ms": 138.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3586,7 +3586,7 @@
                 "dita-spec/fileext.dita",
                 "dita-spec/classification-maps.dita"
               ],
-              "ms": 5.0,
+              "ms": 4.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3636,7 +3636,7 @@
                 "dita-spec/document-type-shells-conformance.dita",
                 "dita-spec/classification-maps.dita"
               ],
-              "ms": 4.3,
+              "ms": 3.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3686,7 +3686,7 @@
                 "dita-spec/document-type-shells-conformance.dita",
                 "dita-spec/example-keys-scope-defining-precedence.dita"
               ],
-              "ms": 5.0,
+              "ms": 3.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3736,7 +3736,7 @@
                 "dita-spec/basic-dita-terminology.dita",
                 "dita-spec/adding-an-attribute-to-certain-table-elements.dita"
               ],
-              "ms": 5.1,
+              "ms": 4.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3786,7 +3786,7 @@
                 "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
                 "dita-spec/document-type-shells-conformance.dita"
               ],
-              "ms": 4.5,
+              "ms": 3.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3836,7 +3836,7 @@
                 "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
                 "dita-spec/example-of-an-index-range.dita"
               ],
-              "ms": 5.3,
+              "ms": 4.2,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -3886,7 +3886,7 @@
                 "dita-spec/generalization-w-cross-specialization-dependencies.dita",
                 "dita-spec/classification-maps.dita"
               ],
-              "ms": 4.9,
+              "ms": 3.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -3941,7 +3941,7 @@
               0.8448
             ],
             "unjudged_returned": 0,
-            "p50_ms": 9.3
+            "p50_ms": 6.9
           },
           "rows": [
             {
@@ -3980,7 +3980,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/configuration.dita"
               ],
-              "ms": 172.2,
+              "ms": 143.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4020,17 +4020,17 @@
                 "dita-spec/aboutconditionalprocessing.dita",
                 "dita-spec/classification-maps.dita",
                 "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
                 "dita-spec/generalization-w-cross-specialization-dependencies.dita",
                 "dita-spec/fileext.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
                 "dita-spec/example-flagging-outputclass.dita",
                 "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-chunk-combine-all.dita",
                 "dita-spec/ditaaddressing.dita",
+                "dita-spec/example-chunk-combine-all.dita",
                 "dita-spec/document-type-shells-conformance.dita"
               ],
-              "ms": 10.5,
+              "ms": 7.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4080,7 +4080,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/diratt.dita"
               ],
-              "ms": 9.3,
+              "ms": 6.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4124,13 +4124,13 @@
                 "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
                 "dita-spec/example-flagging-outputclass.dita",
                 "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
                 "dita-spec/example-conref-range-conkeyref.dita",
                 "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/configuration.dita"
               ],
-              "ms": 9.2,
+              "ms": 6.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4180,7 +4180,7 @@
                 "dita-spec/configuration.dita",
                 "dita-spec/diratt.dita"
               ],
-              "ms": 8.8,
+              "ms": 6.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4230,7 +4230,7 @@
                 "dita-spec/examples-of-keys.dita",
                 "dita-spec/ditaaddressing.dita"
               ],
-              "ms": 9.3,
+              "ms": 6.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4280,7 +4280,7 @@
                 "dita-spec/example-flagging-outputclass.dita",
                 "dita-spec/examples-expansion-implemented-using-rng.dita"
               ],
-              "ms": 9.4,
+              "ms": 7.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4330,7 +4330,7 @@
                 "dita-spec/example-contraints-redefine-content-model.dita",
                 "dita-spec/document-type-shells-conformance.dita"
               ],
-              "ms": 9.1,
+              "ms": 6.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4385,7 +4385,7 @@
               0.8689
             ],
             "unjudged_returned": 1,
-            "p50_ms": 10.8
+            "p50_ms": 9.5
           },
           "rows": [
             {
@@ -4424,7 +4424,7 @@
                 "dita-spec/document-type-shells-conformance.dita",
                 "dita-spec/examples-of-keys.dita"
               ],
-              "ms": 338.8,
+              "ms": 293.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4474,7 +4474,7 @@
                 "dita-spec/example-chunk-combine-all.dita",
                 "dita-spec/document-type-shells-conformance.dita"
               ],
-              "ms": 10.8,
+              "ms": 9.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4524,7 +4524,7 @@
                 "dita-spec/classification-maps.dita",
                 "dita-spec/document-type-shells-conformance.dita"
               ],
-              "ms": 9.2,
+              "ms": 8.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4574,7 +4574,7 @@
                 "dita-spec/example-ditaval-with-conditions-for-groups.dita",
                 "dita-spec/example-flagging-outputclass.dita"
               ],
-              "ms": 10.0,
+              "ms": 9.3,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -4624,7 +4624,7 @@
                 "dita-spec/example-of-an-index-range.dita",
                 "dita-spec/example-flagging-outputclass.dita"
               ],
-              "ms": 10.7,
+              "ms": 9.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4674,7 +4674,7 @@
                 "dita-spec/document-type-shells-conformance.dita",
                 "dita-spec/example-flagging-outputclass.dita"
               ],
-              "ms": 9.4,
+              "ms": 8.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4724,7 +4724,7 @@
                 "dita-spec/example-keys-scope-defining-precedence.dita",
                 "dita-spec/classification-maps.dita"
               ],
-              "ms": 13.7,
+              "ms": 9.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4774,7 +4774,7 @@
                 "dita-spec/example-simple-map-w-reltable.dita",
                 "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita"
               ],
-              "ms": 14.4,
+              "ms": 9.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4791,6 +4791,894 @@
           ]
         },
         "rag-hybrid-base": {
+          "metrics": {
+            "n": 8,
+            "ndcg@3": 0.8108,
+            "ci95_ndcg@3": [
+              0.7422,
+              0.8832
+            ],
+            "ndcg@5": 0.7968,
+            "ci95_ndcg@5": [
+              0.7194,
+              0.87
+            ],
+            "ndcg@10": 0.8487,
+            "ci95_ndcg@10": [
+              0.8192,
+              0.8761
+            ],
+            "ndcg@20": 0.8716,
+            "ci95_ndcg@20": [
+              0.8497,
+              0.8955
+            ],
+            "err@10": 0.8831,
+            "ci95_err@10": [
+              0.8179,
+              0.9227
+            ],
+            "gprec@10": 0.2643,
+            "ci95_gprec@10": [
+              0.2107,
+              0.3143
+            ],
+            "ap": 0.7559,
+            "ci95_ap": [
+              0.6533,
+              0.8499
+            ],
+            "unjudged_returned": 1,
+            "p50_ms": 12.1
+          },
+          "rows": [
+            {
+              "query_id": "DT-G1",
+              "corpus": "dita-spec",
+              "taxon": "G2",
+              "got": [
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/configuration.dita"
+              ],
+              "ms": 306.8,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.6903,
+                "ndcg@5": 0.8518,
+                "ndcg@10": 0.8152,
+                "ndcg@20": 0.8299,
+                "err@10": 0.6693,
+                "gprec@10": 0.3286,
+                "ap": 1.0
+              }
+            },
+            {
+              "query_id": "DT-G3",
+              "corpus": "dita-spec",
+              "taxon": "G3",
+              "got": [
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/document-type-shells-conformance.dita"
+              ],
+              "ms": 12.1,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.8046,
+                "ndcg@5": 0.7121,
+                "ndcg@10": 0.8719,
+                "ndcg@20": 0.8719,
+                "err@10": 0.9143,
+                "gprec@10": 0.2857,
+                "ap": 0.8929
+              }
+            },
+            {
+              "query_id": "DT-G4",
+              "corpus": "dita-spec",
+              "taxon": "G4",
+              "got": [
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/diratt.dita"
+              ],
+              "ms": 12.0,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.7453,
+                "ndcg@5": 0.7453,
+                "ndcg@10": 0.859,
+                "ndcg@20": 0.859,
+                "err@10": 0.8828,
+                "gprec@10": 0.1429,
+                "ap": 0.6667
+              }
+            },
+            {
+              "query_id": "DT-G4B",
+              "corpus": "dita-spec",
+              "taxon": "G4",
+              "got": [
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/configuration.dita"
+              ],
+              "ms": 11.7,
+              "error": "",
+              "scores": {
+                "judged_returned": 19,
+                "unjudged_returned": 1,
+                "ndcg@3": 0.8839,
+                "ndcg@5": 0.8553,
+                "ndcg@10": 0.877,
+                "ndcg@20": 0.9377,
+                "err@10": 0.9299,
+                "gprec@10": 0.2143,
+                "ap": 0.75
+              }
+            },
+            {
+              "query_id": "DT-G3B",
+              "corpus": "dita-spec",
+              "taxon": "G3",
+              "got": [
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/configuration.dita"
+              ],
+              "ms": 12.7,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 1.0,
+                "ndcg@5": 0.9555,
+                "ndcg@10": 0.8695,
+                "ndcg@20": 0.8695,
+                "err@10": 0.9345,
+                "gprec@10": 0.3571,
+                "ap": 0.6667
+              }
+            },
+            {
+              "query_id": "DT-G2",
+              "corpus": "dita-spec",
+              "taxon": "G2",
+              "got": [
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/ditaaddressing.dita"
+              ],
+              "ms": 11.5,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.6735,
+                "ndcg@5": 0.6628,
+                "ndcg@10": 0.7871,
+                "ndcg@20": 0.8481,
+                "err@10": 0.8876,
+                "gprec@10": 0.1857,
+                "ap": 0.5
+              }
+            },
+            {
+              "query_id": "DT-G1B",
+              "corpus": "dita-spec",
+              "taxon": "G1",
+              "got": [
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/diratt.dita"
+              ],
+              "ms": 12.3,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.8046,
+                "ndcg@5": 0.6762,
+                "ndcg@10": 0.7948,
+                "ndcg@20": 0.8419,
+                "err@10": 0.9151,
+                "gprec@10": 0.3429,
+                "ap": 0.7038
+              }
+            },
+            {
+              "query_id": "DT-G6",
+              "corpus": "dita-spec",
+              "taxon": "G6",
+              "got": [
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/configuration.dita"
+              ],
+              "ms": 12.0,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.8839,
+                "ndcg@5": 0.9158,
+                "ndcg@10": 0.915,
+                "ndcg@20": 0.915,
+                "err@10": 0.931,
+                "gprec@10": 0.2571,
+                "ap": 0.8667
+              }
+            }
+          ]
+        },
+        "rtr-arctic": {
+          "metrics": {
+            "n": 8,
+            "ndcg@3": 0.8108,
+            "ci95_ndcg@3": [
+              0.7422,
+              0.8832
+            ],
+            "ndcg@5": 0.8169,
+            "ci95_ndcg@5": [
+              0.7446,
+              0.8838
+            ],
+            "ndcg@10": 0.8706,
+            "ci95_ndcg@10": [
+              0.8364,
+              0.9073
+            ],
+            "ndcg@20": 0.8859,
+            "ci95_ndcg@20": [
+              0.8542,
+              0.9189
+            ],
+            "err@10": 0.8833,
+            "ci95_err@10": [
+              0.8185,
+              0.9227
+            ],
+            "gprec@10": 0.2804,
+            "ci95_gprec@10": [
+              0.2214,
+              0.3393
+            ],
+            "ap": 0.7913,
+            "ci95_ap": [
+              0.6979,
+              0.8679
+            ],
+            "unjudged_returned": 1,
+            "p50_ms": 16.5
+          },
+          "rows": [
+            {
+              "query_id": "DT-G1",
+              "corpus": "dita-spec",
+              "taxon": "G2",
+              "got": [
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/configuration.dita"
+              ],
+              "ms": 369.8,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.6903,
+                "ndcg@5": 0.8518,
+                "ndcg@10": 0.8152,
+                "ndcg@20": 0.8299,
+                "err@10": 0.6693,
+                "gprec@10": 0.3286,
+                "ap": 1.0
+              }
+            },
+            {
+              "query_id": "DT-G3",
+              "corpus": "dita-spec",
+              "taxon": "G3",
+              "got": [
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-chunk-combine-all.dita"
+              ],
+              "ms": 16.6,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.8046,
+                "ndcg@5": 0.7121,
+                "ndcg@10": 0.8564,
+                "ndcg@20": 0.8564,
+                "err@10": 0.913,
+                "gprec@10": 0.2857,
+                "ap": 0.8611
+              }
+            },
+            {
+              "query_id": "DT-G4",
+              "corpus": "dita-spec",
+              "taxon": "G4",
+              "got": [
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/diratt.dita"
+              ],
+              "ms": 15.8,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.7453,
+                "ndcg@5": 0.8688,
+                "ndcg@10": 0.8996,
+                "ndcg@20": 0.8996,
+                "err@10": 0.8854,
+                "gprec@10": 0.1571,
+                "ap": 0.7
+              }
+            },
+            {
+              "query_id": "DT-G4B",
+              "corpus": "dita-spec",
+              "taxon": "G4",
+              "got": [
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/configuration.dita"
+              ],
+              "ms": 16.5,
+              "error": "",
+              "scores": {
+                "judged_returned": 19,
+                "unjudged_returned": 1,
+                "ndcg@3": 0.8839,
+                "ndcg@5": 0.8553,
+                "ndcg@10": 0.8553,
+                "ndcg@20": 0.9161,
+                "err@10": 0.9297,
+                "gprec@10": 0.2,
+                "ap": 0.75
+              }
+            },
+            {
+              "query_id": "DT-G3B",
+              "corpus": "dita-spec",
+              "taxon": "G3",
+              "got": [
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/diratt.dita"
+              ],
+              "ms": 17.2,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 1.0,
+                "ndcg@5": 0.9555,
+                "ndcg@10": 0.9622,
+                "ndcg@20": 0.9622,
+                "err@10": 0.9345,
+                "gprec@10": 0.4429,
+                "ap": 0.8593
+              }
+            },
+            {
+              "query_id": "DT-G2",
+              "corpus": "dita-spec",
+              "taxon": "G2",
+              "got": [
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/ditaaddressing.dita"
+              ],
+              "ms": 14.9,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.6735,
+                "ndcg@5": 0.6244,
+                "ndcg@10": 0.8303,
+                "ndcg@20": 0.8303,
+                "err@10": 0.8873,
+                "gprec@10": 0.2143,
+                "ap": 0.5536
+              }
+            },
+            {
+              "query_id": "DT-G1B",
+              "corpus": "dita-spec",
+              "taxon": "G1",
+              "got": [
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita"
+              ],
+              "ms": 16.4,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.8046,
+                "ndcg@5": 0.7517,
+                "ndcg@10": 0.81,
+                "ndcg@20": 0.8571,
+                "err@10": 0.9164,
+                "gprec@10": 0.3429,
+                "ap": 0.7398
+              }
+            },
+            {
+              "query_id": "DT-G6",
+              "corpus": "dita-spec",
+              "taxon": "G6",
+              "got": [
+                "dita-spec/ditaaddressing.dita",
+                "dita-spec/fileext.dita",
+                "dita-spec/aboutconditionalprocessing.dita",
+                "dita-spec/example-subjectScheme-extension.dita",
+                "dita-spec/basic-dita-terminology.dita",
+                "dita-spec/dtd-coding-element-types.dita",
+                "dita-spec/example-of-an-index-range.dita",
+                "dita-spec/example-conref-range-conkeyref.dita",
+                "dita-spec/diratt.dita",
+                "dita-spec/configuration.dita",
+                "dita-spec/examples-expansion-implemented-using-rng.dita",
+                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
+                "dita-spec/example-flagging-outputclass.dita",
+                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
+                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
+                "dita-spec/example-simple-map-w-reltable.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
+                "dita-spec/constraints-processing-interoperability.dita",
+                "dita-spec/example-key-scopes-omnibus-publications.dita",
+                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-keys-scope-defining-precedence.dita",
+                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
+                "dita-spec/examples-of-keys.dita",
+                "dita-spec/example-rng-constraints-redefine-content-model.dita",
+                "dita-spec/example-conref-conaction-pushbefore.dita",
+                "dita-spec/classification-maps.dita",
+                "dita-spec/example-chunk-split-nested.dita",
+                "dita-spec/branch-filtering-overview.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
+                "dita-spec/document-type-shells-conformance.dita"
+              ],
+              "ms": 15.8,
+              "error": "",
+              "scores": {
+                "judged_returned": 20,
+                "unjudged_returned": 0,
+                "ndcg@3": 0.8839,
+                "ndcg@5": 0.9158,
+                "ndcg@10": 0.9355,
+                "ndcg@20": 0.9355,
+                "err@10": 0.9311,
+                "gprec@10": 0.2714,
+                "ap": 0.8667
+              }
+            }
+          ]
+        },
+        "rtr-bge": {
           "metrics": {
             "n": 8,
             "ndcg@3": 0.8108,
@@ -4868,7 +5756,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/configuration.dita"
               ],
-              "ms": 379.9,
+              "ms": 307.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4912,13 +5800,13 @@
                 "dita-spec/classification-maps.dita",
                 "dita-spec/example-rng-constraints-redefine-content-model.dita",
                 "dita-spec/fileext.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
                 "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-chunk-combine-all.dita",
+                "dita-spec/example-contraints-redefine-content-model.dita",
                 "dita-spec/ditaaddressing.dita",
+                "dita-spec/example-chunk-combine-all.dita",
                 "dita-spec/document-type-shells-conformance.dita"
               ],
-              "ms": 15.0,
+              "ms": 14.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -4968,7 +5856,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/diratt.dita"
               ],
-              "ms": 14.4,
+              "ms": 14.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -5014,8 +5902,8 @@
                 "dita-spec/example-contraints-redefine-content-model.dita",
                 "dita-spec/example-conref-range-conkeyref.dita",
                 "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
                 "dita-spec/ditaaddressing.dita",
+                "dita-spec/evaluating-conditional-processing-attributes.dita",
                 "dita-spec/configuration.dita"
               ],
               "ms": 14.1,
@@ -5068,7 +5956,7 @@
                 "dita-spec/examples-of-keys.dita",
                 "dita-spec/configuration.dita"
               ],
-              "ms": 15.5,
+              "ms": 14.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -5118,7 +6006,7 @@
                 "dita-spec/examples-expansion-implemented-using-rng.dita",
                 "dita-spec/ditaaddressing.dita"
               ],
-              "ms": 14.1,
+              "ms": 13.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -5167,900 +6055,12 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/examples-expansion-implemented-using-rng.dita",
                 "dita-spec/diratt.dita"
-              ],
-              "ms": 13.7,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.8046,
-                "ndcg@5": 0.6762,
-                "ndcg@10": 0.7948,
-                "ndcg@20": 0.8419,
-                "err@10": 0.9151,
-                "gprec@10": 0.3429,
-                "ap": 0.7038
-              }
-            },
-            {
-              "query_id": "DT-G6",
-              "corpus": "dita-spec",
-              "taxon": "G6",
-              "got": [
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/configuration.dita"
               ],
               "ms": 14.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
                 "unjudged_returned": 0,
-                "ndcg@3": 0.8839,
-                "ndcg@5": 0.9158,
-                "ndcg@10": 0.915,
-                "ndcg@20": 0.915,
-                "err@10": 0.931,
-                "gprec@10": 0.2571,
-                "ap": 0.8667
-              }
-            }
-          ]
-        },
-        "rtr-arctic": {
-          "metrics": {
-            "n": 8,
-            "ndcg@3": 0.8108,
-            "ci95_ndcg@3": [
-              0.7422,
-              0.8832
-            ],
-            "ndcg@5": 0.8169,
-            "ci95_ndcg@5": [
-              0.7446,
-              0.8838
-            ],
-            "ndcg@10": 0.8706,
-            "ci95_ndcg@10": [
-              0.8364,
-              0.9073
-            ],
-            "ndcg@20": 0.8859,
-            "ci95_ndcg@20": [
-              0.8542,
-              0.9189
-            ],
-            "err@10": 0.8833,
-            "ci95_err@10": [
-              0.8185,
-              0.9227
-            ],
-            "gprec@10": 0.2804,
-            "ci95_gprec@10": [
-              0.2214,
-              0.3393
-            ],
-            "ap": 0.7913,
-            "ci95_ap": [
-              0.6979,
-              0.8679
-            ],
-            "unjudged_returned": 1,
-            "p50_ms": 19.0
-          },
-          "rows": [
-            {
-              "query_id": "DT-G1",
-              "corpus": "dita-spec",
-              "taxon": "G2",
-              "got": [
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/configuration.dita"
-              ],
-              "ms": 493.3,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.6903,
-                "ndcg@5": 0.8518,
-                "ndcg@10": 0.8152,
-                "ndcg@20": 0.8299,
-                "err@10": 0.6693,
-                "gprec@10": 0.3286,
-                "ap": 1.0
-              }
-            },
-            {
-              "query_id": "DT-G3",
-              "corpus": "dita-spec",
-              "taxon": "G3",
-              "got": [
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/document-type-shells-conformance.dita"
-              ],
-              "ms": 19.0,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.8046,
-                "ndcg@5": 0.7121,
-                "ndcg@10": 0.8564,
-                "ndcg@20": 0.8564,
-                "err@10": 0.913,
-                "gprec@10": 0.2857,
-                "ap": 0.8611
-              }
-            },
-            {
-              "query_id": "DT-G4",
-              "corpus": "dita-spec",
-              "taxon": "G4",
-              "got": [
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/diratt.dita"
-              ],
-              "ms": 17.8,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.7453,
-                "ndcg@5": 0.8688,
-                "ndcg@10": 0.8996,
-                "ndcg@20": 0.8996,
-                "err@10": 0.8854,
-                "gprec@10": 0.1571,
-                "ap": 0.7
-              }
-            },
-            {
-              "query_id": "DT-G4B",
-              "corpus": "dita-spec",
-              "taxon": "G4",
-              "got": [
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/configuration.dita"
-              ],
-              "ms": 17.6,
-              "error": "",
-              "scores": {
-                "judged_returned": 19,
-                "unjudged_returned": 1,
-                "ndcg@3": 0.8839,
-                "ndcg@5": 0.8553,
-                "ndcg@10": 0.8553,
-                "ndcg@20": 0.9161,
-                "err@10": 0.9297,
-                "gprec@10": 0.2,
-                "ap": 0.75
-              }
-            },
-            {
-              "query_id": "DT-G3B",
-              "corpus": "dita-spec",
-              "taxon": "G3",
-              "got": [
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/diratt.dita"
-              ],
-              "ms": 19.6,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 1.0,
-                "ndcg@5": 0.9555,
-                "ndcg@10": 0.9622,
-                "ndcg@20": 0.9622,
-                "err@10": 0.9345,
-                "gprec@10": 0.4429,
-                "ap": 0.8593
-              }
-            },
-            {
-              "query_id": "DT-G2",
-              "corpus": "dita-spec",
-              "taxon": "G2",
-              "got": [
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/ditaaddressing.dita"
-              ],
-              "ms": 18.7,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.6735,
-                "ndcg@5": 0.6244,
-                "ndcg@10": 0.8303,
-                "ndcg@20": 0.8303,
-                "err@10": 0.8873,
-                "gprec@10": 0.2143,
-                "ap": 0.5536
-              }
-            },
-            {
-              "query_id": "DT-G1B",
-              "corpus": "dita-spec",
-              "taxon": "G1",
-              "got": [
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita"
-              ],
-              "ms": 18.0,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.8046,
-                "ndcg@5": 0.7517,
-                "ndcg@10": 0.81,
-                "ndcg@20": 0.8571,
-                "err@10": 0.9164,
-                "gprec@10": 0.3429,
-                "ap": 0.7398
-              }
-            },
-            {
-              "query_id": "DT-G6",
-              "corpus": "dita-spec",
-              "taxon": "G6",
-              "got": [
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/document-type-shells-conformance.dita"
-              ],
-              "ms": 19.8,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.8839,
-                "ndcg@5": 0.9158,
-                "ndcg@10": 0.9355,
-                "ndcg@20": 0.9355,
-                "err@10": 0.9311,
-                "gprec@10": 0.2714,
-                "ap": 0.8667
-              }
-            }
-          ]
-        },
-        "rtr-bge": {
-          "metrics": {
-            "n": 8,
-            "ndcg@3": 0.8108,
-            "ci95_ndcg@3": [
-              0.7422,
-              0.8832
-            ],
-            "ndcg@5": 0.7968,
-            "ci95_ndcg@5": [
-              0.7194,
-              0.87
-            ],
-            "ndcg@10": 0.8487,
-            "ci95_ndcg@10": [
-              0.8192,
-              0.8761
-            ],
-            "ndcg@20": 0.8716,
-            "ci95_ndcg@20": [
-              0.8497,
-              0.8955
-            ],
-            "err@10": 0.8831,
-            "ci95_err@10": [
-              0.8179,
-              0.9227
-            ],
-            "gprec@10": 0.2643,
-            "ci95_gprec@10": [
-              0.2107,
-              0.3143
-            ],
-            "ap": 0.7559,
-            "ci95_ap": [
-              0.6533,
-              0.8499
-            ],
-            "unjudged_returned": 1,
-            "p50_ms": 17.3
-          },
-          "rows": [
-            {
-              "query_id": "DT-G1",
-              "corpus": "dita-spec",
-              "taxon": "G2",
-              "got": [
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/configuration.dita"
-              ],
-              "ms": 382.9,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.6903,
-                "ndcg@5": 0.8518,
-                "ndcg@10": 0.8152,
-                "ndcg@20": 0.8299,
-                "err@10": 0.6693,
-                "gprec@10": 0.3286,
-                "ap": 1.0
-              }
-            },
-            {
-              "query_id": "DT-G3",
-              "corpus": "dita-spec",
-              "taxon": "G3",
-              "got": [
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/document-type-shells-conformance.dita"
-              ],
-              "ms": 17.3,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.8046,
-                "ndcg@5": 0.7121,
-                "ndcg@10": 0.8719,
-                "ndcg@20": 0.8719,
-                "err@10": 0.9143,
-                "gprec@10": 0.2857,
-                "ap": 0.8929
-              }
-            },
-            {
-              "query_id": "DT-G4",
-              "corpus": "dita-spec",
-              "taxon": "G4",
-              "got": [
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/diratt.dita"
-              ],
-              "ms": 16.2,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.7453,
-                "ndcg@5": 0.7453,
-                "ndcg@10": 0.859,
-                "ndcg@20": 0.859,
-                "err@10": 0.8828,
-                "gprec@10": 0.1429,
-                "ap": 0.6667
-              }
-            },
-            {
-              "query_id": "DT-G4B",
-              "corpus": "dita-spec",
-              "taxon": "G4",
-              "got": [
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/configuration.dita"
-              ],
-              "ms": 15.4,
-              "error": "",
-              "scores": {
-                "judged_returned": 19,
-                "unjudged_returned": 1,
-                "ndcg@3": 0.8839,
-                "ndcg@5": 0.8553,
-                "ndcg@10": 0.877,
-                "ndcg@20": 0.9377,
-                "err@10": 0.9299,
-                "gprec@10": 0.2143,
-                "ap": 0.75
-              }
-            },
-            {
-              "query_id": "DT-G3B",
-              "corpus": "dita-spec",
-              "taxon": "G3",
-              "got": [
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/configuration.dita"
-              ],
-              "ms": 18.9,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 1.0,
-                "ndcg@5": 0.9555,
-                "ndcg@10": 0.8695,
-                "ndcg@20": 0.8695,
-                "err@10": 0.9345,
-                "gprec@10": 0.3571,
-                "ap": 0.6667
-              }
-            },
-            {
-              "query_id": "DT-G2",
-              "corpus": "dita-spec",
-              "taxon": "G2",
-              "got": [
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/diratt.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/ditaaddressing.dita"
-              ],
-              "ms": 14.7,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
-                "ndcg@3": 0.6735,
-                "ndcg@5": 0.6628,
-                "ndcg@10": 0.7871,
-                "ndcg@20": 0.8481,
-                "err@10": 0.8876,
-                "gprec@10": 0.1857,
-                "ap": 0.5
-              }
-            },
-            {
-              "query_id": "DT-G1B",
-              "corpus": "dita-spec",
-              "taxon": "G1",
-              "got": [
-                "dita-spec/document-type-shells-conformance.dita",
-                "dita-spec/basic-dita-terminology.dita",
-                "dita-spec/dtd-coding-element-types.dita",
-                "dita-spec/example-contraints-redefine-content-model.dita",
-                "dita-spec/example-rng-constraints-redefine-content-model.dita",
-                "dita-spec/constraints-processing-interoperability.dita",
-                "dita-spec/configuration.dita",
-                "dita-spec/generalization-w-cross-specialization-dependencies.dita",
-                "dita-spec/evaluating-conditional-processing-attributes.dita",
-                "dita-spec/fileext.dita",
-                "dita-spec/adding-an-attribute-to-certain-table-elements.dita",
-                "dita-spec/example-simple-map-w-reltable.dita",
-                "dita-spec/example-of-an-index-range.dita",
-                "dita-spec/example-subjectScheme-extension.dita",
-                "dita-spec/example-chunk-combine-all.dita",
-                "dita-spec/example-conref-range-conkeyref.dita",
-                "dita-spec/example-key-scopes-omnibus-publications.dita",
-                "dita-spec/example-ditaval-with-conditions-for-groups.dita",
-                "dita-spec/examples-of-keys.dita",
-                "dita-spec/aboutconditionalprocessing.dita",
-                "dita-spec/example-keys-scope-defining-precedence.dita",
-                "dita-spec/example-conref-conaction-pushbefore.dita",
-                "dita-spec/classification-maps.dita",
-                "dita-spec/example-chunk-split-nested.dita",
-                "dita-spec/cascading-of-metadata-elements-from-map-to-map.dita",
-                "dita-spec/branch-filtering-overview.dita",
-                "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/ditaaddressing.dita",
-                "dita-spec/examples-expansion-implemented-using-rng.dita",
-                "dita-spec/diratt.dita"
-              ],
-              "ms": 17.3,
-              "error": "",
-              "scores": {
-                "judged_returned": 20,
-                "unjudged_returned": 0,
                 "ndcg@3": 0.8046,
                 "ndcg@5": 0.6762,
                 "ndcg@10": 0.7948,
@@ -6106,7 +6106,7 @@
                 "dita-spec/document-type-shells-conformance.dita",
                 "dita-spec/configuration.dita"
               ],
-              "ms": 16.6,
+              "ms": 14.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6161,7 +6161,7 @@
               0.8898
             ],
             "unjudged_returned": 0,
-            "p50_ms": 30.5
+            "p50_ms": 27.5
           },
           "rows": [
             {
@@ -6200,7 +6200,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/configuration.dita"
               ],
-              "ms": 767.1,
+              "ms": 667.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6246,11 +6246,11 @@
                 "dita-spec/example-rng-constraints-redefine-content-model.dita",
                 "dita-spec/fileext.dita",
                 "dita-spec/example-flagging-outputclass.dita",
-                "dita-spec/example-chunk-combine-all.dita",
                 "dita-spec/ditaaddressing.dita",
-                "dita-spec/document-type-shells-conformance.dita"
+                "dita-spec/document-type-shells-conformance.dita",
+                "dita-spec/example-chunk-combine-all.dita"
               ],
-              "ms": 30.1,
+              "ms": 27.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6300,7 +6300,7 @@
                 "dita-spec/classification-maps.dita",
                 "dita-spec/diratt.dita"
               ],
-              "ms": 29.9,
+              "ms": 26.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6350,7 +6350,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/configuration.dita"
               ],
-              "ms": 30.5,
+              "ms": 26.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6400,7 +6400,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/examples-of-keys.dita"
               ],
-              "ms": 29.1,
+              "ms": 28.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6450,7 +6450,7 @@
                 "dita-spec/examples-expansion-implemented-using-rng.dita",
                 "dita-spec/ditaaddressing.dita"
               ],
-              "ms": 29.3,
+              "ms": 25.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6500,7 +6500,7 @@
                 "dita-spec/ditaaddressing.dita",
                 "dita-spec/examples-expansion-implemented-using-rng.dita"
               ],
-              "ms": 31.2,
+              "ms": 26.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6550,7 +6550,7 @@
                 "dita-spec/example-contraints-redefine-content-model.dita",
                 "dita-spec/document-type-shells-conformance.dita"
               ],
-              "ms": 32.1,
+              "ms": 27.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6611,7 +6611,7 @@
               0.7783
             ],
             "unjudged_returned": 3,
-            "p50_ms": 16.2
+            "p50_ms": 15.0
           },
           "rows": [
             {
@@ -6644,7 +6644,7 @@
                 "dtd-commands/goetia-dtd.md",
                 "dtd-commands/eisenhower-matrix-dtd.md"
               ],
-              "ms": 229.7,
+              "ms": 169.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6702,7 +6702,7 @@
                 "dtd-commands/competitive-dtd.md",
                 "dtd-commands/history-dtd.md"
               ],
-              "ms": 15.8,
+              "ms": 13.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6755,7 +6755,7 @@
                 "dtd-commands/deep-dive-dtd.md",
                 "dtd-commands/history-dtd.md"
               ],
-              "ms": 18.5,
+              "ms": 14.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6809,7 +6809,7 @@
                 "dtd-commands/one-thing-dtd.md",
                 "dtd-commands/check-todos-dtd.md"
               ],
-              "ms": 16.1,
+              "ms": 15.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6847,7 +6847,7 @@
                 "dtd-commands/one-thing-dtd.md",
                 "dtd-commands/count-the-library-dtd.md"
               ],
-              "ms": 15.5,
+              "ms": 13.0,
               "error": "",
               "scores": {
                 "judged_returned": 16,
@@ -6898,7 +6898,7 @@
                 "dtd-commands/enhance-codebase-dtd.md",
                 "dtd-commands/git-gh-amplification-dtd.md"
               ],
-              "ms": 16.9,
+              "ms": 13.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -6944,7 +6944,7 @@
                 "dtd-commands/catalog-dtd.md",
                 "dtd-commands/options-dtd.md"
               ],
-              "ms": 16.2,
+              "ms": 16.5,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -6996,7 +6996,7 @@
                 "dtd-commands/loci-dtd.md",
                 "dtd-commands/git-gh-amplification-dtd.md"
               ],
-              "ms": 16.1,
+              "ms": 16.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7051,7 +7051,7 @@
               0.7593
             ],
             "unjudged_returned": 2,
-            "p50_ms": 122.7
+            "p50_ms": 91.2
           },
           "rows": [
             {
@@ -7095,7 +7095,7 @@
                 "dtd-commands/landscape-dtd.md",
                 "dtd-commands/create-agent-skill-dtd.md"
               ],
-              "ms": 319.5,
+              "ms": 228.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7147,7 +7147,7 @@
                 "dtd-commands/feasibility-dtd.md",
                 "dtd-commands/hadopelagia-deep-dive-dtd.md"
               ],
-              "ms": 72.6,
+              "ms": 46.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7215,7 +7215,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 152.4,
+              "ms": 92.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7276,7 +7276,7 @@
                 "dtd-commands/formula-dtd.md",
                 "dtd-commands/file-blacklist-dtd.md"
               ],
-              "ms": 128.0,
+              "ms": 77.9,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -7330,7 +7330,7 @@
                 "dtd-commands/goetia-dtd.md",
                 "dtd-commands/chain-dtd.md"
               ],
-              "ms": 101.5,
+              "ms": 64.2,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -7395,7 +7395,7 @@
                 "dtd-commands/codebase-architect-dtd.md",
                 "dtd-commands/options-dtd.md"
               ],
-              "ms": 121.1,
+              "ms": 91.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7461,7 +7461,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 122.7,
+              "ms": 90.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7528,7 +7528,7 @@
                 "dtd-commands/10-10-10-dtd.md",
                 "dtd-commands/5-whys-dtd.md"
               ],
-              "ms": 113.3,
+              "ms": 92.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7583,7 +7583,7 @@
               0.8358
             ],
             "unjudged_returned": 4,
-            "p50_ms": 25.9
+            "p50_ms": 20.9
           },
           "rows": [
             {
@@ -7616,7 +7616,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/brainstorm-meta-clear-section-dtd.md"
               ],
-              "ms": 401.7,
+              "ms": 325.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7663,7 +7663,7 @@
                 "dtd-commands/one-thing-dtd.md",
                 "dtd-commands/ai-slop-dtd.md"
               ],
-              "ms": 35.2,
+              "ms": 20.9,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -7708,7 +7708,7 @@
                 "dtd-commands/audit-skill-dtd.md",
                 "dtd-commands/feasibility-dtd.md"
               ],
-              "ms": 28.8,
+              "ms": 21.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7758,7 +7758,7 @@
                 "dtd-commands/eleusis-dtd.md",
                 "dtd-commands/four-branches-dtd.md"
               ],
-              "ms": 24.9,
+              "ms": 19.5,
               "error": "",
               "scores": {
                 "judged_returned": 19,
@@ -7794,7 +7794,7 @@
                 "dtd-commands/hadal-deep-dive-dtd.md",
                 "dtd-commands/catalog-dtd.md"
               ],
-              "ms": 23.0,
+              "ms": 18.7,
               "error": "",
               "scores": {
                 "judged_returned": 16,
@@ -7839,7 +7839,7 @@
                 "dtd-commands/corpus-dtd.md",
                 "dtd-commands/count-the-library-dtd.md"
               ],
-              "ms": 23.6,
+              "ms": 20.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7889,7 +7889,7 @@
                 "dtd-commands/debug-dtd.md",
                 "dtd-commands/feasibility-dtd.md"
               ],
-              "ms": 22.5,
+              "ms": 19.1,
               "error": "",
               "scores": {
                 "judged_returned": 18,
@@ -7931,7 +7931,7 @@
                 "dtd-commands/create-agent-skill-dtd.md",
                 "dtd-commands/goetia-dtd.md"
               ],
-              "ms": 25.9,
+              "ms": 22.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -7986,7 +7986,7 @@
               0.8266
             ],
             "unjudged_returned": 0,
-            "p50_ms": 123.7
+            "p50_ms": 91.7
           },
           "rows": [
             {
@@ -8040,7 +8040,7 @@
                 "dtd-commands/corpus-dtd.md",
                 "dtd-commands/ccc-dtd.md"
               ],
-              "ms": 551.0,
+              "ms": 406.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8095,7 +8095,7 @@
                 "dtd-commands/eleusis-dtd.md",
                 "dtd-commands/history-dtd.md"
               ],
-              "ms": 108.3,
+              "ms": 73.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8159,7 +8159,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 146.1,
+              "ms": 93.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8217,7 +8217,7 @@
                 "dtd-commands/formula-dtd.md",
                 "dtd-commands/clean-unclean-dtd.md"
               ],
-              "ms": 118.2,
+              "ms": 80.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8278,7 +8278,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 109.8,
+              "ms": 84.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8340,7 +8340,7 @@
                 "dtd-commands/open-source-dtd.md",
                 "dtd-commands/options-dtd.md"
               ],
-              "ms": 123.7,
+              "ms": 91.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8408,7 +8408,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 149.7,
+              "ms": 99.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8467,7 +8467,7 @@
                 "dtd-commands/5-whys-dtd.md",
                 "dtd-commands/four-branches-dtd.md"
               ],
-              "ms": 97.7,
+              "ms": 87.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8522,7 +8522,7 @@
               0.7743
             ],
             "unjudged_returned": 6,
-            "p50_ms": 157.1
+            "p50_ms": 106.3
           },
           "rows": [
             {
@@ -8540,8 +8540,8 @@
                 "dtd-commands/hadopelagia-deep-dive-dtd.md",
                 "dtd-commands/file-blacklist-dtd.md",
                 "dtd-commands/ask-me-everything-dtd.md",
-                "dtd-commands/goetia-dtd.md",
                 "dtd-commands/code-blacklist-dtd.md",
+                "dtd-commands/goetia-dtd.md",
                 "dtd-commands/eleusis-dtd.md",
                 "dtd-commands/atharvan-dtd.md",
                 "dtd-commands/hadal-deep-dive-dtd.md",
@@ -8578,7 +8578,7 @@
                 "dtd-commands/ai-slop-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 614.6,
+              "ms": 479.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8644,7 +8644,7 @@
                 "dtd-commands/corpus-dtd.md",
                 "dtd-commands/check-todos-dtd.md"
               ],
-              "ms": 131.9,
+              "ms": 103.8,
               "error": "",
               "scores": {
                 "judged_returned": 17,
@@ -8696,8 +8696,8 @@
                 "dtd-commands/formula-dtd.md",
                 "dtd-commands/heal-skill-dtd.md",
                 "dtd-commands/four-branches-dtd.md",
-                "dtd-commands/havamal-dtd.md",
                 "dtd-commands/babel-dtd.md",
+                "dtd-commands/havamal-dtd.md",
                 "dtd-commands/goetia-dtd.md",
                 "dtd-commands/catalog-dtd.md",
                 "dtd-commands/inversion-dtd.md",
@@ -8711,7 +8711,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 161.8,
+              "ms": 109.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8778,7 +8778,7 @@
                 "dtd-commands/corpus-dtd.md",
                 "dtd-commands/file-blacklist-dtd.md"
               ],
-              "ms": 157.8,
+              "ms": 105.5,
               "error": "",
               "scores": {
                 "judged_returned": 17,
@@ -8843,7 +8843,7 @@
                 "dtd-commands/add-to-todos-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 157.1,
+              "ms": 103.8,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8907,7 +8907,7 @@
                 "dtd-commands/corpus-dtd.md",
                 "dtd-commands/options-dtd.md"
               ],
-              "ms": 123.5,
+              "ms": 107.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -8973,7 +8973,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 126.5,
+              "ms": 106.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9039,7 +9039,7 @@
                 "dtd-commands/5-whys-dtd.md",
                 "dtd-commands/10-10-10-dtd.md"
               ],
-              "ms": 119.7,
+              "ms": 102.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9094,7 +9094,7 @@
               0.8266
             ],
             "unjudged_returned": 0,
-            "p50_ms": 140.2
+            "p50_ms": 96.3
           },
           "rows": [
             {
@@ -9148,7 +9148,7 @@
                 "dtd-commands/corpus-dtd.md",
                 "dtd-commands/ccc-dtd.md"
               ],
-              "ms": 500.1,
+              "ms": 410.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9203,7 +9203,7 @@
                 "dtd-commands/eleusis-dtd.md",
                 "dtd-commands/history-dtd.md"
               ],
-              "ms": 114.0,
+              "ms": 78.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9267,7 +9267,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 150.9,
+              "ms": 98.5,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9325,7 +9325,7 @@
                 "dtd-commands/formula-dtd.md",
                 "dtd-commands/clean-unclean-dtd.md"
               ],
-              "ms": 121.9,
+              "ms": 86.7,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9386,7 +9386,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 107.2,
+              "ms": 89.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9448,7 +9448,7 @@
                 "dtd-commands/open-source-dtd.md",
                 "dtd-commands/options-dtd.md"
               ],
-              "ms": 140.2,
+              "ms": 96.3,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9516,7 +9516,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 159.9,
+              "ms": 106.2,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9575,7 +9575,7 @@
                 "dtd-commands/5-whys-dtd.md",
                 "dtd-commands/four-branches-dtd.md"
               ],
-              "ms": 112.5,
+              "ms": 91.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9630,7 +9630,7 @@
               0.7706
             ],
             "unjudged_returned": 4,
-            "p50_ms": 191.6
+            "p50_ms": 131.6
           },
           "rows": [
             {
@@ -9687,7 +9687,7 @@
                 "dtd-commands/ai-slop-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 1066.4,
+              "ms": 806.0,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9755,7 +9755,7 @@
                 "dtd-commands/corpus-dtd.md",
                 "dtd-commands/check-todos-dtd.md"
               ],
-              "ms": 174.1,
+              "ms": 132.1,
               "error": "",
               "scores": {
                 "judged_returned": 18,
@@ -9822,7 +9822,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 193.6,
+              "ms": 131.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -9887,7 +9887,7 @@
                 "dtd-commands/options-dtd.md",
                 "dtd-commands/hadal-deep-dive-dtd.md"
               ],
-              "ms": 191.6,
+              "ms": 128.6,
               "error": "",
               "scores": {
                 "judged_returned": 18,
@@ -9951,7 +9951,7 @@
                 "dtd-commands/heal-skill-dtd.md",
                 "dtd-commands/check-todos-dtd.md"
               ],
-              "ms": 184.1,
+              "ms": 126.6,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -10014,7 +10014,7 @@
                 "dtd-commands/open-source-dtd.md",
                 "dtd-commands/formula-dtd.md"
               ],
-              "ms": 191.2,
+              "ms": 132.4,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -10082,7 +10082,7 @@
                 "dtd-commands/ccc-dtd.md",
                 "dtd-commands/corpus-dtd.md"
               ],
-              "ms": 195.2,
+              "ms": 131.1,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -10149,7 +10149,7 @@
                 "dtd-commands/10-10-10-dtd.md",
                 "dtd-commands/5-whys-dtd.md"
               ],
-              "ms": 188.6,
+              "ms": 125.9,
               "error": "",
               "scores": {
                 "judged_returned": 20,
@@ -10207,7 +10207,7 @@
         0.7818
       ],
       "unjudged_returned": 6,
-      "p50_ms": 5.7
+      "p50_ms": 4.9
     },
     "rag-hybrid": {
       "n": 24,
@@ -10247,7 +10247,7 @@
         0.7258
       ],
       "unjudged_returned": 2,
-      "p50_ms": 10.5
+      "p50_ms": 7.3
     },
     "rag-dense-base": {
       "n": 24,
@@ -10287,7 +10287,7 @@
         0.7943
       ],
       "unjudged_returned": 6,
-      "p50_ms": 13.7
+      "p50_ms": 10.5
     },
     "rag-hybrid-base": {
       "n": 24,
@@ -10327,7 +10327,7 @@
         0.752
       ],
       "unjudged_returned": 1,
-      "p50_ms": 16.8
+      "p50_ms": 13.0
     },
     "rtr-arctic": {
       "n": 24,
@@ -10367,7 +10367,7 @@
         0.7501
       ],
       "unjudged_returned": 9,
-      "p50_ms": 20.4
+      "p50_ms": 17.5
     },
     "rtr-bge": {
       "n": 24,
@@ -10407,7 +10407,7 @@
         0.752
       ],
       "unjudged_returned": 1,
-      "p50_ms": 19.5
+      "p50_ms": 15.8
     },
     "rtr-full": {
       "n": 24,
@@ -10447,7 +10447,7 @@
         0.7593
       ],
       "unjudged_returned": 4,
-      "p50_ms": 34.1
+      "p50_ms": 28.4
     }
   },
   "skipped_corpora": [
@@ -14256,7 +14256,7 @@
           "rag-hybrid": 11,
           "rag-dense-base": 9,
           "rag-hybrid-base": 12,
-          "rtr-arctic": 12,
+          "rtr-arctic": 11,
           "rtr-bge": 12,
           "rtr-full": 11
         },
@@ -14373,7 +14373,7 @@
         },
         "dtd-commands/goetia-dtd.md": {
           "rag-hybrid-base": 11,
-          "rtr-arctic": 11,
+          "rtr-arctic": 12,
           "rtr-bge": 11,
           "rtr-full": 13
         },

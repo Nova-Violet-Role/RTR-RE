@@ -109,7 +109,7 @@ def main() -> int:
             f"search_p50={row['search_p50_ms']}ms max={row['search_max_ms']}ms"
         )
     out = Path(__file__).parent / "results" / "preset-perf.json"
-    out.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {out}")
     return 0
 

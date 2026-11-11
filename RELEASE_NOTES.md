@@ -23,7 +23,7 @@ CPU-first, local-first, zero API cost.
   NDATA masked, never stored; Chroma carries messages contiguously.
 - **Measured:** 508 Python + 33 subtests, 125 JS, Lean green zero
   sorry, ship gate 27/27, behavior gate 8/8, versus rtr-full R@1
-  0.6893 / R@3 0.8456 / MRR 0.7561 (installed wheel identical).
+  0.7227 / R@3 0.8497 / MRR 0.7769 (installed wheel identical).
 
 ## Install
 
