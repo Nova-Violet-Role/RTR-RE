@@ -124,4 +124,35 @@ theorem live_seven_turn_instance :
     cumWith 390000 1000 7 < cumWithout 3430000 7 := by
   decide
 
+/-- Empowerment: savings grow with managed size (fixed live+retrieved).
+The bigger the context, the larger the fraction RTR saves. -/
+theorem savings_mono_managed (live retrieved m1 m2 : Nat)
+    (hc : 0 < live + retrieved) (h1 : live + retrieved < m1)
+    (hlt : m1 < m2) :
+    savings m1 live retrieved < savings m2 live retrieved := by
+  unfold savings
+  have hne1 : (m1 : Nat) ≠ 0 := by omega
+  have hne2 : (m2 : Nat) ≠ 0 := by omega
+  rw [if_neg hne1, if_neg hne2]
+  have hpos1 : (0 : Rat) < (m1 : Rat) := by exact_mod_cast (by omega : 0 < m1)
+  have hpos2 : (0 : Rat) < (m2 : Rat) := by exact_mod_cast (by omega : 0 < m2)
+  have hcc : (0 : Rat) < ((live + retrieved : Nat) : Rat) := by exact_mod_cast hc
+  have hfrac : ((live + retrieved : Nat) : Rat) / (m2 : Rat)
+      < ((live + retrieved : Nat) : Rat) / (m1 : Rat) := by
+    have h12 : (m1 : Rat) < (m2 : Rat) := by exact_mod_cast hlt
+    gcongr
+  linarith
+
+/-- Empowerment: the restore budget caps retrieved content (mirrors
+bounded_restore: output never exceeds 4000 chars). -/
+def restoreCap (n : Nat) : Nat :=
+  min n 4000
+
+theorem restore_cap_bounded (n : Nat) : restoreCap n ≤ 4000 :=
+  Nat.min_le_right _ _
+
+theorem restore_cap_exact_small (n : Nat) (h : n ≤ 4000) :
+    restoreCap n = n :=
+  Nat.min_eq_left h
+
 end Symbiose
