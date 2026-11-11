@@ -5,6 +5,8 @@
 RTR-RE:Symbiose OpenCode plugins — the **Keeper** (server) and the
 **ctrl+p palette** (TUI). Technical companion to the RTR-RE product.
 
+Version 1.2.1.
+
 ## What ships here
 
 | File | Role |

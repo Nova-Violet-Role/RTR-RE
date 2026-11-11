@@ -4,6 +4,9 @@
 **Short name: RE:Symbiose. RRF-heuristic, DTD-semantic-capable retriever + symbiotized context engine.
 CPU-first. Local-first. Zero API cost.**
 
+Current release **1.2.1** ([notes](RELEASE_NOTES.md)): vector reconciliation
+plus abort-safe upsert order on top of the 1.2.0 intense freeze.
+
 [![Ko-fi](https://img.shields.io/badge/Support-Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/saimonokuma) [![Open Source](https://img.shields.io/badge/Open-Source-9cf?style=for-the-badge)](https://github.com/Nova-Violet-Role) [![Copyleft](https://img.shields.io/badge/Licence-AGPL--3.0--or--later_OR_EUPL--1.2-634bA2?style=for-the-badge)](#-licence--philosophy)
 
 ```text

@@ -1,5 +1,23 @@
 <!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
+# RTR-RE:Symbiose v1.2.1
+
+Role-Type-Retrieval-RE:Symbiotized — the retriever + full context engine.
+CPU-first, local-first, zero API cost.
+
+## What's new since 1.2.0
+
+- **Vector reconciliation.** `memory_repair` now diffs registry-vs-Chroma
+  per model, reports live files whose chunks are missing (holes the
+  incremental path is hash-blind to), and heals them through the normal
+  incremental path. Dry run measures without writing.
+- **Abort-safe upserts.** Index writes land before stale ids are pruned
+  (add-then-purge), so a timeout or kill mid-wave leaves old vectors
+  serving instead of holes; a plain re-run resumes cleanly.
+- **Measured:** 526 Python + 33 subtests, 129 JS, Lean green zero
+  sorry, ship gate 27/27, behavior gate 8/8, versus rtr-full R@1
+  0.7227 / R@3 0.8497 / MRR 0.7769 (installed wheel identical).
+
 # RTR-RE:Symbiose v1.2.0
 
 Role-Type-Retrieval-RE:Symbiotized — the retriever + full context engine.

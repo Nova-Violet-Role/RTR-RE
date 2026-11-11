@@ -21,7 +21,7 @@ import { join } from "node:path"
 import { readFile, writeFile, mkdir } from "node:fs/promises"
 import { existsSync } from "node:fs"
 
-export const SUBAGENT_VERSION = "1.2.0"
+export const SUBAGENT_VERSION = "1.2.1"
 export const SUBAGENT_TITLE_PREFIX = "#RTR-SUBAGENT "
 export const STALE_AFTER_MS = 24 * 60 * 60 * 1000 // 24h (Temporal.Duration)
 
