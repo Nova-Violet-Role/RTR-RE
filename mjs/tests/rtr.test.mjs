@@ -145,6 +145,10 @@ test("cli bridge builds measured rtr-cli arguments and refuses unknown commands 
         ["index", "--force", "--project", "demo"],
     )
     assert.deepEqual(
+        core.buildCliArgs("index", { repair: true, project: "demo" }),
+        ["index", "--repair", "--project", "demo"],
+    )
+    assert.deepEqual(
         core.buildCliArgs("write", { project: "p", filename: "f", content: "c" }),
         ["write", "p", "f", "c"],
     )

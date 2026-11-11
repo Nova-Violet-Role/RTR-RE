@@ -291,6 +291,7 @@ function buildCliArgs(command, opts = {}) {
     case 'index': {
       const args = ['index'];
       if (o.force) args.push('--force');
+      if (o.repair) args.push('--repair');
       const projects = Array.isArray(o.project) ? o.project : (o.project ? [o.project] : []);
       for (const p of projects) args.push('--project', String(p));
       return args;
