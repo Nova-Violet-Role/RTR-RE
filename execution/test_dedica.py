@@ -35,6 +35,11 @@ class TestDedica(unittest.TestCase):
         self.assertIn("with RTR: 391,000", svg)
         self.assertIn("<svg", svg)
 
+    def test_dark_variant_flips_chrome(self):
+        svg = dp.render_svg(3430000, 390000, 1000, 700000, dark=True)
+        self.assertIn("#1a1d24", svg)
+        self.assertIn("with RTR: 391,000", svg)
+
 
 if __name__ == "__main__":
     unittest.main()

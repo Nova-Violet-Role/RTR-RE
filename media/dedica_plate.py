@@ -49,11 +49,16 @@ def render_ascii(managed: int, live: int, retrieved: int, window: int) -> str:
     return "\n".join(lines) + "\n"
 
 
-def render_svg(managed: int, live: int, retrieved: int, window: int) -> str:
+def render_svg(
+    managed: int, live: int, retrieved: int, window: int, dark: bool = False
+) -> str:
     with_rtr = live + retrieved
     saved_pct = (1.0 - with_rtr / managed) * 100.0 if managed else 0.0
     left_w = 560
     right_w = max(8, int(560 * with_rtr / managed)) if managed else 8
+    bg = "#1a1d24" if dark else "#ffffff"
+    ink = "#e2e5ec" if dark else "#1a1d24"
+    muted = "#9aa3b2" if dark else "#5b6472"
 
     def bar(x, y, w, fill, label):
         return (
@@ -63,16 +68,16 @@ def render_svg(managed: int, live: int, retrieved: int, window: int) -> str:
         )
 
     parts = [
-        "<text x='400' y='52' font-size='24' fill='#1a1d24' text-anchor='middle'"
+        f"<text x='400' y='52' font-size='24' fill='{ink}' text-anchor='middle'"
         " font-weight='bold'>DEDICA — cost without cache</text>",
-        "<text x='400' y='74' font-size='13' fill='#1a1d24' text-anchor='middle'>"
+        f"<text x='400' y='74' font-size='13' fill='{ink}' text-anchor='middle'>"
         f"{managed:,} managed · {live:,} live + {retrieved:,} retrieved ·"
         f" {window:,} window</text>",
         bar(120, 110, left_w, "#b26a00", f"without RTR: {managed:,} tok/turn"),
         bar(120, 160, right_w, "#1a7f37", f"with RTR: {with_rtr:,} tok/turn"),
-        "<text x='400' y='232' font-size='15' fill='#1a1d24' text-anchor='middle'>"
+        f"<text x='400' y='232' font-size='15' fill='{ink}' text-anchor='middle'>"
         f"saved {saved_pct:.1f}% — no prompt cache, no RAG</text>",
-        "<text x='400' y='254' font-size='12' fill='#5b6472' text-anchor='middle'>"
+        f"<text x='400' y='254' font-size='12' fill='{muted}' text-anchor='middle'>"
         "evicted is never deleted — RTR-RE:Symbiose</text>",
     ]
     body = "\n".join(parts)
@@ -82,7 +87,7 @@ def render_svg(managed: int, live: int, retrieved: int, window: int) -> str:
         " re-measure, then re-run. -->\n"
         "<svg xmlns='http://www.w3.org/2000/svg' width='800' height='280'"
         " viewBox='0 0 800 280'>\n"
-        "<rect width='800' height='280' fill='#ffffff'/>\n"
+        f"<rect width='800' height='280' fill='{bg}'/>\n"
         f"{body}\n</svg>\n"
     )
 
@@ -103,7 +108,13 @@ def main(argv=None) -> int:
         encoding="utf-8",
         newline="\n",
     )
-    print(f"wrote {out}")
+    dark = out.with_name(out.stem + "-dark" + out.suffix)
+    dark.write_text(
+        render_svg(args.managed, args.live, args.retrieved, args.window, dark=True),
+        encoding="utf-8",
+        newline="\n",
+    )
+    print(f"wrote {out} + {dark}")
     return 0
 
 
