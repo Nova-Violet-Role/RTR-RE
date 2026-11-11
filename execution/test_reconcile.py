@@ -304,6 +304,69 @@ class TestAbortSafeUpsert(unittest.TestCase):
                     mem.LEXIKON_GLOBAL_FILE,
                 ) = saved
 
+    def test_abort_mid_wave_resumes_without_holes(self):
+        # Cooperative kill mid-wave (SystemExit at the 2nd stale
+        # prune): add-then-purge must leave every file with vectors
+        # on every model (old or new, never zero), the registry
+        # uncommitted, and a plain re-run must complete cleanly.
+        import contextlib
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "ab" / "directives"
+                d.mkdir(parents=True)
+                files = []
+                for i in range(4):
+                    f = d / f"f{i}.md"
+                    f.write_text(f"# F{i}\n\nABORT-MARKER-{i} v1", encoding="utf-8")
+                    files.append(str(f))
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    reg_before = dict(eng.load_registry())
+                    for i, f in enumerate(files):
+                        Path(f).write_text(
+                            f"# F{i}\n\nABORT-MARKER-{i} v2", encoding="utf-8"
+                        )
+                    calls = []
+                    orig_prune = MemoryEngine._prune_stale_ids
+
+                    def killer(col, info, new_ids, old_ids):
+                        calls.append(info["path"])
+                        if len(calls) == 2:
+                            raise SystemExit("simulated kill mid-wave")
+                        return orig_prune(col, info, new_ids, old_ids)
+
+                    with patch.object(
+                        MemoryEngine, "_prune_stale_ids", side_effect=killer
+                    ):
+                        with self.assertRaises(SystemExit):
+                            eng.index_all()
+                    self.assertEqual(len(calls), 2)
+                    cols = eng.rtr_collections()
+                    for slug, col in cols.items():
+                        if (
+                            "opencode_memory_" in slug
+                            and slug.replace("opencode_memory_", "") in cols
+                        ):
+                            continue
+                        for f in files:
+                            n = len(col.get(where={"source": f}, limit=5000)["ids"])
+                            self.assertGreater(n, 0, f"{slug} holed {f} after abort")
+                    self.assertEqual(eng.load_registry(), reg_before)
+                    # resume: a plain re-run completes and converges
+                    eng.index_all()
+                    report = eng.reconcile_vectors()
+                    total_missing = sum(len(v) for v in report["missing"].values())
+                    self.assertEqual(total_missing, 0)
+                    hits = eng.search("ABORT-MARKER-2 v2", k=3)
+                    self.assertTrue(
+                        any("f2.md" in h["metadata"].get("source", "") for h in hits)
+                    )
+                finally:
+                    eng.close()
+
 
 if __name__ == "__main__":
     unittest.main()
