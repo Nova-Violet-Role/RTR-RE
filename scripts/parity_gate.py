@@ -140,8 +140,8 @@ def run_checks(expected: str) -> None:
         val = f"{full[key]:.3f}"
         check(f"readme:versus-{key}", val in root_readme, val)
     check(
-        "readme:thirteen",
-        "thirteen" in read_text(ROOT / "opencode-plugin" / "README.md"),
+        "readme:fourteen",
+        "fourteen" in read_text(ROOT / "opencode-plugin" / "README.md"),
     )
     for name in ("README.md", "mjs/README.md", "opencode-plugin/README.md"):
         body = read_text(ROOT / name)
