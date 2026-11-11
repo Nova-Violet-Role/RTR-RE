@@ -67,6 +67,10 @@ theorem m31_native : Nat.Prime (2 ^ 31 - 1) := by native_decide
 #print axioms rtr_costs_less
 #print axioms savings_positive
 #print axioms live_instance_fits
+#print axioms cumulative_costs_less
+#print axioms seventh_costs_lesser
+#print axioms savings_mono_managed
+#print axioms restore_cap_bounded
 #print axioms m31_native
 
 end Symbiose
