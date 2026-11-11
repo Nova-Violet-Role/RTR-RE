@@ -396,10 +396,10 @@ COLLAGES = {
                 ],
             ),
             (
-                "Lean battery 8 jobs",
+                "Lean battery green",
                 [
-                    "core-only, no Mathlib",
-                    "13 axiom records, 0 sorry",
+                    "full Mathlib, 0 sorry",
+                    "axioms recorded per theorem",
                     "SUB: model, not engine",
                 ],
             ),

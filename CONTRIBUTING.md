@@ -1,3 +1,5 @@
+<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
+<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # Contributing to Nova-Violet Role
 
 This applies to every repository in the organisation. Individual repositories
@@ -109,7 +111,9 @@ repository's choice.
 Some of these projects specify behaviour in **Lean 4**. Where they do:
 
 - `lake build` and read the exit code **directly**.
-- Zero `sorry`. Never `native_decide`.
+- Zero `sorry`. `native_decide` only for large computations where kernel
+  `decide` is infeasible, with its native axiom recorded in `#print axioms`
+  output — kernel-checked tactics win ties.
 - `#print axioms` on what you proved — `sorryAx` means it is not proved, and no
   axioms at all is usually a sign the statement is vacuous.
 - `lake env leanchecker <Module>` re-runs the **kernel** over the compiled proof

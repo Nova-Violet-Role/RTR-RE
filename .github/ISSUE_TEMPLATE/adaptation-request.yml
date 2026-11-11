@@ -54,7 +54,7 @@ body:
     id: model
     attributes:
       label: Model + context window + input cap (if known)
-      description: The Keeper trigger must sit below the model's input cap; 320k/128k defaults assume a big window.
+      description: The Keeper trigger must sit below the model's input cap; 400k/200k defaults assume a big window.
     validations:
       required: false
 

@@ -1,3 +1,5 @@
+<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
+<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # RTR-RE:Symbiose v1.2.0
 
 Role-Type-Retrieval-RE:Symbiotized — the retriever + full context engine.
@@ -19,7 +21,7 @@ CPU-first, local-first, zero API cost.
   corpus skips, computed transfer findings.
 - **Verbatim proof.** Span bytes equal message bytes (byte-exact tests);
   NDATA masked, never stored; Chroma carries messages contiguously.
-- **Measured:** 455 Python + 33 subtests, 113 JS, Lean 8714 jobs zero
+- **Measured:** 505 Python + 33 subtests, 125 JS, Lean green zero
   sorry, ship gate 27/27, behavior gate 8/8, versus rtr-full R@1
   0.6893 / R@3 0.8456 / MRR 0.7561 (installed wheel identical).
 

@@ -17,7 +17,7 @@ body:
     id: repo
     attributes:
       label: Which repository, and which version
-      placeholder: "rtr-role-type-retrieval @ 0.3.0, or commit 673266b"
+      placeholder: "rtr-role-type-retrieval @ 1.2.0, or commit 1cd87fdf"
     validations:
       required: true
 

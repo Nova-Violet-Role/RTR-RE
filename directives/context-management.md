@@ -6,16 +6,16 @@ AGPL-3.0-or-later OR EUPL-1.2, as always. Three offices, zero overlap.
 The Keeper (native plugin `opencode-plugin/rtr-re-keeper.js`) only
 selects, protects and prunes the window — it never summarises and never
 nudges. The Compressor
-keeps everything verbatim until TRIGGER=320000 tokens, then cuts 60%
-to a TARGET tail of 128000 tokens / 40 messages, in a background
+keeps everything verbatim until TRIGGER=400000 tokens, then cuts 50%
+to a TARGET tail of 200000 tokens / 200 messages, in a background
 worker (`execution/symbiose_worker.py`) so the live turn never pauses.
 RTR is the Manager replacing RAG: evicted read + written spans go verbatim
-(PCDATA/CDATA byte-exact, NDATA masked) into `directives/sessions/` for
-the dual-ONNX index (Arctic-m + bge-base, RRF, DTD-typed), so compression
-loses position, never substance.
+(PCDATA/CDATA byte-exact, NDATA masked) into `.opencode/memory/` as
+DTD-shaped records for the dual-ONNX index (Arctic-m + bge-base, RRF,
+DTD-typed), so compression loses position, never substance.
 
 Every Compressor bound is configurable (`OPENCODE_MEMORY_RTRRE_*`,
-refused loudly when invalid). Protected tools (`skill`, `compress`) and
+refused loudly when invalid). Protected tools (`todowrite`) and
 the last user message are never evicted. Summaries cap at 20000 chars;
 restore at 4000. Declared subset: directives/rtr-re-symbiose.md.
 Derivation: artifacts/geometry/2026-10-26-plan.md. Evaluation:

@@ -143,9 +143,9 @@ class TestArtifactsAndSurface(unittest.TestCase):
             keeper,
         )
         self.assertIn(
-            "TRIGGER=320000", read(ROOT / "directives" / "context-management.md")
+            "TRIGGER=400000", read(ROOT / "directives" / "context-management.md")
         )
-        self.assertIn("320000", read(ROOT / "directives" / "rtr-re-symbiose.md"))
+        self.assertIn("400000", read(ROOT / "directives" / "rtr-re-symbiose.md"))
 
 
 class TestNativeKeeperContract(unittest.TestCase):

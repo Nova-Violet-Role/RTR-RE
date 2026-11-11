@@ -18,8 +18,7 @@ The **.mjs edition** (`mjs/` in the repo) provides the same memory
 discipline with **no MCP server**: an OpenCode plugin + Claude Code /
 Codex hooks over one zero-dependency core, retrieval through `rtr-cli`,
 and **AUTO-OPTIMIZE**, an optimize pass instigated between every file
-read and the next code write. The 0.4.x releases also fix two measured
-defects: engine close/reopen returning a dead Chroma client, and
+read and the next code write. Two measured defects stay fixed since the 0.4.x line: engine close/reopen returning a dead Chroma client, and
 wikilink expansion crashing search on chromadb 1.5 (`$contains in get`);
 dependencies are now bounded to tested majors.
 
@@ -155,7 +154,7 @@ partitioned per project. Reopen the same project name → memory restored.
 | `OPENCODE_MEMORY_HNSW_SEARCH_EF` | unset (Chroma default) | HNSW search ef |
 | `OPENCODE_MEMORY_QUERY_PROMPT_OVERRIDE` | empty (off) | override the query prompt template |
 | `OPENCODE_MEMORY_RRF_CONSENSUS` | `0` | `1` down-weights confidently-wrong runs in fusion |
-| `OPENCODE_MEMORY_WARM_MODELS` | unset (lazy) | `1`/`true`/`yes` = eager dual-model warm at server start |
+| `OPENCODE_MEMORY_WARM_MODELS` | unset (warm) | models warm at server start unless `0`/`false`/`no`/`off` |
 | `OPENCODE_MEMORY_RTRRE_MAX_SUMMARY` | `20000` | max summary chars |
 | `OPENCODE_MEMORY_RTRRE_MAX_RESTORE` | `4000` | max restore chars |
 | `OPENCODE_MEMORY_RTRRE_CUMULATIVE` | `0` | cumulative message seed for cross-restart accounting |
@@ -170,13 +169,15 @@ partitioned per project. Reopen the same project name → memory restored.
 `memory_init_project` · `memory_consolidate` · `memory_stats` · `memory_index` ·
 `memory_lexikon_add` · `memory_lexikon_show` · `memory_lexikon_build` ·
 `memory_janitor` · `memory_context_plan` · `memory_symbiose_submit` ·
-`memory_symbiose_poll` · `memory_rtr_status` (27 tools; the last four are the
+`memory_symbiose_poll` · `memory_symbiose_drain` · `memory_symbiose_compress` ·
+`memory_keeper_evict_now` · `memory_doctor` · `memory_repair` ·
+`memory_rtr_status` (32 tools; the symbiose/keeper/doctor/repair/status set is the
 live loop surface — background tickets that never pause the turn, plus the
 truthful status/health viewport reporting Keeper, Compressor and Manager).
 Supervision beyond v2: gold v3 (785 judgments, additive only, labels frozen)
 reruns the same verdict; the Lean battery builds against full Mathlib
-(pinned v4.33.0, 8713 jobs green).
-CLI mirrors the core verbs (`rtr-cli <verb> --help` each): consolidate, explain, index, init, janitor, lexikon-add, lexikon-build, lexikon-show, materialize, reflect, search, session-commit, session-start, stats, update-graph, write.
+(pinned v4.33.0, green, 0 sorry).
+CLI mirrors the core verbs (`rtr-cli <verb> --help` each): consolidate, context-plan, explain, index, init, janitor, keeper-evict-now, lexikon-add, lexikon-build, lexikon-show, materialize, reflect, search, session-commit, session-start, stats, symbiose-compress, symbiose-drain, symbiose-submit, update-graph, write.
 
 Lexikon: per-project glossary auto-derived from registry + sessions, plus a
 hand-curated `_global` user lexikon (`rtr-cli lexikon-add _global "term"
@@ -292,9 +293,9 @@ npx --package rtr-re-opencode-plugin rtr-re-installer --theme network
 python installer/launchers/python_launcher.py --theme forge
 ```
 
-Flags (Python `installer/launchers/python_launcher.py`): `--theme instrument|network|forge` (default instrument), `--project DIR` (default cwd, or `RTRRE_INSTALL_PROJECT`), `--wheel PATH` (installs the wheel, or `RTRRE_INSTALL_WHEEL`). Flags (Node `installer/launchers/node_launcher.mjs`): `--theme` (default network, or `RTRRE_INSTALL_THEME`), `--project DIR` (or `RTRRE_INSTALL_PROJECT`), `--tarball PATH` (or `RTRRE_INSTALL_TARBALL`). `--wheel` needs pip on the running interpreter (uv-managed Pythons ship without it — install the wheel with `uv pip` separately in that case). `RTRRE_INSTALL_NO_AUDIO=1` silences the remixes on both launchers (headless installs). The session offers three presets — Quick (MUGEN one-click),
+Flags (Python `installer/launchers/python_launcher.py`): `--theme instrument|network|forge` (default instrument), `--project DIR` (default cwd, or `RTRRE_INSTALL_PROJECT`), `--wheel PATH` (installs the wheel, or `RTRRE_INSTALL_WHEEL`). Flags (Node `installer/launchers/node_launcher.mjs`): `--theme` (default network, or `RTRRE_INSTALL_THEME`), `--project DIR` (or `RTRRE_INSTALL_PROJECT`), `--tarball PATH` (or `RTRRE_INSTALL_TARBALL`). `--wheel` needs pip on the running interpreter (uv-managed Pythons ship without it — install the wheel with `uv pip` separately in that case). `RTRRE_INSTALL_NO_AUDIO=1` silences the remixes on both launchers (headless installs). The session offers four presets — Quick (MUGEN one-click),
 Custom (component selection), Hardcore (full cockpit with
-Recommended-from-Saimonokuma badges) — plus adaptive arcade remixes of
+Recommended-from-Saimonokuma badges), Manual (palette guide, no automation) — plus adaptive arcade remixes of
 *Obsession* and the MiDi-MoE-Symbiogen-000 easter egg. The scene is a
 DTD family member (`installer/shell/dtd/rtrre-scene.mod`); the shell
 markup is validated against the declared vocabulary by
