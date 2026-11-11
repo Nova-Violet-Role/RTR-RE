@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "execution"))
 import memory_engine as mem
 from memory_engine import MemoryEngine
 
-THREAD_MODES = (2, 4, 8)
+THREAD_MODES = (2, 4, 8, 12, 16)
 QUERIES = [
     "quokka router nocturnal dispatch",
     "badger arbiter midnight ledger",
