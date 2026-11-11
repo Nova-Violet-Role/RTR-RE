@@ -1916,12 +1916,35 @@ class MemoryEngine:
             )
         return jobs
 
+    @staticmethod
+    def _prune_stale_ids(col, info, new_ids, old_ids_by_path) -> None:
+        """Delete ids the file held before that the new set drops.
+
+        Runs only after a successful upsert, so an abort can never
+        strand a file with neither old nor new vectors.
+        """
+        try:
+            fresh = set(new_ids)
+            stale = [i for i in old_ids_by_path.get(info["path"], []) if i not in fresh]
+            if stale:
+                col.delete(ids=stale)
+        except Exception as e:
+            print(
+                f"Failed pruning stale chunks for {info['rel_path']}: {e}",
+                file=sys.stderr,
+            )
+
     def _upsert_jobs(self, jobs, to_index, new_registry, stats):
         """Embed and upsert jobs per model; failed paths keep old hashes.
 
-        Fused adds (TODO-22): one col.add per model across all jobs
+        Fused adds (TODO-22): one col.upsert per model across all jobs
         (200 round-trips become 2 per wave), falling back to per-file
-        adds when the fused call fails so isolation holds.
+        upserts when the fused call fails so isolation holds.
+
+        Add-then-purge (abort-safe): new chunks land BEFORE any stale
+        id is deleted, so a timeout or kill mid-wave leaves old
+        vectors serving instead of holes. A failed re-embed keeps
+        old chunks AND the old hash, so the next run simply retries.
         """
         models = self.models
         cols = self.collections
@@ -1932,6 +1955,7 @@ class MemoryEngine:
                 slug,
             )
             staged = []
+            old_ids_by_path: Dict[str, List[str]] = {}
             for (
                 info,
                 filepath,
@@ -1944,16 +1968,17 @@ class MemoryEngine:
                 hists,
                 nots,
             ) in jobs:
-                if old_hash is not None:
-                    try:
-                        existing = col.get(where={"source": info["path"]})
-                        if existing and existing["ids"]:
-                            col.delete(ids=existing["ids"])
-                    except Exception as e:
-                        print(
-                            f"Error purging old chunks for {info['rel_path']}: {e}",
-                            file=sys.stderr,
-                        )
+                # Read (never delete yet) the ids this file already
+                # holds: after a successful upsert, ids absent from
+                # the new set are pruned as stale. Nothing is
+                # destroyed before its replacement has landed.
+                try:
+                    existing = col.get(where={"source": info["path"]})
+                    old_ids_by_path[info["path"]] = (
+                        list(existing["ids"]) if existing and existing["ids"] else []
+                    )
+                except Exception:
+                    old_ids_by_path[info["path"]] = []
                 ids = [c["chunk_id"] for c in chunks]
                 texts = masked
                 metadatas = [
@@ -1993,7 +2018,7 @@ class MemoryEngine:
             if not staged:
                 continue
             try:
-                col.add(
+                col.upsert(
                     ids=[i for _info, ids, _t, _e, _m in staged for i in ids],
                     embeddings=[v for _info, _d, _t, vecs, _m in staged for v in vecs],
                     documents=[t for _info, _d, texts, _e, _m in staged for t in texts],
@@ -2002,12 +2027,13 @@ class MemoryEngine:
             except Exception:
                 for info, ids, texts, embeddings, metadatas in staged:
                     try:
-                        col.add(
+                        col.upsert(
                             ids=ids,
                             embeddings=embeddings,
                             documents=texts,
                             metadatas=metadatas,
                         )
+                        self._prune_stale_ids(col, info, ids, old_ids_by_path)
                     except Exception as e:
                         print(
                             f"Failed indexing chunks for {info['rel_path']}: {e}",
@@ -2015,16 +2041,14 @@ class MemoryEngine:
                         )
                         stats["failed"] += 1
                         failed_paths.add(info["path"])
+            else:
+                for info, ids, _texts, _embeddings, _metadatas in staged:
+                    self._prune_stale_ids(col, info, ids, old_ids_by_path)
         if failed_paths:
             old_by_path = {i["path"]: o for i, _f, o, _n in to_index}
-            for col in cols.values():
-                for path in failed_paths:
-                    try:
-                        existing = col.get(where={"source": path})
-                        if existing and existing["ids"]:
-                            col.delete(ids=existing["ids"])
-                    except Exception:
-                        pass
+            # Add-then-purge: failed files still hold their OLD chunks
+            # (nothing was purged before the failure), so only the
+            # registry is restored — the next run retries cleanly.
             for path in failed_paths:
                 if path in old_by_path and old_by_path[path] is not None:
                     new_registry[path] = old_by_path[path]
@@ -2237,6 +2261,73 @@ class MemoryEngine:
                 pass
         self.save_registry(registry)
         return {"status": "success", "repaired": fixed, "total": len(registry)}
+
+    def reconcile_vectors(self, heal: bool = False) -> Dict[str, Any]:
+        """Diff registry-vs-Chroma per model; optionally heal holes.
+
+        repair_registry rebuilds registry FROM Chroma; janitor deletes
+        chunks for dead files. Neither sees a LIVE file whose chunks
+        are MISSING (holes: registry says indexed, a model holds
+        nothing) — aborts and ancient model swaps leave exactly these,
+        and incremental index is hash-blind to them. This is the third
+        leg: report the holes, and with heal=True re-queue holed files
+        through the normal incremental path (drop their keys, index).
+        """
+        refused = self._require_writer("reconcile_vectors")
+        if refused is not None:
+            return refused
+        registry = self.load_registry()
+        # Configured live models only: rtr_collections() also lists each
+        # collection twice (by slug and by name) plus legacy orphans,
+        # which would double-count holes and flag dead collections.
+        cols = self.collections
+        per_model: Dict[str, set] = {}
+        for slug, col in cols.items():
+            seen: set = set()
+            try:
+                total = col.count()
+            except Exception:
+                total = 0
+            offset = 0
+            while offset < total:
+                try:
+                    got = col.get(
+                        limit=JANITOR_PAGE_SIZE,
+                        offset=offset,
+                        include=["metadatas"],
+                    )
+                except Exception:
+                    break
+                if not got or not got["ids"]:
+                    break
+                for meta in got["metadatas"] or []:
+                    src = (meta or {}).get("source", "")
+                    if src:
+                        seen.add(src)
+                offset += len(got["ids"])
+            per_model[slug] = seen
+        live = {p for p in registry if Path(p).exists()}
+        stale_skipped = len(registry) - len(live)
+        missing: Dict[str, List[str]] = {}
+        for slug, seen in per_model.items():
+            missing[slug] = sorted(p for p in live if p not in seen)
+        healed: List[str] = []
+        if heal:
+            to_heal = sorted({p for v in missing.values() for p in v})
+            if to_heal:
+                for p in to_heal:
+                    registry.pop(p, None)
+                self.save_registry(registry)
+                self.index_all()
+                healed = to_heal
+        return {
+            "status": "success",
+            "files": len(registry),
+            "models": {slug: len(seen) for slug, seen in per_model.items()},
+            "missing": missing,
+            "stale_skipped": stale_skipped,
+            "healed": healed,
+        }
 
     def _purge_deleted_paths(self, deleted_paths: set) -> None:
         """Remove deleted files from every RTR collection (configured +

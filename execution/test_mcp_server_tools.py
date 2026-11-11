@@ -433,5 +433,69 @@ class TestAutoindexSwitch(unittest.TestCase):
         )
 
 
+class RepairReconcileTests(unittest.TestCase):
+    def test_repair_panel_reports_and_heals_holes(self):
+        import tempfile
+        from pathlib import Path
+
+        import memory_engine as mem
+        from memory_engine import MemoryEngine
+        import memory_mcp_server as mcp_server
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            saved = (
+                mem.PROJECT_ROOTS,
+                mem.PROJECTS_DIR,
+                mem.DB_DIR,
+                mem.REGISTRY_FILE,
+                mem.EXTRA_ROOTS_FILE,
+                mem.LEXIKON_GLOBAL_FILE,
+            )
+            mem.PROJECT_ROOTS = [root / "projects"]
+            mem.PROJECTS_DIR = root / "projects"
+            mem.DB_DIR = root / "db"
+            mem.REGISTRY_FILE = root / "registry.json"
+            mem.EXTRA_ROOTS_FILE = root / "extra.json"
+            mem.LEXIKON_GLOBAL_FILE = root / "lex.json"
+            try:
+                proj = root / "projects" / "rep"
+                d = proj / "directives"
+                d.mkdir(parents=True)
+                (d / "a.md").write_text("# A\n\nREPAIR-MARKER", encoding="utf-8")
+                eng = MemoryEngine()
+                old = mcp_server.engine
+                mcp_server.engine = eng
+                try:
+                    eng.index_all()
+                    slug = next(s for s in eng.rtr_collections() if "bge" in s)
+                    col = eng.rtr_collections()[slug]
+                    victim = str(d / "a.md")
+                    dead = col.get(where={"source": victim}, limit=5000)["ids"]
+                    self.assertGreater(len(dead), 0)
+                    col.delete(ids=dead)
+                    dry = mcp_server.memory_repair(dry_run=True)
+                    self.assertIn("Vector holes found: 1", dry)
+                    self.assertEqual(
+                        col.get(where={"source": victim}, limit=5000)["ids"], []
+                    )
+                    wet = mcp_server.memory_repair()
+                    self.assertIn("Vector holes healed: 1", wet)
+                    back = col.get(where={"source": victim}, limit=5000)["ids"]
+                    self.assertGreater(len(back), 0)
+                finally:
+                    mcp_server.engine = old
+                    eng.close()
+            finally:
+                (
+                    mem.PROJECT_ROOTS,
+                    mem.PROJECTS_DIR,
+                    mem.DB_DIR,
+                    mem.REGISTRY_FILE,
+                    mem.EXTRA_ROOTS_FILE,
+                    mem.LEXIKON_GLOBAL_FILE,
+                ) = saved
+
+
 if __name__ == "__main__":
     unittest.main()

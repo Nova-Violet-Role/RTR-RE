@@ -197,6 +197,10 @@ terms and optional structural-grep hits (`OPENCODE_MEMORY_STRUCT_LANE`).
 Spans are DTD-typed at index
 (`PCDATA`/`CDATA`/`NDATA` + NOTATION recorded, NDATA masked pre-embedding).
 Same-name projects across roots resolve first-match; absolute paths always exact.
+Query prompts are per-model from each model's own card: Arctic-m gets its
+instruction prefix, bge-base declares none so it embeds raw queries — the
+asymmetry is correct by design (an instruction prefix would push a
+non-instruction model off-distribution, not prepare it).
 
 ## 6b. Overseeding — bigger turbos welcome (bi-turbo philosophy)
 
