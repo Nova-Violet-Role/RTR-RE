@@ -3,6 +3,7 @@
 """Tool-surface tests for the MCP server (guards, errors, isolation)."""
 
 import os
+import re
 import sys
 import tempfile
 import threading
@@ -92,9 +93,10 @@ class TestMcpServerTools(unittest.TestCase):
         stray.write_text("# Stray\n", encoding="utf-8")
         panel = mcp_server.memory_delete(str(stray))
         # Panels wrap at terminal width (path length differs per
-        # machine), so match whitespace-blind: wrapping may split
-        # mid-word ("n" / "ot indexed" seen on CI).
-        self.assertIn("notindexed", "".join(panel.split()))
+        # machine), so match border- and whitespace-blind: wrapping
+        # may split mid-word with box borders between ("n║║ot").
+        flat = re.sub(r"[\s║╔╗╚╝═─]+", "", panel)
+        self.assertIn("notindexed", flat)
         self.assertTrue(stray.exists())
 
     def test_delete_removes_indexed_file(self):
