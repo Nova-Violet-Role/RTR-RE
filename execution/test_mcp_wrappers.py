@@ -216,6 +216,19 @@ class TestMcpWrappers(unittest.TestCase):
             skip = mcp_server.maybe_migrate_db(db_dir=db, package_version="1.2.0")
             self.assertEqual(skip["action"], "skip")
 
+    def test_migration_populated_unmarked_db_amends_as_legacy(self):
+        import tempfile
+
+        f = self.test_projects / "wrapproj" / "directives" / "legacy.md"
+        f.write_text("# Legacy\n\nold content here", encoding="utf-8")
+        self.engine.index_all()
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "db2"
+            db.mkdir()
+            out = mcp_server.maybe_migrate_db(db_dir=db, package_version="1.2.0")
+            self.assertEqual(out["action"], "amend")
+            self.assertIn("legacy", out["reason"])
+
     def test_warm_models_defaults_on_explicit_off(self):
         self.assertTrue(mcp_server._should_warm_models({}))
         for off in ("0", "false", "no", "off"):

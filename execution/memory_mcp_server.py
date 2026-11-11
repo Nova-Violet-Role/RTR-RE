@@ -1381,9 +1381,10 @@ def maybe_migrate_db(db_dir=None, package_version=None) -> dict:
     """The one update-conformance path (TODO-13): version skew self-amends.
 
     Compares the package version against the marker beside the DB:
-    fresh (no marker) writes the marker and skips; older marker runs
-    repair_registry + janitor, writes a refusal-free report, and stamps
-    the marker; same-or-newer skips. Never raises into startup.
+    fresh empty DB writes the marker and skips; a populated DB without a
+    marker (every pre-migration database, including RTR-era hybrids) is
+    treated as old and amends; older marker amends; same-or-newer skips.
+    Never raises into startup.
     """
     import time
 
@@ -1399,13 +1400,21 @@ def maybe_migrate_db(db_dir=None, package_version=None) -> dict:
             except Exception:
                 stored = None
         if stored is None:
-            marker.write_text(
-                json.dumps({"version": pkg, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")})
-                + "\n",
-                encoding="utf-8",
-            )
-            outcome.update({"action": "stamp", "reason": "fresh"})
-            return outcome
+            try:
+                populated = any(col.count() > 0 for col in engine.collections.values())
+            except Exception:
+                populated = False
+            if not populated:
+                marker.write_text(
+                    json.dumps(
+                        {"version": pkg, "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+                outcome.update({"action": "stamp", "reason": "fresh"})
+                return outcome
+            stored = "0.0.0-legacy"
         if _version_tuple(stored) >= _version_tuple(pkg):
             return outcome
         rep = engine.repair_registry()
