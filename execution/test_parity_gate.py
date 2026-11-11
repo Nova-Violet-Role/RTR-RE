@@ -52,7 +52,7 @@ class TestLiveTree(unittest.TestCase):
     def test_command_counts(self):
         counts = pg.command_counts()
         self.assertEqual(counts["palette"], 14)
-        self.assertEqual(counts["rtr_verbs"], 15)
+        self.assertEqual(counts["rtr_verbs"], 16)
         self.assertEqual(counts["cli_verbs"], 21)
         self.assertEqual(counts["mcp_tools"], 32)
 

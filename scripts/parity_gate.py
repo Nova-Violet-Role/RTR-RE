@@ -127,7 +127,7 @@ def run_checks(expected: str) -> None:
         check(f"version:{name}", val == expected, f"got {val}")
     counts = command_counts()
     check("commands:palette14", counts["palette"] == 14, f"got {counts['palette']}")
-    check("commands:rtr15", counts["rtr_verbs"] == 15, f"got {counts['rtr_verbs']}")
+    check("commands:rtr16", counts["rtr_verbs"] == 16, f"got {counts['rtr_verbs']}")
     check("commands:cli21", counts["cli_verbs"] == 21, f"got {counts['cli_verbs']}")
     check("commands:mcp32", counts["mcp_tools"] == 32, f"got {counts['mcp_tools']}")
     # README numbers resolve to the frozen JSONs.
