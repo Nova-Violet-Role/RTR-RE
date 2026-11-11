@@ -82,6 +82,17 @@ class TestCostModel(unittest.TestCase):
         self.assertLess(cost_with(live, 1000), cost_without(4000000))
         self.assertLessEqual(live + 1000, 700000)
 
+    def test_seventh_reread_costs_lesser_cumulative(self):
+        # The cache factor dies: 7 turns rereading through a 4M window
+        # cost 7x live-plus-retrieved with RTR against 7x managed
+        # without. Every repeated read costs retrieval, never re-send.
+        live, _evicted = simulate_managed(4000000, target_tokens=200000)
+        turns = 7
+        cum_with = turns * cost_with(live, 1000)
+        cum_without = turns * cost_without(4000000)
+        self.assertLess(cum_with, cum_without)
+        self.assertLess(cum_with / cum_without, 0.2)
+
     def test_restore_budget_bounds_retrieved(self):
         blob = "r" * 50000
         self.assertEqual(len(bounded_restore(blob)), 4000)

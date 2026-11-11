@@ -96,4 +96,32 @@ theorem live_instance_savings :
     savings 3430000 390000 1000 > 4 / 5 := by
   norm_num [savings]
 
+/-- Cumulative cost over T turns: without RTR every turn re-sends the
+managed context (the cache factor: repetition multiplies the bulk);
+with RTR every turn costs live-plus-retrieved, so the 7th reread of
+the same files costs the same lesser price as the 1st. -/
+def cumWithout (managed turns : Nat) : Nat :=
+  turns * managed
+
+def cumWith (live retrieved turns : Nat) : Nat :=
+  turns * (live + retrieved)
+
+theorem cumulative_costs_less (managed live retrieved turns : Nat)
+    (h : live + retrieved < managed) (ht : 0 < turns) :
+    cumWith live retrieved turns < cumWithout managed turns := by
+  unfold cumWith cumWithout
+  exact (Nat.mul_lt_mul_left ht).mpr h
+
+theorem seventh_costs_lesser (managed live retrieved : Nat)
+    (h : live + retrieved < managed) :
+    cumWith live retrieved 7 < cumWithout managed 7 ∧
+      cumWith live retrieved 7 = 7 * (live + retrieved) := by
+  constructor
+  · exact cumulative_costs_less managed live retrieved 7 h (by decide)
+  · rfl
+
+theorem live_seven_turn_instance :
+    cumWith 390000 1000 7 < cumWithout 3430000 7 := by
+  decide
+
 end Symbiose
