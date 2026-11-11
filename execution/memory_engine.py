@@ -1911,12 +1911,7 @@ class MemoryEngine:
         return jobs
 
     def _upsert_jobs(self, jobs, to_index, new_registry, stats):
-        """Embed and upsert jobs per model; failed paths keep old hashes.
-
-        Batched (TODO-17): one embed call per model across all jobs (the
-        per-call tokenizer overhead dominated), falling back to per-file
-        on batch failure so one poison file cannot kill the wave.
-        """
+        """Embed and upsert jobs per model; failed paths keep old hashes."""
         models = self.models
         cols = self.collections
         failed_paths = set()
@@ -1925,18 +1920,17 @@ class MemoryEngine:
                 (n for n in self.embed_model_names if model_slug(n) == slug),
                 slug,
             )
-            # Purge updates first (per file, unchanged semantics).
             for (
                 info,
-                _filepath,
+                filepath,
                 old_hash,
-                _new_hash,
-                _chunks,
-                _mtime_val,
-                _imp,
-                _masked,
-                _hists,
-                _nots,
+                new_hash,
+                chunks,
+                mtime_val,
+                imp,
+                masked,
+                hists,
+                nots,
             ) in jobs:
                 if old_hash is not None:
                     try:
@@ -1948,21 +1942,8 @@ class MemoryEngine:
                             f"Error purging old chunks for {info['rel_path']}: {e}",
                             file=sys.stderr,
                         )
-            # Assemble every job's payload, then embed once per model.
-            payloads = []
-            for (
-                info,
-                _filepath,
-                _old_hash,
-                new_hash,
-                chunks,
-                mtime_val,
-                imp,
-                masked,
-                hists,
-                nots,
-            ) in jobs:
                 ids = [c["chunk_id"] for c in chunks]
+                texts = masked
                 metadatas = [
                     {
                         "source": info["path"],
@@ -1984,25 +1965,10 @@ class MemoryEngine:
                     }
                     for c, h, n in zip(chunks, hists, nots)
                 ]
-                payloads.append((info, ids, list(masked), metadatas))
-            all_texts = [t for _i, _d, texts, _m in payloads for t in texts]
-            try:
-                all_vecs = [
-                    [float(val) for val in e] for e in models[slug].embed(all_texts)
-                ]
-            except Exception:
-                all_vecs = None
-            cursor = 0
-            for info, ids, texts, metadatas in payloads:
-                n = len(texts)
                 try:
-                    if all_vecs is not None:
-                        embeddings = all_vecs[cursor : cursor + n]
-                        cursor += n
-                    else:
-                        embeddings = [
-                            [float(val) for val in e] for e in models[slug].embed(texts)
-                        ]
+                    embeddings = [
+                        [float(val) for val in e] for e in models[slug].embed(texts)
+                    ]
                     col.add(
                         ids=ids,
                         embeddings=embeddings,
