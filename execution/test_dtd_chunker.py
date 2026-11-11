@@ -258,6 +258,28 @@ class ChunkDtdWholeTests(unittest.TestCase):
         f = self._write("")
         self.assertEqual(self.engine.chunk_dtd_whole(f, "empty.dtd"), [])
 
+    def test_quoted_dtd_in_spans_never_pollutes_inventory(self):
+        # Live 2026-11-10: a span quoting SAMPLE_DTD put book, copyright,
+        # xhtml.list into the inventory. Structure scans the schema block
+        # before the first span; the quoted text stays in the body only.
+        span = (
+            "<!-- RTR-RE:Symbiose keeper memory span v2.1 (DTD-shaped) -->\n"
+            "<!ELEMENT span EMPTY>\n<!ATTLIST span id ID #REQUIRED>\n"
+            "<!-- verbatim span content follows -->\n\n"
+            '<span id="span-0" role="user" lane="read" dtype="PCDATA">\n'
+            '<!ELEMENT book (title, chapter+)>\n<!ENTITY copyright "x">\n'
+            "</span>\n"
+        )
+        f = self._write(span)
+        chunks = self.engine.chunk_dtd_whole(f, "quoted.dtd")
+        self.assertEqual(len(chunks), 1)
+        text = chunks[0]["text"]
+        header = text.split("Section: Full Document\n\n")[1].split("\n\n")[0]
+        self.assertIn("ROOT: span", header)
+        self.assertNotIn("book", header)
+        self.assertNotIn("copyright", header)
+        self.assertIn("<!ELEMENT book", text)
+
     def test_whole_file_survives_memory_error_during_assembly(self):
         # Live incident 2026-11-10: MemoryError at the section_text f-string
         # killed the whole index run. Per-file failures must degrade to

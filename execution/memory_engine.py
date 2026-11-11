@@ -1634,8 +1634,20 @@ class MemoryEngine:
             return []
         if not content.strip():
             return []
+        # Schema-scoped inventory (TODO-13): span files carry verbatim
+        # content that may quote DTD declarations (measured live: quoted
+        # SAMPLE_DTD polluted ROOT/ATTRIBUTES/ENTITIES with book, copyright,
+        # xhtml.list). The structure lives before the first span element;
+        # inventory scans that schema block only. Raw content still follows
+        # whole. Files without spans scan whole as before.
+        inv_text = content
+        span_at = content.find("<span ")
+        if span_at < 0:
+            span_at = content.find("<span>")
+        if span_at > 0:
+            inv_text = content[:span_at]
         try:
-            decls = list(_scan_dtd_declarations(content))
+            decls = list(_scan_dtd_declarations(inv_text))
         except Exception as e:
             print(f"Error scanning {filepath}: {e}", file=sys.stderr)
             return []
