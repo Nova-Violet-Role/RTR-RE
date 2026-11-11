@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 import os
 import sys
+import faulthandler
 import hashlib
 import json
 import re
@@ -1963,6 +1964,7 @@ class MemoryEngine:
             )
             staged = []
             old_ids_by_path: Dict[str, List[str]] = {}
+            trace_on = os.environ.get("RTR_RE_INDEX_TRACE", "0").strip() == "1"
             for (
                 info,
                 filepath,
@@ -2009,10 +2011,29 @@ class MemoryEngine:
                     }
                     for c, h, n in zip(chunks, hists, nots)
                 ]
+                t_embed = 0.0
                 try:
+                    if trace_on:
+                        nbytes = sum(len(t) for t in texts)
+                        print(
+                            f"trace index embed-start {slug} "
+                            f"{info['rel_path']} chunks={len(texts)} "
+                            f"bytes={nbytes}",
+                            file=sys.stderr,
+                            flush=True,
+                        )
+                        t_embed = time.time()
                     embeddings = [
                         [float(val) for val in e] for e in models[slug].embed(texts)
                     ]
+                    if trace_on:
+                        print(
+                            f"trace index embed-done {slug} "
+                            f"{info['rel_path']} "
+                            f"ms={(time.time() - t_embed) * 1000:.0f}",
+                            file=sys.stderr,
+                            flush=True,
+                        )
                 except Exception as e:
                     print(
                         f"Failed embedding chunks for {info['rel_path']}: {e}",
@@ -2024,6 +2045,16 @@ class MemoryEngine:
                 staged.append((info, ids, texts, embeddings, metadatas))
             if not staged:
                 continue
+            t_upsert = 0.0
+            if trace_on:
+                n_chunks = sum(len(ids) for _i, ids, _t, _e, _m in staged)
+                print(
+                    f"trace index upsert-start {slug} "
+                    f"files={len(staged)} chunks={n_chunks}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                t_upsert = time.time()
             try:
                 col.upsert(
                     ids=[i for _info, ids, _t, _e, _m in staged for i in ids],
@@ -2051,6 +2082,13 @@ class MemoryEngine:
             else:
                 for info, ids, _texts, _embeddings, _metadatas in staged:
                     self._prune_stale_ids(col, info, ids, old_ids_by_path)
+                if trace_on:
+                    print(
+                        f"trace index upsert-done {slug} "
+                        f"ms={(time.time() - t_upsert) * 1000:.0f}",
+                        file=sys.stderr,
+                        flush=True,
+                    )
         if failed_paths:
             old_by_path = {i["path"]: o for i, _f, o, _n in to_index}
             # Add-then-purge: failed files still hold their OLD chunks
@@ -2332,33 +2370,69 @@ class MemoryEngine:
         unhealed: List[str] = []
         batches = 0
         rss_peak_mb = 0.0
+        hb_sec = 0.0
+        try:
+            hb_sec = float(os.environ.get("RTR_RE_HEAL_HEARTBEAT_SEC", "120") or 0)
+        except Exception:
+            hb_sec = 0.0
         if heal:
-            to_heal = sorted({p for v in missing.values() for p in v})
-            step = RECONCILE_BATCH_SIZE
-            for start in range(0, len(to_heal), step):
-                batch = to_heal[start : start + step]
-                for p in batch:
-                    registry.pop(p, None)
-                self.save_registry(registry)
-                self.index_all()
-                batches += 1
+            # Smallest-first: monster files take minutes per file per
+            # model, so alphabetical order can open on an hour-long
+            # file with zero early signal. Size order streams quick
+            # wins (and quick verification) first; total work is
+            # identical, only the shape of progress changes.
+            def _heal_size(p: str) -> tuple:
                 try:
-                    rss_peak_mb = max(rss_peak_mb, process_rss_mb())
+                    return (Path(p).stat().st_size, p)
+                except Exception:
+                    return (0, p)
+
+            to_heal = sorted({p for v in missing.values() for p in v}, key=_heal_size)
+            step = RECONCILE_BATCH_SIZE
+            if hb_sec > 0:
+                # py-spy cannot attach to these interpreters; a heartbeat
+                # is the in-process equivalent: stacks land on stderr
+                # every hb_sec during the heal, so a kill leaves the
+                # exact stuck frames behind for post-mortem. The live
+                # sys.stderr is passed explicitly (never the import-time
+                # default) so redirection and capture always work.
+                try:
+                    faulthandler.dump_traceback_later(
+                        hb_sec, repeat=True, file=sys.stderr
+                    )
                 except Exception:
                     pass
-                for p in batch:
-                    if self._file_has_all_models(p):
-                        healed.append(p)
-                    else:
-                        unhealed.append(p)
+            try:
+                for start in range(0, len(to_heal), step):
+                    batch = to_heal[start : start + step]
+                    for p in batch:
+                        registry.pop(p, None)
+                    self.save_registry(registry)
+                    self.index_all()
+                    batches += 1
+                    try:
+                        rss_peak_mb = max(rss_peak_mb, process_rss_mb())
+                    except Exception:
+                        pass
+                    for p in batch:
+                        if self._file_has_all_models(p):
+                            healed.append(p)
+                        else:
+                            unhealed.append(p)
+                            try:
+                                registry[p] = self.calculate_sha256(Path(p))
+                            except Exception:
+                                pass
+                    self.save_registry(registry)
+                    if on_batch is not None:
                         try:
-                            registry[p] = self.calculate_sha256(Path(p))
+                            on_batch(len(healed), len(to_heal), rss_peak_mb)
                         except Exception:
                             pass
-                self.save_registry(registry)
-                if on_batch is not None:
+            finally:
+                if hb_sec > 0:
                     try:
-                        on_batch(len(healed), len(to_heal), rss_peak_mb)
+                        faulthandler.cancel_dump_traceback_later()
                     except Exception:
                         pass
         return {

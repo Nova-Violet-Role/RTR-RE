@@ -452,6 +452,161 @@ class TestAbortSafeUpsert(unittest.TestCase):
                 finally:
                     eng.close()
 
+    def test_index_trace_logs_per_file_timings(self):
+        # Long heals must leave a trail even when killed: with
+        # RTR_RE_INDEX_TRACE=1, every file embed+upsert logs one
+        # line (model, chunks, ms) so a stall names its file.
+        import contextlib
+        import io
+        import os
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "rec" / "directives"
+                d.mkdir(parents=True)
+                (d / "t.md").write_text("# T\n\nTRACE-MARKER", encoding="utf-8")
+                (d / "s.dtd").write_text(
+                    "<!ELEMENT span (text)>\n<!ATTLIST span id ID #REQUIRED>\n",
+                    encoding="utf-8",
+                )
+                eng = MemoryEngine()
+                try:
+                    old = os.environ.get("RTR_RE_INDEX_TRACE")
+                    os.environ["RTR_RE_INDEX_TRACE"] = "1"
+                    try:
+                        import contextlib as cl
+
+                        buf = io.StringIO()
+                        with cl.redirect_stderr(buf):
+                            eng.index_all()
+                    finally:
+                        if old is None:
+                            del os.environ["RTR_RE_INDEX_TRACE"]
+                        else:
+                            os.environ["RTR_RE_INDEX_TRACE"] = old
+                    out = buf.getvalue()
+                    self.assertIn("trace index", out)
+                    self.assertIn("t.md", out)
+                    self.assertIn("s.dtd", out)
+                    self.assertIn("ms", out)
+                finally:
+                    eng.close()
+
+    def test_heal_orders_batches_smallest_first(self):
+        # Monsters (multi-MB spans) take minutes per file per model;
+        # healing smallest-first streams early progress (and early
+        # verification) instead of opening on an hour-long file.
+        # Both chunker families (.md + .dtd): the database is spans,
+        # but directives docs are markdown, and size order must hold
+        # across both.
+        import contextlib
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "rec" / "directives"
+                d.mkdir(parents=True)
+                (d / "a-huge.md").write_text(
+                    "# Z\n\n" + "BIGPAD " * 2000, encoding="utf-8"
+                )
+                (d / "z-tiny.md").write_text("# A\n\ntiny", encoding="utf-8")
+                (d / "m-mid.md").write_text(
+                    "# M\n\n" + "MIDPAD " * 200, encoding="utf-8"
+                )
+                (d / "a-huge.dtd").write_text(
+                    "<!ELEMENT big (x)>\n<!-- " + "P" * 22000 + " -->\n",
+                    encoding="utf-8",
+                )
+                (d / "z-tiny.dtd").write_text("<!ELEMENT t (x)>\n", encoding="utf-8")
+                (d / "m-mid.dtd").write_text(
+                    "<!ELEMENT m (x)>\n<!-- " + "Q" * 2200 + " -->\n",
+                    encoding="utf-8",
+                )
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    slug = next(
+                        s for s in eng.rtr_collections() if s == "baai_bge_base_en_v1_5"
+                    )
+                    col = eng.rtr_collections()[slug]
+                    for name in (
+                        "a-huge.md",
+                        "z-tiny.md",
+                        "m-mid.md",
+                        "a-huge.dtd",
+                        "z-tiny.dtd",
+                        "m-mid.dtd",
+                    ):
+                        victim = str(d / name)
+                        dead = col.get(where={"source": victim}, limit=5000)["ids"]
+                        self.assertGreater(len(dead), 0)
+                        col.delete(ids=dead)
+                    out = eng.reconcile_vectors(heal=True)
+                    names = [Path(p).name for p in out["healed"]]
+                    self.assertEqual(
+                        names,
+                        [
+                            "z-tiny.md",
+                            "z-tiny.dtd",
+                            "m-mid.md",
+                            "m-mid.dtd",
+                            "a-huge.md",
+                            "a-huge.dtd",
+                        ],
+                    )
+                finally:
+                    eng.close()
+
+    def test_heal_heartbeat_dumps_stacks(self):
+        # Long heals must X-ray themselves: with a short heartbeat,
+        # stack dumps land on stderr during the run (post-kill
+        # forensics included), naming the live frames.
+        import contextlib
+        import io
+        import os
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "rec" / "directives"
+                d.mkdir(parents=True)
+                for i in range(20):
+                    (d / f"h{i:02d}.md").write_text(
+                        f"# H{i}\n\nHEARTBEAT-MARKER-{i}", encoding="utf-8"
+                    )
+                    (d / f"s{i:02d}.dtd").write_text(
+                        f"<!ELEMENT beat{i} (pulse)>\n", encoding="utf-8"
+                    )
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    slug = next(
+                        s for s in eng.rtr_collections() if s == "baai_bge_base_en_v1_5"
+                    )
+                    col = eng.rtr_collections()[slug]
+                    victims = [str(p) for p in sorted(d.iterdir())]
+                    for victim in victims:
+                        dead = col.get(where={"source": victim}, limit=5000)["ids"]
+                        self.assertGreater(len(dead), 0)
+                        col.delete(ids=dead)
+                    old = os.environ.get("RTR_RE_HEAL_HEARTBEAT_SEC")
+                    os.environ["RTR_RE_HEAL_HEARTBEAT_SEC"] = "1"
+                    try:
+                        import contextlib as cl
+
+                        err_path = root / "hb-stderr.log"
+                        with open(err_path, "w", encoding="utf-8") as err:
+                            with cl.redirect_stderr(err):
+                                out = eng.reconcile_vectors(heal=True)
+                        dumped = err_path.read_text(encoding="utf-8")
+                    finally:
+                        if old is None:
+                            del os.environ["RTR_RE_HEAL_HEARTBEAT_SEC"]
+                        else:
+                            os.environ["RTR_RE_HEAL_HEARTBEAT_SEC"] = old
+                    self.assertEqual(len(out["healed"]), 40)
+                    self.assertIn("Thread", dumped)
+                finally:
+                    eng.close()
+
 
 if __name__ == "__main__":
     unittest.main()
