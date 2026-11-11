@@ -30,6 +30,9 @@ evaluation. The native axiom below is the price, recorded on purpose. -/
 theorem m31_native : Nat.Prime (2 ^ 31 - 1) := by native_decide
 
 #print axioms protected_message_can_exceed_any_smaller_target
+#print axioms keeper_tail_bounded
+#print axioms eviction_kills_cache
+#print axioms sunk_grows_monotone
 #print axioms fixpoint_repairs_chain_to_call
 #print axioms fused_calls_new_never_more
 #print axioms retained_tickets_eq
