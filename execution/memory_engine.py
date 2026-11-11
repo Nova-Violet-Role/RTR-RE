@@ -1911,7 +1911,12 @@ class MemoryEngine:
         return jobs
 
     def _upsert_jobs(self, jobs, to_index, new_registry, stats):
-        """Embed and upsert jobs per model; failed paths keep old hashes."""
+        """Embed and upsert jobs per model; failed paths keep old hashes.
+
+        Fused adds (TODO-22): one col.add per model across all jobs
+        (200 round-trips become 2 per wave), falling back to per-file
+        adds when the fused call fails so isolation holds.
+        """
         models = self.models
         cols = self.collections
         failed_paths = set()
@@ -1920,6 +1925,7 @@ class MemoryEngine:
                 (n for n in self.embed_model_names if model_slug(n) == slug),
                 slug,
             )
+            staged = []
             for (
                 info,
                 filepath,
@@ -1969,19 +1975,40 @@ class MemoryEngine:
                     embeddings = [
                         [float(val) for val in e] for e in models[slug].embed(texts)
                     ]
-                    col.add(
-                        ids=ids,
-                        embeddings=embeddings,
-                        documents=texts,
-                        metadatas=metadatas,
-                    )
                 except Exception as e:
                     print(
-                        f"Failed indexing chunks for {info['rel_path']}: {e}",
+                        f"Failed embedding chunks for {info['rel_path']}: {e}",
                         file=sys.stderr,
                     )
                     stats["failed"] += 1
                     failed_paths.add(info["path"])
+                    continue
+                staged.append((info, ids, texts, embeddings, metadatas))
+            if not staged:
+                continue
+            try:
+                col.add(
+                    ids=[i for _info, ids, _t, _e, _m in staged for i in ids],
+                    embeddings=[v for _info, _d, _t, vecs, _m in staged for v in vecs],
+                    documents=[t for _info, _d, texts, _e, _m in staged for t in texts],
+                    metadatas=[m for _info, _d, _t, _e, metas in staged for m in metas],
+                )
+            except Exception:
+                for info, ids, texts, embeddings, metadatas in staged:
+                    try:
+                        col.add(
+                            ids=ids,
+                            embeddings=embeddings,
+                            documents=texts,
+                            metadatas=metadatas,
+                        )
+                    except Exception as e:
+                        print(
+                            f"Failed indexing chunks for {info['rel_path']}: {e}",
+                            file=sys.stderr,
+                        )
+                        stats["failed"] += 1
+                        failed_paths.add(info["path"])
         if failed_paths:
             old_by_path = {i["path"]: o for i, _f, o, _n in to_index}
             for col in cols.values():
