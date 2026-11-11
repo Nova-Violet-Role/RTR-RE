@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
+<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 <!DOCTYPE scene SYSTEM "../rtrre-scene.mod">
 <scene version="1.0" theme="instrument">
   <camera drift="0.0012" parallax="0.0004" pitch="-0.16" distance="6.5"/>

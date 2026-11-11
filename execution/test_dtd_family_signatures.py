@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """DTD family-signature tests (TODO-64 assimilation, proposals A-C).
 
 Family signatures are the discriminator dense retrieval lacks: two

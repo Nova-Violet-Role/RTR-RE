@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: Nova-Violet Role ORG
+// SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 // RTR-RE installer — WebGL 3D scene.
 // The scene is DATA declared in the scene DTD module (rtrre-scene.mod)
 // and embedded per theme in index.html as <script type="application/xml">.

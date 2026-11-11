@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Freeze an architecture baseline (TODO-29, divided per TODO-68).
 
 Reads the three immutable source artifacts and writes:

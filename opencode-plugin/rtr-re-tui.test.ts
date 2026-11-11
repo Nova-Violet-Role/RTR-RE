@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: Nova-Violet Role ORG
+// SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 import { describe, expect, test } from "bun:test"
 import { fileURLToPath } from "node:url"
 import plugin from "./rtr-re-tui.tsx"

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Tests for the cross-family transfer matrix instrument (TODO-35).
 
 The instrument is an evaluation probe (eval/transfer_matrix.py): it

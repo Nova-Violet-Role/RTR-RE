@@ -1,3 +1,5 @@
+<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
+<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # Security Policy
 
 Applies to every repository in the Nova-Violet Role organisation unless that

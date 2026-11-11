@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Cross-family transfer matrix for the DTD corpus (TODO-35).
 
 For every family pair, quantify how much structural vocabulary transfers:

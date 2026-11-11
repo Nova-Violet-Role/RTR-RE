@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Probe: does a model's query prompt recover its retrieval gap?
 
 Isolated experiment, faithful to bench_versus:

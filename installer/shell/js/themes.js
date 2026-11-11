@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: Nova-Violet Role ORG
+// SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 // RTR-RE installer — theme registry.
 // Each platform injects its personality: the shell reads the theme from
 // the launcher (data-theme on <body>) and this module exposes the scene

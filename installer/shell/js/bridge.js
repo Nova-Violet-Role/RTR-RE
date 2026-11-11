@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: Nova-Violet Role ORG
+// SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 // RTR-RE installer — bridge client.
 // The shell loads from file:// (no http:// in the address bar). The
 // launcher runs a loopback API (127.0.0.1, random port, token, CORS)

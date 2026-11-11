@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Measure the chunk-count scale of the DTD-aware chunker over the staged corpus."""
 
 from __future__ import annotations

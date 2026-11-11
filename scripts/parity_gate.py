@@ -18,6 +18,7 @@ this script (untracked, per machine).
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -61,6 +62,7 @@ def save_state(consumed: bool, verdict: str) -> None:
         )
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
 
 
@@ -121,6 +123,93 @@ def command_counts() -> dict:
     }
 
 
+def file_has_spdx(path: Path) -> bool:
+    """True when the file carries an SPDX-License-Identifier in its head."""
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            head = "".join(f.readline() for _ in range(10))
+    except OSError:
+        return False
+    return "SPDX-License-Identifier" in head
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def license_failures() -> list[str]:
+    """License disposal checks: texts identical, manifests coherent, headers present."""
+    fails: list[str] = []
+    for root_name, licenses_name in (
+        ("LICENSE-AGPL-3.0.txt", "LICENSES/AGPL-3.0-or-later.txt"),
+        ("LICENSE-EUPL-1.2.txt", "LICENSES/EUPL-1.2.txt"),
+    ):
+        a, b = ROOT / root_name, ROOT / licenses_name
+        if not a.exists() or not b.exists():
+            fails.append(f"license:texts-missing:{root_name}")
+        elif _sha256(a) != _sha256(b):
+            fails.append(f"license:texts-differ:{root_name}")
+    try:
+        with open(ROOT / "pyproject.toml", "rb") as f:
+            proj = tomllib.load(f)["project"]
+        lic_field = proj.get("license", {})
+        lic_text = lic_field.get("text", "") if isinstance(lic_field, dict) else ""
+    except Exception:
+        lic_text = ""
+    if "EUPL-1.2" not in lic_text or "AGPL-3.0" not in lic_text:
+        fails.append("license:pyproject")
+    for pkg_rel in ("opencode-plugin/package.json", "mjs/package.json"):
+        try:
+            lic = json.loads((ROOT / pkg_rel).read_text(encoding="utf-8")).get(
+                "license", ""
+            )
+        except Exception:
+            lic = ""
+        if lic != "AGPL-3.0-or-later OR EUPL-1.2":
+            fails.append(f"license:manifest-{pkg_rel}")
+    scope = [
+        "execution/*.py",
+        "scripts/*.py",
+        "eval/*.py",
+        "eval/graded/*.py",
+        "formal/*.lean",
+        "formal/Symbiose/*.lean",
+        "media/*.py",
+        "opencode-plugin/*.js",
+        "opencode-plugin/*.mjs",
+        "opencode-plugin/*.ts",
+        "opencode-plugin/*.tsx",
+        "mjs/hooks/*.js",
+        "mjs/scripts/*.js",
+        "mjs/framework/*.mjs",
+        "mjs/tests/*.mjs",
+        "mjs/.opencode/plugins/*.mjs",
+        "mjs/.opencode/plugins/*.cjs",
+        "installer/launchers/*.py",
+        "installer/launchers/*.mjs",
+        "installer/tools/*.py",
+        "installer/shell/tools/*.py",
+        "installer/shell/js/*.js",
+        "installer/shell/*.html",
+        "installer/shell/css/*.css",
+        "installer/shell/dtd/*.dtd",
+        "installer/shell/dtd/*.mod",
+        "installer/shell/dtd/scenes/*.xml",
+        "installer/__init__.py",
+    ]
+    seen = set()
+    for pattern in scope:
+        for path in sorted(ROOT.glob(pattern)):
+            if not path.is_file() or path in seen:
+                continue
+            seen.add(path)
+            if "__pycache__" in path.parts or "node_modules" in path.parts:
+                continue
+            if not file_has_spdx(path):
+                fails.append(f"license:header-{path.relative_to(ROOT)}")
+    return fails
+
+
 def run_checks(expected: str) -> None:
     vs = versions()
     for name, val in vs.items():
@@ -176,6 +265,10 @@ def run_checks(expected: str) -> None:
     )
     check("registry:schema", reg.get("schema") == "rtr.preset-registry/v2")
     check("registry:default", reg.get("defaultKeeperPreset") == "re-symbiose-mugen")
+    lic = license_failures()
+    for name in lic:
+        check(name, False)
+    check("license:clean", not lic)
 
 
 def main(argv: list[str] | None = None) -> int:

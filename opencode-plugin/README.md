@@ -1,3 +1,5 @@
+<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
+<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # rtr-re-opencode-plugin
 
 RTR-RE:Symbiose OpenCode plugins — the **Keeper** (server) and the

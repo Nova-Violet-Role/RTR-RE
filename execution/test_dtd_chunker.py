@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """DTD-aware chunking tests (TODO-30/32 amplification).
 
 Hybrid contract: files with up to OPENCODE_MEMORY_DTD_PER_DECLARATION_MAX

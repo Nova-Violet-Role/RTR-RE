@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: Nova-Violet Role ORG
+# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 """Tests for the per-family DTD suites wiring (TODO-36).
 
 Covers: the 14 per-family corpus specs (all real families present,

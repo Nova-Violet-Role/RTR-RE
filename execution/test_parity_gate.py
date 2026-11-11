@@ -57,5 +57,25 @@ class TestLiveTree(unittest.TestCase):
         self.assertEqual(counts["mcp_tools"], 32)
 
 
+class TestLicense(unittest.TestCase):
+    def test_license_section_clean_on_live_tree(self):
+        self.assertEqual(pg.license_failures(), [])
+
+    def test_file_has_spdx_red_and_green(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            good = Path(td) / "good.py"
+            good.write_text(
+                "# SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later\nx = 1\n",
+                encoding="utf-8",
+            )
+            bad = Path(td) / "bad.py"
+            bad.write_text("x = 1\n", encoding="utf-8")
+            self.assertTrue(pg.file_has_spdx(good))
+            self.assertFalse(pg.file_has_spdx(bad))
+            self.assertFalse(pg.file_has_spdx(Path(td) / "missing.py"))
+
+
 if __name__ == "__main__":
     unittest.main()

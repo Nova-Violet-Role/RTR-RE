@@ -1,3 +1,5 @@
+<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
+<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # Privacy Policy
 
 Version 1, dated 2026-09-03. Applies to every repository in the Nova-Violet

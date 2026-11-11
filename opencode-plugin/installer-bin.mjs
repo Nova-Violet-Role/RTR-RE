@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// SPDX-FileCopyrightText: Nova-Violet Role ORG
+// SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later
 // RTR-RE installer — npm bin entry.
 // Locates the terminal launcher bundled with this package and runs it.
 // The launcher is the Node terminal installer (node_launcher.mjs); the
