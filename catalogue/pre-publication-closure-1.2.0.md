@@ -1,0 +1,96 @@
+<!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
+<!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
+# Pre-Publication Closure Catalogue — RTR-RE 1.2.0
+
+Date: 2026-11-11. Second edition of the 1.0.0 closure catalogue: every
+open rung of the release ladder, its closure evidence, the operator
+trigger, and the rollback plan. Nothing uploads without the operator's
+explicit order; this document is preparation, not publication.
+
+## Published state (measured 2026-11-11)
+
+| Platform | Latest | 1.2.0 present |
+|---|---|---|
+| PyPI `rtr-role-type-retrieval` | 1.1.0 (2026-11-08) | no |
+| npm `rtr-re-opencode-plugin` | 1.1.0 | no |
+| npm `@saimonokuma/rtr-re-mjs` | 1.1.0 | no |
+| GitHub tags | v1.1.0 only | no tag yet |
+
+## This release, rebuilt fresh (dist/, gitignored scratch)
+
+| File | Bytes | sha256 |
+|---|---|---|
+| rtr_role_type_retrieval-1.2.0-py3-none-any.whl | 16968127 | 1e110e4de9c4443de68c987efd92167afa5de54b794869ce791c3936b6fe37ac |
+| rtr_role_type_retrieval-1.2.0.tar.gz | 19284856 | fc2d28293504c9063a646e1138136435af21e57484b544257def71bb5b29333d |
+| rtr-re-opencode-plugin-1.2.0.tgz | 16841934 | 2a110cf8dbd4412f57f2ae449a2b6adb826d00abe9dfe0cf6018241928e93a66 |
+| saimonokuma-rtr-re-mjs-1.2.0.tgz | 12663 | c952263dc8099ab20ca5148956a53d869f0087b4cf9d557db28c5afd1fae14f1 |
+
+Stale 1.1.0 local blobs were recorded (plugin tgz cf067874…,
+wheel 442572f7…, sdist 76a36042…, mjs e0b07174…) and removed; the
+1.1.0 release lives on the three platforms, which is the rollback
+source, not this directory.
+
+Sdist composition note (measured, accepted): 19.3 MB vs 1.1.0's
+2.1 MB — the growth is frozen evidence (seven versus snapshots,
+catalogue, pool worksheet) plus the shipped installer audio. The
+wheel installers actually download is unchanged in size class
+(17.0 MB vs 1.1.0's 16.95 MB). Revisit if a slim sdist is wanted
+(hatch exclude rules); not a blocker.
+
+## Evidence (all measured this ladder)
+
+| Battery | Result |
+|---|---|
+| pytest | 508 passed, 1 skipped, 33 subtests, exit 0 |
+| node keeper / bulletproof / launcher / bin | 55 + 9 + 16 + 3, exit 0 |
+| mjs suite | 38, exit 0 |
+| bun TUI | 4, exit 0 |
+| keeper behavior gate | PASS 8/8 |
+| Lean battery | exit 0, 0 sorry, axioms standard-or-recorded |
+| Engine Beneath | 27/27 VERDICT True (rmtree race fixed, retry-cleanup) |
+| regression gate | PASS (5 corpora, 35 systems, 11 taxons) |
+| parity gate | PASS incl. license:clean |
+| verify_release | PASS 40 checks, 0 failures |
+| wheel preflight | paths + entry points + version 1.2.0 PASS |
+| public paths | uvx help lists 21 verbs; npm names resolve at 1.1.0 |
+
+## Operator blockers (cannot be cleared here)
+
+1. MP3 clearance: the shipped installer audio remixes a commercial
+   track (See-Saw / Kajiura, attributed in audio.js). Publish needs
+   the operator's answer: confirm, replace, or drop.
+2. Upstream note: the retrieval core derives in part from
+   github.com/xpajonx/opencode-memory, which ships no licence file
+   (NOTICE + README-PYPI carry the caveat).
+
+## Trigger (operator runs, in order)
+
+1. Answer the two blockers above.
+2. Undraft `.github/workflows/publish.yml` (remove the Draft header;
+   the workflow is otherwise preflighted).
+3. `git tag v1.2.0` and push the tag (or workflow_dispatch with
+   version 1.2.0). The workflow builds fresh, verifies four
+   artifacts, publishes PyPI then npm (each skips if already
+   published), then creates the GitHub release with assets.
+4. Read back each stage: PyPI JSON shows 1.2.0, `npm view` shows
+   1.2.0 on both packages, the GitHub release carries four assets.
+
+## Rollback
+
+- Before any upload: nothing to roll back; delete the tag.
+- After PyPI: yank 1.2.0, publish 1.2.1; users reinstall 1.1.0
+  (`uvx --from rtr-role-type-retrieval==1.1.0`, `uv tool install
+  rtr-role-type-retrieval==1.1.0`).
+- After npm: deprecate 1.2.0 on both packages, publish 1.2.1;
+  users reinstall 1.1.0.
+- After GitHub: delete the release and the tag, re-cut.
+- Local live system: keeper file + opencode.jsonc backups restore
+  the old world; the engine reinstalls from the sealed 1.1.0
+  published wheel (never `uv tool upgrade` over a running server).
+
+## Conclusion
+
+Open items: the two blockers above plus the operator trigger.
+Everything else on the ladder is closed with evidence. The gate
+therefore holds at READY-BLOCKED: ready on evidence, blocked on
+the operator's two answers and trigger.
