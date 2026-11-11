@@ -85,6 +85,23 @@ class TestPaginatedHygiene(unittest.TestCase):
         self.assertIn(str(live), self.engine.load_registry())
         self.assertTrue(all(lim <= 1000 for lim, _ in col.calls))
 
+    def test_repair_snapshots_pre_image_backup(self):
+        import json
+
+        live = self.test_dir / "pre.md"
+        live.write_text("# Pre\n", encoding="utf-8")
+        self.engine.save_registry({"old-entry": "hash"})
+        metas = [{"source": str(live)}]
+        col = FakeCol("opencode_memory_test", metas)
+        with patch.object(MemoryEngine, "rtr_collections", return_value={"a": col}):
+            res = self.engine.repair_registry()
+        self.assertEqual(res["repaired"], 1)
+        bak = Path(str(memory_engine.REGISTRY_FILE) + ".bak")
+        self.assertTrue(bak.exists())
+        self.assertEqual(
+            json.loads(bak.read_text(encoding="utf-8")), {"old-entry": "hash"}
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -955,6 +955,28 @@ test("rtr repair arms the repair flag", async () => {
     assert.match(output.parts[0].text, /repair requested/)
 })
 
+test("rtr status surfaces the last repair report", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "rtrre-repstat-"))
+    try {
+        await mkdir(join(dir, ".opencode"), { recursive: true })
+        await writeFile(
+            join(dir, ".opencode", "rtr-re-repair.report.json"),
+            JSON.stringify({ status: "done", ts: "t", repaired: 3, freed: 1 }),
+            "utf8",
+        )
+        const hooks = await server({ directory: dir }, { triggerTokens: 1000000 })
+        const messages = [
+            { info: { id: "m", role: "user", sessionID: "s" }, parts: [{ id: "p", type: "text", text: "/rtr status" }] },
+        ]
+        await hooks["experimental.chat.messages.transform"]({}, { messages })
+        const reply = messages[0].parts.find((p) => p.synthetic)
+        assert.match(reply.text, /last repair: done/)
+        assert.match(reply.text, /relinked 3, freed 1/)
+    } finally {
+        rmSync(dir, { recursive: true, force: true })
+    }
+})
+
 test("repair flag becomes a request file and clears itself", async () => {
     const dir = mkdtempSync(join(tmpdir(), "rtrre-repair-"))
     try {

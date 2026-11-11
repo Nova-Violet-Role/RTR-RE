@@ -2183,6 +2183,7 @@ class MemoryEngine:
                         sources.add(src)
                 offset += len(got["ids"])
         fixed = 0
+        pre_image = dict(registry)
         for src in sorted(sources):
             if src in registry:
                 continue
@@ -2194,6 +2195,13 @@ class MemoryEngine:
                 fixed += 1
             except Exception:
                 continue
+        if fixed:
+            try:
+                Path(str(REGISTRY_FILE) + ".bak").write_text(
+                    json.dumps(pre_image, indent=2), encoding="utf-8"
+                )
+            except Exception:
+                pass
         self.save_registry(registry)
         return {"status": "success", "repaired": fixed, "total": len(registry)}
 

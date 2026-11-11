@@ -895,7 +895,7 @@ function isInternalRequest(messages) {
     return false
 }
 
-function formatStatus(cfg, last) {
+function formatStatus(cfg, last, repair) {
     const lines = [
         "RTR-RE Keeper status (native, live):",
         `profile: ${cfg.profileLabel} (${cfg.profileCode})`,
@@ -919,6 +919,12 @@ function formatStatus(cfg, last) {
     } else {
         lines.push("no eviction yet this process (window below trigger so far)")
     }
+    if (repair && typeof repair === "object") {
+        lines.push(
+            `last repair: ${repair.status ?? "?"} at ${repair.ts ?? "?"}`
+            + ` (relinked ${repair.repaired ?? 0}, freed ${repair.freed ?? 0})`,
+        )
+    }
     return lines.join("\n")
 }
 
@@ -933,7 +939,15 @@ const RTR_USAGE =
 async function runRtrVerb(verb, rest, ctx, say) {
     try {
         if (!verb || verb === "status") {
-            say(formatStatus(ctx.getConfig(), ctx.last))
+            let repair = null
+            try {
+                const raw = await readFile(join(ctx.directory, ".opencode", "rtr-re-repair.report.json"), "utf8")
+                const parsed = JSON.parse(raw)
+                if (parsed && typeof parsed === "object") repair = parsed
+            } catch {
+                repair = null
+            }
+            say(formatStatus(ctx.getConfig(), ctx.last, repair))
             return
         }
         if (verb === "help") {
@@ -1199,6 +1213,7 @@ const server = async (ctx, options = {}) => {
         return {
             getConfig: () => cfg,
             last,
+            directory: ctx.directory,
             writeFileConfig: async (values) => {
                 let current = {}
                 try {
