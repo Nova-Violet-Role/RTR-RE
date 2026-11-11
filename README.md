@@ -291,7 +291,7 @@ Lean, not just asserted in Python.
 | Manager | `execution/memory_engine.py` | memory MCP viewport: status/health/work-in-progress/retrieval, ≤512 tickets |
 | Engine-beneath | `formal/Symbiose.lean`, `eval/engine_beneath.py` | Lean-proven typed lanes and bounded loop |
 | Installer | `execution/install_opencode.py` | `rtr-re-install-opencode` writes the keeper plugin + config snippet |
-| Live tuning | `opencode-plugin/rtr-re-tui.tsx` | ctrl+p palette commands (status/enable/disable/preset/cpu/modality/threads/parking/trigger/target/max) |
+| Live tuning | `opencode-plugin/rtr-re-tui.tsx` | ctrl+p palette commands (status/enable/disable/preset/cpu/modality/threads/parking/trigger/target/max/evict-tokens/evict-messages/repair) |
 | Presets (shared) | `execution/rtr_presets.json` | keeper presets: re-symbiose-mugen 400k/200k/200 (default) · symbiose-ah 250k/100k/40 · fusion-ah 200k/100k/30 · re-symbiose 320k/128k/50 · legacy standard/calibrated/wide |
 | .mjs edition | `mjs/` | no-MCP memory plugin for OpenCode + Claude Code / Codex hooks |
 

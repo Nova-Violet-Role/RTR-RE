@@ -38,6 +38,8 @@ evict-tokens .... ONE-SHOT: evict N tokens oldest-first on the next
 evict-messages .. ONE-SHOT: evict N oldest messages (thinking, reasoning,
                   tool calls, reads, writes) on the next exchange, then
                   the flag clears itself
+repair .......... ENGINE HYGIENE: conform the registry, purge orphans
+                  (the engine tick executes it and reports back)
 
 TIPS AND TRICKS
 ---------------

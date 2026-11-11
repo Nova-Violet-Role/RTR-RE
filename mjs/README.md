@@ -54,7 +54,7 @@ draft beats the obvious first version. Further reads stay silent; the
 next `write`/`edit` re-arms. The plugin never edits code itself; it
 instigates the agent at the moment the draft forms.
 
-## Parity with the MCP server (26 tools), honestly
+## Parity with the MCP server (32 tools), honestly
 
 | Surface | .mjs edition |
 |---|---|

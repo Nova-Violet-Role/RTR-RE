@@ -8,7 +8,7 @@ RTR-RE:Symbiose OpenCode plugins — the **Keeper** (server) and the
 | File | Role |
 |---|---|
 | `rtr-re-keeper.js` | Keeper server plugin: eviction planning, DTD-shaped memory sink, recency-aware todowrite protection, `/rtr` prompt commands, status file |
-| `rtr-re-tui.tsx` | TUI plugin: thirteen ctrl+p palette commands (`status`, `enable`, `disable`, `preset`, `cpu`, `modality`, `threads`, `parking`, `trigger`, `target`, `max`, `evict-tokens`, `evict-messages`) |
+| `rtr-re-tui.tsx` | TUI plugin: fourteen ctrl+p palette commands (`status`, `enable`, `disable`, `preset`, `cpu`, `modality`, `threads`, `parking`, `trigger`, `target`, `max`, `evict-tokens`, `evict-messages`, `repair`) |
 | `assets/rtr_presets.json` | Shared preset registry (keeper presets + CPU profiles + modalities) |
 
 ## Install
