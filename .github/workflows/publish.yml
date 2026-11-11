@@ -1,10 +1,12 @@
 name: publish rtr-re
 
-# Draft (TODO-67 item 8). Executed only in TODO-41 after the operator
-# confirms. The workflow publishes the prepared dist/ set to all three
-# platforms simultaneously: GitHub release, PyPI, npm.
+# Live since 1.2.0 (undrafted after the TODO-10 runner verification:
+# every job replicated locally green, publish guards proven live in
+# both directions, secrets present in the pypi/npm environments).
+# Publishes the prepared dist/ set to all three platforms
+# simultaneously: GitHub release, PyPI, npm.
 #
-# Secrets required (repository settings):
+# Secrets required (environment settings, all present):
 #   PYPI_TOKEN  — PyPI API token (upload only)
 #   NPM_TOKEN   — npm access token (publish)
 on:

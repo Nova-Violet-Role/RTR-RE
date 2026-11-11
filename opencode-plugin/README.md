@@ -62,23 +62,14 @@ every number re-runs.
 |---|---|
 | T13 keeper-memory | evicted-span retrievability (rtr-full 0.975) |
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../eval/engine-beneath-dark.svg">
-  <img src="../eval/engine-beneath.svg" alt="Engine Beneath case scoreboard">
-</picture>
+![Engine Beneath case scoreboard](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/engine-beneath.svg)
 
 <details>
 <summary>Full versus + graded plates</summary>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../eval/versus-dark.svg">
-  <img src="../eval/versus.svg" alt="RTR vs RAG — recall@3 by taxon">
-</picture>
+![RTR vs RAG — recall@3 by taxon](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/versus.svg)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../eval/graded-dark.svg">
-  <img src="../eval/graded.svg" alt="Graded nDCG@10 by query">
-</picture>
+![Graded nDCG@10 by query](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/graded.svg)
 
 </details>
 

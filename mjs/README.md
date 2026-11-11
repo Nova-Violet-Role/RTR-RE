@@ -87,28 +87,16 @@ Install via npm, measure via pypi (`rtr-cli`), source on git.
 | T7–T12 | DTD structural + family discrimination |
 | T13 keeper-memory | evicted-span retrievability (0.975) |
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../eval/versus-dark.svg">
-  <img src="../eval/versus.svg" alt="RTR vs RAG — recall@3 by taxon">
-</picture>
+![RTR vs RAG — recall@3 by taxon](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/versus.svg)
 
 <details>
 <summary>Graded + Engine Beneath + CPU preset performance</summary>
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../eval/graded-dark.svg">
-  <img src="../eval/graded.svg" alt="Graded nDCG@10 by query">
-</picture>
+![Graded nDCG@10 by query](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/graded.svg)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../eval/engine-beneath-dark.svg">
-  <img src="../eval/engine-beneath.svg" alt="Engine Beneath case scoreboard">
-</picture>
+![Engine Beneath case scoreboard](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/engine-beneath.svg)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="../eval/preset-perf-dark.svg">
-  <img src="../eval/preset-perf.svg" alt="CPU preset performance">
-</picture>
+![CPU preset performance](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/preset-perf.svg)
 
 </details>
 
