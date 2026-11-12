@@ -610,6 +610,7 @@ class TestAbortSafeUpsert(unittest.TestCase):
                             os.environ["RTR_RE_HEAL_HEARTBEAT_SEC"] = old
                     self.assertEqual(len(out["healed"]), 40)
                     self.assertIn("Thread", dumped)
+                    self.assertIn("pulses, not failures", dumped)
                 finally:
                     eng.close()
 

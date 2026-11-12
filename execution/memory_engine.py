@@ -2432,6 +2432,12 @@ class MemoryEngine:
                 # sys.stderr is passed explicitly (never the import-time
                 # default) so redirection and capture always work.
                 try:
+                    print(
+                        "heartbeat armed: 'Timeout' headers below are "
+                        f"routine {hb_sec:.0f}s pulses, not failures",
+                        file=sys.stderr,
+                        flush=True,
+                    )
                     faulthandler.dump_traceback_later(
                         hb_sec, repeat=True, file=sys.stderr
                     )
