@@ -613,6 +613,56 @@ class TestAbortSafeUpsert(unittest.TestCase):
                 finally:
                     eng.close()
 
+    def test_embed_splits_giant_texts_into_budgeted_calls(self):
+        # One 150KB text sharing an embed call with 2455 friends pads
+        # the whole batch to its length and kills ONNX Attention
+        # (measured live). Texts split into sub-batches bounded by
+        # total chars: the giant rides solo, small fry fuse as before.
+        import contextlib
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "rec" / "directives"
+                d.mkdir(parents=True)
+                sections = "".join(
+                    f"# S{i}\n\n" + "GIANT " * 2500 + "\n" for i in range(10)
+                )
+                (d / "g.md").write_text(sections, encoding="utf-8")
+                (d / "s.md").write_text("# S\n\ntiny", encoding="utf-8")
+                eng = MemoryEngine()
+                try:
+                    buckets = {}
+                    with contextlib.ExitStack() as stack:
+                        for slug, m in eng.models.items():
+                            o = m.embed
+                            b = []
+                            buckets[slug] = b
+                            stack.enter_context(
+                                patch.object(
+                                    m,
+                                    "embed",
+                                    side_effect=lambda t, o=o, b=b: (
+                                        b.append(len(t)),
+                                        o(t),
+                                    )[1],
+                                )
+                            )
+                        eng.index_all()
+                    for slug, b in buckets.items():
+                        self.assertGreater(len(b), 2, f"{slug} never split its calls")
+                        self.assertEqual(sum(b), 11)
+                    hits = eng.search("GIANT", k=3)
+                    self.assertTrue(
+                        any("g.md" in h["metadata"].get("source", "") for h in hits)
+                    )
+                    hits = eng.search("tiny", k=3)
+                    self.assertTrue(
+                        any("s.md" in h["metadata"].get("source", "") for h in hits)
+                    )
+                finally:
+                    eng.close()
+
 
 if __name__ == "__main__":
     unittest.main()

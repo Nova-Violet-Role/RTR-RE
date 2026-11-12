@@ -1227,6 +1227,13 @@ _INDEX_LOCK = threading.Lock()
 # first upsert lands.
 INDEX_WAVE_SIZE = 200
 
+# Embed-call char budget: one giant text sharing an ONNX call with
+# thousands of friends pads the whole batch to its length and kills
+# Attention (measured live on a 2455-chunk file). Texts split into
+# consecutive groups bounded by this total; over-budget texts ride
+# solo. Small files still fuse in one call, exactly as before.
+EMBED_CALL_CHAR_BUDGET = 100_000
+
 # Page size for janitor/repair collection scans: one giant get() exceeds
 # SQLite's variable limit on big collections (measured live 2026-11-10).
 JANITOR_PAGE_SIZE = 500
@@ -1298,6 +1305,28 @@ def thread_top_frames(limit: int = 3) -> Dict[str, List[str]]:
             f"{Path(f.filename).name}:{f.lineno}:{f.name}" for f in stack
         ]
     return out
+
+
+def _split_texts_by_budget(texts: List[str], budget: int) -> List[List[str]]:
+    """Split texts into consecutive groups bounded by total chars.
+
+    Order-preserving: concatenating each group's embeddings reproduces
+    the single-call result exactly. Empty input yields one empty group
+    so callers keep today's call shape for degenerate files.
+    """
+    out: List[List[str]] = []
+    cur: List[str] = []
+    cur_chars = 0
+    for t in texts:
+        n = len(t)
+        if cur and cur_chars + n > budget:
+            out.append(cur)
+            cur, cur_chars = [], 0
+        cur.append(t)
+        cur_chars += n
+    if cur:
+        out.append(cur)
+    return out if out else [texts]
 
 
 class MemoryEngine:
@@ -2024,9 +2053,11 @@ class MemoryEngine:
                             flush=True,
                         )
                         t_embed = time.time()
-                    embeddings = [
-                        [float(val) for val in e] for e in models[slug].embed(texts)
-                    ]
+                    embeddings = []
+                    for sub in _split_texts_by_budget(texts, EMBED_CALL_CHAR_BUDGET):
+                        embeddings.extend(
+                            [float(val) for val in e] for e in models[slug].embed(sub)
+                        )
                     if trace_on:
                         print(
                             f"trace index {time.strftime('%H:%M:%S')} "
