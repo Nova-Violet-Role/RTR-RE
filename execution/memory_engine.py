@@ -1245,6 +1245,12 @@ JANITOR_PAGE_SIZE = 500
 # durable, so a timeout between batches simply resumes.
 RECONCILE_BATCH_SIZE = 25
 
+# Heal batch byte budget: file-count batches still explode when the
+# files are giants (25 x 3.5MB = 87MB per batch -> 30GB RSS, measured
+# live). Batches split by total bytes too, so every batch costs the
+# same; small files still pack 25 per batch, exactly as before.
+RECONCILE_BATCH_BYTES = 10_000_000
+
 
 def process_rss_mb() -> float:
     """Current process RSS in MB (Windows ctypes, POSIX resource)."""
@@ -1327,6 +1333,34 @@ def _split_texts_by_budget(texts: List[str], budget: int) -> List[List[str]]:
     if cur:
         out.append(cur)
     return out if out else [texts]
+
+
+def _pack_heal_batches(
+    paths: List[str], max_files: int, max_bytes: int
+) -> List[List[str]]:
+    """Pack heal paths into batches bounded by count AND bytes.
+
+    Count-only batches explode when the files are giants (25 x 3.5MB
+    = 87MB per batch -> 30GB RSS, measured live). Byte-bounded
+    batches cost the same each; small files still pack by count.
+    Order-preserving (caller sorts: smallest-first streams wins).
+    """
+    out: List[List[str]] = []
+    cur: List[str] = []
+    cur_bytes = 0
+    for p in paths:
+        try:
+            n = Path(p).stat().st_size
+        except Exception:
+            n = 0
+        if cur and (len(cur) >= max_files or cur_bytes + n > max_bytes):
+            out.append(cur)
+            cur, cur_bytes = [], 0
+        cur.append(p)
+        cur_bytes += n
+    if cur:
+        out.append(cur)
+    return out
 
 
 class MemoryEngine:
@@ -1881,8 +1915,17 @@ class MemoryEngine:
         return "medium"
 
     def _hash_infos(self, discovered, registry, new_registry, stats, force=False):
-        """Hash discovered infos into a to_index list (shared index core)."""
+        """Hash discovered infos into a to_index list (shared index core).
+
+        Dedup: files sharing identical bytes collapse to the newest by
+        mtime; followers carry sentinel registry values
+        (dedup:<hash>:<winner>) instead of vectors. A follower whose
+        bytes diverge rejoins automatically (its hash leaves the
+        group); a deleted winner promotes the next-newest follower.
+        Sentinels are local bookkeeping (counts only downstream).
+        """
         to_index = []
+        hashed = []
         for info in discovered:
             path_str = info["path"]
             filepath = Path(path_str)
@@ -1890,7 +1933,36 @@ class MemoryEngine:
                 continue
             try:
                 current_hash = self.calculate_sha256(filepath)
-                old_hash = registry.get(path_str)
+            except Exception as e:
+                print(f"Failed to hash {path_str}: {e}", file=sys.stderr)
+                stats["failed"] += 1
+                if path_str in registry:
+                    new_registry[path_str] = registry[path_str]
+                continue
+            hashed.append((info, filepath, current_hash))
+        by_hash = {}
+        for info, filepath, current_hash in hashed:
+            by_hash.setdefault(current_hash, []).append((info, filepath))
+        for current_hash, members in by_hash.items():
+            if len(members) > 1:
+
+                def _dkey(im):
+                    try:
+                        return (im[1].stat().st_mtime_ns, str(im[1]))
+                    except Exception:
+                        return (0, str(im[1]))
+
+                members.sort(key=_dkey, reverse=True)
+                winner = members[0][0]["path"]
+                for info, _filepath in members[1:]:
+                    path_str = info["path"]
+                    new_registry[path_str] = f"dedup:{current_hash}:{winner}"
+                    stats["deduped"] = stats.get("deduped", 0) + 1
+                members[:] = members[:1]
+            for info, filepath in members:
+                path_str = info["path"]
+                old = registry.get(path_str)
+                old_hash = None if str(old or "").startswith("dedup:") else old
                 new_registry[path_str] = current_hash
                 if force or old_hash != current_hash:
                     if old_hash is None:
@@ -1900,11 +1972,6 @@ class MemoryEngine:
                     to_index.append((info, filepath, old_hash, current_hash))
                 else:
                     stats["unchanged"] += 1
-            except Exception as e:
-                print(f"Failed to hash {path_str}: {e}", file=sys.stderr)
-                stats["failed"] += 1
-                if path_str in registry:
-                    new_registry[path_str] = registry[path_str]
         return to_index
 
     def _chunk_jobs(self, to_index, new_registry, stats):
@@ -2175,6 +2242,7 @@ class MemoryEngine:
             "updated": 0,
             "unchanged": 0,
             "failed": 0,
+            "deduped": 0,
         }
 
         # Track active paths to purge deleted files later
@@ -2239,7 +2307,14 @@ class MemoryEngine:
         if wedged is not None:
             return _empty_index_stats(wedged)
         registry = self.load_registry()
-        stats = {"scanned": 0, "new": 0, "updated": 0, "unchanged": 0, "failed": 0}
+        stats = {
+            "scanned": 0,
+            "new": 0,
+            "updated": 0,
+            "unchanged": 0,
+            "failed": 0,
+            "deduped": 0,
+        }
         new_registry = dict(registry)
         infos = []
         seen = set()
@@ -2353,15 +2428,17 @@ class MemoryEngine:
         leg: report the holes, and with heal=True re-queue holed files
         through the normal incremental path (drop their keys, index).
 
-        Heal runs in bounded batches (RECONCILE_BATCH_SIZE files per
-        index cycle): each batch commits before the next starts, so a
-        timeout between batches resumes instead of restarting, and
-        RSS stays flat no matter how many holes exist. Files that
-        still fail to embed are reported under unhealed (never
-        silently dropped): their keys are restored so the next
-        report names them again instead of losing them. on_batch,
-        when given, fires per batch as on_batch(done, total, rss_mb)
-        so long heals stay observable instead of silent.
+        Heal runs in bounded batches (RECONCILE_BATCH_SIZE files and
+        RECONCILE_BATCH_BYTES per index cycle, smallest-first): each
+        batch commits before the next starts, so a timeout between
+        batches resumes instead of restarting, and RSS stays flat no
+        matter how many holes exist. Files that still fail to embed
+        are reported under unhealed (never silently dropped): their
+        keys are restored so the next report names them again instead
+        of losing them. on_batch, when given, fires per batch as
+        on_batch(done, total, rss_mb) so long heals stay observable
+        instead of silent. duplicate_sets names same-byte groups
+        (newest first) for visibility; a heartbeat X-rays long runs.
         """
         refused = self._require_writer("reconcile_vectors")
         if refused is not None:
@@ -2398,9 +2475,48 @@ class MemoryEngine:
             per_model[slug] = seen
         live = {p for p in registry if Path(p).exists()}
         stale_skipped = len(registry) - len(live)
+
+        # Deduped followers (sentinel registry values) are deliberately
+        # unindexed: excluded from missing, reported separately so the
+        # census stays honest without ever reading zero falsely.
+        def _is_sentinel(p: str) -> bool:
+            return str(registry.get(p, "")).startswith("dedup:")
+
+        deduped_skipped = sorted(p for p in live if _is_sentinel(p))
+        # Duplicate sets (report-only): identical BYTES anywhere, newest
+        # first by mtime. Grouped by content hash alone so copies group
+        # together wherever they live. Names ride along for readability.
+        by_hash: Dict[str, List[str]] = {}
+        for p in sorted(live):
+            h = registry.get(p, "")
+            if h.startswith("dedup:"):
+                h = h.split(":")[1]
+            by_hash.setdefault(h, []).append(p)
+        duplicate_sets: List[Dict[str, Any]] = []
+        for h in sorted(by_hash):
+            members = by_hash[h]
+            if not h or len(members) < 2:
+                continue
+            ordered = sorted(
+                members,
+                key=lambda p: Path(p).stat().st_mtime_ns if Path(p).exists() else 0,
+                reverse=True,
+            )
+            names = sorted({Path(p).name for p in members})
+            duplicate_sets.append(
+                {
+                    "hash": h,
+                    "name": names[0] if len(names) == 1 else None,
+                    "newest": ordered[0],
+                    "paths": sorted(members),
+                }
+            )
+        duplicate_sets.sort(key=lambda s: s["hash"])
         missing: Dict[str, List[str]] = {}
         for slug, seen in per_model.items():
-            missing[slug] = sorted(p for p in live if p not in seen)
+            missing[slug] = sorted(
+                p for p in live if p not in seen and not _is_sentinel(p)
+            )
         healed: List[str] = []
         unhealed: List[str] = []
         batches = 0
@@ -2423,7 +2539,9 @@ class MemoryEngine:
                     return (0, p)
 
             to_heal = sorted({p for v in missing.values() for p in v}, key=_heal_size)
-            step = RECONCILE_BATCH_SIZE
+            batches_done = _pack_heal_batches(
+                to_heal, RECONCILE_BATCH_SIZE, RECONCILE_BATCH_BYTES
+            )
             if hb_sec > 0:
                 # py-spy cannot attach to these interpreters; a heartbeat
                 # is the in-process equivalent: stacks land on stderr
@@ -2444,12 +2562,13 @@ class MemoryEngine:
                 except Exception:
                     pass
             try:
-                for start in range(0, len(to_heal), step):
-                    batch = to_heal[start : start + step]
+                for batch in batches_done:
                     for p in batch:
                         registry.pop(p, None)
                     self.save_registry(registry)
-                    self.index_all()
+                    # Bounded call: only these paths embed (no world
+                    # discovery per batch, no purge of the unseen).
+                    self.index_files(batch)
                     batches += 1
                     try:
                         rss_peak_mb = max(rss_peak_mb, process_rss_mb())
@@ -2486,6 +2605,8 @@ class MemoryEngine:
             "healed": healed,
             "unhealed": unhealed,
             "rss_peak_mb": rss_peak_mb,
+            "duplicate_sets": duplicate_sets,
+            "deduped_skipped": deduped_skipped,
         }
 
     def _file_has_all_models(self, path: str) -> bool:

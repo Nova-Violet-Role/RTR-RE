@@ -395,13 +395,13 @@ class TestAbortSafeUpsert(unittest.TestCase):
                         self.assertGreater(len(dead), 0)
                         col.delete(ids=dead)
                     calls = []
-                    orig_index = eng.index_all
+                    orig_index = eng.index_files
 
                     def counting(*a, **k):
                         calls.append(1)
                         return orig_index(*a, **k)
 
-                    with patch.object(eng, "index_all", side_effect=counting):
+                    with patch.object(eng, "index_files", side_effect=counting):
                         out = eng.reconcile_vectors(heal=True)
                     self.assertEqual(len(out["healed"]), 60)
                     self.assertEqual(out["batches"], 3)
@@ -565,22 +565,24 @@ class TestAbortSafeUpsert(unittest.TestCase):
     def test_heal_heartbeat_dumps_stacks(self):
         # Long heals must X-ray themselves: with a short heartbeat,
         # stack dumps land on stderr during the run (post-kill
-        # forensics included), naming the live frames.
+        # forensics included), naming the live frames. Big-enough
+        # files that the heal outlasts several 1s ticks with margin.
+        # Both chunker families (.md + .dtd). Teardown tolerates the
+        # measured Chroma sqlite-handle release race (WinError 32);
+        # assertions stay strict.
         import contextlib
-        import io
         import os
 
-        with tempfile.TemporaryDirectory() as td:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
             with contextlib.contextmanager(self._isolated)(td) as root:
                 d = root / "projects" / "rec" / "directives"
                 d.mkdir(parents=True)
-                for i in range(20):
+                for i in range(5):
                     (d / f"h{i:02d}.md").write_text(
-                        f"# H{i}\n\nHEARTBEAT-MARKER-{i}", encoding="utf-8"
+                        f"# H{i}\n\n" + "HEARTBEAT " * 250000,
+                        encoding="utf-8",
                     )
-                    (d / f"s{i:02d}.dtd").write_text(
-                        f"<!ELEMENT beat{i} (pulse)>\n", encoding="utf-8"
-                    )
+                (d / "s.dtd").write_text("<!ELEMENT beat (pulse)>\n", encoding="utf-8")
                 eng = MemoryEngine()
                 try:
                     eng.index_all()
@@ -608,7 +610,7 @@ class TestAbortSafeUpsert(unittest.TestCase):
                             del os.environ["RTR_RE_HEAL_HEARTBEAT_SEC"]
                         else:
                             os.environ["RTR_RE_HEAL_HEARTBEAT_SEC"] = old
-                    self.assertEqual(len(out["healed"]), 40)
+                    self.assertEqual(len(out["healed"]), 6)
                     self.assertIn("Thread", dumped)
                     self.assertIn("pulses, not failures", dumped)
                 finally:
@@ -661,6 +663,152 @@ class TestAbortSafeUpsert(unittest.TestCase):
                     self.assertTrue(
                         any("s.md" in h["metadata"].get("source", "") for h in hits)
                     )
+                finally:
+                    eng.close()
+
+    def test_heal_batches_bounded_by_bytes(self):
+        # File-count batches still explode when the files are giants
+        # (25 x 3.5MB = 87MB per batch -> 30GB RSS, measured live).
+        # Batches split by total bytes too, so every batch costs the
+        # same. Both chunker families (.md multi-chunk + .dtd
+        # whole-file singles): RTR content is spans, md alone never
+        # suffices.
+        import contextlib
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "rec" / "directives"
+                d.mkdir(parents=True)
+                for i in range(3):
+                    (d / f"big{i}.md").write_text(
+                        f"# B{i}\n\n" + "BLOB " * 120000, encoding="utf-8"
+                    )
+                    (d / f"big{i}.dtd").write_text(
+                        f"<!ELEMENT big{i} (x)>\n<!-- " + "P" * 600000 + " -->\n",
+                        encoding="utf-8",
+                    )
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    slug = next(
+                        s for s in eng.rtr_collections() if s == "baai_bge_base_en_v1_5"
+                    )
+                    col = eng.rtr_collections()[slug]
+                    for i in range(3):
+                        for ext in ("md", "dtd"):
+                            victim = str(d / f"big{i}.{ext}")
+                            dead = col.get(where={"source": victim}, limit=5000)["ids"]
+                            self.assertGreater(len(dead), 0)
+                            col.delete(ids=dead)
+                    calls = []
+                    orig_index = eng.index_files
+
+                    def counting(*a, **k):
+                        calls.append(1)
+                        return orig_index(*a, **k)
+
+                    old_budget = mem.RECONCILE_BATCH_BYTES
+                    mem.RECONCILE_BATCH_BYTES = 1_000_000
+                    try:
+                        with patch.object(eng, "index_files", side_effect=counting):
+                            out = eng.reconcile_vectors(heal=True)
+                    finally:
+                        mem.RECONCILE_BATCH_BYTES = old_budget
+                    self.assertEqual(len(out["healed"]), 6)
+                    self.assertGreaterEqual(out["batches"], 2)
+                    self.assertEqual(len(calls), out["batches"])
+                finally:
+                    eng.close()
+
+    def test_reconcile_reports_duplicate_sets(self):
+        # Identical BYTES anywhere group together regardless of
+        # location, newest-first by mtime. Report-only visibility
+        # before any exclusion ever lands. Both chunker families.
+        import contextlib
+        import hashlib
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                a = root / "projects" / "ra" / "directives"
+                b = root / "projects" / "rb" / "directives"
+                a.mkdir(parents=True)
+                b.mkdir(parents=True)
+                (a / "dup.md").write_text("# D\n\nsame bytes", encoding="utf-8")
+                import time as _t
+
+                _t.sleep(0.05)
+                (b / "dup.md").write_text("# D\n\nsame bytes", encoding="utf-8")
+                _t.sleep(0.05)
+                (b / "other-name.dtd").write_text("# D\n\nsame bytes", encoding="utf-8")
+                (a / "solo.md").write_text("# S\n\nunique", encoding="utf-8")
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    report = eng.reconcile_vectors()
+                    sets = report["duplicate_sets"]
+                    self.assertEqual(len(sets), 1)
+                    want_hash = hashlib.sha256((b / "dup.md").read_bytes()).hexdigest()
+                    self.assertEqual(sets[0]["hash"], want_hash)
+                    self.assertIsNone(sets[0]["name"])
+                    self.assertEqual(len(sets[0]["paths"]), 3)
+                    self.assertEqual(sets[0]["newest"], str(b / "other-name.dtd"))
+                finally:
+                    eng.close()
+
+    def test_dedup_skips_identical_followers(self):
+        # Same BYTES anywhere (never by directory): newest embeds,
+        # identical followers get sentinel registry values instead of
+        # vectors. Reconcile reports them deduped (never missing),
+        # and re-runs embed nothing new. Stable, no loops.
+        import contextlib
+        import time as _t
+        from unittest.mock import patch
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                a = root / "projects" / "ra" / "directives"
+                b = root / "projects" / "rb" / "directives"
+                a.mkdir(parents=True)
+                b.mkdir(parents=True)
+                (a / "first.md").write_text(
+                    "# D\n\nSHARED IDENTICAL BYTES", encoding="utf-8"
+                )
+                _t.sleep(0.05)
+                (b / "second.md").write_text(
+                    "# D\n\nSHARED IDENTICAL BYTES", encoding="utf-8"
+                )
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    reg = eng.load_registry()
+                    first, second = str(a / "first.md"), str(b / "second.md")
+                    self.assertTrue(reg[first].startswith("dedup:"))
+                    self.assertFalse(reg[second].startswith("dedup:"))
+                    cols = eng.rtr_collections()
+                    slug = next(s for s in cols if "bge" in s)
+                    col = cols[slug]
+                    self.assertEqual(
+                        col.get(where={"source": first}, limit=5000)["ids"], []
+                    )
+                    self.assertGreater(
+                        len(col.get(where={"source": second}, limit=5000)["ids"]),
+                        0,
+                    )
+                    report = eng.reconcile_vectors()
+                    self.assertNotIn(first, report["missing"][slug])
+                    self.assertNotIn(second, report["missing"][slug])
+                    self.assertIn(first, report["deduped_skipped"])
+                    with patch.object(
+                        MemoryEngine, "_upsert_jobs", wraps=eng._upsert_jobs
+                    ) as up:
+                        eng.index_all()
+                    ids = [
+                        i["path"]
+                        for c in up.call_args_list
+                        for i, _f, _o, _n in c.args[1]
+                    ]
+                    self.assertNotIn(first, ids)
                 finally:
                     eng.close()
 
