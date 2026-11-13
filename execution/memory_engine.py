@@ -3331,6 +3331,27 @@ class MemoryEngine:
                 print(f"Error pruning extra roots: {e}", file=sys.stderr)
         report["pruned_roots"] = pruned_roots
         report["unmounted_roots"] = unmounted_roots
+        # Dead registry keys (files gone from disk) linger forever:
+        # nothing else removes them, so every census carries their
+        # stale count. Forget them here (same unmounted-drive guard
+        # as roots: a sleeping drive must never read as deletion).
+        registry = self.load_registry()
+        pruned_keys: List[str] = []
+        kept_keys: Dict[str, str] = {}
+        for path_str, h in registry.items():
+            p = Path(path_str)
+            if p.exists():
+                kept_keys[path_str] = h
+                continue
+            anchor = p.drive if os.name == "nt" else "/"
+            if os.name == "nt" and anchor and not Path(anchor + os.sep).exists():
+                kept_keys[path_str] = h
+                continue
+            pruned_keys.append(path_str)
+        if pruned_keys and not dry_run:
+            self.save_registry(kept_keys)
+        report["registry_pruned"] = len(pruned_keys) if not dry_run else 0
+        report["registry_dead"] = pruned_keys
         return report
 
     def stats(self) -> Dict[str, Any]:

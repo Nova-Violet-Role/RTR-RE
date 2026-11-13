@@ -672,11 +672,12 @@ class TestAbortSafeUpsert(unittest.TestCase):
         # Batches split by total bytes too, so every batch costs the
         # same. Both chunker families (.md multi-chunk + .dtd
         # whole-file singles): RTR content is spans, md alone never
-        # suffices.
+        # suffices. Teardown tolerates the measured Chroma
+        # sqlite-handle release race (WinError 32); assertions strict.
         import contextlib
         from unittest.mock import patch
 
-        with tempfile.TemporaryDirectory() as td:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as td:
             with contextlib.contextmanager(self._isolated)(td) as root:
                 d = root / "projects" / "rec" / "directives"
                 d.mkdir(parents=True)
@@ -809,6 +810,35 @@ class TestAbortSafeUpsert(unittest.TestCase):
                         for i, _f, _o, _n in c.args[1]
                     ]
                     self.assertNotIn(first, ids)
+                finally:
+                    eng.close()
+
+    def test_janitor_prunes_dead_registry_keys(self):
+        # Dead registry keys (files gone from disk) linger forever:
+        # nothing removes them, so every census carries their stale
+        # count. Janitor forgets them (unmounted drives guarded, like
+        # roots). Both chunker families (.md + .dtd).
+        import contextlib
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "jan" / "directives"
+                d.mkdir(parents=True)
+                (d / "gone.md").write_text("# G\n\ngone", encoding="utf-8")
+                (d / "gone.dtd").write_text("<!ELEMENT g (x)>\n", encoding="utf-8")
+                (d / "stays.md").write_text("# S\n\nstays", encoding="utf-8")
+                eng = MemoryEngine()
+                try:
+                    eng.index_all()
+                    (d / "gone.md").unlink()
+                    (d / "gone.dtd").unlink()
+                    out = eng.janitor(dry_run=False)
+                    self.assertGreater(out["freed"], 0)
+                    reg = eng.load_registry()
+                    self.assertNotIn(str(d / "gone.md"), reg)
+                    self.assertNotIn(str(d / "gone.dtd"), reg)
+                    self.assertIn(str(d / "stays.md"), reg)
+                    self.assertIn("registry_pruned", out)
                 finally:
                     eng.close()
 
