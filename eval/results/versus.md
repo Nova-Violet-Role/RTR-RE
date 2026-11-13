@@ -171,11 +171,11 @@ Tool: RE:Symbiose versus v2 (isolated, same-size controls) | seed 20260928 | lex
 | rtr-bge | T4 | 36 | 0.2778 | 0.3889 | 0.3241 |
 | rtr-bge | T5 | 1 | 0.0000 | 0.0000 | 0.0000 |
 | rtr-bge | T6 | 40 | 0.9000 | 0.9250 | 0.9083 |
-| rtr-full | OVERALL | 213 | 0.5446 | 0.6573 | 0.5923 |
-| rtr-full | OVERALL_MACRO | 213 | 0.6150 | 0.7060 | 0.6537 |
+| rtr-full | OVERALL | 213 | 0.5446 | 0.6573 | 0.5939 |
+| rtr-full | OVERALL_MACRO | 213 | 0.6150 | 0.7060 | 0.6548 |
 | rtr-full | T1 | 48 | 0.2917 | 0.4583 | 0.3646 |
 | rtr-full | T2 | 40 | 0.4000 | 0.4250 | 0.4083 |
-| rtr-full | T3 | 48 | 0.7708 | 0.9583 | 0.8472 |
+| rtr-full | T3 | 48 | 0.7708 | 0.9583 | 0.8542 |
 | rtr-full | T4 | 36 | 0.2778 | 0.4444 | 0.3519 |
 | rtr-full | T5 | 1 | 1.0000 | 1.0000 | 1.0000 |
 | rtr-full | T6 | 40 | 0.9500 | 0.9500 | 0.9500 |
@@ -184,8 +184,8 @@ Tool: RE:Symbiose versus v2 (isolated, same-size controls) | seed 20260928 | lex
 
 | System | Taxon | n | R@1 | R@3 | MRR |
 |---|---|---|---|---|---|
-| rag-dense | OVERALL | 285 | 0.3263 | 0.4912 | 0.3947 |
-| rag-dense | OVERALL_MACRO | 285 | 0.3541 | 0.5378 | 0.4318 |
+| rag-dense | OVERALL | 285 | 0.3228 | 0.4842 | 0.3895 |
+| rag-dense | OVERALL_MACRO | 285 | 0.3449 | 0.5192 | 0.4179 |
 | rag-dense | T1 | 32 | 0.6562 | 0.8125 | 0.7240 |
 | rag-dense | T10 | 21 | 0.3810 | 0.6190 | 0.4841 |
 | rag-dense | T11 | 40 | 0.0750 | 0.2500 | 0.1458 |
@@ -194,7 +194,7 @@ Tool: RE:Symbiose versus v2 (isolated, same-size controls) | seed 20260928 | lex
 | rag-dense | T6 | 20 | 0.7500 | 0.9500 | 0.8333 |
 | rag-dense | T7 | 40 | 0.0250 | 0.1750 | 0.0875 |
 | rag-dense | T8 | 40 | 0.2000 | 0.3250 | 0.2458 |
-| rag-dense | T9 | 12 | 0.2500 | 0.5833 | 0.4028 |
+| rag-dense | T9 | 12 | 0.1667 | 0.4167 | 0.2778 |
 | rag-hybrid | OVERALL | 285 | 0.5930 | 0.7263 | 0.6538 |
 | rag-hybrid | OVERALL_MACRO | 285 | 0.6171 | 0.7446 | 0.6749 |
 | rag-hybrid | T1 | 32 | 0.6562 | 0.8125 | 0.7240 |
@@ -206,96 +206,96 @@ Tool: RE:Symbiose versus v2 (isolated, same-size controls) | seed 20260928 | lex
 | rag-hybrid | T7 | 40 | 0.3750 | 0.4000 | 0.3875 |
 | rag-hybrid | T8 | 40 | 0.4500 | 0.5250 | 0.4833 |
 | rag-hybrid | T9 | 12 | 0.5833 | 0.7500 | 0.6528 |
-| rag-dense-base | OVERALL | 285 | 0.2982 | 0.4351 | 0.3567 |
-| rag-dense-base | OVERALL_MACRO | 285 | 0.3475 | 0.5051 | 0.4141 |
+| rag-dense-base | OVERALL | 285 | 0.3053 | 0.4351 | 0.3614 |
+| rag-dense-base | OVERALL_MACRO | 285 | 0.3623 | 0.5051 | 0.4240 |
 | rag-dense-base | T1 | 32 | 0.6562 | 0.8125 | 0.7240 |
 | rag-dense-base | T10 | 21 | 0.5714 | 0.6667 | 0.6111 |
 | rag-dense-base | T11 | 40 | 0.1500 | 0.3750 | 0.2500 |
 | rag-dense-base | T12 | 40 | 0.3250 | 0.4500 | 0.3792 |
 | rag-dense-base | T2 | 40 | 0.2000 | 0.3000 | 0.2417 |
-| rag-dense-base | T6 | 20 | 0.8500 | 1.0000 | 0.9167 |
+| rag-dense-base | T6 | 20 | 0.9000 | 1.0000 | 0.9500 |
 | rag-dense-base | T7 | 40 | 0.0500 | 0.0750 | 0.0625 |
 | rag-dense-base | T8 | 40 | 0.0750 | 0.2000 | 0.1250 |
-| rag-dense-base | T9 | 12 | 0.2500 | 0.6667 | 0.4167 |
-| rag-hybrid-base | OVERALL | 285 | 0.5474 | 0.6702 | 0.6029 |
-| rag-hybrid-base | OVERALL_MACRO | 285 | 0.5914 | 0.7246 | 0.6524 |
+| rag-dense-base | T9 | 12 | 0.3333 | 0.6667 | 0.4722 |
+| rag-hybrid-base | OVERALL | 285 | 0.5509 | 0.6737 | 0.6064 |
+| rag-hybrid-base | OVERALL_MACRO | 285 | 0.5969 | 0.7274 | 0.6566 |
 | rag-hybrid-base | T1 | 32 | 0.7188 | 0.8750 | 0.7917 |
 | rag-hybrid-base | T10 | 21 | 0.7619 | 0.9048 | 0.8175 |
-| rag-hybrid-base | T11 | 40 | 0.3250 | 0.5500 | 0.4167 |
-| rag-hybrid-base | T12 | 40 | 0.6250 | 0.8000 | 0.7125 |
-| rag-hybrid-base | T2 | 40 | 0.6500 | 0.7000 | 0.6708 |
-| rag-hybrid-base | T6 | 20 | 0.9000 | 1.0000 | 0.9500 |
-| rag-hybrid-base | T7 | 40 | 0.2500 | 0.2500 | 0.2500 |
+| rag-hybrid-base | T11 | 40 | 0.3500 | 0.5500 | 0.4292 |
+| rag-hybrid-base | T12 | 40 | 0.6000 | 0.8000 | 0.7000 |
+| rag-hybrid-base | T2 | 40 | 0.6750 | 0.7250 | 0.6958 |
+| rag-hybrid-base | T6 | 20 | 0.9500 | 1.0000 | 0.9750 |
+| rag-hybrid-base | T7 | 40 | 0.2250 | 0.2500 | 0.2375 |
 | rag-hybrid-base | T8 | 40 | 0.4250 | 0.5250 | 0.4708 |
 | rag-hybrid-base | T9 | 12 | 0.6667 | 0.9167 | 0.7917 |
-| rtr-arctic | OVERALL | 285 | 0.7228 | 0.8702 | 0.7871 |
-| rtr-arctic | OVERALL_MACRO | 285 | 0.7342 | 0.8779 | 0.7981 |
+| rtr-arctic | OVERALL | 285 | 0.7333 | 0.8667 | 0.7912 |
+| rtr-arctic | OVERALL_MACRO | 285 | 0.7426 | 0.8751 | 0.8014 |
 | rtr-arctic | T1 | 32 | 0.7188 | 0.8750 | 0.7917 |
 | rtr-arctic | T10 | 21 | 0.7143 | 0.8095 | 0.7540 |
-| rtr-arctic | T11 | 40 | 0.5000 | 0.8000 | 0.6292 |
-| rtr-arctic | T12 | 40 | 0.7750 | 0.9750 | 0.8625 |
+| rtr-arctic | T11 | 40 | 0.5000 | 0.8000 | 0.6250 |
+| rtr-arctic | T12 | 40 | 0.8000 | 0.9750 | 0.8750 |
 | rtr-arctic | T2 | 40 | 0.8500 | 0.8500 | 0.8500 |
 | rtr-arctic | T6 | 20 | 0.9000 | 1.0000 | 0.9500 |
-| rtr-arctic | T7 | 40 | 0.6500 | 0.7750 | 0.7000 |
-| rtr-arctic | T8 | 40 | 0.7500 | 0.9000 | 0.8125 |
+| rtr-arctic | T7 | 40 | 0.6750 | 0.7500 | 0.7042 |
+| rtr-arctic | T8 | 40 | 0.7750 | 0.9000 | 0.8292 |
 | rtr-arctic | T9 | 12 | 0.7500 | 0.9167 | 0.8333 |
-| rtr-bge | OVERALL | 285 | 0.6491 | 0.8070 | 0.7205 |
-| rtr-bge | OVERALL_MACRO | 285 | 0.6719 | 0.8329 | 0.7455 |
+| rtr-bge | OVERALL | 285 | 0.6491 | 0.8105 | 0.7222 |
+| rtr-bge | OVERALL_MACRO | 285 | 0.6747 | 0.8357 | 0.7483 |
 | rtr-bge | T1 | 32 | 0.7188 | 0.8750 | 0.7917 |
 | rtr-bge | T10 | 21 | 0.7619 | 0.9048 | 0.8175 |
 | rtr-bge | T11 | 40 | 0.2750 | 0.5500 | 0.3917 |
-| rtr-bge | T12 | 40 | 0.7000 | 0.9000 | 0.8000 |
-| rtr-bge | T2 | 40 | 0.6500 | 0.7000 | 0.6708 |
-| rtr-bge | T6 | 20 | 0.9000 | 1.0000 | 0.9500 |
-| rtr-bge | T7 | 40 | 0.6250 | 0.7250 | 0.6667 |
+| rtr-bge | T12 | 40 | 0.6750 | 0.9000 | 0.7875 |
+| rtr-bge | T2 | 40 | 0.6750 | 0.7250 | 0.6958 |
+| rtr-bge | T6 | 20 | 0.9500 | 1.0000 | 0.9750 |
+| rtr-bge | T7 | 40 | 0.6000 | 0.7250 | 0.6542 |
 | rtr-bge | T8 | 40 | 0.7500 | 0.9250 | 0.8292 |
 | rtr-bge | T9 | 12 | 0.6667 | 0.9167 | 0.7917 |
-| rtr-full | OVERALL | 285 | 0.7263 | 0.9018 | 0.8023 |
-| rtr-full | OVERALL_MACRO | 285 | 0.7445 | 0.9130 | 0.8185 |
+| rtr-full | OVERALL | 285 | 0.7193 | 0.8947 | 0.7959 |
+| rtr-full | OVERALL_MACRO | 285 | 0.7390 | 0.9074 | 0.8134 |
 | rtr-full | T1 | 32 | 0.7188 | 0.8750 | 0.7917 |
 | rtr-full | T10 | 21 | 0.8571 | 1.0000 | 0.9127 |
-| rtr-full | T11 | 40 | 0.4750 | 0.8000 | 0.6083 |
+| rtr-full | T11 | 40 | 0.4250 | 0.7750 | 0.5708 |
 | rtr-full | T12 | 40 | 0.7250 | 0.9500 | 0.8208 |
 | rtr-full | T2 | 40 | 0.8500 | 0.8750 | 0.8625 |
 | rtr-full | T6 | 20 | 0.9000 | 1.0000 | 0.9500 |
-| rtr-full | T7 | 40 | 0.6500 | 0.8250 | 0.7250 |
-| rtr-full | T8 | 40 | 0.7750 | 0.9750 | 0.8625 |
+| rtr-full | T7 | 40 | 0.6250 | 0.8000 | 0.7000 |
+| rtr-full | T8 | 40 | 0.8000 | 0.9750 | 0.8792 |
 | rtr-full | T9 | 12 | 0.7500 | 0.9167 | 0.8333 |
 
 ## keeper-memory (40 files, 40 queries)
 
 | System | Taxon | n | R@1 | R@3 | MRR |
 |---|---|---|---|---|---|
-| rag-dense | OVERALL | 40 | 0.0500 | 0.4500 | 0.2500 |
-| rag-dense | OVERALL_MACRO | 40 | 0.0500 | 0.4500 | 0.2500 |
-| rag-dense | T13 | 40 | 0.0500 | 0.4500 | 0.2500 |
-| rag-hybrid | OVERALL | 40 | 0.7000 | 0.7000 | 0.7000 |
-| rag-hybrid | OVERALL_MACRO | 40 | 0.7000 | 0.7000 | 0.7000 |
-| rag-hybrid | T13 | 40 | 0.7000 | 0.7000 | 0.7000 |
-| rag-dense-base | OVERALL | 40 | 0.2000 | 0.5250 | 0.3625 |
-| rag-dense-base | OVERALL_MACRO | 40 | 0.2000 | 0.5250 | 0.3625 |
-| rag-dense-base | T13 | 40 | 0.2000 | 0.5250 | 0.3625 |
-| rag-hybrid-base | OVERALL | 40 | 0.9000 | 0.9000 | 0.9000 |
-| rag-hybrid-base | OVERALL_MACRO | 40 | 0.9000 | 0.9000 | 0.9000 |
-| rag-hybrid-base | T13 | 40 | 0.9000 | 0.9000 | 0.9000 |
-| rtr-arctic | OVERALL | 40 | 0.8500 | 0.8500 | 0.8500 |
-| rtr-arctic | OVERALL_MACRO | 40 | 0.8500 | 0.8500 | 0.8500 |
-| rtr-arctic | T13 | 40 | 0.8500 | 0.8500 | 0.8500 |
-| rtr-bge | OVERALL | 40 | 0.9000 | 0.9000 | 0.9000 |
-| rtr-bge | OVERALL_MACRO | 40 | 0.9000 | 0.9000 | 0.9000 |
-| rtr-bge | T13 | 40 | 0.9000 | 0.9000 | 0.9000 |
-| rtr-full | OVERALL | 40 | 0.9750 | 0.9750 | 0.9750 |
-| rtr-full | OVERALL_MACRO | 40 | 0.9750 | 0.9750 | 0.9750 |
-| rtr-full | T13 | 40 | 0.9750 | 0.9750 | 0.9750 |
+| rag-dense | OVERALL | 40 | 0.1000 | 0.4750 | 0.2875 |
+| rag-dense | OVERALL_MACRO | 40 | 0.1000 | 0.4750 | 0.2875 |
+| rag-dense | T13 | 40 | 0.1000 | 0.4750 | 0.2875 |
+| rag-hybrid | OVERALL | 40 | 0.6750 | 0.6750 | 0.6750 |
+| rag-hybrid | OVERALL_MACRO | 40 | 0.6750 | 0.6750 | 0.6750 |
+| rag-hybrid | T13 | 40 | 0.6750 | 0.6750 | 0.6750 |
+| rag-dense-base | OVERALL | 40 | 0.0250 | 0.5000 | 0.2625 |
+| rag-dense-base | OVERALL_MACRO | 40 | 0.0250 | 0.5000 | 0.2625 |
+| rag-dense-base | T13 | 40 | 0.0250 | 0.5000 | 0.2625 |
+| rag-hybrid-base | OVERALL | 40 | 0.8000 | 0.8000 | 0.8000 |
+| rag-hybrid-base | OVERALL_MACRO | 40 | 0.8000 | 0.8000 | 0.8000 |
+| rag-hybrid-base | T13 | 40 | 0.8000 | 0.8000 | 0.8000 |
+| rtr-arctic | OVERALL | 40 | 0.8750 | 0.8750 | 0.8750 |
+| rtr-arctic | OVERALL_MACRO | 40 | 0.8750 | 0.8750 | 0.8750 |
+| rtr-arctic | T13 | 40 | 0.8750 | 0.8750 | 0.8750 |
+| rtr-bge | OVERALL | 40 | 0.8000 | 0.8000 | 0.8000 |
+| rtr-bge | OVERALL_MACRO | 40 | 0.8000 | 0.8000 | 0.8000 |
+| rtr-bge | T13 | 40 | 0.8000 | 0.8000 | 0.8000 |
+| rtr-full | OVERALL | 40 | 0.9500 | 0.9500 | 0.9500 |
+| rtr-full | OVERALL_MACRO | 40 | 0.9500 | 0.9500 | 0.9500 |
+| rtr-full | T13 | 40 | 0.9500 | 0.9500 | 0.9500 |
 
 ## Combined
 
 | System | n | R@1 | R@3 | MRR | mR@1 | p50 ms | errors |
 |---|---|---|---|---|---|---|---|
-| rag-dense | 898 | 0.3942 | 0.5713 | 0.4733 | 0.3067 | 3.0 | 0 |
-| rag-hybrid | 898 | 0.6381 | 0.7361 | 0.6808 | 0.5701 | 6.2 | 0 |
-| rag-dense-base | 898 | 0.4042 | 0.5490 | 0.4688 | 0.3136 | 8.0 | 0 |
-| rag-hybrid-base | 898 | 0.6258 | 0.7116 | 0.6641 | 0.5569 | 11.8 | 0 |
-| rtr-arctic | 898 | 0.7127 | 0.8241 | 0.7597 | 0.6950 | 18.7 | 0 |
-| rtr-bge | 898 | 0.6592 | 0.7550 | 0.7019 | 0.6319 | 14.4 | 0 |
-| rtr-full | 898 | 0.7227 | 0.8497 | 0.7769 | 0.7132 | 30.7 | 0 |
+| rag-dense | 898 | 0.3953 | 0.5702 | 0.4733 | 0.3042 | 3.4 | 0 |
+| rag-hybrid | 898 | 0.6370 | 0.7350 | 0.6797 | 0.5682 | 7.0 | 0 |
+| rag-dense-base | 898 | 0.3987 | 0.5479 | 0.4659 | 0.3070 | 9.1 | 0 |
+| rag-hybrid-base | 898 | 0.6225 | 0.7082 | 0.6607 | 0.5483 | 12.5 | 0 |
+| rtr-arctic | 898 | 0.7171 | 0.8241 | 0.7621 | 0.7027 | 19.9 | 0 |
+| rtr-bge | 898 | 0.6548 | 0.7517 | 0.6980 | 0.6214 | 16.1 | 0 |
+| rtr-full | 898 | 0.7194 | 0.8463 | 0.7741 | 0.7074 | 32.9 | 0 |

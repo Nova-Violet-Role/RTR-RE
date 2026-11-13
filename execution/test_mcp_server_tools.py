@@ -498,6 +498,144 @@ class RepairReconcileTests(unittest.TestCase):
                     mem.LEXIKON_GLOBAL_FILE,
                 ) = saved
 
+    def test_repair_dry_run_writes_nothing(self):
+        # ISSUE-1: dry_run must measure without writing: registry bytes
+        # and mtime identical afterwards, no pre-image backup created.
+        import tempfile
+        from pathlib import Path
+
+        import memory_engine as mem
+        from memory_engine import MemoryEngine
+        import memory_mcp_server as mcp_server
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            saved = (
+                mem.PROJECT_ROOTS,
+                mem.PROJECTS_DIR,
+                mem.DB_DIR,
+                mem.REGISTRY_FILE,
+                mem.EXTRA_ROOTS_FILE,
+                mem.LEXIKON_GLOBAL_FILE,
+            )
+            mem.PROJECT_ROOTS = [root / "projects"]
+            mem.PROJECTS_DIR = root / "projects"
+            mem.DB_DIR = root / "db"
+            mem.REGISTRY_FILE = root / "registry.json"
+            mem.EXTRA_ROOTS_FILE = root / "extra.json"
+            mem.LEXIKON_GLOBAL_FILE = root / "lex.json"
+            try:
+                proj = root / "projects" / "rep"
+                d = proj / "directives"
+                d.mkdir(parents=True)
+                (d / "a.md").write_text("# A\n\nREPAIR-MARKER", encoding="utf-8")
+                eng = MemoryEngine()
+                old = mcp_server.engine
+                mcp_server.engine = eng
+                try:
+                    eng.index_all()
+                    reg_path = Path(mem.REGISTRY_FILE)
+                    before_bytes = reg_path.read_bytes()
+                    before_mtime = reg_path.stat().st_mtime_ns
+                    bak = Path(str(mem.REGISTRY_FILE) + ".bak")
+                    self.assertFalse(bak.exists())
+                    panel = mcp_server.memory_repair(dry_run=True)
+                    self.assertIn("Dry run", panel)
+                    self.assertEqual(reg_path.read_bytes(), before_bytes)
+                    self.assertEqual(reg_path.stat().st_mtime_ns, before_mtime)
+                    self.assertFalse(bak.exists())
+                finally:
+                    mcp_server.engine = old
+                    eng.close()
+            finally:
+                (
+                    mem.PROJECT_ROOTS,
+                    mem.PROJECTS_DIR,
+                    mem.DB_DIR,
+                    mem.REGISTRY_FILE,
+                    mem.EXTRA_ROOTS_FILE,
+                    mem.LEXIKON_GLOBAL_FILE,
+                ) = saved
+
+    def test_index_panel_reports_deduped(self):
+        class StubEngine:
+            def index_all(self, force=False, projects=None):
+                return {
+                    "scanned": 4,
+                    "new": 0,
+                    "updated": 0,
+                    "unchanged": 2,
+                    "failed": 0,
+                    "deduped": 7,
+                }
+
+        old = mcp_server.engine
+        mcp_server.engine = StubEngine()
+        try:
+            panel = mcp_server.memory_index()
+        finally:
+            mcp_server.engine = old
+        self.assertRegex(panel, r"Deduped:\s+7\b")
+
+    def test_repair_dry_panel_marks_would_relink_and_names_holes(self):
+        # ISSUE-1: dry labels are honest (would-relink, not relinked) and
+        # holed files are named, not just counted.
+        import tempfile
+        from pathlib import Path
+
+        import memory_engine as mem
+        from memory_engine import MemoryEngine
+        import memory_mcp_server as mcp_server
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            saved = (
+                mem.PROJECT_ROOTS,
+                mem.PROJECTS_DIR,
+                mem.DB_DIR,
+                mem.REGISTRY_FILE,
+                mem.EXTRA_ROOTS_FILE,
+                mem.LEXIKON_GLOBAL_FILE,
+            )
+            mem.PROJECT_ROOTS = [root / "projects"]
+            mem.PROJECTS_DIR = root / "projects"
+            mem.DB_DIR = root / "db"
+            mem.REGISTRY_FILE = root / "registry.json"
+            mem.EXTRA_ROOTS_FILE = root / "extra.json"
+            mem.LEXIKON_GLOBAL_FILE = root / "lex.json"
+            try:
+                proj = root / "projects" / "rep"
+                d = proj / "directives"
+                d.mkdir(parents=True)
+                (d / "b.md").write_text("# B\n\nHOLE-MARKER", encoding="utf-8")
+                eng = MemoryEngine()
+                old = mcp_server.engine
+                mcp_server.engine = eng
+                try:
+                    eng.index_all()
+                    slug = next(s for s in eng.rtr_collections() if "bge" in s)
+                    col = eng.rtr_collections()[slug]
+                    victim = str(d / "b.md")
+                    dead = col.get(where={"source": victim}, limit=5000)["ids"]
+                    self.assertGreater(len(dead), 0)
+                    col.delete(ids=dead)
+                    dry = mcp_server.memory_repair(dry_run=True)
+                    self.assertIn("would relink", dry)
+                    flat = re.sub(r"[\s║╔╗╚╝═─]+", "", dry)
+                    self.assertIn("b.md", flat)
+                finally:
+                    mcp_server.engine = old
+                    eng.close()
+            finally:
+                (
+                    mem.PROJECT_ROOTS,
+                    mem.PROJECTS_DIR,
+                    mem.DB_DIR,
+                    mem.REGISTRY_FILE,
+                    mem.EXTRA_ROOTS_FILE,
+                    mem.LEXIKON_GLOBAL_FILE,
+                ) = saved
+
 
 if __name__ == "__main__":
     unittest.main()

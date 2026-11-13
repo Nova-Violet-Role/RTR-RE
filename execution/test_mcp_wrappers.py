@@ -184,7 +184,7 @@ class TestMcpWrappers(unittest.TestCase):
         panel = mcp_server.memory_repair(dry_run=True)
         self.assertIn("Repair", panel)
         self.assertIn("Symbiotising in process", panel)
-        self.assertIn("Registry relinked:", panel)
+        self.assertIn("Registry would relink:", panel)
         self.assertIn("Dry run", panel)
 
     def test_repair_refuses_when_read_only(self):

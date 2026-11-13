@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Version to publish (must match dist/ artifacts, e.g. 1.2.0)
+        description: Version to publish (must match dist/ artifacts, e.g. 1.2.2)
         required: true
         type: string
   push:

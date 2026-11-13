@@ -1693,7 +1693,7 @@ class MemoryEngine:
         return formatted_chunks
 
     def chunk_dtd_whole(self, filepath: Path, rel_path: str) -> List[Dict[str, Any]]:
-        """One chunk per DTD-like file, prefixed with a structural inventory.
+        """Whole-file chunk per DTD-like file; keeper span files chunk per span.
 
         Measured (TODO-30): fragmenting DTDs into declaration chunks degraded
         retrieval below the whole-file baseline (0.5652 → 0.5435 overall;
@@ -1704,6 +1704,13 @@ class MemoryEngine:
         notations, so attribute/entity/cross-family queries can match the
         names without fragmentation noise. Raw content follows verbatim —
         entity bodies are data, never expanded (LAW.AMP.13).
+
+        Keeper span files (ISSUE-2) are records, not grammars: whole-file
+        single chunks dilute needle content below retrievability at
+        giant-span scale (measured live: 74kB/195kB span files miss top-10
+        for their own unique markers while vectors exist on both models).
+        Files carrying real span opens chunk one per span below; grammar
+        and summary files keep the whole-file path.
         """
         try:
             with open(filepath, "r", encoding="utf-8") as f:
@@ -1713,20 +1720,64 @@ class MemoryEngine:
             return []
         if not content.strip():
             return []
-        # Schema-scoped inventory (TODO-13): span files carry verbatim
-        # content that may quote DTD declarations (measured live: quoted
-        # SAMPLE_DTD polluted ROOT/ATTRIBUTES/ENTITIES with book, copyright,
-        # xhtml.list). The structure lives before the first span element;
-        # inventory scans that schema block only. Raw content still follows
-        # whole. Files without spans scan whole as before.
-        inv_text = content
-        span_at = content.find("<span ")
-        if span_at < 0:
-            span_at = content.find("<span>")
-        if span_at > 0:
-            inv_text = content[:span_at]
+        split_lines = content.split("\n")
+        span_opens = [
+            i
+            for i, line in enumerate(split_lines)
+            if re.match(r'\s*<span id="span-\d+"', line)
+        ]
+        if span_opens:
+            span_chunks: List[Dict[str, Any]] = []
+            for start in span_opens:
+                try:
+                    open_line = split_lines[start].strip()
+                    m = re.search(r'<span id="span-(\d+)"', open_line)
+                    idx = m.group(1) if m else "?"
+                    attrs = dict(re.findall(r'(\w+)="([^"]*)"', open_line))
+                    body_lines: List[str] = []
+                    for raw in split_lines[start + 1 :]:
+                        if raw.strip() == "</span>":
+                            break
+                        body_lines.append(raw)
+                    text = "\n".join(body_lines).strip()
+                    if not text:
+                        continue
+                    anchor = next(
+                        (ln.strip() for ln in text.split("\n") if ln.strip()),
+                        "",
+                    )
+                    title = f"span-{idx}: {anchor[:80]}" if anchor else f"span-{idx}"
+                    header = (
+                        f"span {idx} [{attrs.get('role', '?')}/"
+                        f"{attrs.get('lane', '?')}/{attrs.get('dtype', '?')}]"
+                    )
+                    section_text = (
+                        f"Document: {rel_path}\nSection: {title}\n\n{header}\n{text}"
+                    )
+                    span_chunks.append(
+                        {
+                            "chunk_id": f"{rel_path}#span_{idx}",
+                            "text": section_text,
+                            "title": title,
+                            "raw_body": text,
+                            "linked_concepts": [],
+                        }
+                    )
+                except Exception as e:
+                    print(
+                        f"Error assembling span chunk for {filepath}: {e}",
+                        file=sys.stderr,
+                    )
+                    continue
+            if span_chunks:
+                return span_chunks
+        # (ISSUE-2: the old schema-scoped inventory for span files is
+        # gone: span files chunk per span above and never reach this
+        # inventory, so quoted declarations can no longer pollute it (the
+        # 2026-11-10 incident class is closed by construction). Grammar
+        # and summary files scan whole, as before.)
         try:
-            decls = list(_scan_dtd_declarations(inv_text))
+            decls = list(_scan_dtd_declarations(content))
         except Exception as e:
             print(f"Error scanning {filepath}: {e}", file=sys.stderr)
             return []
@@ -1943,8 +1994,9 @@ class MemoryEngine:
         by_hash = {}
         for info, filepath, current_hash in hashed:
             by_hash.setdefault(current_hash, []).append((info, filepath))
+        dedup_on = os.environ.get("OPENCODE_MEMORY_DEDUP", "1").strip() != "0"
         for current_hash, members in by_hash.items():
-            if len(members) > 1:
+            if dedup_on and len(members) > 1:
 
                 def _dkey(im):
                     try:
@@ -2351,13 +2403,15 @@ class MemoryEngine:
         self.save_registry(new_registry)
         return stats
 
-    def repair_registry(self) -> Dict[str, Any]:
+    def repair_registry(self, dry_run: bool = False) -> Dict[str, Any]:
         """Rebuild the hash registry from Chroma contents plus disk truth.
 
         For every chunk source known to any collection: if the file still
         exists, rehash and register it; dead sources are left for janitor
         (which deletes their chunks). Repairs crash-skewed registries
         (2 files over 61k chunks) without re-embedding a single byte.
+        With dry_run=True, count only: the registry file and the pre-image
+        backup are left untouched, and the report carries would_repair.
         """
         refused = self._require_writer("repair_registry")
         if refused is not None:
@@ -2407,6 +2461,13 @@ class MemoryEngine:
                 fixed += 1
             except Exception:
                 continue
+        if dry_run:
+            return {
+                "status": "success",
+                "repaired": 0,
+                "total": len(registry),
+                "would_repair": fixed,
+            }
         if fixed:
             try:
                 Path(str(REGISTRY_FILE) + ".bak").write_text(

@@ -19,8 +19,8 @@ import {
     writeSubagentBrief,
 } from "../framework/rtr-keeper-framework.mjs"
 
-test("framework version is 1.2.1", () => {
-    assert.strictEqual(FRAMEWORK_VERSION, "1.2.1")
+test("framework version is 1.2.2", () => {
+    assert.strictEqual(FRAMEWORK_VERSION, "1.2.2")
 })
 
 test("P1: parseRtrPrompt handles verbs, args and bare /rtr", () => {

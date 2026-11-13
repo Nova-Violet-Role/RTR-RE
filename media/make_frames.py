@@ -18,31 +18,31 @@ COLLAGES = {
                 "RTR vs RAG — binary Versus",
                 [
                     "898 queries · 214 real files",
-                    "frozen versus.json (1.2.0)",
+                    "frozen versus.json (1.2.2)",
                     "SUB: every number re-runnable",
                 ],
             ),
             (
                 "Scoreboard R@1",
                 [
-                    "rtr-full 0.723 · rag-hybrid 0.638",
-                    "rtr-arctic 0.713 · bge 0.659",
+                    "rtr-full 0.719 · rag-hybrid 0.637",
+                    "rtr-arctic 0.717 · bge 0.655",
                     "SUB: full leads, published",
                 ],
             ),
             (
                 "Scoreboard R@3",
                 [
-                    "rtr-full 0.850 BEST",
-                    "rtr-arctic 0.824 · hybrid 0.736",
+                    "rtr-full 0.846 BEST",
+                    "rtr-arctic 0.824 · hybrid 0.735",
                     "SUB: full leads depth",
                 ],
             ),
             (
                 "Scoreboard MRR",
                 [
-                    "rtr-full 0.777 · arctic 0.760",
-                    "rag-hybrid 0.681",
+                    "rtr-full 0.774 · arctic 0.762",
+                    "rag-hybrid 0.680",
                     "SUB: full leads, honest",
                 ],
             ),
@@ -65,9 +65,9 @@ COLLAGES = {
             (
                 "Per-corpus: dtd-commands",
                 [
-                    "arctic collapses R@1 0.160",
-                    "bge arms edge R@1",
-                    "SUB: weak model drag measured",
+                    "arctic R@1 0.559, no collapse",
+                    "full leads R@1 0.545 outright",
+                    "SUB: consensus holds the weak arm",
                 ],
             ),
             (
@@ -145,7 +145,7 @@ COLLAGES = {
             (
                 "Calibration 400k-200k",
                 [
-                    "submit ~3-6ms complete <=41ms",
+                    "submit 0.4-4.2ms complete <=19.3ms",
                     "synthetic upper bound",
                     "SUB: planning, not model",
                 ],
@@ -238,33 +238,33 @@ COLLAGES = {
             (
                 "Combined nDCG@10",
                 [
-                    "dense-base 0.8167 BEST",
-                    "rtr-full 0.7798",
+                    "dense-base 0.8094 BEST",
+                    "rtr-full 0.7944",
                     "SUB: dense leads, published",
                 ],
             ),
             (
                 "ERR@10 + MAP",
                 [
-                    "dense ERR 0.8369 MAP 0.724",
-                    "full ERR 0.7899 MAP 0.658",
+                    "dense ERR 0.8311 MAP 0.7138",
+                    "full ERR 0.8153 MAP 0.6672",
                     "SUB: same story, two metrics",
                 ],
             ),
             (
-                "Worst loss NT-G1C",
+                "Worst loss NT-G1",
                 [
-                    "dense 0.7346 vs full 0.4192",
-                    "delta -0.3154",
-                    "SUB: collapse hidden in mean",
+                    "dense 0.9358 vs full 0.6567",
+                    "delta -0.2791",
+                    "SUB: worst case, open",
                 ],
             ),
             (
-                "NT-G1C mechanism",
+                "NT-G1C recovered",
                 [
-                    "jats buried rank 12 before",
-                    "generic terms matched 8 losers",
-                    "SUB: burial, not relevance",
+                    "NT-G1C now +0.0401 (recovered)",
+                    "dedup cleared the burial",
+                    "SUB: dividend, measured",
                 ],
             ),
             (
@@ -292,18 +292,18 @@ COLLAGES = {
                 ],
             ),
             (
-                "NT-G1 loss -0.2446",
+                "CMD-G1 next loss -0.1588",
                 [
-                    "tei-modules family",
-                    "semantic intent, weak lexicon",
-                    "SUB: dense wins prose",
+                    "clean-unclean channels intent",
+                    "delta -0.1588, lexical gap",
+                    "SUB: open, second worst",
                 ],
             ),
             (
-                "CMD-G1B loss -0.1977",
+                "CMD-G1B loss -0.0753",
                 [
                     "command shape intents",
-                    "lexical helps here",
+                    "delta improved, lexical helps",
                     "SUB: corpus-shaped edge",
                 ],
             ),
@@ -314,7 +314,7 @@ COLLAGES = {
             (
                 "CMD wins for full",
                 [
-                    "CMD-G3B +0.3422 measured",
+                    "CMD-G3B +0.3542 measured",
                     "fusion helps term-dense",
                     "SUB: not one-sided",
                 ],
@@ -322,7 +322,7 @@ COLLAGES = {
             (
                 "Lane-on graded neutral",
                 [
-                    "full 0.7798 to 0.7809",
+                    "full 0.7944 to 0.7947",
                     "few code-shaped terms",
                     "SUB: no-harm, default-off",
                 ],
@@ -330,7 +330,7 @@ COLLAGES = {
             (
                 "Unjudged accounting",
                 [
-                    "dense-base 6 · full 2",
+                    "dense-base 6 · full 4",
                     "pool depth 20 blind",
                     "SUB: counted, not hidden",
                 ],
@@ -505,7 +505,7 @@ COLLAGES = {
                 [
                     "write spans, then evict",
                     "fail-open on sink error",
-                    "SUB: substance never lost",
+                    "SUB: never lose substance",
                 ],
             ),
             (
@@ -616,7 +616,7 @@ COLLAGES = {
                 "Standalone C:/RTR-RE",
                 [
                     "no ACP/Rolling folders",
-                    "154 files manifest sha256",
+                    "347 files, git retreats",
                     "SUB: ship tree, not lab",
                 ],
             ),
@@ -624,16 +624,16 @@ COLLAGES = {
                 "Wheel + installer",
                 [
                     "keeper inside wheel",
-                    "clean-venv 25 tools",
+                    "clean-venv 32 tools",
                     "SUB: pip installs plugin",
                 ],
             ),
             (
                 "Live cutover next",
                 [
-                    "old ACP still running",
-                    "swap after proof",
-                    "SUB: restart proves posture",
+                    "1.2.1 live serves now",
+                    "1.2.2 proves, then ships",
+                    "SUB: swap after release",
                 ],
             ),
             (

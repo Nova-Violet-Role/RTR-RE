@@ -1,6 +1,6 @@
 {
   "name": "@saimonokuma/rtr-re-mjs",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "RTR-RE persistent memory mode without an MCP server: rtr-cli bridge, context budget discipline, and AUTO-OPTIMIZE between file reads and code writes. OpenCode plugin + Claude Code / Codex hooks, one shared core.",
   "keywords": ["opencode-plugin", "opencode", "memory", "rag", "retrieval", "context", "optimize"],
   "license": "AGPL-3.0-or-later OR EUPL-1.2",

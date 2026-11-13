@@ -1,0 +1,612 @@
+{
+  "schema": "rtr-re.baseline/1.2.2/v1",
+  "release_arc": "1.2.2",
+  "frozen_at": "2026-11-13T04:44:26",
+  "source_manifest": {
+    "versus": "1c086472b7ccd8af31da1a32397594e36dd695edca22071dc8474563b538d596",
+    "engine_beneath": "e8964a9ca74856d5d8d1431e33b9208c7864afd538da3dcdc5b2aeb80dde865a",
+    "parity_matrix": "9757cb2154a029f2e8b49464805097c9d9ef36a9b89cf251326979d8336be330"
+  },
+  "retrieval": {
+    "seed": 20260928,
+    "tool": "RE:Symbiose versus v2 (isolated, same-size controls)",
+    "corpora": {
+      "dita-spec": {
+        "files": 30,
+        "queries": 169,
+        "systems": {
+          "rag-dense": {
+            "n": 169,
+            "recall@1": 0.6568,
+            "recall@3": 0.7574,
+            "mrr": 0.7022,
+            "p50_ms": 3.1
+          },
+          "rag-dense-base": {
+            "n": 169,
+            "recall@1": 0.6391,
+            "recall@3": 0.7278,
+            "mrr": 0.6795,
+            "p50_ms": 9.3
+          },
+          "rag-hybrid": {
+            "n": 169,
+            "recall@1": 0.929,
+            "recall@3": 0.9467,
+            "mrr": 0.9359,
+            "p50_ms": 5.6
+          },
+          "rag-hybrid-base": {
+            "n": 169,
+            "recall@1": 0.8698,
+            "recall@3": 0.8935,
+            "mrr": 0.8787,
+            "p50_ms": 11.3
+          },
+          "rtr-arctic": {
+            "n": 169,
+            "recall@1": 0.929,
+            "recall@3": 0.9586,
+            "mrr": 0.9398,
+            "p50_ms": 14.5
+          },
+          "rtr-bge": {
+            "n": 169,
+            "recall@1": 0.8698,
+            "recall@3": 0.8935,
+            "mrr": 0.8787,
+            "p50_ms": 13.3
+          },
+          "rtr-full": {
+            "n": 169,
+            "recall@1": 0.9467,
+            "recall@3": 0.9645,
+            "mrr": 0.9536,
+            "p50_ms": 24.8
+          }
+        }
+      },
+      "dtd-commands": {
+        "files": 48,
+        "queries": 213,
+        "systems": {
+          "rag-dense": {
+            "n": 213,
+            "recall@1": 0.3803,
+            "recall@3": 0.5164,
+            "mrr": 0.4413,
+            "p50_ms": 3.3
+          },
+          "rag-dense-base": {
+            "n": 213,
+            "recall@1": 0.3897,
+            "recall@3": 0.5258,
+            "mrr": 0.4523,
+            "p50_ms": 9.2
+          },
+          "rag-hybrid": {
+            "n": 213,
+            "recall@1": 0.4836,
+            "recall@3": 0.5775,
+            "mrr": 0.5235,
+            "p50_ms": 4.1
+          },
+          "rag-hybrid-base": {
+            "n": 213,
+            "recall@1": 0.4883,
+            "recall@3": 0.5728,
+            "mrr": 0.5266,
+            "p50_ms": 10.0
+          },
+          "rtr-arctic": {
+            "n": 213,
+            "recall@1": 0.5587,
+            "recall@3": 0.6385,
+            "mrr": 0.5915,
+            "p50_ms": 23.3
+          },
+          "rtr-bge": {
+            "n": 213,
+            "recall@1": 0.4883,
+            "recall@3": 0.5728,
+            "mrr": 0.5266,
+            "p50_ms": 15.8
+          },
+          "rtr-full": {
+            "n": 213,
+            "recall@1": 0.5446,
+            "recall@3": 0.6573,
+            "mrr": 0.5939,
+            "p50_ms": 35.5
+          }
+        }
+      },
+      "dtd-family": {
+        "files": 60,
+        "queries": 285,
+        "systems": {
+          "rag-dense": {
+            "n": 285,
+            "recall@1": 0.3228,
+            "recall@3": 0.4842,
+            "mrr": 0.3895,
+            "p50_ms": 3.5
+          },
+          "rag-dense-base": {
+            "n": 285,
+            "recall@1": 0.3053,
+            "recall@3": 0.4351,
+            "mrr": 0.3614,
+            "p50_ms": 9.0
+          },
+          "rag-hybrid": {
+            "n": 285,
+            "recall@1": 0.593,
+            "recall@3": 0.7263,
+            "mrr": 0.6538,
+            "p50_ms": 18.5
+          },
+          "rag-hybrid-base": {
+            "n": 285,
+            "recall@1": 0.5509,
+            "recall@3": 0.6737,
+            "mrr": 0.6064,
+            "p50_ms": 20.7
+          },
+          "rtr-arctic": {
+            "n": 285,
+            "recall@1": 0.7333,
+            "recall@3": 0.8667,
+            "mrr": 0.7912,
+            "p50_ms": 46.3
+          },
+          "rtr-bge": {
+            "n": 285,
+            "recall@1": 0.6491,
+            "recall@3": 0.8105,
+            "mrr": 0.7222,
+            "p50_ms": 38.5
+          },
+          "rtr-full": {
+            "n": 285,
+            "recall@1": 0.7193,
+            "recall@3": 0.8947,
+            "mrr": 0.7959,
+            "p50_ms": 65.8
+          }
+        }
+      },
+      "keeper-memory": {
+        "files": 40,
+        "queries": 40,
+        "systems": {
+          "rag-dense": {
+            "n": 40,
+            "recall@1": 0.1,
+            "recall@3": 0.475,
+            "mrr": 0.2875,
+            "p50_ms": 4.0
+          },
+          "rag-dense-base": {
+            "n": 40,
+            "recall@1": 0.025,
+            "recall@3": 0.5,
+            "mrr": 0.2625,
+            "p50_ms": 8.4
+          },
+          "rag-hybrid": {
+            "n": 40,
+            "recall@1": 0.675,
+            "recall@3": 0.675,
+            "mrr": 0.675,
+            "p50_ms": 4.4
+          },
+          "rag-hybrid-base": {
+            "n": 40,
+            "recall@1": 0.8,
+            "recall@3": 0.8,
+            "mrr": 0.8,
+            "p50_ms": 9.5
+          },
+          "rtr-arctic": {
+            "n": 40,
+            "recall@1": 0.875,
+            "recall@3": 0.875,
+            "mrr": 0.875,
+            "p50_ms": 14.1
+          },
+          "rtr-bge": {
+            "n": 40,
+            "recall@1": 0.8,
+            "recall@3": 0.8,
+            "mrr": 0.8,
+            "p50_ms": 12.8
+          },
+          "rtr-full": {
+            "n": 40,
+            "recall@1": 0.95,
+            "recall@3": 0.95,
+            "mrr": 0.95,
+            "p50_ms": 22.8
+          }
+        }
+      },
+      "nt-studies": {
+        "files": 36,
+        "queries": 191,
+        "systems": {
+          "rag-dense": {
+            "n": 191,
+            "recall@1": 0.3508,
+            "recall@3": 0.6126,
+            "mrr": 0.4703,
+            "p50_ms": 3.2
+          },
+          "rag-dense-base": {
+            "n": 191,
+            "recall@1": 0.4136,
+            "recall@3": 0.5916,
+            "mrr": 0.4904,
+            "p50_ms": 9.0
+          },
+          "rag-hybrid": {
+            "n": 191,
+            "recall@1": 0.6073,
+            "recall@3": 0.7487,
+            "mrr": 0.6667,
+            "p50_ms": 5.2
+          },
+          "rag-hybrid-base": {
+            "n": 191,
+            "recall@1": 0.623,
+            "recall@3": 0.7277,
+            "mrr": 0.6693,
+            "p50_ms": 11.0
+          },
+          "rtr-arctic": {
+            "n": 191,
+            "recall@1": 0.6492,
+            "recall@3": 0.8377,
+            "mrr": 0.7277,
+            "p50_ms": 15.1
+          },
+          "rtr-bge": {
+            "n": 191,
+            "recall@1": 0.6283,
+            "recall@3": 0.7277,
+            "mrr": 0.6719,
+            "p50_ms": 13.9
+          },
+          "rtr-full": {
+            "n": 191,
+            "recall@1": 0.6649,
+            "recall@3": 0.8586,
+            "mrr": 0.7469,
+            "p50_ms": 25.9
+          }
+        }
+      }
+    },
+    "dtd_family_rtr_full_taxons": {
+      "T1": {
+        "n": 32,
+        "recall@1": 0.7188,
+        "recall@3": 0.875,
+        "mrr": 0.7917
+      },
+      "T10": {
+        "n": 21,
+        "recall@1": 0.8571,
+        "recall@3": 1.0,
+        "mrr": 0.9127
+      },
+      "T11": {
+        "n": 40,
+        "recall@1": 0.425,
+        "recall@3": 0.775,
+        "mrr": 0.5708
+      },
+      "T12": {
+        "n": 40,
+        "recall@1": 0.725,
+        "recall@3": 0.95,
+        "mrr": 0.8208
+      },
+      "T2": {
+        "n": 40,
+        "recall@1": 0.85,
+        "recall@3": 0.875,
+        "mrr": 0.8625
+      },
+      "T6": {
+        "n": 20,
+        "recall@1": 0.9,
+        "recall@3": 1.0,
+        "mrr": 0.95
+      },
+      "T7": {
+        "n": 40,
+        "recall@1": 0.625,
+        "recall@3": 0.8,
+        "mrr": 0.7
+      },
+      "T8": {
+        "n": 40,
+        "recall@1": 0.8,
+        "recall@3": 0.975,
+        "mrr": 0.8792
+      },
+      "T9": {
+        "n": 12,
+        "recall@1": 0.75,
+        "recall@3": 0.9167,
+        "mrr": 0.8333
+      },
+      "OVERALL": {
+        "n": 285,
+        "recall@1": 0.7193,
+        "recall@3": 0.8947,
+        "mrr": 0.7959,
+        "ci95_recall@1": [
+          0.6667,
+          0.7684
+        ],
+        "ci95_recall@3": [
+          0.8561,
+          0.9263
+        ],
+        "ci95_mrr": [
+          0.7526,
+          0.8322
+        ],
+        "p50_ms": 65.8
+      },
+      "OVERALL_MACRO": {
+        "n": 285,
+        "n_taxons": 9,
+        "recall@1": 0.739,
+        "recall@3": 0.9074,
+        "mrr": 0.8134
+      }
+    }
+  },
+  "engine_beneath": {
+    "summary": {
+      "cases": 27,
+      "passed": 27,
+      "failed": 0,
+      "pass": true
+    },
+    "cases": {
+      "compressor-double-duty-after-keeper-trim": {
+        "verdict": "pass",
+        "checks": {
+          "fires_over_trigger": 1.0,
+          "kept_within_keeper_cap": 1.0,
+          "kept_tokens_reduced": 1.0,
+          "evict_nonempty": 1.0
+        }
+      },
+      "compressor-evicted-retrievable-via-memory-search": {
+        "verdict": "pass",
+        "checks": {
+          "compressed": 1.0,
+          "sink_wrote_file": 1.0,
+          "memory_search_finds_evicted": 1.0
+        }
+      },
+      "compressor-fires-only-past-trigger": {
+        "verdict": "pass",
+        "checks": {
+          "no_compress_below_trigger": 1.0,
+          "compress_above_trigger": 1.0
+        }
+      },
+      "compressor-incremental-ten-plus-fires": {
+        "verdict": "pass",
+        "checks": {
+          "all_twelve_cycles_fired": 1.0,
+          "all_partitions_exact": 1.0,
+          "all_token_reports_exact": 1.0,
+          "all_payloads_verbatim": 1.0,
+          "all_ndata_masked": 1.0,
+          "all_within_budget_slack": 1.0
+        }
+      },
+      "compressor-lexikon-interplay": {
+        "verdict": "pass",
+        "checks": {
+          "compressed": 1.0,
+          "lexikon_expands_to_evicted_term": 1.0,
+          "alias_query_retrieves_evicted": 1.0
+        }
+      },
+      "compressor-never-compresses-protected": {
+        "verdict": "pass",
+        "checks": {
+          "protected_never_compressed_below": 1.0,
+          "old_protected_evictable_above": 1.0,
+          "recent_protected_retained_above": 1.0
+        }
+      },
+      "compressor-reduces-live-window": {
+        "verdict": "pass",
+        "checks": {
+          "window_measurably_smaller": 1.0,
+          "evict_payload_carries_all_evicted": 1.0
+        }
+      },
+      "compressor-session-resume-cumulative": {
+        "verdict": "pass",
+        "checks": {
+          "session1_compressed": 1.0,
+          "cumulative_persisted_session1": 1.0,
+          "session2_resumed_compressed": 1.0,
+          "cumulative_grew_across_resume": 1.0,
+          "atomic_write_no_tmp_leftovers": 1.0
+        }
+      },
+      "content-model-feature-in-header": {
+        "verdict": "pass",
+        "checks": {
+          "header_has_content_models": 1.0,
+          "fragments_listed": 1.0,
+          "fragment_query_resolves": 1.0
+        }
+      },
+      "corrupted-sink-mid-batch": {
+        "verdict": "pass",
+        "checks": {
+          "worker_reports_failed": 1.0,
+          "error_recorded": 1.0,
+          "sink_attempted_write": 1.0
+        }
+      },
+      "corrupted-sink-reports-failed": {
+        "verdict": "pass",
+        "checks": {
+          "worker_reports_failed": 1.0,
+          "error_recorded": 1.0
+        }
+      },
+      "duplicate-submission-deterministic": {
+        "verdict": "pass",
+        "checks": {
+          "same_keep": 1.0,
+          "same_evict": 1.0,
+          "same_total_tokens": 1.0
+        }
+      },
+      "live-engine-sink-roundtrip": {
+        "verdict": "pass",
+        "checks": {
+          "verdict_pass": 1.0,
+          "sink_exists": 1.0,
+          "sink_has_marker": 1.0
+        }
+      },
+      "optimizer-cpu-profile-applies-threads": {
+        "verdict": "pass",
+        "checks": {
+          "local_system_applies_8": 1.0,
+          "public_default_applies_4": 1.0,
+          "legacy_performance_still_works": 1.0
+        }
+      },
+      "optimizer-expansion-gated": {
+        "verdict": "pass",
+        "checks": {
+          "expansion_on_uses_lexikon": 1.0,
+          "expansion_off_gates_lexikon": 1.0
+        }
+      },
+      "optimizer-mjs-plan-context-aligned": {
+        "verdict": "pass",
+        "checks": {
+          "registry_preset_mugen": 1.0,
+          "plan_trigger_400k": 1.0,
+          "plan_target_200k": 1.0,
+          "plan_maxkeep_200": 1.0
+        }
+      },
+      "optimizer-modality-controls-hybrid": {
+        "verdict": "pass",
+        "checks": {
+          "rag_dense_hybrid_false": 1.0,
+          "rag_dense_expansion_false": 1.0,
+          "rtr_full_hybrid_true": 1.0,
+          "rtr_full_expansion_true": 1.0
+        }
+      },
+      "optimizer-parking-applies": {
+        "verdict": "pass",
+        "checks": {
+          "parking20_caps_to_3": 1.0,
+          "parking80_keeps_4": 1.0
+        }
+      },
+      "optimizer-profile-consumed-by-engine": {
+        "verdict": "pass",
+        "checks": {
+          "models_match_profile": 1.0,
+          "threads_match_profile": 1.0,
+          "profile_hybrid_flag": 1.0,
+          "profile_expansion_flag": 1.0
+        }
+      },
+      "parameter-entity-injection-blocked": {
+        "verdict": "pass",
+        "checks": {
+          "root_is_safe": 1.0,
+          "no_injected_attributes": 1.0,
+          "no_injected_elements": 1.0,
+          "param_entities_reported_as_data": 1.0
+        }
+      },
+      "preset-axis-all-six": {
+        "verdict": "pass",
+        "checks": {
+          "standard_resolves": 1.0,
+          "calibrated_resolves": 1.0,
+          "wide_resolves": 1.0,
+          "fusion-ah_resolves": 1.0,
+          "symbiose-ah_resolves": 1.0,
+          "re-symbiose_resolves": 1.0
+        }
+      },
+      "preset-axis-full": {
+        "verdict": "pass",
+        "checks": {
+          "standard_bounds_exact": 1.0,
+          "calibrated_bounds_exact": 1.0,
+          "wide_bounds_exact": 1.0,
+          "fusion-ah_bounds_exact": 1.0,
+          "symbiose-ah_bounds_exact": 1.0,
+          "re-symbiose_bounds_exact": 1.0,
+          "re-symbiose-mugen_bounds_exact": 1.0,
+          "parking_arithmetic_all_cells": 1.0,
+          "public_default_profile": 1.0,
+          "local_system_profile": 1.0
+        }
+      },
+      "production-scale-bounds": {
+        "verdict": "pass",
+        "checks": {
+          "all_accounted": 1.0,
+          "keep_within_max": 1.0,
+          "compress_triggered": 1.0
+        }
+      },
+      "production-scale-extreme-protection-warning": {
+        "verdict": "pass",
+        "checks": {
+          "old_todo_evicted_past_threshold": 1.0,
+          "recent_todo_retained": 1.0,
+          "all_accounted": 1.0
+        }
+      },
+      "protected-tool-todowrite-retained": {
+        "verdict": "pass",
+        "checks": {
+          "todowrite_retained": 1.0
+        }
+      },
+      "tool-pair-fixpoint": {
+        "verdict": "pass",
+        "checks": {
+          "call_retained": 1.0,
+          "result_retained": 1.0
+        }
+      },
+      "worker-cache-deduplicates": {
+        "verdict": "pass",
+        "checks": {
+          "second_is_cached": 1.0,
+          "same_digest": 1.0,
+          "first_ready": 1.0
+        }
+      }
+    }
+  },
+  "parity_matrix": "eval/results/parity-matrix-1.0.0.md"
+}

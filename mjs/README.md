@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # RTR-RE .mjs edition — persistent memory without an MCP server
 
-Version 1.2.1. The full RTR-RE discipline for people who do not want to
+Version 1.2.2. The full RTR-RE discipline for people who do not want to
 run an MCP server: session memory, context budget rules, and **AUTO-OPTIMIZE** —
 an optimize pass instigated between every file read and the next code
 write, unasked, so code written by a model that never looks back still
@@ -87,16 +87,16 @@ Install via npm, measure via pypi (`rtr-cli`), source on git.
 | T7–T12 | DTD structural + family discrimination |
 | T13 keeper-memory | evicted-span retrievability (0.975) |
 
-![RTR vs RAG — recall@3 by taxon](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/versus.svg)
+![RTR vs RAG — recall@3 by taxon](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.2/eval/versus.svg)
 
 <details>
 <summary>Graded + Engine Beneath + CPU preset performance</summary>
 
-![Graded nDCG@10 by query](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/graded.svg)
+![Graded nDCG@10 by query](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.2/eval/graded.svg)
 
-![Engine Beneath case scoreboard](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/engine-beneath.svg)
+![Engine Beneath case scoreboard](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.2/eval/engine-beneath.svg)
 
-![CPU preset performance](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/preset-perf.svg)
+![CPU preset performance](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.2/eval/preset-perf.svg)
 
 </details>
 

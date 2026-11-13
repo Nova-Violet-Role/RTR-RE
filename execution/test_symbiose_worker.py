@@ -501,7 +501,8 @@ class TestSessionSpanSink(unittest.TestCase):
             body = glossary.read_text(encoding="utf-8")
             self.assertIn("<!ELEMENT glossaryentry EMPTY>", body)
 
-    def test_engine_chunks_dtd_span_with_inventory_header(self):
+    def test_engine_chunks_dtd_span_per_span(self):
+        # ISSUE-2: span files chunk per span (no inventory header).
         import sys
 
         sys.path.insert(0, str(Path(__file__).parent))
@@ -523,10 +524,11 @@ class TestSessionSpanSink(unittest.TestCase):
                 digest="abc123",
             )
             chunks = engine.chunk_dtd_whole(Path(path), "rtrre-abc123.dtd")
-            self.assertTrue(chunks)
+            self.assertEqual(len(chunks), 1)
+            self.assertTrue(chunks[0]["chunk_id"].endswith("#span_0"))
+            self.assertIn("span-0", chunks[0]["title"])
             text = chunks[0]["text"]
-            self.assertIn("ATTLIST", text)
-            self.assertIn("role", text)
+            self.assertIn("assistant/written/CDATA", text)
             self.assertIn("the keeper memory is infinite", text)
 
 

@@ -67,28 +67,31 @@ T5 pairs runtime-validated (source present, synonym absent, single owner).
 
 Official tool v2, fully isolated (DB/registry/roots/lexikon),
 sha256 corpus manifest in the JSON. 898 queries, 5 real corpora,
-**0 query errors** on every system. Freeze 2026-11-11 at 1.2.0,
-intense caps (`results/versus.json`; 1.1.0 preserved in
-`results/versus-1.1.0.json`; STRUCT-lane-on run archived in
+**0 query errors** on every system. Freeze 2026-11-13 at 1.2.2,
+intense caps (`results/versus.json`; 1.2.0 preserved in
+`results/versus-1.2.0.json`; 1.1.0 in `results/versus-1.1.0.json`;
+STRUCT-lane-on run archived in
 `results/versus-lane-on.json`, within noise). The 1.2.0 non-intense
 544-query run reproduced the prior record exactly (R@1 bit-identical
 on 4 of 5 corpora), proving the engine changes bench-neutral; the
 freeze moved to intense because this taxonomy specifies intense
-counts and the record must match its spec. Cross-run absolutes move ±~0.02 (register R-15) — read
+counts and the record must match its spec. 1.2.2 moves: dedup-exclusion
+plus per-span chunking for keeper spans (uniform micro-drops binary,
+graded mixed, T13 holds 0.95). Cross-run absolutes move ±~0.02 (register R-15) — read
 within-run comparisons only.
 
 | System | R@1 | R@3 | MRR |
 |---|---|---|---|
-| **rtr-full** | **0.723** | **0.850** | **0.777** |
-| rtr-arctic | 0.713 | 0.824 | 0.760 |
-| rtr-bge | 0.659 | 0.755 | 0.702 |
-| rag-hybrid | 0.638 | 0.736 | 0.681 |
-| rag-hybrid-base | 0.626 | 0.712 | 0.664 |
-| rag-dense-base | 0.404 | 0.549 | 0.469 |
-| rag-dense | 0.394 | 0.571 | 0.473 |
+| **rtr-full** | **0.719** | **0.846** | **0.774** |
+| rtr-arctic | 0.717 | 0.824 | 0.762 |
+| rtr-bge | 0.655 | 0.752 | 0.698 |
+| rag-hybrid | 0.637 | 0.735 | 0.680 |
+| rag-hybrid-base | 0.623 | 0.708 | 0.661 |
+| rag-dense-base | 0.399 | 0.548 | 0.466 |
+| rag-dense | 0.395 | 0.570 | 0.473 |
 
 rtr-full leads every column. keeper-memory (T13): rtr-full R@1/R@3/MRR
-0.975 — evicted spans are retrievable at high score through the real
+0.95 — evicted spans are retrievable at high score through the real
 engine. Historical 2026-10-27 freeze (3 corpora): rtr-full
 0.642/0.756/0.689; precedent leak-aided 164-query run (superseded):
 0.738/0.854/0.785.
@@ -106,18 +109,19 @@ cross-family taxon is the hardest lane — shared vocabulary across
 families (e.g. `appendix` in DocBook and DITA) collapses on the
 strongest family match; this is the measured target for amplification.
 
-rtr-full leads R@3 and sits at R@1/MRR parity (−0.014/−0.007 vs the best
-RAG arm); dense-only RAG is not close anywhere. The graded companion
+rtr-full leads every column combined (0.719/0.846/0.774); dense-only
+RAG is not close anywhere. The graded companion
 (`bench_graded.py`, frozen gold-v2, 773 judgments) is the stricter
-instrument and same-size dense leads it combined — published in full in
+instrument and same-size dense leads it combined (0.8094 vs 0.7944) —
+published in full in
 `results/graded.md` and scoped in
 `artifacts/geometry/2026-10-27-graded-fortification.md`. Gold v1 (155
 judgments, 370 unjudged returned) vs v2 (773 judgments, 4 unjudged):
 rtr-full nDCG@10 0.7960 → 0.7944, drift 0.0016 (noise) — the residual
 is pool coverage, and v2 strictly dominates as the claim basis. On
-dtd-commands Arctic collapses (binary R@1 0.160 in the TODO-6 run);
-vote truncation + standout lane weights mitigate fusion drag but do not
-make Arctic a solo model there. T5 stays small-n; cross-encoder rerank
+dtd-commands Arctic no longer collapses (binary R@1 0.559 at 1.2.2, was
+0.160 in the TODO-6 run);
+vote truncation + standout lane weights + run consensus hold the weak arm. T5 stays small-n; cross-encoder rerank
 remains tracked future work, not a claim.
 
 Historical (precedent, leak-aided, superseded): 164 queries gave
@@ -198,13 +202,13 @@ Root causes found and fixed in-product:
 
 ## Limits (read before quoting us)
 
-- Four corpora, 353 queries (standard caps), file-level self-supervision, no
+- Five corpora, 898 queries intense (544 standard), file-level self-supervision, no
   human labels. Measures retrieval mechanics, not graded relevance depth.
 - Margins on nt-studies/dtd-commands are narrow queries-wide; dita-spec is decisive.
 - The DTD-family corpus is the hardest: 60 real grammar files across 15 families,
   with T7–T10 structural taxons. T7/T8 were amplified (see above); T10 remains
   the hardest lane, held at parity with the floor.
-- Latency: RTR-full ~42–47ms p50 vs 5–20ms classic arms (in-process; MCP adds transport).
+- Latency: RTR-full ~23–66ms p50 vs ~3–21ms classic arms (in-process; MCP adds transport).
 - Dual-ensemble value concentrates in identifiers and cross-corpus robustness;
   per-model ablations ship in the same table so anyone can check our work.
 

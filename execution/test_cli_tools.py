@@ -304,6 +304,52 @@ class TestCliTools(unittest.TestCase):
         self.assertEqual(cm.exception.code, 1)
         self.assertIn("Empty term", buf.getvalue())
 
+    def test_index_repair_heals_and_reports(self):
+        # CLI --repair matches MCP memory_repair: registry relink +
+        # vector-hole heal + counts panel (not relink alone). Both
+        # chunker families (.md + .dtd).
+        d = self.test_projects / "rec" / "directives"
+        d.mkdir(parents=True)
+        (d / "c.md").write_text("# C\n\nCLI-REPAIR-MARKER", encoding="utf-8")
+        (d / "s.dtd").write_text("<!ELEMENT cspan (text)>\n", encoding="utf-8")
+        self.engine.index_all()
+        cols = self.engine.rtr_collections()
+        slug = next(s for s in cols if "bge" in s)
+        col = cols[slug]
+        for name in ("c.md", "s.dtd"):
+            victim = str(d / name)
+            dead = col.get(where={"source": victim}, limit=5000)["ids"]
+            self.assertGreater(len(dead), 0)
+            col.delete(ids=dead)
+        buf = io.StringIO()
+        with patch.object(memory_cli, "MemoryEngine", return_value=self.engine):
+            with redirect_stdout(buf):
+                memory_cli.format_index(repair=True)
+        out = buf.getvalue()
+        self.assertIn("healed", out.lower())
+        self.assertIn("2", out)
+        for name in ("c.md", "s.dtd"):
+            back = col.get(where={"source": str(d / name)}, limit=5000)["ids"]
+            self.assertGreater(len(back), 0)
+
+    def test_index_panel_reports_deduped(self):
+        class StubEngine:
+            def index_all(self, force=False, projects=None):
+                return {
+                    "scanned": 4,
+                    "new": 0,
+                    "updated": 0,
+                    "unchanged": 2,
+                    "failed": 0,
+                    "deduped": 7,
+                }
+
+        buf = io.StringIO()
+        with patch.object(memory_cli, "MemoryEngine", return_value=StubEngine()):
+            with redirect_stdout(buf):
+                memory_cli.format_index()
+        self.assertRegex(buf.getvalue(), r"Deduped:\s+7\b")
+
 
 class TestErrorText(unittest.TestCase):
     def test_bare_exceptions_render_non_blank(self):

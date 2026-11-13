@@ -532,6 +532,7 @@ def memory_index(force: bool = False, project: str = "", repair: bool = False) -
         f"Updated:       {s['updated']}",
         f"Unchanged:     {s['unchanged']}",
         f"Failed:        {s['failed']}",
+        f"Deduped:       {s.get('deduped', 0)}",
         f"Duration:      {duration:.2f}s",
     ]
     return TUIRenderer.render_panel("Incremental Indexing", lines, status="index")
@@ -944,7 +945,7 @@ def memory_repair(dry_run: bool = False) -> str:
             status="error",
         )
     try:
-        rep = engine.repair_registry()
+        rep = engine.repair_registry(dry_run=dry_run)
     except Exception as e:
         return TUIRenderer.render_panel(
             "Repair Failure", [f"Error: {_error_text(e)}"], status="error"
@@ -966,13 +967,28 @@ def memory_repair(dry_run: bool = False) -> str:
             "Repair Failure", [f"Error: {_error_text(e)}"], status="error"
         )
     lines = list(recall)
-    lines.append(f"Registry relinked: {rep.get('repaired', 0)} files")
+    if dry_run:
+        lines.append(f"Registry would relink: {rep.get('would_repair', 0)} files")
+    else:
+        lines.append(f"Registry relinked: {rep.get('repaired', 0)} files")
     lines.append(f"Registry total: {rep.get('total', 0)} files")
     lines.append(f"Chunks freed: {jan.get('freed', 0)}")
     if jan.get("pruned_roots"):
-        lines.append(f"Roots pruned: {len(jan['pruned_roots'])}")
+        verb = "would prune" if dry_run else "pruned"
+        lines.append(f"Roots {verb}: {len(jan['pruned_roots'])}")
     holes = sum(len(v) for v in rec.get("missing", {}).values())
     lines.append(f"Vector holes found: {holes}")
+    shown = 0
+    for slug in sorted(rec.get("missing", {})):
+        for path in rec.get("missing", {})[slug]:
+            if shown >= 10:
+                break
+            lines.append(f"  hole [{slug}]: {path}")
+            shown += 1
+        if shown >= 10:
+            break
+    if holes > shown:
+        lines.append(f"  ... and {holes - shown} more")
     if dry_run:
         lines.append("Dry run: measured only, nothing written.")
     else:

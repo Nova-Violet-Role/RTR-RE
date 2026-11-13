@@ -3,38 +3,38 @@
   "combos": [
     {
       "threads": 2,
-      "files": 12,
-      "index_s": 0.64,
-      "search_p50_ms": 10.0,
-      "search_max_ms": 429.3
+      "files": 3,
+      "index_s": 0.47,
+      "search_p50_ms": 10.9,
+      "search_max_ms": 434.8
     },
     {
       "threads": 4,
-      "files": 12,
-      "index_s": 0.47,
-      "search_p50_ms": 7.7,
-      "search_max_ms": 9.2
+      "files": 3,
+      "index_s": 0.37,
+      "search_p50_ms": 7.4,
+      "search_max_ms": 8.7
     },
     {
       "threads": 8,
-      "files": 12,
-      "index_s": 0.45,
-      "search_p50_ms": 7.5,
-      "search_max_ms": 9.5
+      "files": 3,
+      "index_s": 0.35,
+      "search_p50_ms": 6.9,
+      "search_max_ms": 9.2
     },
     {
       "threads": 12,
-      "files": 12,
-      "index_s": 0.43,
-      "search_p50_ms": 6.5,
-      "search_max_ms": 8.9
+      "files": 3,
+      "index_s": 0.36,
+      "search_p50_ms": 6.8,
+      "search_max_ms": 8.7
     },
     {
       "threads": 16,
-      "files": 12,
-      "index_s": 0.48,
-      "search_p50_ms": 7.1,
-      "search_max_ms": 9.7
+      "files": 3,
+      "index_s": 0.42,
+      "search_p50_ms": 8.3,
+      "search_max_ms": 10.6
     }
   ]
 }

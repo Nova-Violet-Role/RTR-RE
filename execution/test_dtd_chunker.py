@@ -260,10 +260,10 @@ class ChunkDtdWholeTests(unittest.TestCase):
         f = self._write("")
         self.assertEqual(self.engine.chunk_dtd_whole(f, "empty.dtd"), [])
 
-    def test_quoted_dtd_in_spans_never_pollutes_inventory(self):
-        # Live 2026-11-10: a span quoting SAMPLE_DTD put book, copyright,
-        # xhtml.list into the inventory. Structure scans the schema block
-        # before the first span; the quoted text stays in the body only.
+    def test_quoted_dtd_in_spans_stays_in_bodies(self):
+        # ISSUE-2: span files chunk per span (no inventory header to
+        # pollute). Quoted declarations ride in span bodies verbatim and
+        # never in the span attribute headers.
         span = (
             "<!-- RTR-RE:Symbiose keeper memory span v2.1 (DTD-shaped) -->\n"
             "<!ELEMENT span EMPTY>\n<!ATTLIST span id ID #REQUIRED>\n"
@@ -276,11 +276,29 @@ class ChunkDtdWholeTests(unittest.TestCase):
         chunks = self.engine.chunk_dtd_whole(f, "quoted.dtd")
         self.assertEqual(len(chunks), 1)
         text = chunks[0]["text"]
+        header = [ln for ln in text.split("\n") if ln.startswith("span 0 [")]
+        self.assertEqual(len(header), 1)
+        self.assertNotIn("book", header[0])
+        self.assertNotIn("copyright", header[0])
+        self.assertIn("<!ELEMENT book", text)
+
+    def test_all_empty_spans_fall_back_to_whole_file(self):
+        # Zero content chunks fall through to the whole-file path rather
+        # than indexing nothing (which would read as a permanent hole).
+        span = (
+            "<!-- RTR-RE:Symbiose keeper memory span v2.1 (DTD-shaped) -->\n"
+            "<!ELEMENT span EMPTY>\n<!ATTLIST span id ID #REQUIRED>\n"
+            "<!-- verbatim span content follows -->\n\n"
+            '<span id="span-0" role="user" lane="read" dtype="PCDATA">\n'
+            "\n</span>\n"
+        )
+        f = self._write(span)
+        chunks = self.engine.chunk_dtd_whole(f, "empty-spans.dtd")
+        self.assertEqual(len(chunks), 1)
+        text = chunks[0]["text"]
+        self.assertIn("Section: Full Document", text)
         header = text.split("Section: Full Document\n\n")[1].split("\n\n")[0]
         self.assertIn("ROOT: span", header)
-        self.assertNotIn("book", header)
-        self.assertNotIn("copyright", header)
-        self.assertIn("<!ELEMENT book", text)
 
     def test_whole_file_survives_memory_error_during_assembly(self):
         # Live incident 2026-11-10: MemoryError at the section_text f-string
@@ -348,6 +366,95 @@ class DtdDiscoveryTests(unittest.TestCase):
             self.assertTrue(
                 dtd[0]["rel_path"].replace("\\", "/").endswith("proj/corpus/book.dtd")
             )
+
+
+SPAN_SAMPLE = """<!-- RTR-RE:Symbiose keeper memory span v2.1 (DTD-shaped) -->
+<!ELEMENT span EMPTY>
+<!ATTLIST span
+    id ID #REQUIRED
+    role (user|assistant|tool|system|unknown) #REQUIRED
+    lane (read|written|think|plan|unknown) #IMPLIED
+    dtype (PCDATA|CDATA|NDATA) #IMPLIED>
+<!-- verbatim span content follows -->
+
+<span id="span-0" role="user" lane="read" dtype="PCDATA">
+alpha marker QUERY-ME-ALPHA first content here
+</span>
+
+<span id="span-1" role="assistant" lane="written" dtype="CDATA">
+run `make check` automatically BETA-MARKER-QUERY second
+</span>
+
+<span id="span-2" role="assistant" lane="written" dtype="PCDATA">
+</span>
+
+<span id="span-7" role="assistant" lane="think" dtype="PCDATA">
+thinking GAMMA-QUERY-MARKER third content here
+</span>
+"""
+
+SUMMARY_SAMPLE = """<!-- RTR-RE:Symbiose keeper paraphrase v2 (DTD-shaped) -->
+<!ELEMENT paraphrase EMPTY>
+<!ATTLIST paraphrase
+    spanref IDREF #REQUIRED
+    text CDATA #REQUIRED>
+<!-- common-line anchors follow -->
+
+<paraphrase spanref="span-0" text="alpha marker anchor here" />
+"""
+
+
+class SpanFileChunkTests(unittest.TestCase):
+    """ISSUE-2: keeper span files chunk per span (giant whole-file
+    chunks dilute needle content below retrievability)."""
+
+    def setUp(self):
+        self.engine = MemoryEngine()
+        self.tmp = Path(__file__).parent / "_span_chunk_sample.dtd"
+
+    def tearDown(self):
+        self.tmp.unlink(missing_ok=True)
+        self.engine.close()
+
+    def _write(self, content: str) -> Path:
+        self.tmp.write_text(content, encoding="utf-8", newline="\n")
+        return self.tmp
+
+    def test_span_file_yields_one_chunk_per_content_span(self):
+        f = self._write(SPAN_SAMPLE)
+        chunks = self.engine.chunk_dtd_whole(f, "spans.dtd")
+        self.assertEqual(len(chunks), 3)
+        self.assertEqual(
+            [c["chunk_id"] for c in chunks],
+            ["spans.dtd#span_0", "spans.dtd#span_1", "spans.dtd#span_7"],
+        )
+        self.assertIn("QUERY-ME-ALPHA", chunks[0]["title"])
+        self.assertIn("span-0", chunks[0]["title"])
+
+    def test_span_markers_stay_isolated_per_span(self):
+        f = self._write(SPAN_SAMPLE)
+        chunks = self.engine.chunk_dtd_whole(f, "spans.dtd")
+        by_id = {c["chunk_id"]: c["text"] for c in chunks}
+        self.assertIn("BETA-MARKER-QUERY", by_id["spans.dtd#span_1"])
+        self.assertNotIn("BETA-MARKER-QUERY", by_id["spans.dtd#span_0"])
+        self.assertNotIn("BETA-MARKER-QUERY", by_id["spans.dtd#span_7"])
+
+    def test_grammar_file_stays_single_chunk(self):
+        f = self._write(SAMPLE_DTD)
+        chunks = self.engine.chunk_dtd_whole(f, "sample.dtd")
+        self.assertEqual(len(chunks), 1)
+        self.assertIn("ROOT: book", chunks[0]["text"])
+
+    def test_summary_file_stays_single_chunk(self):
+        f = self._write(SUMMARY_SAMPLE)
+        chunks = self.engine.chunk_dtd_whole(f, "summary.dtd")
+        self.assertEqual(len(chunks), 1)
+
+    def test_unclosed_span_is_lenient_not_lost(self):
+        f = self._write('<span id="span-0" role="user">\nLENIENT-MARKER survives\n')
+        chunks = self.engine.chunk_dtd_whole(f, "rough.dtd")
+        self.assertEqual(len(chunks), 1)
+        self.assertIn("LENIENT-MARKER", chunks[0]["text"])
 
 
 if __name__ == "__main__":

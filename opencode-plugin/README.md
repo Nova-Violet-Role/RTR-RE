@@ -5,7 +5,7 @@
 RTR-RE:Symbiose OpenCode plugins — the **Keeper** (server) and the
 **ctrl+p palette** (TUI). Technical companion to the RTR-RE product.
 
-Version 1.2.1.
+Version 1.2.2.
 
 ## What ships here
 
@@ -20,7 +20,7 @@ Version 1.2.1.
 ```bash
 npm install rtr-re-opencode-plugin
 # or, from the repo:
-npm pack && npm install ./rtr-re-opencode-plugin-1.2.0.tgz
+npm pack && npm install ./rtr-re-opencode-plugin-1.2.2.tgz
 ```
 
 Add the plugin to your OpenCode config (`opencode.jsonc`):
@@ -64,14 +64,14 @@ every number re-runs.
 |---|---|
 | T13 keeper-memory | evicted-span retrievability (rtr-full 0.975) |
 
-![Engine Beneath case scoreboard](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/engine-beneath.svg)
+![Engine Beneath case scoreboard](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.2/eval/engine-beneath.svg)
 
 <details>
 <summary>Full versus + graded plates</summary>
 
-![RTR vs RAG — recall@3 by taxon](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/versus.svg)
+![RTR vs RAG — recall@3 by taxon](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.2/eval/versus.svg)
 
-![Graded nDCG@10 by query](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.0/eval/graded.svg)
+![Graded nDCG@10 by query](https://raw.githubusercontent.com/Nova-Violet-Role/RTR-RE/v1.2.2/eval/graded.svg)
 
 </details>
 

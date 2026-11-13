@@ -1,5 +1,29 @@
 <!-- SPDX-FileCopyrightText: Nova-Violet Role ORG -->
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
+# RTR-RE:Symbiose v1.2.2
+
+Role-Type-Retrieval-RE:Symbiotized — the retriever + full context engine.
+CPU-first, local-first, zero API cost.
+
+## What's new since 1.2.1
+
+- **Bounded heal batches.** Reconcile heals in 25-file batches with
+  per-batch verification, RSS observation, progress callbacks, trace
+  timings, smallest-first order, heartbeat stacks, and char- plus
+  byte-budgeted embed batches.
+- **Dedup exclusion.** Byte-identical followers embed once (newest wins,
+  `dedup:` sentinels, `OPENCODE_MEMORY_DEDUP=0` escape hatch); janitor
+  prunes dead registry keys so censuses read true.
+- **Per-span chunking.** Keeper span files chunk one per span (stable
+  span_N ids, anchor titles) instead of one giant whole-file chunk —
+  evicted markers retrieve top-1 at 0.97.
+- **Honest dry-runs.** `memory_repair(dry_run=True)` measures without
+  writing (would-relink counts, no backup); repair names holed files;
+  index panels account deduped files.
+- **Measured:** 548 Python + 33 subtests, 129 JS, ship gate 27/27,
+  behavior gate 8/8, versus rtr-full R@1 0.719 / R@3 0.846 / MRR
+  0.774 (898 queries, 1.2.2 freeze), rtr_eval green.
+
 # RTR-RE:Symbiose v1.2.1
 
 Role-Type-Retrieval-RE:Symbiotized — the retriever + full context engine.

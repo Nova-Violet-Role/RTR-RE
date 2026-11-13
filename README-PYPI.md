@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: EUPL-1.2 OR AGPL-3.0-or-later -->
 # RTR-RE:Symbiose (rtr-role-type-retrieval) — dense usage manual
 
-RTR-RE:Symbiose (Role-Type-Retrieval-RE:Symbiotized) 1.2.1: RRF-heuristic,
+RTR-RE:Symbiose (Role-Type-Retrieval-RE:Symbiotized) 1.2.2: RRF-heuristic,
 DTD-semantic-capable persistent memory + symbiotized context engine for
 coding agents. Dual ONNX ensemble on CPU, zero API cost, local only.
 Three offices: native Keeper plugin (window), background Compressor

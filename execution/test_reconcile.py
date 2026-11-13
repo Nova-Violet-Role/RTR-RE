@@ -842,6 +842,35 @@ class TestAbortSafeUpsert(unittest.TestCase):
                 finally:
                     eng.close()
 
+    def test_dedup_respects_kill_switch(self):
+        # OPENCODE_MEMORY_DEDUP=0 restores pre-dedup behavior exactly
+        # (escape hatch for diagnosis + bench comparisons).
+        import contextlib
+        import os
+
+        with tempfile.TemporaryDirectory() as td:
+            with contextlib.contextmanager(self._isolated)(td) as root:
+                d = root / "projects" / "kd" / "directives"
+                d.mkdir(parents=True)
+                (d / "x.md").write_text("# X\n\nsame", encoding="utf-8")
+                (d / "y.md").write_text("# X\n\nsame", encoding="utf-8")
+                eng = MemoryEngine()
+                try:
+                    old = os.environ.get("OPENCODE_MEMORY_DEDUP")
+                    os.environ["OPENCODE_MEMORY_DEDUP"] = "0"
+                    try:
+                        eng.index_all()
+                    finally:
+                        if old is None:
+                            del os.environ["OPENCODE_MEMORY_DEDUP"]
+                        else:
+                            os.environ["OPENCODE_MEMORY_DEDUP"] = old
+                    reg = eng.load_registry()
+                    self.assertFalse(reg[str(d / "x.md")].startswith("dedup:"))
+                    self.assertFalse(reg[str(d / "y.md")].startswith("dedup:"))
+                finally:
+                    eng.close()
+
 
 if __name__ == "__main__":
     unittest.main()

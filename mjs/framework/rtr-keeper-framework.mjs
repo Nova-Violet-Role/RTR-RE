@@ -17,7 +17,7 @@ import { mkdirSync } from "node:fs"
 import { join, dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 
-export const FRAMEWORK_VERSION = "1.2.1"
+export const FRAMEWORK_VERSION = "1.2.2"
 
 // --- Registry (finding d) ------------------------------------------------
 

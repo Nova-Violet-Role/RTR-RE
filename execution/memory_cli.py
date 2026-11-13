@@ -99,7 +99,7 @@ def format_index(force: bool = False, projects=None, repair: bool = False):
     engine = MemoryEngine()
     if repair:
         try:
-            res = engine.repair_registry()
+            rep = engine.repair_registry()
         except Exception as e:
             print(
                 TUIRenderer.render_panel(
@@ -109,12 +109,39 @@ def format_index(force: bool = False, projects=None, repair: bool = False):
                 )
             )
             sys.exit(1)
+        if rep.get("status") == "error":
+            print(
+                TUIRenderer.render_panel(
+                    "Repair Failure",
+                    [rep.get("message", "unknown")],
+                    status="error",
+                )
+            )
+            sys.exit(1)
+        try:
+            jan = engine.janitor(dry_run=False)
+            rec = engine.reconcile_vectors(heal=True)
+        except Exception as e:
+            print(
+                TUIRenderer.render_panel(
+                    "Repair Failure",
+                    [f"Error during repair: {_error_text(e)}"],
+                    status="error",
+                )
+            )
+            sys.exit(1)
+        holes = sum(len(v) for v in rec.get("missing", {}).values())
         print(
             TUIRenderer.render_panel(
                 "Registry Repaired",
                 [
-                    f"Relinked: {res.get('repaired', 0)} files",
-                    f"Total:    {res.get('total', 0)} files",
+                    f"Relinked: {rep.get('repaired', 0)} files",
+                    f"Total:    {rep.get('total', 0)} files",
+                    f"Chunks freed: {jan.get('freed', 0)}",
+                    f"Vector holes found: {holes}",
+                    f"Vector holes healed: {len(rec.get('healed', []))}",
+                    f"Heal batches: {rec.get('batches', 0)}",
+                    f"Unhealed: {len(rec.get('unhealed', []))}",
                 ],
                 status="index",
             )
@@ -148,6 +175,7 @@ def format_index(force: bool = False, projects=None, repair: bool = False):
         f"Updated:       {stats['updated']}",
         f"Unchanged:     {stats['unchanged']}",
         f"Failed:        {stats['failed']}",
+        f"Deduped:       {stats.get('deduped', 0)}",
         f"Duration:      {duration:.2f}s",
     ]
     print(TUIRenderer.render_panel("Incremental Indexing", lines, status="index"))
